@@ -17,6 +17,7 @@ public class TrackService {
     public Track[] getTrackList(@PathParam("count") int count) {
 
         Track[] trackarray = {
+                new Track(2342, "Kryptobar", "3 Foos Down", "The Better Foobar - Deluxe Edition", "https://s3.amazonaws.com/images.sheetmusicdirect.com/Album/ca8a8ef7-f305-374a-833b-b8f621ede068/large.jpg", 223),
                 new Track(25, "Kryptonite", "3 Doors Down", "The Better Life - Deluxe Edition", "https://s3.amazonaws.com/images.sheetmusicdirect.com/Album/ca8a8ef7-f305-374a-833b-b8f621ede068/large.jpg", 223),
                 new Track(23, "Hells Bells", "AC/DC", "Back in Black", "https://upload.wikimedia.org/wikipedia/en/2/23/HellsBells.jpg", 312),
                 new Track(84, "Paint it Black", "The Rolling Stones", "Singles 1965-1967", "http://www.covermesongs.com/wp-content/uploads/2010/09/PaintItBlack-400x400.jpg", 224),
