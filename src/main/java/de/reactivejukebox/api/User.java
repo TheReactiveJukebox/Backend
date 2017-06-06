@@ -17,7 +17,7 @@ public class User {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/login")
-    public Response login(Auth auth) {
+    public Response login(UserData auth) {
         Token token = new Token();
         System.out.printf("name " + auth);
         String b = auth.getUsername() + " " + auth.getPassword() + " " + "token";
@@ -45,5 +45,31 @@ public class User {
         }
     }
 
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/logout")
+    public Response logout(Token auth) {
+        System.out.printf("name " + auth);
+        //TODO
+        return Response.status(200).entity("logged out").build();
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/register")
+    public Response register(UserData auth) {
+        System.out.printf("name " + auth);
+        Token token = new Token();
+        String b = auth.getUsername() + " " + auth.getPassword() + " " + "token";
+        token.setToken(b);
+        //TODO
+        if(auth.getUsername() == auth.getPassword()) {
+            return Response.ok(token).build();
+        }else{
+            return Response.status(409).entity("invalid email or username").build();
+        }
+    }
 
 }
