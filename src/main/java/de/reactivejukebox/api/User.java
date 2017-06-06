@@ -22,7 +22,7 @@ public class User {
         System.out.printf("name " + auth);
         String b = auth.getUsername() + " " + auth.getPassword() + " " + "token";
         token.setToken(b);
-        if(auth.getUsername() == auth.getPassword()) {
+        if(auth.getUsername().equalsIgnoreCase(auth.getPassword())) {
             return Response.ok(token).build();
         }else{
             return Response.status(409).entity("invalid password or username").build();
