@@ -1,11 +1,16 @@
 package de.reactivejukebox.user;
 
-public class Token {
+import java.io.Serializable;
+
+public class Token implements Serializable {
 
     String token;
 
     public  Token(String token){
         this.token = token;
+    }
+
+    public  Token(){
     }
     public String getToken() {
         return token;

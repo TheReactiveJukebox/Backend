@@ -1,31 +1,44 @@
 package de.reactivejukebox.user;
 
-public class UserData {
+import java.io.Serializable;
+import java.util.List;
+
+public class UserData implements Serializable {
     String username;
     String password;
     int id;
-
+    List<String> roles;
 
     public String getUsername() {
         return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public int getId() {return id; }
-
-    public void setUsername(String username) {
-        this.username = username;
+    public List<String> getRoles() {
+        return roles;
     }
 
     public void setPassword(String password) {
         this.password = password;
     }
 
-    public void setId(int id)  {
-        this.id= id;
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
     }
 
     @Override
