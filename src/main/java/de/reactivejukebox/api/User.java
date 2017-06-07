@@ -1,15 +1,15 @@
 package de.reactivejukebox.api;
 
-import de.reactivejukebox.user.*;
+import de.reactivejukebox.user.Token;
+import de.reactivejukebox.user.TokenHandler;
+import de.reactivejukebox.user.UserData;
 
-import javax.ws.rs.GET;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.Consumes;
 
 @Path("/user")
 public class User {
@@ -18,13 +18,11 @@ public class User {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/login")
     public Response login(UserData auth) {
-        Token token = new Token();
-        System.out.printf("login"+ auth);
-        String b = auth.getUsername() + " " + auth.getPassword() + " " + "token";
-        token.setToken(b);
-        if(auth.getUsername().equalsIgnoreCase(auth.getPassword())) {
+        System.out.printf("login" + auth);
+        try {
+            Token token = TokenHandler.getTokenHandler().CheckUser(auth);
             return Response.ok(token).build();
-        }else{
+        } catch (Exception e) {
             return Response.status(409).entity("invalid password or username").build();
         }
     }
@@ -35,12 +33,12 @@ public class User {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/autologin")
     public Response login(Token auth) {
-        Token token = new Token();
         System.out.printf("autologin " + auth);
-        token.setToken(auth.getToken());
-        if(token.getToken()!= null) {
-            return Response.ok(token).build();
-        }else{
+        try {
+            // TODO Return token
+            TokenHandler.getTokenHandler().checkToken(auth);
+            return Response.ok(auth).build();
+        } catch (Exception e) {
             return Response.status(409).entity("invalid password or username").build();
         }
     }
@@ -51,7 +49,8 @@ public class User {
     @Path("/logout")
     public Response logout(Token auth) {
         System.out.printf("logout " + auth);
-        //TODO
+        //TODO logout Method
+        //TokenHandler.getTokenHandler().
         return Response.status(200).entity("logged out").build();
     }
 
@@ -60,13 +59,11 @@ public class User {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/register")
     public Response register(UserData auth) {
-        Token token = new Token();
         System.out.printf("register " + auth);
-        String b = auth.getUsername() + " " + auth.getPassword() + " " + "token";
-        token.setToken(b);
-        if(auth.getUsername().equalsIgnoreCase(auth.getPassword())) {
+        try {
+            Token token = TokenHandler.getTokenHandler().register(auth);
             return Response.ok(token).build();
-        }else{
+        } catch (Exception e) {
             return Response.status(409).entity("invalid password or username").build();
         }
     }
