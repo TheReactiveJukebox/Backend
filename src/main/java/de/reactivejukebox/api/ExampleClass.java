@@ -11,7 +11,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 
-@Path("/ex")
+@Path("/hello")
 public class ExampleClass {
 
     @Secured
@@ -24,7 +24,7 @@ public class ExampleClass {
 
     @GET
     @Secured
-    @Path("/hello/{param}")
+    @Path("/{param}")
     public Response getMessage2(@Context ContainerRequestContext crc, @PathParam("param") String message) {
        UserData user = (UserData)crc.getProperty("UserData");
         String output = "Jersey says " + user;//username;
