@@ -11,6 +11,7 @@ import java.util.List;
  * Authors: Andreas Lang, Thilo Kamradt
  */
 public class UserData implements Serializable {
+    private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
     protected String username;
     protected String password;
     protected String pwHash;
@@ -57,7 +58,8 @@ public class UserData implements Serializable {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(message.getBytes(StandardCharsets.UTF_8));
-            hashedMessage = hash.toString();
+
+            hashedMessage = this.bytesToHexString(hash).toLowerCase();
         } catch (NoSuchAlgorithmException e) {
             //will never happen
             System.err.println("SHA-256 is not available anymore");
@@ -80,5 +82,15 @@ public class UserData implements Serializable {
     @Override
     public String toString() {
         return "UserData [username=" + username + ", userID=" + userID + "]";
+    }
+
+    private String bytesToHexString(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for ( int j = 0; j < bytes.length; j++ ) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
     }
 }
