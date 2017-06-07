@@ -11,6 +11,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 public class ReactiveJukebox extends ResourceConfig {
     public ReactiveJukebox(){
         packages(true, "de.reactivejukebox.api");
+        register(CORSResponseFilter.class);
         register(new AbstractBinder(){
             @Override
             protected void configure() {
