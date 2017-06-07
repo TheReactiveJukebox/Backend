@@ -1,4 +1,4 @@
-package de.reactivejukebox.api;
+package de.reactivejukebox.core;
 
 import de.reactivejukebox.user.UserData;
 import org.glassfish.hk2.api.Factory;
