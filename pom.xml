@@ -19,6 +19,11 @@
       <artifactId>jersey-container-servlet</artifactId>
       <version>2.10.1</version>
     </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.media</groupId>
+      <artifactId>jersey-media-json-jackson</artifactId>
+      <version>2.26-b04</version>
+    </dependency>
   </dependencies>
   <build>
     <finalName>server</finalName>
