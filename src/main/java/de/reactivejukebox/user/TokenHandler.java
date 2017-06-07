@@ -115,7 +115,7 @@ public class TokenHandler {
         UserData dbUser = new UserData();
 
         try {
-            Connection db = DriverManager.getConnection("jdbc:postgresql://" + dbAdress + "/database", "backend", "xxx");
+            Connection db = DriverManager.getConnection("jdbc:postgresql://" + dbAdress + "/reactivejukebox", "backend", "xxx");
             Statement st = db.createStatement();
             ResultSet rs = st.executeQuery("SELECT uid, username, password FROM users WHERE username=\'" + user.getUsername() + "\'");
 
@@ -140,7 +140,7 @@ public class TokenHandler {
         UserData dbUser = new UserData();
 
         try {
-            Connection db = DriverManager.getConnection("jdbc:postgresql://" + dbAdress + "/database", "backend", "xxx");
+            Connection db = DriverManager.getConnection("jdbc:postgresql://" + dbAdress + "/reactivejukebox", "backend", "xxx");
             Statement st = db.createStatement();
             ResultSet rs = st.executeQuery("SELECT uid, username, password FROM users WHERE token=\'" + token.getToken() + "\'");
 
@@ -167,7 +167,7 @@ public class TokenHandler {
 
     private void registerUserAtDB(UserData user, Token token) {
         try {
-            Connection db = DriverManager.getConnection("jdbc:postgresql://" + dbAdress + "/database", "backend", "xxx");
+            Connection db = DriverManager.getConnection("jdbc:postgresql://" + dbAdress + "/reactivejukebox", "backend", "xxx");
             Statement st = db.createStatement();
             ResultSet rs = st.executeQuery("INSERT INTO users (username, password, token,) VALUES (" + user.getUsername() + ", " + user.getPassword() + ", " + token.getToken() + ");");
             rs.close();
@@ -180,7 +180,7 @@ public class TokenHandler {
 
     private void updateTokenAtDB(UserData user, Token token) {
         try {
-            Connection db = DriverManager.getConnection("jdbc:postgresql://" + dbAdress + "/database", "backend", "xxx");
+            Connection db = DriverManager.getConnection("jdbc:postgresql://" + dbAdress + "/reactivejukebox", "backend", "xxx");
             Statement st = db.createStatement();
             ResultSet rs = st.executeQuery(" UPDATE users SET token="+token.getToken()+" WHERE username="+user.getUsername()+";");
             rs.close();
