@@ -1,12 +1,19 @@
 package de.reactivejukebox.user;
 
-public class Token {
+import java.io.Serializable;
+
+/**
+ * This is a simple Container to Store a authentication token.
+ * Author: Andreas Lang
+ */
+public class Token implements Serializable {
 
     String token;
 
-    public  Token(String token){
+    public Token(String token) {
         this.token = token;
     }
+
     public String getToken() {
         return token;
     }
