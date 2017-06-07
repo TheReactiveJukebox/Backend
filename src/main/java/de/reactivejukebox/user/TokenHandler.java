@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat;
  */
 public class TokenHandler {
     private static TokenHandler instance;
-    private static final String dbAdress = "jdbc:postgresql://db:5432/reactivejukebox";
+    private static final String dbAdress = "jdbc:postgresql://localhost:5432/reactivejukebox";
     private static final String dbLoginUser = "backend";
     private static final String dbLoginPassword = "xxx";
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -217,7 +217,7 @@ public class TokenHandler {
         try {
             Connection db = DriverManager.getConnection(dbAdress, dbLoginUser, dbLoginPassword);
             Statement st = db.createStatement();
-            ResultSet rs = st.executeQuery("INSERT INTO users (username, pw, token,) VALUES (" + user.getUsername() + ", " + user.getPassword() + ", " + token.getToken() + ");");
+            ResultSet rs = st.executeQuery("INSERT INTO users (username, pw, token) VALUES ( " + user.getUsername() + ", " + user.getPassword() + ", " + token.getToken() + ");");
             rs.close();
             st.close();
             db.close();

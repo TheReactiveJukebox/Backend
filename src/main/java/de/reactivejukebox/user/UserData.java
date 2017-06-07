@@ -17,15 +17,6 @@ public class UserData implements Serializable {
     protected int userID;
     protected List<String> roles;
 
-
-    public UserData() {
-        //TODO remove after testing (if working, the passowrd kann directly be hashed)
-        try {
-            System.out.println("----------------- name:" + username + " password:" + password);
-        } catch (Exception e) {
-        }
-    }
-
     public String getUsername() {
         return username;
     }
