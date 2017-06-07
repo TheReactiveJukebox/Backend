@@ -41,11 +41,9 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         try {
 
             // Validate the token
-            // TODO getUser to Check token
+            // TODO getUser does not throw Exception
             user = TokenHandler.getTokenHandler().getUser(new Token(token));
-            SecurityContext oldContext = requestContext.getSecurityContext();               // (4)
-            requestContext.setSecurityContext(new BasicSecurityContext(user, oldContext.isSecure()));
-
+            requestContext.setProperty("UserData", user);
         } catch (Exception e) {
             requestContext.abortWith(
                     Response.status(Response.Status.UNAUTHORIZED).build());
