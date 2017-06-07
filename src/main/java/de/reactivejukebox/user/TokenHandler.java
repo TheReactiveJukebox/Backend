@@ -136,6 +136,7 @@ public class TokenHandler {
      * @return the new valid {@link Token}
      */
     private Token generateToken(UserData user) {
+        // if token size grow then adapt database table users
         return new Token(sdf.format(new Timestamp(System.currentTimeMillis())) + user.getUsername().substring(0,2));
     }
 
