@@ -218,7 +218,7 @@ public class TokenHandler {
         try {
             Connection db = DriverManager.getConnection(dbAdress, dbLoginUser, dbLoginPassword);
             Statement st = db.createStatement();
-            ResultSet rs = st.executeQuery("INSERT INTO users (username, pw, token) VALUES ( " + user.getUsername() + ", " + user.getPassword() + ", " + token.getToken() + ");");
+            ResultSet rs = st.executeQuery("INSERT INTO users (username, pw, token) VALUES ( '" + user.getUsername() + "', '" + user.getPassword() + "', '" + token.getToken() + "');");
             rs.close();
             st.close();
             db.close();
@@ -234,7 +234,7 @@ public class TokenHandler {
         try {
             Connection db = DriverManager.getConnection(dbAdress, dbLoginUser, dbLoginPassword);
             Statement st = db.createStatement();
-            ResultSet rs = st.executeQuery(" UPDATE users SET token=" + token.getToken() + " WHERE username=" + user.getUsername() + ";");
+            ResultSet rs = st.executeQuery(" UPDATE users SET token=" + token.getToken() + " WHERE username='" + user.getUsername() + "';");
             rs.close();
             st.close();
             db.close();
