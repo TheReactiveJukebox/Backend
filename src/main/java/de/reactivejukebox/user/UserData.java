@@ -45,10 +45,6 @@ public class UserData implements Serializable {
         return pwHash;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public List<String> getRoles() {
         return roles;
     }
@@ -83,7 +79,7 @@ public class UserData implements Serializable {
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.userID = id;
     }
 
     public void setRoles(List<String> roles) {

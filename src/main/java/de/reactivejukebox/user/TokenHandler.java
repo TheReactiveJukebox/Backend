@@ -121,7 +121,7 @@ public class TokenHandler {
 
             if (rs.next()) {
                 //directly fill UserData because there can only be one row since usernames are unique
-                dbUser.setUserID(Integer.valueOf(rs.getNString("uid"));
+                dbUser.setUserID(Integer.valueOf(rs.getNString("uid")));
                 dbUser.setUsername(rs.getNString("username"));
                 dbUser.setHashedPassword(rs.getNString("password"));
             }
@@ -146,7 +146,7 @@ public class TokenHandler {
 
 
             if (rs.next()) {
-                dbUser.setUserID(Integer.valueOf(rs.getNString("uid"));
+                dbUser.setUserID(Integer.valueOf(rs.getNString("uid")));
                 dbUser.setUsername(rs.getNString("username"));
                 dbUser.setHashedPassword(rs.getNString("password"));
             }
@@ -165,7 +165,7 @@ public class TokenHandler {
         return dbUser;
     }
 
-    private UserData registerUserAtDB(UserData user, Token token) {
+    private void registerUserAtDB(UserData user, Token token) {
         try {
             Connection db = DriverManager.getConnection("jdbc:postgresql://" + dbAdress + "/database", "backend", "xxx");
             Statement st = db.createStatement();
