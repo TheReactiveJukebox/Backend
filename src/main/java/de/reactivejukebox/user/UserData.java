@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 /**
  * This is a simple class to store the retrieved JSON-Login Credentials
@@ -14,6 +15,7 @@ public class UserData implements Serializable {
     protected String password;
     protected String pwHash;
     protected int userID;
+    protected List<String> roles;
 
 
     public UserData() {
@@ -28,9 +30,13 @@ public class UserData implements Serializable {
         return username;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public String getPassword() {
         if (pwHash == null) {
-            if(password == null) {
+            if (password == null) {
                 return null;
             }
             pwHash = generateSHA256(password);
@@ -39,12 +45,12 @@ public class UserData implements Serializable {
         return pwHash;
     }
 
-    public int getUserID() {
-        return userID;
-    }
-
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public List<String> getRoles() {
+        return roles;
     }
 
     public void setPassword(String password) {
@@ -70,6 +76,18 @@ public class UserData implements Serializable {
             System.err.println("SHA-256 is not available anymore");
         }
         return hashedMessage;
+    }
+
+    public int getId() {
+        return userID;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
     }
 
     @Override
