@@ -20,7 +20,7 @@ public class User {
     public Response login(UserData auth) {
         System.out.printf("login" + auth);
         try {
-            Token token = TokenHandler.getTokenHandler().CheckUser(auth);
+            Token token = TokenHandler.getTokenHandler().checkUser(auth);
             return Response.ok(token).build();
         } catch (Exception e) {
             return Response.status(409).entity("invalid password or username").build();

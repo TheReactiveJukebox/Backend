@@ -3,13 +3,12 @@ package de.reactivejukebox.user;
 import org.postgresql.util.PSQLException;
 
 import javax.security.auth.login.FailedLoginException;
-import java.security.InvalidKeyException;
 import java.sql.*;
 import java.util.HashMap;
 import java.text.SimpleDateFormat;
 
 /**
- * Author: Thilo Kamradt
+ * The TokenHandler is used to create and manage the login {@link Token}s and the users table at the Database.
  */
 public class TokenHandler {
     private static TokenHandler instance;
@@ -39,13 +38,11 @@ public class TokenHandler {
     private TokenHandler() {
 
         tokenMap = new HashMap<>();
-        // triger loading the JDBC Driver
-        /* this is bad style,it would be much better to start the appliation with
-         * 'java -Djdbc.drivers=org.postgresql.Driver example.ImageViewer
-         */
+        // trigger loading the JDBC Driver
         try {
             Class.forName("org.postgresql.Driver");
         } catch (Exception e) {
+            //will not happen since the driver is a working dependency
         }
 
     }
@@ -74,6 +71,7 @@ public class TokenHandler {
     public UserData getUser(Token token) throws PSQLException {
         UserData user = tokenMap.get(token.getToken());
         if (user == null) {
+            //TODO remove this afte
             //maybe it is not really useful to check the database here
             user = this.getUserFromDBbyToken(token);
             tokenMap.put(token.getToken(), user);
@@ -95,15 +93,8 @@ public class TokenHandler {
      * @throws PSQLException if the user already exist
      */
     public Token register(UserData newUser) throws PSQLException {
-        /*try {
-            //this should cause an error since the user already exist
-            this.getUserFromDBbyName(newUser);
-            //TODO make it more pratically
-            throw new LoginException("User already exists");
-        } catch (PSQLException e) {
-            //user does not exist and we can go on
-        }*/
-        newUser.setHashedPassword(newUser.getPassword());
+        //generate Token and try to register
+        //if there are any conflicts, the database will throw an exception
         Token nextToken = generateToken(newUser);
         this.registerUserAtDB(newUser, nextToken);
 
@@ -120,9 +111,8 @@ public class TokenHandler {
      * @throws PSQLException        if the user does not exist
      * @throws FailedLoginException if the user credentials are wrong
      */
-    public Token CheckUser(UserData user) throws PSQLException, FailedLoginException {
+    public Token checkUser(UserData user) throws PSQLException, FailedLoginException {
         //compare password and username with database
-        user.setHashedPassword(user.getPassword()); //TODO write method
         UserData dbUser = getUserFromDBbyName(user);
         if (!dbUser.getUsername().equals(user.getUsername())
                 || !dbUser.getPassword().equals(user.getPassword())) {

@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 /**
  * This is a simple Container to Store a authentication token.
- * Author: Andreas Lang
  */
 public class Token implements Serializable {
 

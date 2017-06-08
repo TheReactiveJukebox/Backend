@@ -7,9 +7,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 /**
- * This is a simple class to store the retrieved JSON-Login Credentials
- * Authors: Andreas Lang, Thilo Kamradt
- */
+ * This is a simple class to store the retrieved JSON-Login credentials and hash the password.
+ **/
 public class UserData implements Serializable {
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
     protected String username;
@@ -26,6 +25,9 @@ public class UserData implements Serializable {
         this.username = username;
     }
 
+    /**
+     * Method the recieve the password. Note that this is not the real password but the SHA-256 hash of it.
+     */
     public String getPassword() {
         if (pwHash == null) {
             if (password == null) {
@@ -86,7 +88,7 @@ public class UserData implements Serializable {
 
     private String bytesToHexString(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
-        for ( int j = 0; j < bytes.length; j++ ) {
+        for (int j = 0; j < bytes.length; j++) {
             int v = bytes[j] & 0xFF;
             hexChars[j * 2] = hexArray[v >>> 4];
             hexChars[j * 2 + 1] = hexArray[v & 0x0F];
