@@ -81,8 +81,7 @@ public class TokenHandler {
     public UserData getUser(Token token) throws PSQLException {
         UserData user = tokenMap.get(token.getToken());
         if (user == null) {
-            //TODO remove this afte
-            //maybe it is not really useful to check the database here
+            //chekc Database for the user
             user = this.getUserFromDBbyToken(token);
             tokenMap.put(token.getToken(), user);
         }
