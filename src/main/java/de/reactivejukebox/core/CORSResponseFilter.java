@@ -19,7 +19,6 @@ public class CORSResponseFilter
             throws IOException {
 
         MultivaluedMap<String, Object> headers = responseContext.getHeaders();
-
         headers.add("Access-Control-Allow-Origin", "*");
         //headers.add("Access-Control-Allow-Origin", "http://reactivejukebox.de"); //allows CORS requests only coming from reactivejukebox.de
         headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, UPDATE");

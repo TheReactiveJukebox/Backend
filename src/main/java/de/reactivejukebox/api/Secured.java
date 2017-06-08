@@ -1,4 +1,4 @@
-package de.reactivejukebox.core;
+package de.reactivejukebox.api;
 
 import javax.ws.rs.NameBinding;
 import java.lang.annotation.Retention;

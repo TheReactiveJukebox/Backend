@@ -1,4 +1,4 @@
-package de.reactivejukebox.core;
+package de.reactivejukebox.api;
 
 import de.reactivejukebox.user.Token;
 import de.reactivejukebox.user.TokenHandler;
@@ -38,10 +38,10 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         String token = authorizationHeader.substring("Bearer".length()).trim();
         UserData user = null;
         try {
-
             // Validate the token
             // TODO getUser does not throw Exception
             user = TokenHandler.getTokenHandler().getUser(new Token(token));
+            System.out.printf(user.getUsername()); //TODO generate Exception
             requestContext.setProperty("UserData", user);
         } catch (Exception e) {
             requestContext.abortWith(
