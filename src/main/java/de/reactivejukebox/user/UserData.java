@@ -45,7 +45,7 @@ public class UserData implements Serializable {
         pwHash = this.generateSHA256(password);
     }
 
-    public void setUserID(int userID) {
+    public void setUserID(Integer userID) {
         this.userID = userID;
     }
 

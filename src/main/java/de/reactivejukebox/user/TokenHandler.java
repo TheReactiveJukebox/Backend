@@ -156,9 +156,9 @@ public class TokenHandler {
 
             if (rs.next()) {
                 //directly fill UserData because there can only be one row since usernames are unique
-                dbUser.setUserID(Integer.valueOf(rs.getNString("uid")));
-                dbUser.setUsername(rs.getNString("username"));
-                dbUser.setHashedPassword(rs.getNString("password"));
+                dbUser.setUserID(Integer.valueOf(rs.getString("uid")));
+                dbUser.setUsername(rs.getString("username"));
+                dbUser.setHashedPassword(rs.getString("pw"));
             } else {
                 throw new FailedLoginException("there is no user with name " + user.getUsername());
             }
@@ -189,9 +189,9 @@ public class TokenHandler {
 
 
             if (rs.next()) {
-                userAtDB.setUserID(Integer.valueOf(rs.getNString("uid")));
-                userAtDB.setUsername(rs.getNString("username"));
-                userAtDB.setHashedPassword(rs.getNString("pw"));
+                userAtDB.setUserID(Integer.valueOf(rs.getString("uid")));
+                userAtDB.setUsername(rs.getString("username"));
+                userAtDB.setHashedPassword(rs.getString("pw"));
             } else {
                 //there is no User with a token
                 throw new InvalidKeyException("no user with specified token");
