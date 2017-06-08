@@ -1,4 +1,4 @@
-package de.reactivejukebox.api;
+package de.reactivejukebox.core;
 
 import de.reactivejukebox.user.Token;
 import de.reactivejukebox.user.TokenHandler;

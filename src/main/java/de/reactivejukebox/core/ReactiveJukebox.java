@@ -12,6 +12,7 @@ public class ReactiveJukebox extends ResourceConfig {
     public ReactiveJukebox(){
         packages(true, "de.reactivejukebox.api");
         register(CORSResponseFilter.class);
+        register(AuthenticationFilter.class);
         register(new AbstractBinder(){
             @Override
             protected void configure() {

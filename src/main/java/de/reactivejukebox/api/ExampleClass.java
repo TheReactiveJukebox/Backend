@@ -1,5 +1,6 @@
 package de.reactivejukebox.api;
 
+import de.reactivejukebox.core.Secured;
 import de.reactivejukebox.user.UserData;
 
 import javax.ws.rs.GET;
