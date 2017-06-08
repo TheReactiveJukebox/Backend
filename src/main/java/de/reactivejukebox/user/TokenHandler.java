@@ -1,7 +1,8 @@
 package de.reactivejukebox.user;
 
+import org.postgresql.util.PSQLException;
+
 import javax.security.auth.login.FailedLoginException;
-import javax.security.auth.login.LoginException;
 import java.security.InvalidKeyException;
 import java.sql.*;
 import java.util.HashMap;
@@ -52,8 +53,10 @@ public class TokenHandler {
     /**
      * Checks whether the {@link Token} exists. Note that this method
      * returns nothing if the Token is fine and throws an error elsewise.
+     *
+     * @throws PSQLException if the token is invalid
      */
-    public Token checkToken(Token token) throws InvalidKeyException {
+    public Token checkToken(Token token) throws PSQLException {
         if (!tokenMap.containsKey(token.getToken())) {
             UserData dbuser = this.getUserFromDBbyToken(token);
             tokenMap.put(token.getToken(), dbuser);
@@ -66,8 +69,9 @@ public class TokenHandler {
      *
      * @param token the {@link Token} of the user you want
      * @return the matching {@link UserData} to the {@link Token}
+     * @throws PSQLException if there is no user with this token
      */
-    public UserData getUser(Token token) throws InvalidKeyException {
+    public UserData getUser(Token token) throws PSQLException {
         UserData user = tokenMap.get(token.getToken());
         if (user == null) {
             //maybe it is not really useful to check the database here
@@ -88,15 +92,17 @@ public class TokenHandler {
      * adds a new User to the Database and generates a Token
      *
      * @param newUser name and password of the new User
+     * @throws PSQLException if the user already exist
      */
-    public Token register(UserData newUser) throws LoginException {
-        try {
-            UserData dbUser = this.getUserFromDBbyName(newUser);
-            //TODO find a working way
+    public Token register(UserData newUser) throws PSQLException {
+        /*try {
+            //this should cause an error since the user already exist
+            this.getUserFromDBbyName(newUser);
+            //TODO make it more pratically
             throw new LoginException("User already exists");
-        } catch (FailedLoginException e) {
+        } catch (PSQLException e) {
             //user does not exist and we can go on
-        }
+        }*/
         newUser.setHashedPassword(newUser.getPassword());
         Token nextToken = generateToken(newUser);
         this.registerUserAtDB(newUser, nextToken);
@@ -111,11 +117,12 @@ public class TokenHandler {
      *
      * @param user the retrieved login credentials
      * @return a new valid {@link Token} for the user
-     * @throws FailedLoginException
+     * @throws PSQLException        if the user does not exist
+     * @throws FailedLoginException if the user credentials are wrong
      */
-    public Token CheckUser(UserData user) throws FailedLoginException {
+    public Token CheckUser(UserData user) throws PSQLException, FailedLoginException {
         //compare password and username with database
-        user.setHashedPassword(user.getPassword());
+        user.setHashedPassword(user.getPassword()); //TODO write method
         UserData dbUser = getUserFromDBbyName(user);
         if (!dbUser.getUsername().equals(user.getUsername())
                 || !dbUser.getPassword().equals(user.getPassword())) {
@@ -137,16 +144,16 @@ public class TokenHandler {
      */
     private Token generateToken(UserData user) {
         // if token size grow then adapt database table users
-        return new Token(sdf.format(new Timestamp(System.currentTimeMillis())) + user.getUsername().substring(0,2));
+        return new Token(sdf.format(new Timestamp(System.currentTimeMillis())) + user.getUsername().substring(0, 2));
     }
 
     /**
      * This method queries the Database for the specified user by username and composes a {@link UserData}
      * object out of the retrieved information
      *
-     * @throws FailedLoginException if there is no user with the specified name
+     * @throws PSQLException if there is no user with the specified name
      */
-    private UserData getUserFromDBbyName(UserData user) throws FailedLoginException {
+    private UserData getUserFromDBbyName(UserData user) throws PSQLException {
         UserData dbUser = new UserData();
 
         try {
@@ -156,11 +163,9 @@ public class TokenHandler {
 
             if (rs.next()) {
                 //directly fill UserData because there can only be one row since usernames are unique
-                dbUser.setUserID(Integer.valueOf(rs.getString("uid")));
+                dbUser.setUserID(rs.getInt("uid"));
                 dbUser.setUsername(rs.getString("username"));
                 dbUser.setHashedPassword(rs.getString("pw"));
-            } else {
-                throw new FailedLoginException("there is no user with name " + user.getUsername());
             }
 
             rs.close();
@@ -177,9 +182,9 @@ public class TokenHandler {
      * This method queries the Database for the specified user by {@link Token} and composes a {@link UserData}
      * object out of the retrieved information
      *
-     * @throws FailedLoginException if there is no user with the specified token
+     * @throws PSQLException if there is no user with the specified token
      */
-    private UserData getUserFromDBbyToken(Token token) throws InvalidKeyException {
+    private UserData getUserFromDBbyToken(Token token) throws PSQLException {
         UserData userAtDB = new UserData();
 
         try {
@@ -189,16 +194,9 @@ public class TokenHandler {
 
 
             if (rs.next()) {
-                userAtDB.setUserID(Integer.valueOf(rs.getString("uid")));
+                userAtDB.setUserID(rs.getInt("uid"));
                 userAtDB.setUsername(rs.getString("username"));
                 userAtDB.setHashedPassword(rs.getString("pw"));
-            } else {
-                //there is no User with a token
-                throw new InvalidKeyException("no user with specified token");
-            }
-            if (rs.next()) {
-                //multiple useres are using this Token
-                throw new InvalidKeyException("Token is not unique");
             }
 
             rs.close();
@@ -213,13 +211,14 @@ public class TokenHandler {
 
     /**
      * Inserts the userdata at the users table
+     *
+     * @throws PSQLException if the user already exist
      */
-    private void registerUserAtDB(UserData user, Token token) {
+    private void registerUserAtDB(UserData user, Token token) throws PSQLException {
         try {
             Connection db = DriverManager.getConnection(dbAdress, dbLoginUser, dbLoginPassword);
             Statement st = db.createStatement();
-            ResultSet rs = st.executeQuery("INSERT INTO users (username, pw, token) VALUES ( '" + user.getUsername() + "', '" + user.getPassword() + "', '" + token.getToken() + "');");
-            rs.close();
+            int updatedRows = st.executeUpdate("INSERT INTO users (username, pw, token) VALUES ( '" + user.getUsername() + "', '" + user.getPassword() + "', '" + token.getToken() + "');");
             st.close();
             db.close();
         } catch (SQLException e) {
@@ -234,8 +233,7 @@ public class TokenHandler {
         try {
             Connection db = DriverManager.getConnection(dbAdress, dbLoginUser, dbLoginPassword);
             Statement st = db.createStatement();
-            ResultSet rs = st.executeQuery(" UPDATE users SET token=" + token.getToken() + " WHERE username='" + user.getUsername() + "';");
-            rs.close();
+            int updatedRows = st.executeUpdate(" UPDATE users SET token=" + token.getToken() + " WHERE username='" + user.getUsername() + "';");
             st.close();
             db.close();
         } catch (SQLException e) {
