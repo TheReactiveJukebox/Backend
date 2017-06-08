@@ -22,8 +22,8 @@ public class CORSResponseFilter
 
         headers.add("Access-Control-Allow-Origin", "*");
         //headers.add("Access-Control-Allow-Origin", "http://reactivejukebox.de"); //allows CORS requests only coming from reactivejukebox.de
-        headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
-        headers.add("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, X-Codingpedia");
+        headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, UPDATE");
+        headers.add("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, Authorization");
     }
 
 }
