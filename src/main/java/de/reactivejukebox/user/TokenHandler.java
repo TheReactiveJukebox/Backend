@@ -17,9 +17,7 @@ public class TokenHandler {
     private static final String dbLoginPassword = "xxx";
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
     private HashMap<String, UserData> tokenMap;
-    private Connection db;
-    private Statement st;
-    private ResultSet rs;
+    private PreparedStatement updateToken, insertUser, selectByUser, selectByToken;
 
     /**
      * Delivers the single {@link TokenHandler} Instance to organize the users.
@@ -43,6 +41,18 @@ public class TokenHandler {
             Class.forName("org.postgresql.Driver");
         } catch (Exception e) {
             //will not happen since the driver is a working dependency
+        }
+        try {
+            /* create connection and prepare statements. Note that the Connection is never closed.
+             * This is because the connection is held until the server is shut down.
+             */
+            Connection db = DriverManager.getConnection(dbAdress, dbLoginUser, dbLoginPassword);
+            updateToken = db.prepareStatement(" UPDATE users SET token = ? WHERE username = ?;");
+            insertUser = db.prepareStatement("INSERT INTO users (username, pw, token) VALUES ( ?, ?, ?);");
+            selectByUser = db.prepareStatement("SELECT uid, username, pw FROM users WHERE username = ?;");
+            selectByToken = db.prepareStatement("SELECT uid, username, pw FROM users WHERE token = ?;");
+        } catch (SQLException e) {
+            throw new RuntimeException("could not establish connection to Database please restart or contact developer!");
         }
 
     }
@@ -79,6 +89,11 @@ public class TokenHandler {
         return user;
     }
 
+    /**
+     * removes the token from the local HashMap and the Database
+     *
+     * @param token to remove
+     */
     public void logout(Token token) {
         UserData user = tokenMap.get(token.getToken());
         tokenMap.remove(token.getToken());
@@ -147,10 +162,8 @@ public class TokenHandler {
         UserData dbUser = new UserData();
 
         try {
-            Connection db = DriverManager.getConnection(dbAdress, dbLoginUser, dbLoginPassword);
-            PreparedStatement preparedstatement = db.prepareStatement("SELECT uid, username, pw FROM users WHERE username = ?;");
-            preparedstatement.setString(1, user.getUsername());
-            ResultSet rs = preparedstatement.executeQuery();
+            selectByUser.setString(1, user.getUsername());
+            ResultSet rs = selectByUser.executeQuery();
 
             if (rs.next()) {
                 //directly fill UserData because there can only be one row since usernames are unique
@@ -160,8 +173,6 @@ public class TokenHandler {
             }
 
             rs.close();
-            preparedstatement.close();
-            db.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -179,11 +190,8 @@ public class TokenHandler {
         UserData userAtDB = new UserData();
 
         try {
-            Connection db = DriverManager.getConnection(dbAdress, dbLoginUser, dbLoginPassword);
-            PreparedStatement preparedStatement = db.prepareStatement("SELECT uid, username, pw FROM users WHERE token = ?;");
-            preparedStatement.setString(1, token.getToken());
-            ResultSet rs = preparedStatement.executeQuery();
-
+            selectByToken.setString(1, token.getToken());
+            ResultSet rs = selectByToken.executeQuery();
 
             if (rs.next()) {
                 userAtDB.setUserID(rs.getInt("uid"));
@@ -192,8 +200,6 @@ public class TokenHandler {
             }
 
             rs.close();
-            st.close();
-            db.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -208,14 +214,10 @@ public class TokenHandler {
      */
     private void registerUserAtDB(UserData user, Token token) throws PSQLException {
         try {
-            Connection db = DriverManager.getConnection(dbAdress, dbLoginUser, dbLoginPassword);
-            PreparedStatement preparedStatement = db.prepareStatement("INSERT INTO users (username, pw, token) VALUES ( ?, ?, ?);");
-            preparedStatement.setString(1, user.getUsername());
-            preparedStatement.setString(2, user.getPassword());
-            preparedStatement.setString(3, token.getToken());
-            int insertedRows = preparedStatement.executeUpdate();
-            st.close();
-            db.close();
+            insertUser.setString(1, user.getUsername());
+            insertUser.setString(2, user.getPassword());
+            insertUser.setString(3, token.getToken());
+            insertUser.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -226,13 +228,9 @@ public class TokenHandler {
      */
     private void updateTokenAtDB(UserData user, Token token) {
         try {
-            Connection db = DriverManager.getConnection(dbAdress, dbLoginUser, dbLoginPassword);
-            PreparedStatement preparedStatement = db.prepareStatement(" UPDATE users SET token = ? WHERE username = ?;");
-            preparedStatement.setString(1, token.getToken());
-            preparedStatement.setString(2, user.getUsername());
-            int updatedRows = preparedStatement.executeUpdate();
-            st.close();
-            db.close();
+            updateToken.setString(1, token.getToken());
+            updateToken.setString(2, user.getUsername());
+            updateToken.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
