@@ -158,8 +158,9 @@ public class TokenHandler {
 
         try {
             Connection db = DriverManager.getConnection(dbAdress, dbLoginUser, dbLoginPassword);
-            Statement st = db.createStatement();
-            ResultSet rs = st.executeQuery("SELECT uid, username, pw FROM users WHERE username=\'" + user.getUsername() + "\';");
+            PreparedStatement preparedstatement = db.prepareStatement("SELECT uid, username, pw FROM users WHERE username = ?;");
+            preparedstatement.setString(1, user.getUsername());
+            ResultSet rs = preparedstatement.executeQuery();
 
             if (rs.next()) {
                 //directly fill UserData because there can only be one row since usernames are unique
@@ -169,7 +170,7 @@ public class TokenHandler {
             }
 
             rs.close();
-            st.close();
+            preparedstatement.close();
             db.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -189,8 +190,9 @@ public class TokenHandler {
 
         try {
             Connection db = DriverManager.getConnection(dbAdress, dbLoginUser, dbLoginPassword);
-            Statement st = db.createStatement();
-            ResultSet rs = st.executeQuery("SELECT uid, username, pw FROM users WHERE token=\'" + token.getToken() + "\';");
+            PreparedStatement preparedStatement = db.prepareStatement("SELECT uid, username, pw FROM users WHERE token = ?;");
+            preparedStatement.setString(1, token.getToken());
+            ResultSet rs = preparedStatement.executeQuery();
 
 
             if (rs.next()) {
@@ -217,8 +219,11 @@ public class TokenHandler {
     private void registerUserAtDB(UserData user, Token token) throws PSQLException {
         try {
             Connection db = DriverManager.getConnection(dbAdress, dbLoginUser, dbLoginPassword);
-            Statement st = db.createStatement();
-            int updatedRows = st.executeUpdate("INSERT INTO users (username, pw, token) VALUES ( '" + user.getUsername() + "', '" + user.getPassword() + "', '" + token.getToken() + "');");
+            PreparedStatement preparedStatement = db.prepareStatement("INSERT INTO users (username, pw, token) VALUES ( ?, ?, ?);");
+            preparedStatement.setString(1, user.getUsername());
+            preparedStatement.setString(2, user.getPassword());
+            preparedStatement.setString(3, token.getToken());
+            int insertedRows = preparedStatement.executeUpdate();
             st.close();
             db.close();
         } catch (SQLException e) {
@@ -232,8 +237,10 @@ public class TokenHandler {
     private void updateTokenAtDB(UserData user, Token token) {
         try {
             Connection db = DriverManager.getConnection(dbAdress, dbLoginUser, dbLoginPassword);
-            Statement st = db.createStatement();
-            int updatedRows = st.executeUpdate(" UPDATE users SET token=" + token.getToken() + " WHERE username='" + user.getUsername() + "';");
+            PreparedStatement preparedStatement = db.prepareStatement(" UPDATE users SET token = ? WHERE username = ?;");
+            preparedStatement.setString(1, token.getToken());
+            preparedStatement.setString(2, user.getUsername());
+            int updatedRows = preparedStatement.executeUpdate();
             st.close();
             db.close();
         } catch (SQLException e) {
