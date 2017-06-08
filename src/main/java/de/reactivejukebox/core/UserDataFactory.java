@@ -9,6 +9,10 @@ import javax.ws.rs.container.ContainerRequestContext;
 /**
  * Created by lang on 6/7/17.
  */
+
+/**
+ * makes Generates UserData for "@Context UserData user"
+ */
 public class UserDataFactory implements Factory<UserData> {
     private final ContainerRequestContext context;
 
@@ -19,9 +23,10 @@ public class UserDataFactory implements Factory<UserData> {
 
     @Override
     public UserData provide() {
-        return (UserData)context.getProperty("UserData");
+        return (UserData) context.getProperty("UserData");
     }
 
     @Override
-    public void dispose(UserData t) {}
+    public void dispose(UserData t) {
+    }
 }

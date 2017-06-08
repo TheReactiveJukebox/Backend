@@ -11,8 +11,18 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+/**
+ * Class for all user Related API endpoints
+ */
+
 @Path("/user")
 public class User {
+
+    /**
+     * Consumes JSON File with username and password as @param auth
+     * Delivers Token on successful login
+     * Status 409 for invalid password or username
+     */
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -27,7 +37,11 @@ public class User {
         }
     }
 
-
+    /**
+     * Consumes JSON File with Token as @param auth
+     * Delivers Token on successful login
+     * Status 409 for invalid token
+     */
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -35,25 +49,33 @@ public class User {
     public Response login(Token auth) {
         System.out.printf("autologin " + auth);
         try {
-            // TODO Return token
-            TokenHandler.getTokenHandler().checkToken(auth);
-            return Response.ok(auth).build();
+            Token token = TokenHandler.getTokenHandler().checkToken(auth);
+            return Response.ok(token).build();
         } catch (Exception e) {
             return Response.status(409).entity("invalid password or username").build();
         }
     }
 
+    /**
+     * Consumes JSON File with token as @param auth
+     * invalidates token
+     * returns Status 200 logged out
+     */
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/logout")
     public Response logout(Token auth) {
         System.out.printf("logout " + auth);
-        //TODO logout Method
-        //TokenHandler.getTokenHandler().
+        TokenHandler.getTokenHandler().logout(auth);
         return Response.status(200).entity("logged out").build();
     }
 
+    /**
+     * Consumes JSON File with username and password as @param auth
+     * Delivers Token on successful register
+     * Status 409 if username is already taken
+     */
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)

@@ -18,6 +18,13 @@ import java.io.IOException;
 /**
  * Created by lang on 6/6/17.
  */
+
+/**
+ * Checks whether the {@link Token} exists.
+ * If Token Exists adds user to Context
+ * <p>
+ * else Sets Response.Status.UNAUTHORIZED
+ */
 @Secured
 @Provider
 @Priority(Priorities.AUTHENTICATION)
@@ -36,12 +43,9 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
         // Extract the token from the HTTP Authorization header
         String token = authorizationHeader.substring("Bearer".length()).trim();
-        UserData user = null;
         try {
             // Validate the token
-            // TODO getUser does not throw Exception
-            user = TokenHandler.getTokenHandler().getUser(new Token(token));
-            System.out.printf(user.getUsername()); //TODO generate Exception
+            UserData user = TokenHandler.getTokenHandler().getUser(new Token(token));
             requestContext.setProperty("UserData", user);
         } catch (Exception e) {
             requestContext.abortWith(

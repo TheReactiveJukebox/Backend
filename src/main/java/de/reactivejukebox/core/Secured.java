@@ -12,8 +12,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * Created by lang on 6/6/17.
  */
 
-
+/**
+ * Name Binding for Authorization filter
+ */
 @NameBinding
 @Retention(RUNTIME)
 @Target({TYPE, METHOD})
-public @interface Secured { }
+public @interface Secured {
+}
