@@ -39,12 +39,16 @@ public class UserData implements Serializable {
         return pwHash;
     }
 
+    public void setPassword(String password) {
+        pwHash = this.generateSHA256(password);
+    }
+
     public List<String> getRoles() {
         return roles;
     }
 
-    public void setPassword(String password) {
-        pwHash = this.generateSHA256(password);
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
     }
 
     public void setUserID(Integer userID) {
@@ -75,10 +79,6 @@ public class UserData implements Serializable {
 
     public void setId(int id) {
         this.userID = id;
-    }
-
-    public void setRoles(List<String> roles) {
-        this.roles = roles;
     }
 
     @Override
