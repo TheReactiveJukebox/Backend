@@ -3,7 +3,6 @@ package de.reactivejukebox.user;
 /**
  * Created by lang on 6/9/17.
  */
-import org.postgresql.util.PSQLException;
 import org.testng.Assert;
 import org.testng.annotations.*;
 
@@ -13,7 +12,6 @@ import java.sql.SQLException;
 public class TokenHandlerTest {
     UserData testUser;
     Token testToken;
-    int iteration;
     @BeforeClass
     public void Setup(){
         testUser = new UserData();
@@ -30,6 +28,9 @@ public class TokenHandlerTest {
                 Assert.fail();
             }
         }
+        Assert.assertNotEquals(testToken.getToken(),null);
+        System.out.print(testToken.getToken() + "\n");
+        System.out.print(testUser.getUsername());
     }
 
     @Test
@@ -52,16 +53,15 @@ public class TokenHandlerTest {
 
     @Test (dependsOnMethods = { "testGetUser", "testGetWrongUser" })
     public void testRegister(){
-        iteration++;
        UserData newUser = new UserData();
-       newUser.setUsername("newUser"+iteration);
+       newUser.setUsername("newUser");
        newUser.setUsername("newPW");
        UserData checkUser = null;
        Token newToken = null;
         try {
             newToken = TokenHandler.getTokenHandler().register(newUser);
         } catch (SQLException e) {
-            Assert.fail();
+            Assert.fail("User already exists, possibly from earlier tests");
         }
         try {
             checkUser = TokenHandler.getTokenHandler().getUser(newToken);
@@ -139,7 +139,30 @@ public class TokenHandlerTest {
         TokenHandler.getTokenHandler().checkUser(wrongUser);
     }
 
-    //logout
+    @Test(dependsOnMethods = { "testCheckUser" })
+    public void testLogout(){
+        TokenHandler.getTokenHandler().logout(testToken);
+        try {
+            UserData test = TokenHandler.getTokenHandler().getUser(testToken);
+            Assert.fail(test.toString());
+        } catch (SQLException e) {}
+        try {
+            testToken = TokenHandler.getTokenHandler().checkUser(testUser);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (FailedLoginException e) {
+            e.printStackTrace();
+        }
+        Assert.assertNotEquals(testToken.getToken(),null);
+
+    }
+
+    @AfterClass
+    public void result(){
+        System.out.print("Changed UserData / Token\n");
+        System.out.print(testToken.getToken() + "\n");
+        System.out.print(testUser.getUsername());
+    }
 
 
    // @Test(expectedExceptions = ArithmeticException.class)

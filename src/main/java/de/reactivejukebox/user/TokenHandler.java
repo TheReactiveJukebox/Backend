@@ -96,7 +96,7 @@ public class TokenHandler {
     public void logout(Token token) {
         UserData user = tokenMap.get(token.getToken());
         tokenMap.remove(token.getToken());
-        token.setToken("");
+        token.setToken(null);
         updateTokenAtDB(user, token);
     }
 
