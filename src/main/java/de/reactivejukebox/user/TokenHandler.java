@@ -106,7 +106,7 @@ public class TokenHandler {
      * @param newUser name and password of the new User
      * @throws PSQLException if the user already exist
      */
-    public Token register(UserData newUser) throws PSQLException {
+    public Token register(UserData newUser) throws SQLException {
         //generate Token and try to register
         //if there are any conflicts, the database will throw an exception
         Token nextToken = generateToken(newUser);
@@ -125,7 +125,7 @@ public class TokenHandler {
      * @throws PSQLException        if the user does not exist
      * @throws FailedLoginException if the user credentials are wrong
      */
-    public Token checkUser(UserData user) throws PSQLException, FailedLoginException {
+    public Token checkUser(UserData user) throws SQLException, FailedLoginException {
         //compare password and username with database
         UserData dbUser = getUserFromDBbyName(user);
         if (!dbUser.getUsername().equals(user.getUsername())
@@ -157,10 +157,10 @@ public class TokenHandler {
      *
      * @throws PSQLException if there is no user with the specified name
      */
-    private UserData getUserFromDBbyName(UserData user) throws PSQLException {
+    private UserData getUserFromDBbyName(UserData user) throws SQLException {
         UserData dbUser = new UserData();
 
-        try {
+        //try {
             selectByUser.setString(1, user.getUsername());
             ResultSet rs = selectByUser.executeQuery();
 
@@ -169,12 +169,14 @@ public class TokenHandler {
                 dbUser.setUserID(rs.getInt("uid"));
                 dbUser.setUsername(rs.getString("username"));
                 dbUser.setHashedPassword(rs.getString("pw"));
+            }else{
+                throw new SQLException();
             }
 
-            rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+       //     rs.close();
+       // } catch (SQLException e) {
+       //     e.printStackTrace();
+       // }
 
         return dbUser;
     }
@@ -196,6 +198,8 @@ public class TokenHandler {
             userAtDB.setUserID(rs.getInt("uid"));
             userAtDB.setUsername(rs.getString("username"));
             userAtDB.setHashedPassword(rs.getString("pw"));
+        }else{
+            throw new SQLException();
         }
 
         rs.close();
@@ -211,15 +215,11 @@ public class TokenHandler {
      *
      * @throws PSQLException if the user already exist
      */
-    private void registerUserAtDB(UserData user, Token token) throws PSQLException {
-        try {
+    private void registerUserAtDB(UserData user, Token token) throws SQLException {
             insertUser.setString(1, user.getUsername());
             insertUser.setString(2, user.getPassword());
             insertUser.setString(3, token.getToken());
             insertUser.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     /**

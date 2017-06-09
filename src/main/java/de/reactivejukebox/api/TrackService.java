@@ -1,5 +1,6 @@
 package de.reactivejukebox.api;
 
+import de.reactivejukebox.core.Secured;
 import de.reactivejukebox.model.Track;
 
 import javax.ws.rs.GET;
@@ -12,6 +13,7 @@ import java.util.Arrays;
 @Path("/track")
 public class TrackService {
     @GET
+    //@Secured
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/list/{count}")
     public Track[] getTrackList(@PathParam("count") int count) {
