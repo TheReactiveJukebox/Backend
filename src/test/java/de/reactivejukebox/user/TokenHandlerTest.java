@@ -3,8 +3,11 @@ package de.reactivejukebox.user;
 /**
  * Created by lang on 6/9/17.
  */
+
 import org.testng.Assert;
-import org.testng.annotations.*;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 import javax.security.auth.login.FailedLoginException;
 import java.sql.SQLException;
@@ -12,8 +15,9 @@ import java.sql.SQLException;
 public class TokenHandlerTest {
     UserData testUser;
     Token testToken;
+
     @BeforeClass
-    public void Setup(){
+    public void Setup() {
         testUser = new UserData();
         testUser.setUsername("testUser");
         testUser.setPassword("drfvzrf4!!e785cw4x***'##+'§$%$rjgzu43worjk3");
@@ -28,36 +32,36 @@ public class TokenHandlerTest {
                 Assert.fail();
             }
         }
-        Assert.assertNotEquals(testToken.getToken(),null);
+        Assert.assertNotEquals(testToken.getToken(), null);
         System.out.print(testToken.getToken() + "\n");
         System.out.print(testUser.getUsername());
     }
 
     @Test
-    public void testGetUser(){
+    public void testGetUser() {
         UserData checkUser = null;
         try {
             checkUser = TokenHandler.getTokenHandler().getUser(testToken);
         } catch (SQLException e) {
             Assert.fail();
         }
-        Assert.assertEquals(checkUser.getUsername(),testUser.getUsername());
+        Assert.assertEquals(checkUser.getUsername(), testUser.getUsername());
     }
 
     @Test(expectedExceptions = SQLException.class)
-    public void testGetWrongUser() throws SQLException{
+    public void testGetWrongUser() throws SQLException {
         Token wrongToken = new Token();
         wrongToken.setToken("test123456");
         TokenHandler.getTokenHandler().getUser(wrongToken);
     }
 
-    @Test (dependsOnMethods = { "testGetUser", "testGetWrongUser" })
-    public void testRegister(){
-       UserData newUser = new UserData();
-       newUser.setUsername("newUser");
-       newUser.setUsername("newPW");
-       UserData checkUser = null;
-       Token newToken = null;
+    @Test(dependsOnMethods = {"testGetUser", "testGetWrongUser"})
+    public void testRegister() {
+        UserData newUser = new UserData();
+        newUser.setUsername("newUser");
+        newUser.setUsername("newPW");
+        UserData checkUser = null;
+        Token newToken = null;
         try {
             newToken = TokenHandler.getTokenHandler().register(newUser);
         } catch (SQLException e) {
@@ -68,16 +72,16 @@ public class TokenHandlerTest {
         } catch (SQLException e) {
             Assert.fail();
         }
-        Assert.assertEquals(checkUser.getUsername(),newUser.getUsername());
+        Assert.assertEquals(checkUser.getUsername(), newUser.getUsername());
     }
 
     @Test(expectedExceptions = SQLException.class)
-    public void testWrongRegister() throws SQLException{
+    public void testWrongRegister() throws SQLException {
         TokenHandler.getTokenHandler().register(testUser);
     }
 
-    @Test(dependsOnMethods = { "testGetUser" })
-    public void testCheckToken(){
+    @Test(dependsOnMethods = {"testGetUser"})
+    public void testCheckToken() {
         Token newToken = null;
         try {
             newToken = TokenHandler.getTokenHandler().checkToken(testToken);
@@ -90,18 +94,18 @@ public class TokenHandlerTest {
         } catch (SQLException e) {
             Assert.fail();
         }
-        Assert.assertEquals(checkUser.getUsername(),testUser.getUsername());
+        Assert.assertEquals(checkUser.getUsername(), testUser.getUsername());
     }
 
     @Test(expectedExceptions = SQLException.class)
-    public void testCheckWrongToken()throws SQLException{
+    public void testCheckWrongToken() throws SQLException {
         Token wrongToken = new Token();
         wrongToken.setToken("test123456");
         TokenHandler.getTokenHandler().checkToken(wrongToken);
     }
 
-    @Test(dependsOnMethods = { "testGetUser", "testGetWrongUser" })
-    public void testCheckUser(){
+    @Test(dependsOnMethods = {"testGetUser", "testGetWrongUser"})
+    public void testCheckUser() {
         UserData checkUser = new UserData();
         checkUser.setPassword("drfvzrf4!!e785cw4x***'##+'§$%$rjgzu43worjk3");
         checkUser.setUsername("testUser");
@@ -119,7 +123,7 @@ public class TokenHandlerTest {
         } catch (SQLException e) {
             Assert.fail();
         }
-        Assert.assertEquals(checkUser2.getUsername(),testUser.getUsername());
+        Assert.assertEquals(checkUser2.getUsername(), testUser.getUsername());
 
     }
 
@@ -139,13 +143,14 @@ public class TokenHandlerTest {
         TokenHandler.getTokenHandler().checkUser(wrongUser);
     }
 
-    @Test(dependsOnMethods = { "testCheckUser" })
-    public void testLogout(){
+    @Test(dependsOnMethods = {"testCheckUser"})
+    public void testLogout() {
         TokenHandler.getTokenHandler().logout(testToken);
         try {
             UserData test = TokenHandler.getTokenHandler().getUser(testToken);
             Assert.fail(test.toString());
-        } catch (SQLException e) {}
+        } catch (SQLException e) {
+        }
         try {
             testToken = TokenHandler.getTokenHandler().checkUser(testUser);
         } catch (SQLException e) {
@@ -153,18 +158,18 @@ public class TokenHandlerTest {
         } catch (FailedLoginException e) {
             e.printStackTrace();
         }
-        Assert.assertNotEquals(testToken.getToken(),null);
+        Assert.assertNotEquals(testToken.getToken(), null);
 
     }
 
     @AfterClass
-    public void result(){
+    public void result() {
         System.out.print("Changed UserData / Token\n");
         System.out.print(testToken.getToken() + "\n");
         System.out.print(testUser.getUsername());
     }
 
 
-   // @Test(expectedExceptions = ArithmeticException.class)
-   // @Test(dependsOnMethods = { "initEnvironmentTest" })
+    // @Test(expectedExceptions = ArithmeticException.class)
+    // @Test(dependsOnMethods = { "initEnvironmentTest" })
 }

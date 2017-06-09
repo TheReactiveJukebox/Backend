@@ -161,22 +161,22 @@ public class TokenHandler {
         UserData dbUser = new UserData();
 
         //try {
-            selectByUser.setString(1, user.getUsername());
-            ResultSet rs = selectByUser.executeQuery();
+        selectByUser.setString(1, user.getUsername());
+        ResultSet rs = selectByUser.executeQuery();
 
-            if (rs.next()) {
-                //directly fill UserData because there can only be one row since usernames are unique
-                dbUser.setUserID(rs.getInt("uid"));
-                dbUser.setUsername(rs.getString("username"));
-                dbUser.setHashedPassword(rs.getString("pw"));
-            }else{
-                throw new SQLException();
-            }
+        if (rs.next()) {
+            //directly fill UserData because there can only be one row since usernames are unique
+            dbUser.setUserID(rs.getInt("uid"));
+            dbUser.setUsername(rs.getString("username"));
+            dbUser.setHashedPassword(rs.getString("pw"));
+        } else {
+            throw new SQLException();
+        }
 
-       //     rs.close();
-       // } catch (SQLException e) {
-       //     e.printStackTrace();
-       // }
+        //     rs.close();
+        // } catch (SQLException e) {
+        //     e.printStackTrace();
+        // }
 
         return dbUser;
     }
@@ -198,7 +198,7 @@ public class TokenHandler {
             userAtDB.setUserID(rs.getInt("uid"));
             userAtDB.setUsername(rs.getString("username"));
             userAtDB.setHashedPassword(rs.getString("pw"));
-        }else{
+        } else {
             throw new SQLException();
         }
 
@@ -216,10 +216,10 @@ public class TokenHandler {
      * @throws PSQLException if the user already exist
      */
     private void registerUserAtDB(UserData user, Token token) throws SQLException {
-            insertUser.setString(1, user.getUsername());
-            insertUser.setString(2, user.getPassword());
-            insertUser.setString(3, token.getToken());
-            insertUser.executeUpdate();
+        insertUser.setString(1, user.getUsername());
+        insertUser.setString(2, user.getPassword());
+        insertUser.setString(3, token.getToken());
+        insertUser.executeUpdate();
     }
 
     /**
