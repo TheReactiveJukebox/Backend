@@ -13,7 +13,7 @@ import java.util.Arrays;
 @Path("/track")
 public class TrackService {
     @GET
-    //@Secured
+    @Secured
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/list/{count}")
     public Track[] getTrackList(@PathParam("count") int count) {

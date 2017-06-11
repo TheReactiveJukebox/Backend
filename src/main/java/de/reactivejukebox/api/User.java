@@ -11,10 +11,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-/**
- * Class for all user Related API endpoints
- */
-
 @Path("/user")
 public class User {
 

@@ -6,9 +6,6 @@ import org.glassfish.hk2.api.Factory;
 import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;
 
-/**
- * Created by lang on 6/7/17.
- */
 
 /**
  * makes Generates UserData for "@Context UserData user"

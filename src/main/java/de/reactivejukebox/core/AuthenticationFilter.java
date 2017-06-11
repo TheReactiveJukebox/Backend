@@ -16,10 +16,6 @@ import java.io.IOException;
 
 
 /**
- * Created by lang on 6/6/17.
- */
-
-/**
  * Checks whether the {@link Token} exists.
  * If Token Exists adds user to Context
  * <p>

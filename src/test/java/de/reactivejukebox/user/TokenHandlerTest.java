@@ -1,8 +1,5 @@
 package de.reactivejukebox.user;
 
-/**
- * Created by lang on 6/9/17.
- */
 
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
@@ -12,10 +9,16 @@ import org.testng.annotations.Test;
 import javax.security.auth.login.FailedLoginException;
 import java.sql.SQLException;
 
+/**
+ * Tests all public TokenHandler Methods
+ */
 public class TokenHandlerTest {
     UserData testUser;
     Token testToken;
 
+    /**
+     * Register testUser for the tests
+     */
     @BeforeClass
     public void Setup() {
         testUser = new UserData();
@@ -37,6 +40,9 @@ public class TokenHandlerTest {
         System.out.print(testUser.getUsername());
     }
 
+    /**
+     * test getUser for an registered User
+     */
     @Test
     public void testGetUser() {
         UserData checkUser = null;
@@ -48,6 +54,9 @@ public class TokenHandlerTest {
         Assert.assertEquals(checkUser.getUsername(), testUser.getUsername());
     }
 
+    /**
+     * test getUser for an non registered User
+     */
     @Test(expectedExceptions = SQLException.class)
     public void testGetWrongUser() throws SQLException {
         Token wrongToken = new Token();
@@ -55,6 +64,9 @@ public class TokenHandlerTest {
         TokenHandler.getTokenHandler().getUser(wrongToken);
     }
 
+    /**
+     * test register with new username (only works one time)
+     */
     @Test(dependsOnMethods = {"testGetUser", "testGetWrongUser"})
     public void testRegister() {
         UserData newUser = new UserData();
@@ -75,11 +87,16 @@ public class TokenHandlerTest {
         Assert.assertEquals(checkUser.getUsername(), newUser.getUsername());
     }
 
+    /**
+     * test register with an already used username
+     */
     @Test(expectedExceptions = SQLException.class)
     public void testWrongRegister() throws SQLException {
         TokenHandler.getTokenHandler().register(testUser);
     }
-
+    /**
+     * test checkToken with token for a registered user
+     */
     @Test(dependsOnMethods = {"testGetUser"})
     public void testCheckToken() {
         Token newToken = null;
@@ -97,6 +114,10 @@ public class TokenHandlerTest {
         Assert.assertEquals(checkUser.getUsername(), testUser.getUsername());
     }
 
+    /**
+     * test checkToken with a wrong token
+     * @throws SQLException
+     */
     @Test(expectedExceptions = SQLException.class)
     public void testCheckWrongToken() throws SQLException {
         Token wrongToken = new Token();
@@ -104,6 +125,9 @@ public class TokenHandlerTest {
         TokenHandler.getTokenHandler().checkToken(wrongToken);
     }
 
+    /**
+     * test check User with a registered user
+     */
     @Test(dependsOnMethods = {"testGetUser", "testGetWrongUser"})
     public void testCheckUser() {
         UserData checkUser = new UserData();
@@ -127,6 +151,11 @@ public class TokenHandlerTest {
 
     }
 
+    /**
+     * test checkUser with non registered user
+     * @throws SQLException
+     * @throws FailedLoginException
+     */
     @Test(expectedExceptions = {SQLException.class, FailedLoginException.class})
     public void testCheckWrongUser() throws SQLException, FailedLoginException {
         UserData wrongUser = new UserData();
@@ -135,6 +164,11 @@ public class TokenHandlerTest {
         TokenHandler.getTokenHandler().checkUser(wrongUser);
     }
 
+    /**
+     * test checkUser with a wrong password
+     * @throws SQLException
+     * @throws FailedLoginException
+     */
     @Test(expectedExceptions = {SQLException.class, FailedLoginException.class})
     public void testCHeckWrongPWUser() throws SQLException, FailedLoginException {
         UserData wrongUser = new UserData();
@@ -143,6 +177,9 @@ public class TokenHandlerTest {
         TokenHandler.getTokenHandler().checkUser(wrongUser);
     }
 
+    /**
+     * test logout
+     */
     @Test(dependsOnMethods = {"testCheckUser"})
     public void testLogout() {
         TokenHandler.getTokenHandler().logout(testToken);
@@ -162,14 +199,13 @@ public class TokenHandlerTest {
 
     }
 
+    /**
+     * print username / Token for comparison
+     */
     @AfterClass
     public void result() {
         System.out.print("Changed UserData / Token\n");
         System.out.print(testToken.getToken() + "\n");
         System.out.print(testUser.getUsername());
     }
-
-
-    // @Test(expectedExceptions = ArithmeticException.class)
-    // @Test(dependsOnMethods = { "initEnvironmentTest" })
 }

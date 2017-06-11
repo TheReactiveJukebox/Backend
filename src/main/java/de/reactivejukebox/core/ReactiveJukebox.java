@@ -5,10 +5,6 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.process.internal.RequestScoped;
 import org.glassfish.jersey.server.ResourceConfig;
 
-/**
- * Created by lang on 6/6/17.
- */
-
 
 /**
  * javax.ws.rs.Application Class

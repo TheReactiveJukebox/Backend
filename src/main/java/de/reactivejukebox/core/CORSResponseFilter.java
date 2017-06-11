@@ -8,10 +8,6 @@ import javax.ws.rs.core.MultivaluedMap;
 import java.io.IOException;
 
 /**
- * Created by lang on 6/8/17.
- */
-
-/**
  * Custom CORS-Filter
  * (Cross-Origin Resource Sharing)
  */

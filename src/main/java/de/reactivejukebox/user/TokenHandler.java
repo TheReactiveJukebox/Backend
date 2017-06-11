@@ -11,7 +11,7 @@ import java.util.HashMap;
  * The TokenHandler is used to create and manage the login {@link Token}s and the users table at the Database.
  */
 public class TokenHandler {
-    private static final String dbAdress = "jdbc:postgresql://localhost:5432/reactivejukebox";
+    private static final String dbAdress = "jdbc:postgresql://database:5432/reactivejukebox";
     private static final String dbLoginUser = "backend";
     private static final String dbLoginPassword = "xxx";
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
