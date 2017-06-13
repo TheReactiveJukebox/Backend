@@ -1,13 +1,11 @@
 package de.reactivejukebox.api;
 
+import de.reactivejukebox.core.Secured;
 import de.reactivejukebox.user.Token;
 import de.reactivejukebox.user.TokenHandler;
 import de.reactivejukebox.user.UserData;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -70,7 +68,7 @@ public class User {
     /**
      * Consumes JSON File with username and password as @param auth
      * Delivers Token on successful register
-     * Status 409 if username is already taken
+     * Status 409 if username is already taken or Invite Key is wrong
      */
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -79,11 +77,26 @@ public class User {
     public Response register(UserData auth) {
         System.out.printf("register " + auth);
         try {
+            if(auth.getInviteKey().matches("xxx")){
+                auth.setInviteKey(null);
+            }else{
+                return Response.status(409).entity("invalid password or username").build();
+            }
             Token token = TokenHandler.getTokenHandler().register(auth);
             return Response.ok(token).build();
         } catch (Exception e) {
             return Response.status(409).entity("invalid password or username").build();
         }
+    }
+
+    /**
+     * Checks Token wir @Secured and returns Status 200 for registered Token
+     */
+    @GET
+    @Secured
+    @Path("/basicAuth")
+    public Response basicAuth(){
+        return Response.status(200).build();
     }
 
 }

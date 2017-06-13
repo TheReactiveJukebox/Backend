@@ -14,6 +14,7 @@ public class UserData implements Serializable {
     protected String username;
     protected String password;
     protected String pwHash;
+    protected String inviteKey;
     protected int userID;
     protected List<String> roles;
 
@@ -41,6 +42,14 @@ public class UserData implements Serializable {
 
     public void setPassword(String password) {
         pwHash = this.generateSHA256(password);
+    }
+
+    public String getInviteKey() {
+        return inviteKey;
+    }
+
+    public void setInviteKey(String inviteKey) {
+        this.inviteKey = inviteKey;
     }
 
     public List<String> getRoles() {
