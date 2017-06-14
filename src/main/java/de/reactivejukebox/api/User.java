@@ -83,10 +83,14 @@ public class User {
     public Response register(UserData auth) {
         System.out.printf("register " + auth);
         try {
-            if (auth.getInviteKey().matches("xxx")) {
-                auth.setInviteKey(null);
-            } else {
-                return Response.status(441).entity("invalid password or username").build();
+            try {
+                if (auth.getInviteKey().matches("xxx")) {
+                    auth.setInviteKey(null);
+                } else {
+                    return Response.status(441).entity("invalid InviteKey").build();
+                }
+            }catch (Exception e){
+                return Response.status(441).entity("invalid InviteKey").build();
             }
             Token token = TokenHandler.getTokenHandler().register(auth);
             return Response.ok(token).build();
