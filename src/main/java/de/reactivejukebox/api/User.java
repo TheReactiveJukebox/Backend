@@ -27,7 +27,7 @@ public class User {
             Token token = TokenHandler.getTokenHandler().checkUser(auth);
             return Response.ok(token).build();
         } catch (Exception e) {
-            return Response.status(409).entity("invalid password or username").build();
+            return Response.status(442).entity("invalid password or username").build();
         }
     }
 
@@ -86,12 +86,12 @@ public class User {
             if (auth.getInviteKey().matches("xxx")) {
                 auth.setInviteKey(null);
             } else {
-                return Response.status(409).entity("invalid password or username").build();
+                return Response.status(441).entity("invalid password or username").build();
             }
             Token token = TokenHandler.getTokenHandler().register(auth);
             return Response.ok(token).build();
         } catch (Exception e) {
-            return Response.status(409).entity("username already in use").build();
+            return Response.status(440).entity("username already in use").build();
         }
     }
 
