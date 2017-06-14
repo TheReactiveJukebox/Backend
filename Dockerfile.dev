@@ -1,0 +1,24 @@
+FROM tomcat:9-alpine
+MAINTAINER Danny Textores <textores.danny@gmail.com>
+
+# remove default webapp, listen on port 80, enable hot reload
+RUN rm -rf /usr/local/tomcat/webapps/ROOT && \
+    sed -i /usr/local/tomcat/conf/server.xml -e 's/port="8080"/port="80"/g' && \
+    sed -i /usr/local/tomcat/conf/context.xml -e 's/<Context>/<Context reloadable="true">/'
+
+# environment variables for remote debugging
+ENV JPDA_ADDRESS=8000
+ENV JPDA_TRANSPORT=dt_socket
+
+# wait for debugger to attach
+ENV JPDA_SUSPEND=y
+
+# mount webapp as volume
+VOLUME /usr/local/tomcat/webapps/ROOT.war
+
+# expose remote debugging port
+EXPOSE 8000
+
+# startup script to run tomcat with debugging enabled
+COPY startdebug.sh /
+CMD ["/startdebug.sh"]
