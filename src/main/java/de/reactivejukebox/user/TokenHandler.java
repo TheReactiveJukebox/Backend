@@ -30,7 +30,7 @@ public class TokenHandler {
         try {
             Class.forName("org.postgresql.Driver");
         } catch (Exception e) {
-            //will not happen since the driver is a working dependency
+            e.printStackTrace();//will not happen since the driver is a working dependency
         }
         try {
             /* create connection and prepare statements. Note that the Connection is never closed.

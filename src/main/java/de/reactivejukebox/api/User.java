@@ -46,7 +46,7 @@ public class User {
             Token token = TokenHandler.getTokenHandler().checkToken(auth);
             return Response.ok(token).build();
         } catch (Exception e) {
-            return Response.status(409).entity("invalid password or username").build();
+            return Response.status(409).entity("no valid token").build();
         }
     }
 
@@ -61,8 +61,14 @@ public class User {
     @Path("/logout")
     public Response logout(Token auth) {
         System.out.printf("logout " + auth);
-        TokenHandler.getTokenHandler().logout(auth);
-        return Response.status(200).entity("logged out").build();
+
+        try {
+            TokenHandler.getTokenHandler().checkToken(auth);
+            TokenHandler.getTokenHandler().logout(auth);
+            return Response.status(200).entity("logged out").build();
+        } catch (Exception e) {
+            return Response.status(409).entity("no valid token").build();
+        }
     }
 
     /**

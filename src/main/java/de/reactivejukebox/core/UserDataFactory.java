@@ -8,7 +8,7 @@ import javax.ws.rs.container.ContainerRequestContext;
 
 
 /**
- * makes Generates UserData for "@Context UserData user"
+ * Generates UserData for "@Context UserData user"
  */
 public class UserDataFactory implements Factory<UserData> {
     private final ContainerRequestContext context;
