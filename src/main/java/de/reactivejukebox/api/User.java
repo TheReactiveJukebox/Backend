@@ -83,15 +83,15 @@ public class User {
     public Response register(UserData auth) {
         System.out.printf("register " + auth);
         try {
-            if(auth.getInviteKey().matches("xxx")){
+            if (auth.getInviteKey().matches("xxx")) {
                 auth.setInviteKey(null);
-            }else{
+            } else {
                 return Response.status(409).entity("invalid password or username").build();
             }
             Token token = TokenHandler.getTokenHandler().register(auth);
             return Response.ok(token).build();
         } catch (Exception e) {
-            return Response.status(409).entity("invalid password or username").build();
+            return Response.status(409).entity("username already in use").build();
         }
     }
 
@@ -101,7 +101,7 @@ public class User {
     @GET
     @Secured
     @Path("/basicAuth")
-    public Response basicAuth(){
+    public Response basicAuth() {
         return Response.status(200).build();
     }
 
