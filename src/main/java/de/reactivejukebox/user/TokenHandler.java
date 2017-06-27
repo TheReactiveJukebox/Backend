@@ -37,10 +37,10 @@ public class TokenHandler {
              * This is because the connection is held until the server is shut down.
              */
             Connection db = DriverManager.getConnection(dbAdress, dbLoginUser, dbLoginPassword);
-            updateToken = db.prepareStatement(" UPDATE users SET token = ? WHERE username = ?;");
-            insertUser = db.prepareStatement("INSERT INTO users (username, pw, token) VALUES ( ?, ?, ?);");
-            selectByUser = db.prepareStatement("SELECT uid, username, pw FROM users WHERE username = ?;");
-            selectByToken = db.prepareStatement("SELECT uid, username, pw FROM users WHERE token = ?;");
+            updateToken = db.prepareStatement("UPDATE \"user\" SET Token = ? WHERE Name = ?;");
+            insertUser = db.prepareStatement("INSERT INTO \"user\" (Name, Password, Token) VALUES ( ?, ?, ?);");
+            selectByUser = db.prepareStatement("SELECT Id, Name, Password FROM \"user\" WHERE Name = ?;");
+            selectByToken = db.prepareStatement("SELECT Id, Name, Password FROM \"user\" WHERE Token = ?;");
         } catch (SQLException e) {
             throw new RuntimeException("could not establish connection to Database please restart or contact developer!");
         }
@@ -166,9 +166,9 @@ public class TokenHandler {
 
         if (rs.next()) {
             //directly fill UserData because there can only be one row since usernames are unique
-            dbUser.setUserID(rs.getInt("uid"));
-            dbUser.setUsername(rs.getString("username"));
-            dbUser.setHashedPassword(rs.getString("pw"));
+            dbUser.setUserID(rs.getInt("Id"));
+            dbUser.setUsername(rs.getString("Name"));
+            dbUser.setHashedPassword(rs.getString("Password"));
         } else {
             throw new SQLException();
         }
@@ -195,9 +195,9 @@ public class TokenHandler {
         ResultSet rs = selectByToken.executeQuery();
 
         if (rs.next()) {
-            userAtDB.setUserID(rs.getInt("uid"));
-            userAtDB.setUsername(rs.getString("username"));
-            userAtDB.setHashedPassword(rs.getString("pw"));
+            userAtDB.setUserID(rs.getInt("Id"));
+            userAtDB.setUsername(rs.getString("Name"));
+            userAtDB.setHashedPassword(rs.getString("Password"));
         } else {
             throw new SQLException();
         }
