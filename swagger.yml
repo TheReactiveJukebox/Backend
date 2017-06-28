@@ -1,0 +1,84 @@
+swagger: "2.0"
+info:
+  description: "Specification for the Reactive Jukebox API"
+  version: "0.0.1"
+  title: "The Reactive Jukebox"
+host: "reactivejukebox.de"
+basePath: "/api"
+tags:
+- name: "song"
+  description: "Everything about the songs"
+- name: "jukebox"
+  description: "Everything about jukeboxes"
+schemes:
+- "http"
+paths:
+
+  /song:
+    get:
+      tags:
+        - "song"
+      summary: "Get information about songs"
+      responses:
+        200:
+          description: OK
+      produces: ["application/json"]
+
+  /song/feedback:
+    post:
+      tags:
+        - "song"
+      summary: "An endpoint to push feedback about a song to"
+      responses:
+        200:
+          description: OK
+
+
+  /jukebox:
+    get:
+      tags:
+        - "jukebox"
+      summary: "Get your current jukebox"
+      responses:
+        200:
+          description: OK
+      produces: ["application/json"]
+    post:
+      tags:
+        - "jukebox"
+      summary: "Push a newly created jukebox"
+      responses:
+        200:
+          description: OK
+
+
+  /jukebox/feedback:
+    post:
+      tags:
+        - "jukebox"
+      summary: "An endpoint to push feedback about the current jukebox to"
+      responses:
+        200:
+          description: OK
+
+
+  /artist/{artistId}:
+    get:
+      summary: "Get information about an artist"
+      parameters:
+        - name: "artistId"
+          in: "path"
+          required: true
+          type: "integer"
+      responses:
+        200:
+          description: OK
+        404:
+          description: "No artist with that ID"
+
+  /user:
+    get:
+      summary: "Get information and settings about the user"
+      responses:
+        200:
+          description: OK
