@@ -1,3 +1,6 @@
+#
+# Section with general information about the API
+#
 swagger: "2.0"
 info:
   description: "Specification for the Reactive Jukebox API"
@@ -12,6 +15,10 @@ tags:
   description: "Everything about jukeboxes"
 schemes:
 - "http"
+
+#
+# Specification of individual API endpoints
+#
 paths:
 
   /song:
@@ -82,3 +89,36 @@ paths:
       responses:
         200:
           description: OK
+
+#
+# Definitions for data types that endpoints may produce or consume
+#
+definitions:
+  song:
+    type: "object"
+    properties:
+      name:
+        type: string
+      file:
+        type: string
+      cover:
+        type: string
+      artist:
+        $ref: '#/definitions/artist'
+      genres:
+        type: array
+      releaseYear:
+        type: number
+      format: "int32"
+
+  artist:
+    type: "object"
+
+  songFeedback:
+    type: "object"
+
+  jukebox:
+    type: "object"
+
+  jukeboxFeedback:
+    type: "object"
