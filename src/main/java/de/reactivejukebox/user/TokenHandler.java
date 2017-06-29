@@ -1,5 +1,6 @@
 package de.reactivejukebox.user;
 
+import de.reactivejukebox.core.Database;
 import org.postgresql.util.PSQLException;
 
 import javax.security.auth.login.FailedLoginException;
@@ -11,9 +12,6 @@ import java.util.HashMap;
  * The TokenHandler is used to create and manage the login {@link Token}s and the users table at the Database.
  */
 public class TokenHandler {
-    private static final String dbAdress = "jdbc:postgresql://database:5432/reactivejukebox";
-    private static final String dbLoginUser = "backend";
-    private static final String dbLoginPassword = "xxx";
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
     private static TokenHandler instance;
     private HashMap<String, UserData> tokenMap;
@@ -36,11 +34,11 @@ public class TokenHandler {
             /* create connection and prepare statements. Note that the Connection is never closed.
              * This is because the connection is held until the server is shut down.
              */
-            Connection db = DriverManager.getConnection(dbAdress, dbLoginUser, dbLoginPassword);
-            updateToken = db.prepareStatement("UPDATE \"user\" SET Token = ? WHERE Name = ?;");
-            insertUser = db.prepareStatement("INSERT INTO \"user\" (Name, Password, Token) VALUES ( ?, ?, ?);");
-            selectByUser = db.prepareStatement("SELECT Id, Name, Password FROM \"user\" WHERE Name = ?;");
-            selectByToken = db.prepareStatement("SELECT Id, Name, Password FROM \"user\" WHERE Token = ?;");
+            Connection con = Database.getInstance().getConnection();
+            updateToken = con.prepareStatement("UPDATE \"user\" SET Token = ? WHERE Name = ?;");
+            insertUser = con.prepareStatement("INSERT INTO \"user\" (Name, Password, Token) VALUES ( ?, ?, ?);");
+            selectByUser = con.prepareStatement("SELECT Id, Name, Password FROM \"user\" WHERE Name = ?;");
+            selectByToken = con.prepareStatement("SELECT Id, Name, Password FROM \"user\" WHERE Token = ?;");
         } catch (SQLException e) {
             throw new RuntimeException("could not establish connection to Database please restart or contact developer!");
         }
