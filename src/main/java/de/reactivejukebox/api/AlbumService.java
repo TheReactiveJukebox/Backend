@@ -9,13 +9,16 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/album")
+
 public class AlbumService {
 
     @GET
-    @Path("/search")
+    @Path("/album")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response search(@QueryParam("title") String title) {
+    public Response getAlbum(
+            @QueryParam("id") int albumid,
+            @QueryParam("titlesubstr") String titleSubstring,
+            @QueryParam("byartist") String artist) {
         // TODO replace mock data with actual data
         Album mockAlbum = new Album();
         mockAlbum.setArtist("Red Hot Chili Peppers");

@@ -8,7 +8,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
 
-@Path("/track")
 public class TrackService {
 
     private static final Track[] TRACKS = {
@@ -30,7 +29,7 @@ public class TrackService {
     @GET
     @Secured
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/list/{count}")
+    @Path("/track/list/{count}")
     public Track[] getTrackList(@PathParam("count") int count) {
         // TODO replace mock data with actual data
         return Arrays.copyOfRange(TRACKS, 0, count);
@@ -38,8 +37,9 @@ public class TrackService {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/search")
-    public Response search(@QueryParam("title") String title) {
+    @Path("/track")
+    public Response search(@QueryParam("id") int trackId,
+                           @QueryParam("titlesubstr") String titleSubstring) {
         // TODO replace mock data with actual data
         return Response.status(200)
                 .entity(Arrays.copyOfRange(TRACKS, 0, 4))

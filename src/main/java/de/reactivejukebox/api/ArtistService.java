@@ -9,17 +9,17 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/artist")
 public class ArtistService {
 
     @GET
-    @Path("/search")
+    @Path("/artist")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response search(@QueryParam("name") String name) {
+    public Response getArtist(
+            @QueryParam("id") int artistId,
+            @QueryParam("namesubstr") String nameSubstring) {
         // TODO replace mock data with actual data
         Artist mockArtist = new Artist();
         mockArtist.setName("Red Hot Chili Peppers");
-
         return Response.status(200)
                 .entity(new Artist[]{mockArtist})
                 .build();
