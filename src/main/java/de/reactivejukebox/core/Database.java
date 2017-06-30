@@ -8,6 +8,10 @@ import java.sql.SQLException;
 
 public class Database {
 
+    private static final String DB_URL = "jdbc:postgresql://database:5432/reactivejukebox";
+    private static final String DB_USER = "backend";
+    private static final String DB_PASSWORD = "xxx";
+
     private static Database instance = null;
     private ComboPooledDataSource dataSource;
 
@@ -16,15 +20,18 @@ public class Database {
         try {
             dataSource.setDriverClass("org.postgresql.Driver");
         } catch (PropertyVetoException e) {
+            // - probably thrown when class not found -
+            // setDriverClass does nothing but redirect the call to another method of an
+            // internal object, where this exception isn't documented. Can't really do
+            // anything about this.
             e.printStackTrace();
-            // thrown when class not found?
+            System.err.println("This should never happen!");
         }
 
         // database specifics
-        // TODO Move constants
-        dataSource.setJdbcUrl("jdbc:postgresql://database:5432/reactivejukebox");
-        dataSource.setUser("backend");
-        dataSource.setPassword("xxx");
+        dataSource.setJdbcUrl(DB_URL);
+        dataSource.setUser(DB_USER);
+        dataSource.setPassword(DB_PASSWORD);
 
         // connection pool settings
         dataSource.setMinPoolSize(8);
@@ -43,3 +50,4 @@ public class Database {
         return instance;
     }
 }
+
