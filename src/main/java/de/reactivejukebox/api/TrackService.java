@@ -8,6 +8,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
 
+@Path("/")
 public class TrackService {
 
     private static final Track[] TRACKS = {
