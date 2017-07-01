@@ -168,7 +168,7 @@ public class TokenHandler {
 
     private UserData getUserFromDB(PreparedStatement stmnt) throws SQLException {
         UserData user = new UserData();
-        ResultSet rs = selectByToken.executeQuery();
+        ResultSet rs = stmnt.executeQuery();
 
         if (rs.next()) {
             user.setUserID(rs.getInt("Id"));
