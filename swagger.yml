@@ -9,8 +9,8 @@ info:
 host: "reactivejukebox.de"
 basePath: "/api"
 tags:
-- name: "song"
-  description: "Everything about the songs"
+- name: "track"
+  description: "Everything about the tracks"
 - name: "jukebox"
   description: "Everything about jukeboxes"
 schemes:
@@ -21,21 +21,21 @@ schemes:
 #
 paths:
 
-  /song:
+  /track:
     get:
       tags:
-        - "song"
-      summary: "Get information about songs"
+        - "track"
+      summary: "Get information about tracks"
       responses:
         200:
           description: OK
       produces: ["application/json"]
 
-  /song/feedback:
+  /track/feedback:
     post:
       tags:
-        - "song"
-      summary: "An endpoint to push feedback about a song to"
+        - "track"
+      summary: "An endpoint to push feedback about a track to"
       responses:
         200:
           description: OK
@@ -94,7 +94,7 @@ paths:
 # Definitions for data types that endpoints may produce or consume
 #
 definitions:
-  song:
+  track:
     type: "object"
     properties:
       name:
@@ -114,7 +114,7 @@ definitions:
   artist:
     type: "object"
 
-  songFeedback:
+  trackFeedback:
     type: "object"
 
   jukebox:
