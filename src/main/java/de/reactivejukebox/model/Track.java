@@ -8,14 +8,16 @@ public class Track {
     String album;
     String cover;
     int duration; //song duration in seconds
+    String hash;
 
-    public Track(int id, String title, String artist, String album, String cover, int duration) {
+    public Track(int id, String title, String artist, String album, String cover, int duration, String hash) {
         this.id = id;
         this.title = title;
         this.artist = artist;
         this.album = album;
         this.cover = cover;
         this.duration = duration;
+        this.hash = hash;
     }
 
 
@@ -66,6 +68,11 @@ public class Track {
     public void setTitle(String title) {
         this.title = title;
     }
+
+    public String getHash() { return hash; }
+
+    public void setHash(String hash) { this.hash = hash; }
+
 
 
 }
