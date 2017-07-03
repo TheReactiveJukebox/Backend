@@ -90,12 +90,44 @@ paths:
           description: "The provided feedback is malformed"
 
 
+  /album:
+    get:
+      tags:
+        - track
+      operationId: getAlbum
+      parameters: 
+        - name: artist
+          in: query
+          type: number
+          format: int64
+          description: The ID of the artist from whom to get the albums
+        - name: id
+          type: number
+          format: int64
+          in: query
+          description: The album ID 
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/album'
+
+
   /jukebox:
     get:
       tags:
         - "jukebox"
       summary: "Get your current jukebox"
       operationId: "getJukebox"
+      parameters: 
+        - name: "id"
+          type: number
+          format: int64
+          in: query
+          required: false
+          description: "If given, returns specified jukebox, else returns last jukebox this user created"
       responses:
         200:
           description: OK
@@ -114,6 +146,10 @@ paths:
       responses:
         200:
           description: OK
+          schema:
+            type: number
+            format: int64
+            description: "The ID of the newly created jukebox"
         400:
           description: "The provided jukebox object is malformed"
 
@@ -131,6 +167,12 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/jukeboxFeedback'
+        - in: query
+          name: id
+          type: number
+          format: int64
+          description: The ID of the jukebox to give feedback to (default is latest)
+          required: false
       responses:
         200:
           description: OK
@@ -252,6 +294,25 @@ definitions:
         type: string
 
 
+  album:
+    type: object
+    properties:
+      id:
+        type: number
+        format: int64
+        description: The ID of this album
+      artist:
+        type: number
+        format: int64
+        description: The artist's ID for this album
+      tracks:
+        type: array
+        items:
+          type: number
+          format: int64
+          description: Tracks as IDs for this album
+
+
   trackFeedback:
     type: object
 
@@ -259,6 +320,9 @@ definitions:
   jukebox:
     type: object
     properties:
+      id:
+        type: number
+        format: int64
       feedbacklink:
         type: string
       genres:
@@ -291,5 +355,3 @@ definitions:
       track:
         type: number
         format: int64
-      time:
-        type: object
