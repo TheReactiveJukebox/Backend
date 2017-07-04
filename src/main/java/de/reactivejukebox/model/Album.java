@@ -1,6 +1,6 @@
 package de.reactivejukebox.model;
 
-public class Album {
+public class Album implements MusicEntity {
 
     protected String title;
     protected String artist;

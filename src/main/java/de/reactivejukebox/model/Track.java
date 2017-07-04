@@ -1,6 +1,6 @@
 package de.reactivejukebox.model;
 
-public class Track {
+public class Track implements MusicEntity {
 
     int id; //global track id
     String title;
