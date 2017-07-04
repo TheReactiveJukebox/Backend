@@ -1,4 +1,4 @@
-/*package de.reactivejukebox.api;
+package de.reactivejukebox.api;
 
 import de.reactivejukebox.core.Database;
 import de.reactivejukebox.model.Track;
@@ -40,7 +40,7 @@ public class TrackService {
                 query = con.prepareStatement(QUERY_SONG_BY_ID);
                 query.setInt(1, trackId);
             } else if (!"".equals(titleSubstring)) {
-                Database.getInstance().normalize(titleSubstring);
+                //Database.getInstance().normalize(titleSubstring);
                 query = con.prepareStatement(QUERY_TITLE_LIKE);
                 query.setString(1, titleSubstring);
             } else {
@@ -63,8 +63,8 @@ public class TrackService {
                         rs.getString(rs.findColumn("artists")),
                         rs.getString(rs.findColumn("albumtitle")),
                         rs.getString(rs.findColumn("cover")),
-                        rs.getString(rs.findColumn("hash")),
-                        rs.getInt(rs.findColumn("duration"))
+                        rs.getInt(rs.findColumn("duration")),
+                        rs.getString(rs.findColumn("hash"))
                 );
                 results.add(t);
             }
@@ -84,4 +84,4 @@ public class TrackService {
                 .entity(results)
                 .build();
     }
-}*/
+}
