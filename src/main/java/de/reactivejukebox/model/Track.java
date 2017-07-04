@@ -4,13 +4,13 @@ public class Track {
 
     int id; //global track id
     String title;
-    String artist;
+    Artist artist;
     String album;
     String cover;
     int duration; //song duration in seconds
     String hash;
 
-    public Track(int id, String title, String artist, String album, String cover, int duration, String hash) {
+    public Track(int id, String title, Artist artist, String album, String cover, int duration, String hash) {
         this.id = id;
         this.title = title;
         this.artist = artist;
@@ -29,11 +29,11 @@ public class Track {
         this.id = id;
     }
 
-    public String getArtist() {
+    public Artist getArtist() {
         return artist;
     }
 
-    public void setArtist(String artist) {
+    public void setArtist(Artist artist) {
         this.artist = artist;
     }
 

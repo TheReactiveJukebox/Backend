@@ -1,4 +1,4 @@
-package de.reactivejukebox.api;
+/*package de.reactivejukebox.api;
 
 import de.reactivejukebox.core.Secured;
 import de.reactivejukebox.model.Track;
@@ -30,8 +30,7 @@ public class RandomTrackService {
     @Path("/list/{count}")
     public Track[] getTrackList(@Context UserData user, @PathParam("count") int count) throws SQLException {
         try {
-            /* create connection and prepare statements.
-             */
+
             Connection con = Database.getInstance().getConnection();
             //Get Random song from that isn't in history for current user
             selectRandSong = con.prepareStatement(
@@ -119,4 +118,4 @@ public class RandomTrackService {
         return dbRTracks;
 
     }
-}
+}*/

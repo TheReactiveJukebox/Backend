@@ -1,6 +1,7 @@
 package de.reactivejukebox.api;
 
 import de.reactivejukebox.core.Database;
+import de.reactivejukebox.model.Artist;
 import de.reactivejukebox.model.Track;
 
 import javax.ws.rs.GET;
@@ -57,10 +58,12 @@ public class TrackService {
 
             // parse query result
             while (countResults-- > 0 && rs.next()) {
+                Artist dummyArtist = new Artist();
+                dummyArtist.setName(rs.getString(rs.findColumn("artists")));
                 Track t = new Track(
                         rs.getInt(rs.findColumn("songid")),
                         rs.getString(rs.findColumn("title")),
-                        rs.getString(rs.findColumn("artists")),
+                        dummyArtist,
                         rs.getString(rs.findColumn("albumtitle")),
                         rs.getString(rs.findColumn("cover")),
                         rs.getInt(rs.findColumn("duration")),
