@@ -9,6 +9,7 @@ public class Track {
     String cover;
     int duration; //song duration in seconds
     String hash;
+    String file;
 
     public Track(int id, String title, Artist artist, String album, String cover, int duration, String hash) {
         this.id = id;
@@ -18,6 +19,9 @@ public class Track {
         this.cover = cover;
         this.duration = duration;
         this.hash = hash;
+        if(hash.length()>2) {
+            this.file = hash.substring(0, 1) + "/" + hash.substring(1, 2) + "/" + hash.substring(2) + ".mp3";
+        }
     }
 
 
@@ -73,6 +77,8 @@ public class Track {
 
     public void setHash(String hash) { this.hash = hash; }
 
+    public String getFile() { return file; }
 
+    public void setFile(String file) { this.file = file; }
 
 }
