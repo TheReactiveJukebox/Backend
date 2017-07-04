@@ -147,9 +147,7 @@ paths:
         200:
           description: OK
           schema:
-            type: number
-            format: int64
-            description: "The ID of the newly created jukebox"
+            $ref: '#/definitions/jukebox'
         400:
           description: "The provided jukebox object is malformed"
 
@@ -340,6 +338,7 @@ definitions:
   jukeboxFeedback:
     type: object
 
+
   user:
     type: object
     properties:
@@ -349,9 +348,11 @@ definitions:
       name:
         type: string
 
+
   historyEntry:
     type: object
     properties:
       track:
         type: number
         format: int64
+        description: ID of the track for this history entry
