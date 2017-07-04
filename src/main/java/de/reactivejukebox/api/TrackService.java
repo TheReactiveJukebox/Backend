@@ -1,48 +1,87 @@
-package de.reactivejukebox.api;
+/*package de.reactivejukebox.api;
 
-import de.reactivejukebox.core.Secured;
+import de.reactivejukebox.core.Database;
 import de.reactivejukebox.model.Track;
 
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Arrays;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
-@Path("/track")
+@Path("/")
 public class TrackService {
 
-    private static final Track[] TRACKS = {
-            new Track(2342, "Kryptobar", "3 Foos Down", "The Better Foobar - Deluxe Edition", "https://s3.amazonaws.com/images.sheetmusicdirect.com/AlbumService/ca8a8ef7-f305-374a-833b-b8f621ede068/large.jpg", 223, "dummyhash"),
-            new Track(25, "Kryptonite", "3 Doors Down", "The Better Life - Deluxe Edition", "https://s3.amazonaws.com/images.sheetmusicdirect.com/AlbumService/ca8a8ef7-f305-374a-833b-b8f621ede068/large.jpg", 223, "dummyhash"),
-            new Track(23, "Hells Bells", "AC/DC", "Back in Black", "https://upload.wikimedia.org/wikipedia/en/2/23/HellsBells.jpg", 312, "dummyhash"),
-            new Track(84, "Paint it Black", "The Rolling Stones", "Singles 1965-1967", "http://www.covermesongs.com/wp-content/uploads/2010/09/PaintItBlack-400x400.jpg", 224, "dummyhash"),
-            new Track(424, "Wonderwall", "Oasis", "[What's the Story] Morning Glory?", "https://upload.wikimedia.org/wikipedia/en/1/17/Wonderwall_cover.jpg", 258, "dummyhash"),
-            new Track(2, "Evil Ways", "Santana", "Santana (Legacy Edition)", "https://upload.wikimedia.org/wikipedia/en/8/84/Santana_-_Santana_%281969%29.png", 238, "dummyhash"),
-            new Track(91, "Sweet Child O' Mine", "Guns N' Roses", "Greatest Hits", "https://upload.wikimedia.org/wikipedia/en/1/15/Guns_N%27_Roses_-_Sweet_Child_o%27_Mine.png", 355, "dummyhash"),
-            new Track(153, "Come As You Are", "Nirvana", "Nevermind (Deluxe Edition)", "http://e.snmc.io/lk/f/l/e3aee4167b67150f78c352a0e4d129e5/3736618.jpg", 218, "dummyhash"),
-            new Track(287, "Bodies", "Drowning Pool", "Sinner", "https://upload.wikimedia.org/wikipedia/en/4/49/Drowning_Pool-Bodies_CD_Cover.jpg", 201, "dummyhash"),
-            new Track(42, "Crocodile Rock", "Elton John", "Don't Shooot Me I'm Only The Piano Player", "https://upload.wikimedia.org/wikipedia/en/0/0b/Elton_John_Crocodile_Rock_%282%29.jpg", 235, "dummyhash"),
-            new Track(99, "I Was Made For Loving You", "KISS", "Dynasty (Remastered Version)", "http://streamd.hitparade.ch/cdimages/kiss-i_was_made_for_lovin_you_s.jpg", 217, "dummyhash"),
-            new Track(168, "Come Out and Play", "The Offspring", "Smash", "https://upload.wikimedia.org/wikipedia/en/8/80/TheOffspringSmashalbumcover.jpg", 197, "dummyhash"),
-            new Track(94, "Rock & Roll Queen", "The Subways", "Young For Eternity", "https://images-na.ssl-images-amazon.com/images/I/41T42C5YFEL.jpg", 169, "dummyhash")
-    };
-
-    @GET
-    @Secured
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/list/{count}")
-    public Track[] getTrackList(@PathParam("count") int count) {
-        // TODO replace mock data with actual data
-        return Arrays.copyOfRange(TRACKS, 0, count);
-    }
+    private static final int MAX_RESULT_SIZE = 200;
+    private static final String QUERY_TITLE_LIKE = "SELECT * FROM Song, songview WHERE titleNormalized LIKE ? AND Song.id=songview.songid";
+    private static final String QUERY_SONG_BY_ID = "SELECT * FROM songview WHERE songid=?";
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/search")
-    public Response search(@QueryParam("title") String title) {
-        // TODO replace mock data with actual data
+    @Path("/track")
+    public Response search(@QueryParam("id") int trackId,
+                           @QueryParam("titlesubstr") String titleSubstring,
+                           @QueryParam("count") int countResults) {
+        PreparedStatement query;
+        ArrayList<Track> results = new ArrayList<>();
+
+        queryDB:
+        try (Connection con = Database.getInstance().getConnection()) {
+            if (trackId != 0) {
+                // track id is unique, omit other parameters
+                query = con.prepareStatement(QUERY_SONG_BY_ID);
+                query.setInt(1, trackId);
+            } else if (!"".equals(titleSubstring)) {
+                Database.getInstance().normalize(titleSubstring);
+                query = con.prepareStatement(QUERY_TITLE_LIKE);
+                query.setString(1, titleSubstring);
+            } else {
+                // no parameters specified: empty result, skip querying the database
+                break queryDB;
+            }
+
+            ResultSet rs = query.executeQuery();
+
+            // set count to max if parameter not present
+            if (countResults == 0) {
+                countResults = MAX_RESULT_SIZE;
+            }
+
+            // parse query result
+            while (countResults-- > 0 && rs.next()) {
+                Track t = new Track(
+                        rs.getInt(rs.findColumn("songid")),
+                        rs.getString(rs.findColumn("title")),
+                        rs.getString(rs.findColumn("artists")),
+                        rs.getString(rs.findColumn("albumtitle")),
+                        rs.getString(rs.findColumn("cover")),
+                        rs.getString(rs.findColumn("hash")),
+                        rs.getInt(rs.findColumn("duration"))
+                );
+                results.add(t);
+            }
+            con.close();
+        } catch (SQLException e) {
+            // TODO encapsulate and improve error handling
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            sw.append(e.getMessage());
+            e.printStackTrace(pw);
+            return Response.status(502)
+                    .entity("Error while communicating with database: " + sw.toString())
+                    .build();
+        }
+
         return Response.status(200)
-                .entity(Arrays.copyOfRange(TRACKS, 0, 4))
+                .entity(results)
                 .build();
     }
-}
+}*/
