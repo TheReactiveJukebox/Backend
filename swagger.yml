@@ -96,7 +96,7 @@ paths:
         - track
       operationId: getAlbum
       parameters: 
-        - name: artist
+        - name: artistid
           in: query
           type: number
           format: int64
@@ -265,14 +265,15 @@ definitions:
       id:
         type: number
         format: int64
-      name:
+      title:
         type: string
       file:
         type: string
       cover:
         type: string
-      artist:
-        $ref: '#/definitions/artist'
+      artistid:
+        type: number
+        format: int64
       genres:
         type: array
         items:
@@ -299,11 +300,13 @@ definitions:
         type: number
         format: int64
         description: The ID of this album
-      artist:
+      title:
+        type: string
+      artistid:
         type: number
         format: int64
         description: The artist's ID for this album
-      tracks:
+      trackids:
         type: array
         items:
           type: number
@@ -321,8 +324,6 @@ definitions:
       id:
         type: number
         format: int64
-      feedbacklink:
-        type: string
       genres:
         type: array
       mood:
@@ -333,6 +334,8 @@ definitions:
       endyear:
         type: number
         format: int32
+      isRandom:
+        type: boolean
 
 
   jukeboxFeedback:
@@ -352,7 +355,7 @@ definitions:
   historyEntry:
     type: object
     properties:
-      track:
+      trackid:
         type: number
         format: int64
         description: ID of the track for this history entry
