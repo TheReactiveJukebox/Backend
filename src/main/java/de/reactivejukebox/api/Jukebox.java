@@ -22,7 +22,7 @@ import java.util.ArrayList;
 public class Jukebox {
 
     private static final String QUERY_CREATE_NEW_RADIOSTATION = "INSERT INTO radio (userid, israndom) VALUES (1, true);";
-    private static final String QUERY_RADIOSTATION_BY_USER_ID = "SELECT * FROM radio WHERE userid = ? ORDER BY id DESC LIMIT 1;";
+    private static final String QUERY_RADIOSTATION_BY_USER_ID = "SELECT * FROM radio WHERE userid = 1 ORDER BY id DESC LIMIT 1;";
     private static final String QUERY_RANDOM_RADIOSTATION = "SELECT song.Id AS SongId, song.Title AS SongTitle, song.Duration AS SongDuration, song.Hash AS SongHash, array_agg(artist.Name) AS Artists, album.Id AS AlbumId, album.Title AS AlbumTitle, album.Cover AS AlbumCover FROM (((song LEFT JOIN song_artist ON ((song.id = song_artist.songid))) LEFT JOIN artist ON ((artist.id = song_artist.artistid))) LEFT JOIN album ON ((album.id = song.albumid))) WHERE NOT EXISTS  (SELECT * FROM history WHERE song.id = songid AND ? = userid) GROUP BY song.id, song.title, song.duration, song.hash, album.id, album.title, album.cover ORDER BY RANDOM() LIMIT ?;";
 
 
@@ -87,14 +87,15 @@ public class Jukebox {
         try (Connection con = Database.getInstance().getConnection()) {
 
             query = con.prepareStatement(QUERY_CREATE_NEW_RADIOSTATION);
-            query.setInt(1, user.getId());
-            query.setBoolean(2, r.isRandom());
+            //query.setInt(1, user.getId());
+            //query.setBoolean(2, r.isRandom());
             query.executeQuery();
 
-            query = con.prepareStatement(QUERY_RADIOSTATION_BY_USER_ID);
-            query.setInt(1, user.getId());
+            /*query = con.prepareStatement(QUERY_RADIOSTATION_BY_USER_ID);
+            //query.setInt(1, user.getId());
             rs = query.executeQuery();
             radiostation = new Radio(rs.getInt("id"), null, null, null, 0, 0, r.isRandom());
+            */
             con.close();
         } catch (SQLException e) {
             // TODO encapsulate and improve error handling
@@ -109,7 +110,7 @@ public class Jukebox {
 
 
         return Response.status(200)
-                .entity(radiostation)
+                .entity("{id:123}")
                 .build();
 
     }
