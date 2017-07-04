@@ -1,22 +1,26 @@
 package de.reactivejukebox.model;
 
-public class Radio {
+import java.io.Serializable;
+
+public class Radio implements Serializable {
 
     private int id;
-    private boolean random;
-    private String referenceSongId;
+    private boolean isRandom;
 
     private String feedbacklink;
     private String[] genres;
-    private String[] mood;
+    private String mood;
     private int startYear;
     private int endYear;
 
 
-    public Radio(int id, boolean random, String referenceSongId, String feedbacklink, String[] genres, String[] mood, int startYear, int endYear ) {
+    public Radio(int id, String feedbacklink, String[] genres, String mood, int startYear, int endYear ,  boolean isRandom) {
         this.id = id;
-        this.random = random;
-        this.referenceSongId = referenceSongId;
+        this.isRandom = isRandom;
+    }
+
+    public Radio(){
+
     }
 
 
@@ -29,19 +33,11 @@ public class Radio {
     }
 
     public boolean isRandom() {
-        return random;
+        return isRandom;
     }
 
     public void setRandom(boolean random) {
-        this.random = random;
-    }
-
-    public String getReferenceSongId() {
-        return referenceSongId;
-    }
-
-    public void setReferenceSongId(String refereceSongId) {
-        this.referenceSongId = referenceSongId;
+        this.isRandom = random;
     }
 
     public String getFeedbacklink() {
@@ -60,11 +56,11 @@ public class Radio {
         this.genres = genres;
     }
 
-    public String[] getMood() {
+    public String getMood() {
         return mood;
     }
 
-    public void setMood(String[] mood) {
+    public void setMood(String mood) {
         this.mood = mood;
     }
 
