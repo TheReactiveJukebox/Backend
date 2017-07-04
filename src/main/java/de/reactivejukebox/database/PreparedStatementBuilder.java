@@ -34,21 +34,24 @@ public class PreparedStatementBuilder {
 
     private Queue<PreparedStatementSetter> valueSetters;
     private StringBuilder selectString;
+    private String projection;
+    private String databaseObjects;
     private StringBuilder query;
     private boolean firstExpressionSpecified = false;
+
 
     public PreparedStatementBuilder() {
         valueSetters = new LinkedList<>();
         query = new StringBuilder();
     }
 
-    public PreparedStatementBuilder selectFrom(String projection, String databaseObjects) {
-        selectString = new StringBuilder()
-                .append("SELECT ")
-                .append(projection)
-                .append(" FROM ")
-                .append(databaseObjects)
-                .append(" WHERE ");
+    public PreparedStatementBuilder select(String projection) {
+        this.projection = projection;
+        return this;
+    }
+
+    public PreparedStatementBuilder from(String databaseObjects) {
+        this.databaseObjects = databaseObjects;
         return this;
     }
 
@@ -56,6 +59,7 @@ public class PreparedStatementBuilder {
         if (firstExpressionSpecified) {
             query.append("AND ");
         } else {
+            query.append("WHERE ");
             firstExpressionSpecified = true;
         }
         query.append(expressionString).append(" ");
@@ -64,7 +68,8 @@ public class PreparedStatementBuilder {
     }
 
     public PreparedStatement prepare(Connection con) throws SQLException {
-        PreparedStatement stmnt = con.prepareStatement(selectString.toString() + query.toString());
+        String queryString = "SELECT " + projection + " FROM " + databaseObjects + " " + query;
+        PreparedStatement stmnt = con.prepareStatement(queryString);
         PreparedStatementSetter cmd;
         for (int i = 1; (cmd = valueSetters.poll()) != null; ++i) {
             cmd.execute(stmnt, i);

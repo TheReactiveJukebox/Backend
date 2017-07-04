@@ -799,7 +799,8 @@ public class PreparedStatementBuilderTest {
     @Test
     public void testPrepare() throws Exception {
         MockPreparedStatement mps = (MockPreparedStatement) new PreparedStatementBuilder()
-                .selectFrom("col1, col2", "tbl1, tbl2")
+                .select("col1, col2")
+                .from("tbl1, tbl2")
                 .addFilter("tbl1.col1=tbl2.col1", (query, i) -> {})
                 .addFilter("col2=?", (query, i) -> query.setString(i, "Test"))
                 .prepare(new MockConnection());
