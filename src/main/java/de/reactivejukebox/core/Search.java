@@ -53,13 +53,6 @@ public class Search {
         PreparedStatement dbQuery = stmnt.prepare(con);
         if (result == null) {
             ResultSet rs = dbQuery.executeQuery();
-
-            System.err.println("Columns:");
-            for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
-                System.err.print(rs.getMetaData().getColumnName(i) + "  ");
-            }
-            System.err.println();
-
             ArrayList<MusicEntity> results = new ArrayList<>();
 
             // set count to max if parameter not present
