@@ -14,26 +14,26 @@ import javax.ws.rs.core.Response;
 import java.sql.SQLException;
 import java.util.List;
 
-@Path("/track")
-public class TrackService {
+@Path("/artist")
+public class ArtistService {
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Secured
     @Path("/")
-    public Response search(@QueryParam("id") int trackId,
-                           @QueryParam("titlesubstr") String titleSubstring,
-                           @QueryParam("artist") int artist,
-                           @QueryParam("count") int countResults) {
+    @Secured
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getArtist(
+            @QueryParam("id") int id,
+            @QueryParam("namesubstr") String nameSubstring,
+            @QueryParam("count") int count) {
         try {
-            List<MusicEntity> results = Search.forTrack(Database.getInstance(), trackId, titleSubstring, artist).execute(countResults);
+            List<MusicEntity> results = Search.forArtist(Database.getInstance(), id, nameSubstring).execute(count);
             return Response.status(200)
                     .entity(results)
                     .build();
         } catch (SQLException e) {
             e.printStackTrace();
             return Response.status(500)
-                    .entity("An error occured while querying the database for tracks.")
+                    .entity("An error occured while querying the database for artists.")
                     .build();
         }
     }

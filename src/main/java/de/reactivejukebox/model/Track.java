@@ -1,23 +1,32 @@
 package de.reactivejukebox.model;
 
-public class Track {
+public class Track implements MusicEntity {
 
     int id; //global track id
     String title;
     String artist;
     String album;
     String cover;
+    String hash; // file name hash used to construct URL
     int duration; //song duration in seconds
 
-    public Track(int id, String title, String artist, String album, String cover, int duration) {
+    public Track(int id, String title, String artist, String album, String cover, String hash, int duration) {
         this.id = id;
         this.title = title;
         this.artist = artist;
         this.album = album;
         this.cover = cover;
+        this.hash = hash;
         this.duration = duration;
     }
 
+    public String getHash() {
+        return hash;
+    }
+
+    public void setHash(String hash) {
+        this.hash = hash;
+    }
 
     public int getId() {
         return id;
