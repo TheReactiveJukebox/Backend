@@ -60,7 +60,7 @@ public class Search {
                     Track t = new Track(
                             rs.getInt(rs.findColumn("id")),
                             rs.getString(rs.findColumn("title")),
-                            rs.getString(rs.findColumn("name")), // TODO get as array
+                            rs.getString(rs.findColumn("name")),
                             rs.getString(rs.findColumn("albumtitle")),
                             rs.getString(rs.findColumn("cover")),
                             rs.getString(rs.findColumn("hash")),
@@ -71,7 +71,7 @@ public class Search {
             } else if (musicObject == For.Album) {
                 while (resultCount-- > 0 && rs.next()) {
                     Album a = new Album();
-                    a.setArtist(rs.getString(rs.findColumn("name"))); // TODO get as array
+                    a.setArtist(rs.getString(rs.findColumn("name")));
                     a.setTitle(rs.getString(rs.findColumn("title")));
                     results.add(a);
                 }

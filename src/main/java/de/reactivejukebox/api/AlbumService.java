@@ -11,7 +11,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Path("/")
@@ -23,17 +22,18 @@ public class AlbumService {
     public Response getAlbum(
             @QueryParam("id") int albumid,
             @QueryParam("titlesubstr") String titleSubstring,
-            @QueryParam("byartist") int artist,
+            @QueryParam("artist") int artist,
             @QueryParam("count") int resultCount) {
-        List<MusicEntity> result = new ArrayList<>();
         try {
-            result = Search.forAlbum(Database.getInstance(), albumid, titleSubstring, artist).execute(resultCount);
+            List<MusicEntity> results = Search.forAlbum(Database.getInstance(), albumid, titleSubstring, artist).execute(resultCount);
+            return Response.status(200)
+                    .entity(results)
+                    .build();
         } catch (SQLException e) {
-            // TODO implement error handling and logging
             e.printStackTrace();
+            return Response.status(500)
+                    .entity("An error occured while querying the database for albums.")
+                    .build();
         }
-        return Response.status(200)
-                .entity(result)
-                .build();
     }
 }

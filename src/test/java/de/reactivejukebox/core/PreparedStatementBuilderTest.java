@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 public class PreparedStatementBuilderTest {
 
@@ -801,7 +801,7 @@ public class PreparedStatementBuilderTest {
         MockPreparedStatement mps = (MockPreparedStatement) new PreparedStatementBuilder()
                 .select("col1, col2")
                 .from("tbl1, tbl2")
-                .addFilter("tbl1.col1=tbl2.col1", (query, i) -> {})
+                .addFilter("tbl1.col1=tbl2.col1")
                 .addFilter("col2=?", (query, i) -> query.setString(i, "Test"))
                 .prepare(new MockConnection());
         assertEquals(mps.query, "SELECT col1, col2 FROM tbl1, tbl2 WHERE tbl1.col1=tbl2.col1 AND col2='Test' ");

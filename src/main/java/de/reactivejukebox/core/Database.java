@@ -44,8 +44,6 @@ public class Database {
     }
 
     public String normalize(String str) {
-        // TODO maybe move this function
-
         // convert to lowercase, strip spaces, replace umlauts
         str = str.toLowerCase();
         str = str.replaceAll(" ", "");
