@@ -6,8 +6,6 @@ public class Radio implements Serializable {
 
     private int id;
     private boolean isRandom;
-
-    private String feedbacklink;
     private String[] genres;
     private String mood;
     private int startYear;
@@ -38,14 +36,6 @@ public class Radio implements Serializable {
 
     public void setRandom(boolean random) {
         this.isRandom = random;
-    }
-
-    public String getFeedbacklink() {
-        return feedbacklink;
-    }
-
-    public void setFeedbacklink(String feedbacklink) {
-        this.feedbacklink = feedbacklink;
     }
 
     public String[] getGenres() {
