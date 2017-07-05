@@ -11,8 +11,8 @@ public class PreparedStatementBuilder {
 
     /**
      * With prepared statements, the statement skeleton needs to be sent to the server.
-     * After that, the values are set individually. A PreparedStatementSetter is an
-     * a callback that allows the values to be set before prepare() is called.
+     * After that, the values are set individually. A PreparedStatementSetter is a callback
+     * that allows the values to be set before prepare() is called.
      * <p>
      * Can be written in lambda notation like so:
      * <p>
