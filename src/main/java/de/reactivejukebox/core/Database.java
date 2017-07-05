@@ -43,6 +43,11 @@ public class Database {
         return dataSource.getConnection();
     }
 
+    /**
+     * Normalization procedure we defined for some of our music metadata in the database.
+     * @param str String to normalize
+     * @return normalized string
+     */
     public String normalize(String str) {
         // convert to lowercase, strip spaces, replace umlauts
         str = str.toLowerCase();

@@ -13,6 +13,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A class for finding tracks, artists and albums in the database.
+ * <p>
+ * Use one of the factory methods and provide your search parameters to create a tailored
+ * Search object, on which you can call the execute() Method to run the query.
+ */
 public class Search {
 
     protected enum For {
@@ -26,11 +32,18 @@ public class Search {
     protected List<MusicEntity> result = null;
     protected For musicObject;
 
-    protected Search(For musicObject, PreparedStatementBuilder stmnt) throws SQLException {
+    protected Search(For musicObject, PreparedStatementBuilder stmnt) {
         this.musicObject = musicObject;
         this.stmnt = stmnt;
     }
 
+    /**
+     * Execute the search.
+     *
+     * @param resultCount optional parameter to limit the number of results. Set to 0 for all results
+     * @return A list of MusicEntity objects (Album, Artist, Track) matching the search parameters
+     * @throws SQLException when an SQLException is thrown during statement execution or result set parsing
+     */
     public List<MusicEntity> execute(int resultCount) throws SQLException {
         if (stmnt == null) {
             // if stmnt is not set, return empty list
@@ -90,9 +103,16 @@ public class Search {
         return result;
     }
 
-    /* --- Factory Methods --- */
-
-    public static Search forTrack(Database database, int id, String titleSubstring, int artist) throws SQLException {
+    /**
+     * Factory method for track searches.
+     *
+     * @param database       the Database Singleton
+     * @param id             optional track id, set to 0 to disable filter
+     * @param titleSubstring optional song title substring, set to null to disable filter
+     * @param artist         optional artist id, set to 0 to disable filter
+     * @return the resulting Search object that allows the execution of the query.
+     */
+    public static Search forTrack(Database database, int id, String titleSubstring, int artist) {
         PreparedStatementBuilder builder = new PreparedStatementBuilder();
         builder.select("song.id, song.title, artist.name, album.title as albumtitle, album.cover, song.hash, song.duration")
                 .from("song, song_artist, artist, album")
@@ -113,7 +133,16 @@ public class Search {
         return new Search(For.Track, builder);
     }
 
-    public static Search forAlbum(Database database, int id, String titleSubstring, int artist) throws SQLException {
+    /**
+     * Factory method for album searches.
+     *
+     * @param database       the Database Singleton
+     * @param id             optional album id, set to 0 to disable filter
+     * @param titleSubstring optional album title substring, set to null to disable filter
+     * @param artist         optional artist id, set to 0 to disable filter
+     * @return the resulting Search object that allows the execution of the query.
+     */
+    public static Search forAlbum(Database database, int id, String titleSubstring, int artist) {
         PreparedStatementBuilder builder = new PreparedStatementBuilder()
                 .select("album.title, artist.name")
                 .from("album, artist, album_artist")
@@ -134,7 +163,14 @@ public class Search {
 
     }
 
-    public static Search forArtist(Database database, int id, String nameSubstring) throws SQLException {
+    /**
+     * Factory method for artist searches.
+     *
+     * @param database the Database Singleton
+     * @param id       optional track id, set to 0 to disable filter
+     * @return the resulting Search object that allows the execution of the query.
+     */
+    public static Search forArtist(Database database, int id, String nameSubstring) {
         PreparedStatementBuilder builder = new PreparedStatementBuilder().select("*").from("artist");
         if (id != 0) {
             builder.addFilter("id=?", (query, i) -> query.setInt(i, id));
