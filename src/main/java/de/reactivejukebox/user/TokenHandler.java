@@ -29,10 +29,10 @@ public class TokenHandler {
              * This is because the connection is held until the server is shut down.
              */
             Connection con = Database.getInstance().getConnection();
-            updateToken = con.prepareStatement("UPDATE \"user\" SET Token = ? WHERE Name = ?;");
-            insertUser = con.prepareStatement("INSERT INTO \"user\" (Name, Password, Token) VALUES ( ?, ?, ?);");
-            selectByUser = con.prepareStatement("SELECT Id, Name, Password FROM \"user\" WHERE Name = ?;");
-            selectByToken = con.prepareStatement("SELECT Id, Name, Password FROM \"user\" WHERE Token = ?;");
+            updateToken = con.prepareStatement("UPDATE jukebox_user SET Token = ? WHERE Name = ?;");
+            insertUser = con.prepareStatement("INSERT INTO jukebox_user (Name, Password, Token) VALUES ( ?, ?, ?);");
+            selectByUser = con.prepareStatement("SELECT Id, Name, Password FROM jukebox_user WHERE Name = ?;");
+            selectByToken = con.prepareStatement("SELECT Id, Name, Password FROM jukebox_user WHERE Token = ?;");
 
         } catch (SQLException e) {
             throw new RuntimeException("could not establish connection to Database please restart or contact developer!");
