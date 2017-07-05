@@ -2,6 +2,7 @@ package de.reactivejukebox.api;
 
 import de.reactivejukebox.core.Database;
 import de.reactivejukebox.core.Search;
+import de.reactivejukebox.core.Secured;
 import de.reactivejukebox.model.MusicEntity;
 
 import javax.ws.rs.GET;
@@ -13,12 +14,13 @@ import javax.ws.rs.core.Response;
 import java.sql.SQLException;
 import java.util.List;
 
-@Path("/")
+@Path("/track")
 public class TrackService {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/track")
+    @Secured
+    @Path("/")
     public Response search(@QueryParam("id") int trackId,
                            @QueryParam("titlesubstr") String titleSubstring,
                            @QueryParam("artist") int artist,

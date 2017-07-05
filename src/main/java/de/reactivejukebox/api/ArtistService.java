@@ -2,6 +2,7 @@ package de.reactivejukebox.api;
 
 import de.reactivejukebox.core.Database;
 import de.reactivejukebox.core.Search;
+import de.reactivejukebox.core.Secured;
 import de.reactivejukebox.model.MusicEntity;
 
 import javax.ws.rs.GET;
@@ -13,11 +14,12 @@ import javax.ws.rs.core.Response;
 import java.sql.SQLException;
 import java.util.List;
 
-@Path("/")
+@Path("/artist")
 public class ArtistService {
 
     @GET
-    @Path("/artist")
+    @Path("/")
+    @Secured
     @Produces(MediaType.APPLICATION_JSON)
     public Response getArtist(
             @QueryParam("id") int id,
