@@ -149,7 +149,7 @@ public class Search {
                 .addFilter("album.id=album_artist.albumid")
                 .addFilter("artist.id=album_artist.artistid");
         if (id != 0) {
-            builder.addFilter("id=?", (query, i) -> query.setInt(i, id));
+            builder.addFilter("album.id=?", (query, i) -> query.setInt(i, id));
         } else {
             if (titleSubstring != null) {
                 builder.addFilter("titlenormalized LIKE ?",
