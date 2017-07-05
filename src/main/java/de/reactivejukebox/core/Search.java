@@ -77,6 +77,7 @@ public class Search {
             } else if (musicObject == For.Album) {
                 while (resultCount-- > 0 && rs.next()) {
                     Album a = new Album();
+                    a.setId(rs.getInt(rs.findColumn("id")));
                     a.setArtist(rs.getString(rs.findColumn("name")));
                     a.setTitle(rs.getString(rs.findColumn("title")));
                     results.add(a);
@@ -84,6 +85,7 @@ public class Search {
             } else if (musicObject == For.Artist) {
                 while (resultCount-- > 0 && rs.next()) {
                     Artist a = new Artist();
+                    a.setId(rs.getInt(rs.findColumn("id")));
                     a.setName(rs.getString(rs.findColumn("name")));
                     results.add(a);
                 }
@@ -137,7 +139,7 @@ public class Search {
      */
     public static Search forAlbum(Database database, int id, String titleSubstring, int artist) {
         PreparedStatementBuilder builder = new PreparedStatementBuilder()
-                .select("album.title, artist.name")
+                .select("album.id, album.title, artist.name")
                 .from("album, artist, album_artist")
                 .addFilter("album.id=album_artist.albumid")
                 .addFilter("artist.id=album_artist.artistid");
