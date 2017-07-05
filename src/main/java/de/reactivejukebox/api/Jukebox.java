@@ -24,7 +24,7 @@ public class Jukebox {
 
     private static final String QUERY_CREATE_NEW_RADIOSTATION = "INSERT INTO \"radio\" (userid, israndom) VALUES (?, ?);";
     private static final String QUERY_RADIOSTATION_BY_USER_ID = "SELECT * FROM radio WHERE userid = ? ORDER BY id DESC LIMIT 1;";
-    private static final String QUERY_RANDOM_RADIOSTATION = "SELECT song.Id AS SongId, song.Title AS SongTitle, song.Duration AS SongDuration, song.Hash AS SongHash, array_agg(artist.Name) AS Artists, album.Id AS AlbumId, album.Title AS AlbumTitle, album.Cover AS AlbumCover, song_artist.artistid AS ArtistID FROM (((song LEFT JOIN song_artist ON ((song.id = song_artist.songid))) LEFT JOIN artist ON ((artist.id = song_artist.artistid))) LEFT JOIN album ON ((album.id = song.albumid))) WHERE NOT EXISTS  (SELECT * FROM history WHERE song.id = songid AND ? = userid) GROUP BY song.id, song.title, song.duration, song.hash, album.id, album.title, album.cover, song_artist.artistid ORDER BY RANDOM() LIMIT ?;";
+    private static final String QUERY_RANDOM_RADIOSTATION = "SELECT song.Id AS SongId, song.Title AS SongTitle, song.Duration AS SongDuration, song.Hash AS SongHash, artist.name AS Artists, album.Id AS AlbumId, album.Title AS AlbumTitle, album.Cover AS AlbumCover, song_artist.artistid AS ArtistID FROM (((song LEFT JOIN song_artist ON ((song.id = song_artist.songid))) LEFT JOIN artist ON ((artist.id = song_artist.artistid))) LEFT JOIN album ON ((album.id = song.albumid))) WHERE NOT EXISTS  (SELECT * FROM history WHERE song.id = songid AND ? = userid) GROUP BY song.id, song.title, song.duration, song.hash, artist.name, album.id, album.title, album.cover, song_artist.artistid ORDER BY RANDOM() LIMIT ?;";
 
 
     /*
@@ -54,7 +54,6 @@ public class Jukebox {
             }
             con.close();
         } catch (SQLException e) {
-            // TODO encapsulate and improve error handling
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             sw.append(e.getMessage());
@@ -113,7 +112,6 @@ public class Jukebox {
 
             con.close();
         } catch (SQLException e) {
-            // TODO encapsulate and improve error handling
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             sw.append(e.getMessage());
@@ -152,13 +150,10 @@ public class Jukebox {
             if (rs.next()) {
                 currentRadiostation = new Radio(rs.getInt("id"), null, null, null, 0, 0, rs.getBoolean("israndom"));
             } else {
-                currentRadiostation = new Radio();
                 return Response.status(503)
-                        .entity("Error while writing/reading to database")
+                        .entity("Error while writing/reading to database maybe current user hasn't an active Radiostation")
                         .build();
             }
-
-
 
             if (currentRadiostation.isRandom()) {
                 query = con.prepareStatement(QUERY_RANDOM_RADIOSTATION);
@@ -182,11 +177,12 @@ public class Jukebox {
             }
 
             if (results.isEmpty()) {
-                //TODO dummy result set
+                return Response.status(504)
+                        .entity("Error ne next "+count+" songs are available")
+                        .build();
             }
             con.close();
         } catch (SQLException e) {
-            // TODO encapsulate and improve error handling
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             sw.append(e.getMessage());
