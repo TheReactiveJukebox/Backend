@@ -9,7 +9,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("/user")
-public class User {
+public class UserService {
 
     /**
      * Consumes JSON File with username and password as @param auth

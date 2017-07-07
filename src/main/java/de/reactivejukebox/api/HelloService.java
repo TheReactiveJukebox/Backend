@@ -17,7 +17,7 @@ import javax.ws.rs.core.Response;
  */
 
 @Path("/hello")
-public class ExampleClass {
+public class HelloService {
 
     @GET
     @Secured
