@@ -193,8 +193,7 @@ public class Jukebox {
         }
 
 
-        return Response.status(200)
-                .entity(results)
+        return Response.ok(results)
                 .build();
     }
 }
