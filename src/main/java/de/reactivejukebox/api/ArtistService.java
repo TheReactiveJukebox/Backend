@@ -1,6 +1,9 @@
 package de.reactivejukebox.api;
 
-import de.reactivejukebox.model.Artist;
+import de.reactivejukebox.core.Database;
+import de.reactivejukebox.core.Search;
+import de.reactivejukebox.core.Secured;
+import de.reactivejukebox.model.MusicEntity;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -8,20 +11,30 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.sql.SQLException;
+import java.util.List;
 
 @Path("/artist")
 public class ArtistService {
 
     @GET
-    @Path("/search")
+    @Path("/")
+    @Secured
     @Produces(MediaType.APPLICATION_JSON)
-    public Response search(@QueryParam("name") String name) {
-        // TODO replace mock data with actual data
-        Artist mockArtist = new Artist();
-        mockArtist.setName("Red Hot Chili Peppers");
-
-        return Response.status(200)
-                .entity(new Artist[]{mockArtist})
-                .build();
+    public Response getArtist(
+            @QueryParam("id") int id,
+            @QueryParam("namesubstr") String nameSubstring,
+            @QueryParam("count") int count) {
+        try {
+            List<MusicEntity> results = Search.forArtist(Database.getInstance(), id, nameSubstring).execute(count);
+            return Response.status(200)
+                    .entity(results)
+                    .build();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return Response.status(500)
+                    .entity("An error occured while querying the database for artists.")
+                    .build();
+        }
     }
 }

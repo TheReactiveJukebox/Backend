@@ -1,6 +1,6 @@
 package de.reactivejukebox.model;
 
-public class Track {
+public class Track implements MusicEntity {
 
     int id; //global track id
     String title;
@@ -8,20 +8,16 @@ public class Track {
     String album;
     String cover;
     int duration; //song duration in seconds
-    String hash;
     String file;
 
-    public Track(int id, String title, Artist artist, String album, String cover, int duration, String hash) {
+    public Track(int id, String title, Artist artist, String album, String cover, String hash, int duration) {
         this.id = id;
         this.title = title;
         this.artist = artist;
         this.album = album;
         this.cover = cover;
         this.duration = duration;
-        this.hash = hash;
-        if(hash.length()>2) {
-            this.file = hash.substring(0, 1) + "/" + hash.substring(1, 2) + "/" + hash.substring(2) + ".mp3";
-        }
+        this.file = hash.substring(0, 1) + "/" + hash.substring(1, 2) + "/" + hash.substring(2) + ".mp3";
     }
 
 
@@ -72,10 +68,6 @@ public class Track {
     public void setTitle(String title) {
         this.title = title;
     }
-
-    public String getHash() { return hash; }
-
-    public void setHash(String hash) { this.hash = hash; }
 
     public String getFile() { return file; }
 

@@ -43,6 +43,27 @@ public class Database {
         return dataSource.getConnection();
     }
 
+    /**
+     * Normalization procedure we defined for some of our music metadata in the database.
+     * @param str String to normalize
+     * @return normalized string
+     */
+    public String normalize(String str) {
+        // convert to lowercase, strip spaces, replace umlauts
+        str = str.toLowerCase();
+        str = str.replaceAll(" ", "");
+        str = str.replaceAll("ö", "o");
+        str = str.replaceAll("ü", "u");
+        str = str.replaceAll("ä", "a");
+        str = str.replaceAll("ß", "s");
+
+        // remove non-ascii characters
+        str = str.replaceAll("[^\\x00-\\x7F]", "");
+
+        // remove special characters
+        return str.replaceAll("[^a-zA-Z0-9]", "");
+    }
+
     public synchronized static Database getInstance() {
         if (instance == null) {
             instance = new Database();

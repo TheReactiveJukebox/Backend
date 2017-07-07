@@ -1,9 +1,9 @@
 package de.reactivejukebox.model;
 
-public class Artist {
+public class Artist implements MusicEntity {
 
     protected String name;
-    private int id;
+    protected int id;
 
     public String getName() {
         return name;
@@ -13,11 +13,11 @@ public class Artist {
         this.name = name;
     }
 
-    public int getId() {
-        return id;
-    }
-
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 }

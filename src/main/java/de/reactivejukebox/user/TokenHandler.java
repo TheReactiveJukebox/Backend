@@ -33,7 +33,6 @@ public class TokenHandler {
             insertUser = con.prepareStatement("INSERT INTO jukebox_user (Name, Password, Token) VALUES ( ?, ?, ?);");
             selectByUser = con.prepareStatement("SELECT Id, Name, Password FROM jukebox_user WHERE Name = ?;");
             selectByToken = con.prepareStatement("SELECT Id, Name, Password FROM jukebox_user WHERE Token = ?;");
-
         } catch (SQLException e) {
             throw new RuntimeException("could not establish connection to Database please restart or contact developer!");
         }
