@@ -1,14 +1,11 @@
 package de.reactivejukebox.model;
 
-import de.reactivejukebox.user.UserData;
 
 public class HistoryEntry {
 
     private int trackId;
     private int radioId;
-    private Track track;
-    private Radio radio;
-    private UserData user;
+    private int userId;
 
     public int getTrackId() {
         return trackId;
@@ -26,35 +23,19 @@ public class HistoryEntry {
         this.radioId = radioId;
     }
 
-    public Track getTrack() {
-        return track;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setTrack(Track track) {
-        this.track = track;
-    }
-
-    public UserData getUser() {
-        return user;
-    }
-
-    public void setUser(UserData user) {
-        this.user = user;
-    }
-
-    public Radio getRadio() {
-        return radio;
-    }
-
-    public void setRadio(Radio radio) {
-        this.radio = radio;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     @Override
     public String toString() {
-        return "[user=" + user +
-                ", track=" + track +
-                ", radio=" + radio +
+        return "[user=" + userId +
+                ", track=" + trackId +
+                ", radio=" + radioId +
                 "]";
     }
 }

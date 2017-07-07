@@ -13,7 +13,7 @@ import javax.ws.rs.core.Response;
 import java.sql.SQLException;
 
 @Path("/history")
-public class History {
+public class HistoryService {
 
     /**
      * Consumes JSON File with HistoryEntry as @param history
@@ -26,7 +26,7 @@ public class History {
     @Path("/")
     public Response getMessage(@Context UserData user, HistoryEntry history) {
         try {
-            de.reactivejukebox.feedback.History.getInstance().addHistoryEntry(history, user);
+            de.reactivejukebox.feedback.History.addHistoryEntry(history, user);
             return Response.status(200).build();
         }catch (SQLException e){
             return Response.status(500).entity(e).build();
