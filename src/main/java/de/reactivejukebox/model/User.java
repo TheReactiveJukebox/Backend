@@ -1,4 +1,4 @@
-package de.reactivejukebox.user;
+package de.reactivejukebox.model;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * This is a simple class to store the retrieved JSON-Login credentials and hash the password.
  **/
-public class UserData implements Serializable {
+public class User implements Serializable {
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
     protected String username;
     protected String password;
@@ -92,7 +92,7 @@ public class UserData implements Serializable {
 
     @Override
     public String toString() {
-        return "UserData [username=" + username + ", userID=" + userID + "]";
+        return "User [username=" + username + ", userID=" + userID + "]";
     }
 
     private String bytesToHexString(byte[] bytes) {

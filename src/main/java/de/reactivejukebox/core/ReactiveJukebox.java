@@ -1,6 +1,6 @@
 package de.reactivejukebox.core;
 
-import de.reactivejukebox.user.UserData;
+import de.reactivejukebox.model.User;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.process.internal.RequestScoped;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -18,7 +18,7 @@ public class ReactiveJukebox extends ResourceConfig {
             @Override
             protected void configure() {
                 bindFactory(UserDataFactory.class)
-                        .to(UserData.class)
+                        .to(User.class)
                         .in(RequestScoped.class);
             }
         });

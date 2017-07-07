@@ -1,6 +1,9 @@
 package de.reactivejukebox.user;
 
 
+import de.reactivejukebox.core.TokenHandler;
+import de.reactivejukebox.model.Token;
+import de.reactivejukebox.model.User;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -13,7 +16,7 @@ import java.sql.SQLException;
  * Tests all public TokenHandler Methods
  */
 public class TokenHandlerTest {
-    UserData testUser;
+    User testUser;
     Token testToken;
 
     /**
@@ -21,7 +24,7 @@ public class TokenHandlerTest {
      */
     @BeforeClass
     public void Setup() {
-        testUser = new UserData();
+        testUser = new User();
         testUser.setUsername("testUser");
         testUser.setPassword("drfvzrf4!!e785cw4x***'##+'§$%$rjgzu43worjk3");
         try {
@@ -45,7 +48,7 @@ public class TokenHandlerTest {
      */
     @Test
     public void testGetUser() {
-        UserData checkUser = null;
+        User checkUser = null;
         try {
             checkUser = TokenHandler.getTokenHandler().getUser(testToken);
         } catch (SQLException e) {
@@ -69,10 +72,10 @@ public class TokenHandlerTest {
      */
     @Test(dependsOnMethods = {"testGetUser", "testGetWrongUser"})
     public void testRegister() {
-        UserData newUser = new UserData();
+        User newUser = new User();
         newUser.setUsername("newUser");
         newUser.setUsername("newPW");
-        UserData checkUser = null;
+        User checkUser = null;
         Token newToken = null;
         try {
             newToken = TokenHandler.getTokenHandler().register(newUser);
@@ -105,7 +108,7 @@ public class TokenHandlerTest {
         } catch (SQLException e) {
             Assert.fail();
         }
-        UserData checkUser = null;
+        User checkUser = null;
         try {
             checkUser = TokenHandler.getTokenHandler().getUser(newToken);
         } catch (SQLException e) {
@@ -130,7 +133,7 @@ public class TokenHandlerTest {
      */
     @Test(dependsOnMethods = {"testGetUser", "testGetWrongUser"})
     public void testCheckUser() {
-        UserData checkUser = new UserData();
+        User checkUser = new User();
         checkUser.setPassword("drfvzrf4!!e785cw4x***'##+'§$%$rjgzu43worjk3");
         checkUser.setUsername("testUser");
         Token checkToken = new Token();
@@ -141,7 +144,7 @@ public class TokenHandlerTest {
         } catch (FailedLoginException e) {
             Assert.fail();
         }
-        UserData checkUser2 = null;
+        User checkUser2 = null;
         try {
             checkUser2 = TokenHandler.getTokenHandler().getUser(checkToken);
         } catch (SQLException e) {
@@ -158,7 +161,7 @@ public class TokenHandlerTest {
      */
     @Test(expectedExceptions = {SQLException.class, FailedLoginException.class})
     public void testCheckWrongUser() throws SQLException, FailedLoginException {
-        UserData wrongUser = new UserData();
+        User wrongUser = new User();
         wrongUser.setUsername("Blubb");
         wrongUser.setPassword("drfvzrf4!!e785cw4x***'##+'§$%$rjgzu43worjk3");
         TokenHandler.getTokenHandler().checkUser(wrongUser);
@@ -171,7 +174,7 @@ public class TokenHandlerTest {
      */
     @Test(expectedExceptions = {SQLException.class, FailedLoginException.class})
     public void testCHeckWrongPWUser() throws SQLException, FailedLoginException {
-        UserData wrongUser = new UserData();
+        User wrongUser = new User();
         wrongUser.setUsername("testUser");
         wrongUser.setPassword("wrongPW");
         TokenHandler.getTokenHandler().checkUser(wrongUser);
@@ -184,7 +187,7 @@ public class TokenHandlerTest {
     public void testLogout() {
         TokenHandler.getTokenHandler().logout(testToken);
         try {
-            UserData test = TokenHandler.getTokenHandler().getUser(testToken);
+            User test = TokenHandler.getTokenHandler().getUser(testToken);
             Assert.fail(test.toString());
         } catch (SQLException e) {
         }
@@ -204,7 +207,7 @@ public class TokenHandlerTest {
      */
     @AfterClass
     public void result() {
-        System.out.print("Changed UserData / Token\n");
+        System.out.print("Changed User / Token\n");
         System.out.print(testToken.getToken() + "\n");
         System.out.print(testUser.getUsername());
     }

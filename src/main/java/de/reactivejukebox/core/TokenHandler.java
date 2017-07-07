@@ -1,7 +1,8 @@
-package de.reactivejukebox.user;
+package de.reactivejukebox.core;
 
-import de.reactivejukebox.database.Database;
 import de.reactivejukebox.database.DatabaseFactory;
+import de.reactivejukebox.model.Token;
+import de.reactivejukebox.model.User;
 
 import javax.security.auth.login.FailedLoginException;
 import java.sql.*;
@@ -14,7 +15,7 @@ import java.util.HashMap;
 public class TokenHandler {
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
     private static TokenHandler instance;
-    private HashMap<String, UserData> tokenMap;
+    private HashMap<String, User> tokenMap;
     private PreparedStatement updateToken, insertUser, selectByUser, selectByToken;
 
     /**
@@ -57,21 +58,21 @@ public class TokenHandler {
      */
     public Token checkToken(Token token) throws SQLException {
         if (!tokenMap.containsKey(token.getToken())) {
-            UserData dbuser = this.getUserFromDBbyToken(token);
+            User dbuser = this.getUserFromDBbyToken(token);
             tokenMap.put(token.getToken(), dbuser);
         }
         return token;
     }
 
     /**
-     * Get the {@link UserData} which is connected to a specific {@link Token}
+     * Get the {@link User} which is connected to a specific {@link Token}
      *
      * @param token the {@link Token} of the user you want
-     * @return the matching {@link UserData} to the {@link Token}
+     * @return the matching {@link User} to the {@link Token}
      * @throws SQLException if there is no user with this token
      */
-    public UserData getUser(Token token) throws SQLException {
-        UserData user = tokenMap.get(token.getToken());
+    public User getUser(Token token) throws SQLException {
+        User user = tokenMap.get(token.getToken());
         if (user == null) {
             // check Database for the user
             user = this.getUserFromDBbyToken(token);
@@ -86,7 +87,7 @@ public class TokenHandler {
      * @param token to remove
      */
     public void logout(Token token) {
-        UserData user = tokenMap.get(token.getToken());
+        User user = tokenMap.get(token.getToken());
         tokenMap.remove(token.getToken());
         token.setToken(null);
         updateTokenAtDB(user, token);
@@ -98,7 +99,7 @@ public class TokenHandler {
      * @param newUser name and password of the new User
      * @throws SQLException if the user already exist
      */
-    public Token register(UserData newUser) throws SQLException {
+    public Token register(User newUser) throws SQLException {
         //generate Token and try to register
         //if there are any conflicts, the database will throw an exception
         Token nextToken = generateToken(newUser);
@@ -117,9 +118,9 @@ public class TokenHandler {
      * @throws SQLException        if the user does not exist
      * @throws FailedLoginException if the user credentials are wrong
      */
-    public Token checkUser(UserData user) throws SQLException, FailedLoginException {
+    public Token checkUser(User user) throws SQLException, FailedLoginException {
         //compare password and username with database
-        UserData dbUser = getUserFromDBbyName(user);
+        User dbUser = getUserFromDBbyName(user);
         if (!dbUser.getUsername().equals(user.getUsername())
                 || !dbUser.getPassword().equals(user.getPassword())) {
             throw new FailedLoginException("Wrong Username or Password");
@@ -138,35 +139,35 @@ public class TokenHandler {
      * @param user the connected user
      * @return the new valid {@link Token}
      */
-    private Token generateToken(UserData user) {
+    private Token generateToken(User user) {
         // if token size grow then adapt database table users
         return new Token(sdf.format(new Timestamp(System.currentTimeMillis())) + user.getUsername().substring(0, 2));
     }
 
     /**
-     * This method queries the Database for the specified user by username and composes a {@link UserData}
+     * This method queries the Database for the specified user by username and composes a {@link User}
      * object out of the retrieved information
      *
      * @throws SQLException if there is no user with the specified name
      */
-    private UserData getUserFromDBbyName(UserData user) throws SQLException {
+    private User getUserFromDBbyName(User user) throws SQLException {
         selectByUser.setString(1, user.getUsername());
         return getUserFromDB(selectByUser);
     }
 
     /**
-     * This method queries the Database for the specified user by {@link Token} and composes a {@link UserData}
+     * This method queries the Database for the specified user by {@link Token} and composes a {@link User}
      * object out of the retrieved information
      *
      * @throws SQLException if there is no user with the specified token
      */
-    private UserData getUserFromDBbyToken(Token token) throws SQLException {
+    private User getUserFromDBbyToken(Token token) throws SQLException {
         selectByToken.setString(1, token.getToken());
         return getUserFromDB(selectByToken);
     }
 
-    private UserData getUserFromDB(PreparedStatement stmnt) throws SQLException {
-        UserData user = new UserData();
+    private User getUserFromDB(PreparedStatement stmnt) throws SQLException {
+        User user = new User();
         ResultSet rs = stmnt.executeQuery();
 
         if (rs.next()) {
@@ -184,7 +185,7 @@ public class TokenHandler {
      *
      * @throws SQLException if the user already exist
      */
-    private void registerUserAtDB(UserData user, Token token) throws SQLException {
+    private void registerUserAtDB(User user, Token token) throws SQLException {
         insertUser.setString(1, user.getUsername());
         insertUser.setString(2, user.getPassword());
         insertUser.setString(3, token.getToken());
@@ -194,7 +195,7 @@ public class TokenHandler {
     /**
      * changes the token attribute in the Database
      */
-    private void updateTokenAtDB(UserData user, Token token) {
+    private void updateTokenAtDB(User user, Token token) {
         try {
             updateToken.setString(1, token.getToken());
             updateToken.setString(2, user.getUsername());

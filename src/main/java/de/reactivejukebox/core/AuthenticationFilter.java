@@ -1,8 +1,7 @@
 package de.reactivejukebox.core;
 
-import de.reactivejukebox.user.Token;
-import de.reactivejukebox.user.TokenHandler;
-import de.reactivejukebox.user.UserData;
+import de.reactivejukebox.model.Token;
+import de.reactivejukebox.model.User;
 
 import javax.annotation.Priority;
 import javax.ws.rs.NotAuthorizedException;
@@ -41,8 +40,8 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         String token = authorizationHeader.substring("Bearer".length()).trim();
         try {
             // Validate the token
-            UserData user = TokenHandler.getTokenHandler().getUser(new Token(token));
-            requestContext.setProperty("UserData", user);
+            User user = TokenHandler.getTokenHandler().getUser(new Token(token));
+            requestContext.setProperty("User", user);
         } catch (Exception e) {
             requestContext.abortWith(
                     Response.status(Response.Status.UNAUTHORIZED).build());

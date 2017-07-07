@@ -1,9 +1,8 @@
 package de.reactivejukebox.api;
 
 import de.reactivejukebox.core.Secured;
-import de.reactivejukebox.user.Token;
-import de.reactivejukebox.user.TokenHandler;
-import de.reactivejukebox.user.UserData;
+import de.reactivejukebox.model.Token;
+import de.reactivejukebox.core.TokenHandler;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -21,7 +20,7 @@ public class User {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/login")
-    public Response login(UserData auth) {
+    public Response login(de.reactivejukebox.model.User auth) {
         System.out.printf("login" + auth);
         try {
             Token token = TokenHandler.getTokenHandler().checkUser(auth);
@@ -80,7 +79,7 @@ public class User {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/register")
-    public Response register(UserData auth) {
+    public Response register(de.reactivejukebox.model.User auth) {
         System.out.printf("register " + auth);
         try {
             try {

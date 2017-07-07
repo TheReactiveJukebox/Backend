@@ -1,4 +1,4 @@
-package de.reactivejukebox.user;
+package de.reactivejukebox.model;
 
 import java.io.Serializable;
 

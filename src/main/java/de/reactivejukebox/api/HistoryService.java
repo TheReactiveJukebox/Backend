@@ -2,7 +2,7 @@ package de.reactivejukebox.api;
 
 import de.reactivejukebox.core.Secured;
 import de.reactivejukebox.model.HistoryEntry;
-import de.reactivejukebox.user.UserData;
+import de.reactivejukebox.model.User;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -24,7 +24,7 @@ public class HistoryService {
     @Secured
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/")
-    public Response getMessage(@Context UserData user, HistoryEntry history) {
+    public Response getMessage(@Context User user, HistoryEntry history) {
         try {
             de.reactivejukebox.feedback.History.addHistoryEntry(history, user);
             return Response.status(200).build();

@@ -2,7 +2,7 @@ package de.reactivejukebox.feedback;
 
 import de.reactivejukebox.database.DatabaseFactory;
 import de.reactivejukebox.model.HistoryEntry;
-import de.reactivejukebox.user.UserData;
+import de.reactivejukebox.model.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,7 +16,7 @@ public class History {
      * @param user
      * @throws SQLException if something goes wrong
      */
-    public static void addHistoryEntry(HistoryEntry entry, UserData user) throws SQLException {
+    public static void addHistoryEntry(HistoryEntry entry, User user) throws SQLException {
         Connection con = DatabaseFactory.getInstance().getDatabase().getConnection();
         PreparedStatement addEntry = con.prepareStatement("INSERT INTO \"history\" (SongId, UserId, RadioId) VALUES ( ?, ?, ?);");
         addEntry.setInt(1, entry.getTrackId());

@@ -1,7 +1,7 @@
 package de.reactivejukebox.api;
 
 import de.reactivejukebox.core.Secured;
-import de.reactivejukebox.user.UserData;
+import de.reactivejukebox.model.User;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -23,7 +23,7 @@ public class ExampleClass {
     @Secured
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/test/{param}")
-    public Response getMessage(@Context UserData user, @PathParam("param") String message) {
+    public Response getMessage(@Context User user, @PathParam("param") String message) {
         message = message + " " + user.getUsername();
         String output = "{\"message\": \"Jersey says " + message + "\"}";
         return Response.status(200).entity(output).build();
@@ -34,7 +34,7 @@ public class ExampleClass {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{param}")
     public Response getMessage2(@Context ContainerRequestContext crc, @PathParam("param") String message) {
-        UserData user = (UserData) crc.getProperty("UserData");
+        User user = (User) crc.getProperty("User");
         message = message + " " + user.getUsername();
         String output = "{\"message\": \"Jersey says " + message + "\"}";
         return Response.ok(output).build();
