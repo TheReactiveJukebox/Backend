@@ -54,12 +54,9 @@ public class Jukebox {
             }
             con.close();
         } catch (SQLException e) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            sw.append(e.getMessage());
-            e.printStackTrace(pw);
+            e.printStackTrace();
             return Response.status(502)
-                    .entity("Error while communicating with database: " + sw.toString())
+                    .entity("Error while communicating with database.")
                     .build();
         }
 
@@ -112,15 +109,11 @@ public class Jukebox {
 
             con.close();
         } catch (SQLException e) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            sw.append(e.getMessage());
-            e.printStackTrace(pw);
+            e.printStackTrace();
             return Response.status(502)
-                    .entity("Error while communicating with database: " + sw.toString())
+                    .entity("Error while communicating with database.")
                     .build();
         }
-
 
         return Response.status(200)
                 .entity(radiostation)
@@ -171,8 +164,9 @@ public class Jukebox {
                             tmpArtist,
                             rs.getString(rs.findColumn("AlbumTitle")),
                             rs.getString(rs.findColumn("AlbumCover")),
-                            rs.getInt(rs.findColumn("SongDuration")),
-                            rs.getString(rs.findColumn("SongHash"))));
+                            rs.getString(rs.findColumn("SongHash")),
+                            rs.getInt(rs.findColumn("SongDuration"))
+                    ));
                 }
             }
 
@@ -183,12 +177,9 @@ public class Jukebox {
             }
             con.close();
         } catch (SQLException e) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            sw.append(e.getMessage());
-            e.printStackTrace(pw);
+            e.printStackTrace();
             return Response.status(502)
-                    .entity("Error while communicating with database: " + sw.toString())
+                    .entity("Error while communicating with database.")
                     .build();
         }
 

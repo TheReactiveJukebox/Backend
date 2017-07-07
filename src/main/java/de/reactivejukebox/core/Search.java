@@ -63,10 +63,15 @@ public class Search {
             // find out what we're looking for and parse dbQuery result accordingly
             if (musicObject == For.Track) {
                 while (resultCount-- > 0 && rs.next()) {
+                    // create Artist object
+                    Artist a = new Artist();
+                    a.setName(rs.getString(rs.findColumn("name")));
+                    a.setId(rs.getInt(rs.findColumn("artistid")));
+                    // create Track object referencing the artist
                     Track t = new Track(
-                            rs.getInt(rs.findColumn("id")),
+                            rs.getInt(rs.findColumn("songid")),
                             rs.getString(rs.findColumn("title")),
-                            rs.getString(rs.findColumn("name")),
+                            a,
                             rs.getString(rs.findColumn("albumtitle")),
                             rs.getString(rs.findColumn("cover")),
                             rs.getString(rs.findColumn("hash")),
@@ -109,7 +114,7 @@ public class Search {
      */
     public static Search forTrack(Database database, int id, String titleSubstring, int artist) {
         PreparedStatementBuilder builder = new PreparedStatementBuilder();
-        builder.select("song.id, song.title, artist.name, album.title as albumtitle, album.cover, song.hash, song.duration")
+        builder.select("song.id as songid, song.title, artist.id as artistid, artist.name, album.title as albumtitle, album.cover, song.hash, song.duration")
                 .from("song, song_artist, artist, album")
                 .addFilter("song.albumid=album.id")
                 .addFilter("song.id=song_artist.songid")
