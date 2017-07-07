@@ -1,7 +1,7 @@
 package de.reactivejukebox.user;
 
-import de.reactivejukebox.core.Database;
-import org.postgresql.util.PSQLException;
+import de.reactivejukebox.database.Database;
+import de.reactivejukebox.database.DatabaseFactory;
 
 import javax.security.auth.login.FailedLoginException;
 import java.sql.*;
@@ -28,7 +28,7 @@ public class TokenHandler {
             /* create connection and prepare statements. Note that the Connection is never closed.
              * This is because the connection is held until the server is shut down.
              */
-            Connection con = Database.getInstance().getConnection();
+            Connection con = DatabaseFactory.getInstance().getDatabase().getConnection();
             updateToken = con.prepareStatement("UPDATE jukebox_user SET Token = ? WHERE Name = ?;");
             insertUser = con.prepareStatement("INSERT INTO jukebox_user (Name, Password, Token) VALUES ( ?, ?, ?);");
             selectByUser = con.prepareStatement("SELECT Id, Name, Password FROM jukebox_user WHERE Name = ?;");

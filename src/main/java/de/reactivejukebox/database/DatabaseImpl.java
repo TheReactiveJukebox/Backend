@@ -1,4 +1,4 @@
-package de.reactivejukebox.core;
+package de.reactivejukebox.database;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
@@ -6,16 +6,14 @@ import java.beans.PropertyVetoException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class Database {
-
+public class DatabaseImpl implements Database {
     private static final String DB_URL = "jdbc:postgresql://database:5432/reactivejukebox";
     private static final String DB_USER = "backend";
     private static final String DB_PASSWORD = "xxx";
 
-    private static Database instance = null;
     private ComboPooledDataSource dataSource;
 
-    private Database() {
+    DatabaseImpl() {
         dataSource = new ComboPooledDataSource();
         try {
             dataSource.setDriverClass("org.postgresql.Driver");
@@ -39,6 +37,7 @@ public class Database {
         dataSource.setAcquireIncrement(8);
     }
 
+    @Override
     public Connection getConnection() throws SQLException {
         return dataSource.getConnection();
     }
@@ -48,6 +47,7 @@ public class Database {
      * @param str String to normalize
      * @return normalized string
      */
+    @Override
     public String normalize(String str) {
         // convert to lowercase, strip spaces, replace umlauts
         str = str.toLowerCase();
@@ -64,11 +64,5 @@ public class Database {
         return str.replaceAll("[^a-zA-Z0-9]", "");
     }
 
-    public synchronized static Database getInstance() {
-        if (instance == null) {
-            instance = new Database();
-        }
-        return instance;
-    }
-}
 
+}

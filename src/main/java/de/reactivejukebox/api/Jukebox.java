@@ -1,7 +1,8 @@
 package de.reactivejukebox.api;
 
-import de.reactivejukebox.core.Database;
 import de.reactivejukebox.core.Secured;
+import de.reactivejukebox.database.Database;
+import de.reactivejukebox.database.DatabaseFactory;
 import de.reactivejukebox.model.Artist;
 import de.reactivejukebox.model.Radio;
 import de.reactivejukebox.model.Track;
@@ -41,7 +42,7 @@ public class Jukebox {
         ResultSet rs;
 
         queryDB:
-        try (Connection con = Database.getInstance().getConnection()) {
+        try (Connection con = DatabaseFactory.getInstance().getDatabase().getConnection()) {
             query = con.prepareStatement(QUERY_RADIOSTATION_BY_USER_ID);
             query.setInt(1, user.getId());
             rs = query.executeQuery();
@@ -87,7 +88,7 @@ public class Jukebox {
         ResultSet rs;
 
         queryDB:
-        try (Connection con = Database.getInstance().getConnection()) {
+        try (Connection con = DatabaseFactory.getInstance().getDatabase().getConnection()) {
 
             query = con.prepareStatement(QUERY_CREATE_NEW_RADIOSTATION);
             query.setInt(1, user.getId());
@@ -136,7 +137,7 @@ public class Jukebox {
         ArrayList<Track> results = new ArrayList<>();
 
         queryDB:
-        try (Connection con = Database.getInstance().getConnection()) {
+        try (Connection con = DatabaseFactory.getInstance().getDatabase().getConnection()) {
             query = con.prepareStatement(QUERY_RADIOSTATION_BY_USER_ID);
             query.setInt(1, user.getId());
             rs = query.executeQuery();
@@ -172,7 +173,7 @@ public class Jukebox {
 
             if (results.isEmpty()) {
                 return Response.status(504)
-                        .entity("Error ne next "+count+" songs are available")
+                        .entity("Error ne next " + count + " songs are available")
                         .build();
             }
             con.close();

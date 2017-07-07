@@ -1,5 +1,7 @@
 package de.reactivejukebox.core;
 
+import de.reactivejukebox.database.Database;
+import de.reactivejukebox.database.DatabaseFactory;
 import de.reactivejukebox.database.PreparedStatementBuilder;
 import de.reactivejukebox.model.Album;
 import de.reactivejukebox.model.Artist;
@@ -49,7 +51,7 @@ public class Search {
             // if stmnt is not set, return empty list
             return new ArrayList<>();
         }
-        con = Database.getInstance().getConnection();
+        con = DatabaseFactory.getInstance().getDatabase().getConnection();
         PreparedStatement dbQuery = stmnt.prepare(con);
         if (result == null) {
             ResultSet rs = dbQuery.executeQuery();
