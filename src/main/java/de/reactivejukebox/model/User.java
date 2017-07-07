@@ -15,7 +15,8 @@ public class User implements Serializable {
     protected String password;
     protected String pwHash;
     protected String inviteKey;
-    protected int userID;
+    protected Integer userID;
+    protected String token;
     protected List<String> roles;
 
     public String getUsername() {
@@ -90,6 +91,14 @@ public class User implements Serializable {
         this.userID = id;
     }
 
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     @Override
     public String toString() {
         return "User [username=" + username + ", userID=" + userID + "]";
@@ -103,5 +112,8 @@ public class User implements Serializable {
             hexChars[j * 2 + 1] = hexArray[v & 0x0F];
         }
         return new String(hexChars);
+    }
+    public UserD GetUserD(){
+        return new UserD(userID,username,token);
     }
 }
