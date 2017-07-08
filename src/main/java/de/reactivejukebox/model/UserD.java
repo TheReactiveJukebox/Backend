@@ -7,15 +7,16 @@ import java.sql.SQLException;
 public class UserD {
     Integer id;
     String username;
-    String password;
+    String pwHash;
     String token;
-    String InviteKey;
+    String inviteKey;
 
-    public UserD(){}
+    public UserD() {
+    }
 
-    public UserD(int id, String username, String token){
+    public UserD(int id, String username, String token) {
         this.id = id;
-        this.username=username;
+        this.username = username;
         this.token = token;
     }
 
@@ -36,11 +37,11 @@ public class UserD {
     }
 
     public String getPassword() {
-        return password;
+        return pwHash;
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        pwHash = User.generateSHA256(password);
     }
 
     public String getToken() {
@@ -52,20 +53,10 @@ public class UserD {
     }
 
     public String getInviteKey() {
-        return InviteKey;
+        return inviteKey;
     }
 
     public void setInviteKey(String inviteKey) {
-        InviteKey = inviteKey;
-    }
-    public User getUser(){
-        User user;
-        try {
-            user = DatabaseAccessObject.getInstance().getUsers().get(this.username);
-        } catch (SQLException e) {
-            user = new User();
-            e.printStackTrace();
-        }
-        return user;
+        inviteKey = inviteKey;
     }
 }

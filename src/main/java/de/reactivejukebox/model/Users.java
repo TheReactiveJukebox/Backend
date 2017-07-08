@@ -21,14 +21,14 @@ public class Users {
         userByToken = new ConcurrentHashMap<>();
     }
 
-    public void add(User user) throws SQLException {
+    public User add(User user) throws SQLException {
         toDB(user);
         user = fromDB("name", user.getUsername());
         user.setToken(generateToken(user));
         userByName.put(user.getUsername(), user);
         userById.put(user.getId(), user);
         userByToken.put(user.getToken(), user);
-
+        return user;
     }
 
     public User get(int id) throws SQLException {
@@ -61,15 +61,19 @@ public class Users {
         return user;
     }
 
-    public void changeToken(User user) throws SQLException {
+    public User changeToken(User user) throws SQLException {
         user = get(user.getUsername());
         String oldT = user.getToken();
         user.setToken(generateToken(user));
-        if(userByToken.containsKey(oldT)){
+        try{
             userByToken.remove(oldT);
-        }
+        }catch (Exception e){}
         userByToken.put(user.getToken(),user);
+        return user;
+    }
 
+    public User get(UserD userD) throws SQLException {
+        return get(userD.username);
     }
 
     private User fromDB(String col, Object o) throws SQLException {

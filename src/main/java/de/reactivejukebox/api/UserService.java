@@ -3,6 +3,8 @@ package de.reactivejukebox.api;
 import de.reactivejukebox.core.Secured;
 import de.reactivejukebox.model.Token;
 import de.reactivejukebox.core.TokenHandler;
+import de.reactivejukebox.model.User;
+import de.reactivejukebox.model.UserD;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -20,10 +22,10 @@ public class UserService {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/login")
-    public Response login(de.reactivejukebox.model.User auth) {
+    public Response login(UserD auth) {
         System.out.printf("login" + auth);
         try {
-            Token token = TokenHandler.getTokenHandler().checkUser(auth);
+            UserD token = new TokenHandler().checkUser(auth);
             return Response.ok(token).build();
         } catch (Exception e) {
             return Response.status(442).entity("invalid password or username").build();
@@ -39,10 +41,10 @@ public class UserService {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/autologin")
-    public Response login(Token auth) {
+    public Response autoLogin(UserD auth) {
         System.out.printf("autologin " + auth);
         try {
-            Token token = TokenHandler.getTokenHandler().checkToken(auth);
+            UserD token = new TokenHandler().checkToken(auth);
             return Response.ok(token).build();
         } catch (Exception e) {
             return Response.status(409).entity("no valid token").build();
@@ -58,12 +60,9 @@ public class UserService {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/logout")
-    public Response logout(Token auth) {
-        System.out.printf("logout " + auth);
-
+    public Response logout(UserD auth) {
         try {
-            TokenHandler.getTokenHandler().checkToken(auth);
-            TokenHandler.getTokenHandler().logout(auth);
+            new TokenHandler().logout(auth);
             return Response.status(200).entity("logged out").build();
         } catch (Exception e) {
             return Response.status(409).entity("no valid token").build();
@@ -79,7 +78,7 @@ public class UserService {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/register")
-    public Response register(de.reactivejukebox.model.User auth) {
+    public Response register(User auth) {
         System.out.printf("register " + auth);
         try {
             try {
@@ -91,7 +90,7 @@ public class UserService {
             }catch (Exception e){
                 return Response.status(441).entity("invalid InviteKey").build();
             }
-            Token token = TokenHandler.getTokenHandler().register(auth);
+            UserD token = new TokenHandler().register(auth);
             return Response.ok(token).build();
         } catch (Exception e) {
             return Response.status(440).entity("username already in use").build();

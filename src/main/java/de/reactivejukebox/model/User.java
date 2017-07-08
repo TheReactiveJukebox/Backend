@@ -69,13 +69,13 @@ public class User implements Serializable {
         this.pwHash = hashedPassword;
     }
 
-    private String generateSHA256(String message) {
+    protected static String generateSHA256(String message) {
         String hashedMessage = null;
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(message.getBytes(StandardCharsets.UTF_8));
 
-            hashedMessage = this.bytesToHexString(hash).toLowerCase();
+            hashedMessage = User.bytesToHexString(hash).toLowerCase();
         } catch (NoSuchAlgorithmException e) {
             //will never happen
             System.err.println("SHA-256 is not available anymore");
@@ -104,7 +104,7 @@ public class User implements Serializable {
         return "User [username=" + username + ", userID=" + userID + "]";
     }
 
-    private String bytesToHexString(byte[] bytes) {
+    private static String bytesToHexString(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
         for (int j = 0; j < bytes.length; j++) {
             int v = bytes[j] & 0xFF;
@@ -113,7 +113,7 @@ public class User implements Serializable {
         }
         return new String(hexChars);
     }
-    public UserD GetUserD(){
+    public UserD getUserD(){
         return new UserD(userID,username,token);
     }
 }

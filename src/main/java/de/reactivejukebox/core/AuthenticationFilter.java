@@ -1,5 +1,6 @@
 package de.reactivejukebox.core;
 
+import de.reactivejukebox.database.DatabaseAccessObject;
 import de.reactivejukebox.model.Token;
 import de.reactivejukebox.model.User;
 
@@ -40,7 +41,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         String token = authorizationHeader.substring("Bearer".length()).trim();
         try {
             // Validate the token
-            User user = TokenHandler.getTokenHandler().getUser(new Token(token));
+            User user = DatabaseAccessObject.getInstance().getUsers().getByToken(token);
             requestContext.setProperty("User", user);
         } catch (Exception e) {
             requestContext.abortWith(
