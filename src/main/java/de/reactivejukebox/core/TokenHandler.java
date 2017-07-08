@@ -1,7 +1,6 @@
 package de.reactivejukebox.core;
 
 import de.reactivejukebox.database.DatabaseAccessObject;
-import de.reactivejukebox.model.Token;
 import de.reactivejukebox.model.User;
 import de.reactivejukebox.model.UserD;
 import de.reactivejukebox.model.Users;

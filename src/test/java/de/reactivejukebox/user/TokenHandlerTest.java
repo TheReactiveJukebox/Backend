@@ -2,7 +2,6 @@ package de.reactivejukebox.user;
 
 
 import de.reactivejukebox.core.TokenHandler;
-import de.reactivejukebox.model.Token;
 import de.reactivejukebox.model.User;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
