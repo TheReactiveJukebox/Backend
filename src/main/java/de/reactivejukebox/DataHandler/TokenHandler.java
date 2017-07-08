@@ -1,4 +1,4 @@
-package de.reactivejukebox.core;
+package de.reactivejukebox.DataHandler;
 
 import de.reactivejukebox.database.DatabaseAccessObject;
 import de.reactivejukebox.model.User;

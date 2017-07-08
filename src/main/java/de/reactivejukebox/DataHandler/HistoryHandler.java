@@ -1,4 +1,4 @@
-package de.reactivejukebox.feedback;
+package de.reactivejukebox.DataHandler;
 
 import de.reactivejukebox.database.DatabaseFactory;
 import de.reactivejukebox.model.HistoryEntry;
@@ -9,11 +9,11 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 
-public class History {
+public class HistoryHandler {
     protected Connection con;
     /** adds a new HistoryEntry to the Database
      *
-     * @param entry History with Radio and Track id
+     * @param entry HistoryHandler with Radio and Track id
      * @param user
      * @throws SQLException if something goes wrong
      */

@@ -1,7 +1,7 @@
 package de.reactivejukebox.api;
 
 import de.reactivejukebox.core.Secured;
-import de.reactivejukebox.core.TokenHandler;
+import de.reactivejukebox.DataHandler.TokenHandler;
 import de.reactivejukebox.model.User;
 import de.reactivejukebox.model.UserD;
 
