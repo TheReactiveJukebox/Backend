@@ -15,7 +15,7 @@ import java.io.IOException;
 
 
 /**
- * Checks whether the {@link Token} exists.
+ * Checks whether the Token exists.
  * If Token Exists adds user to Context
  * <p>
  * else Sets Response.Status.UNAUTHORIZED
@@ -42,6 +42,9 @@ public class AuthenticationFilter implements ContainerRequestFilter {
             // Validate the token
             User user = DatabaseAccessObject.getInstance().getUsers().getByToken(token);
             requestContext.setProperty("User", user);
+            if (user == null){
+                System.out.printf("no User found");
+            }
         } catch (Exception e) {
             requestContext.abortWith(
                     Response.status(Response.Status.UNAUTHORIZED).build());

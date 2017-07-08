@@ -1,6 +1,7 @@
 package de.reactivejukebox.database;
 
 
+import de.reactivejukebox.model.HistoryEntries;
 import de.reactivejukebox.model.Users;
 
 public class DatabaseAccessObject {
@@ -8,11 +9,13 @@ public class DatabaseAccessObject {
     private static DatabaseAccessObject instance;
 
     private Users users;
+    private HistoryEntries historyEntries;
 
 
 
     private DatabaseAccessObject(){
         users = new Users();
+        historyEntries = new HistoryEntries(users);
     }
 
 
@@ -26,4 +29,6 @@ public class DatabaseAccessObject {
     public Users getUsers(){
         return users;
     }
+
+    public HistoryEntries getHistoryEntries(){return historyEntries;}
 }

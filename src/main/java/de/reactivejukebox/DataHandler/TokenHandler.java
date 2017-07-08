@@ -63,7 +63,7 @@ public class TokenHandler {
      * @param newUser name and password of the new User
      * @throws SQLException if the user already exist
      */
-    public UserD register(User newUser) throws SQLException {
+    public UserD register(UserD newUser) throws SQLException {
         //generate Token and try to register
         //if there are any conflicts, the database will throw an exception
         return users.add(newUser).getUserD();

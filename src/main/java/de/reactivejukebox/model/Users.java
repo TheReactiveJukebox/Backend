@@ -21,14 +21,14 @@ public class Users {
         userByToken = new ConcurrentHashMap<>();
     }
 
-    public User add(User user) throws SQLException {
+    public User add(UserD user) throws SQLException {
         toDB(user);
-        user = fromDB("name", user.getUsername());
-        user.setToken(generateToken(user));
-        userByName.put(user.getUsername(), user);
-        userById.put(user.getId(), user);
-        userByToken.put(user.getToken(), user);
-        return user;
+        User newUser = fromDB("name", user.getUsername());
+        generateToken(newUser);
+        userByName.put(user.getUsername(), newUser);
+        userById.put(user.getId(), newUser);
+        userByToken.put(user.getToken(), newUser);
+        return newUser;
     }
 
     public User get(int id) throws SQLException {
@@ -64,7 +64,7 @@ public class Users {
     public User changeToken(User user) throws SQLException {
         user = get(user.getUsername());
         String oldT = user.getToken();
-        user.setToken(generateToken(user));
+        generateToken(user);
         try{
             userByToken.remove(oldT);
         }catch (Exception e){}
@@ -101,7 +101,7 @@ public class Users {
 
     }
 
-    private void toDB(User user) throws SQLException {
+    private void toDB(UserD user) throws SQLException {
         con = DatabaseFactory.getInstance().getDatabase().getConnection();
         PreparedStatement addUser = con.prepareStatement("INSERT INTO jukebox_user (name, password, token) VALUES ( ?, ?, ?);");
         addUser.setString(1, user.getUsername());
@@ -111,15 +111,15 @@ public class Users {
         con.close();
     }
 
-    private String generateToken(User user) throws SQLException {
+    private void generateToken(User user) throws SQLException {
         String t = sdf.format(new Timestamp(System.currentTimeMillis())) + user.getUsername().substring(0, 2);
+        user.setToken(t);
         con = DatabaseFactory.getInstance().getDatabase().getConnection();
-        PreparedStatement updateToken = con.prepareStatement("UPDATE jukebox_user SET Token = ? WHERE id = ?;");
+        PreparedStatement updateToken = con.prepareStatement("UPDATE jukebox_user SET token = ? WHERE id = ?;");
         updateToken.setString(1, user.getToken());
         updateToken.setInt(2, user.getId());
         updateToken.executeUpdate();
         con.close();
-        return t;
     }
 
 }

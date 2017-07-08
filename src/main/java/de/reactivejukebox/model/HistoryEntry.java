@@ -1,41 +1,75 @@
 package de.reactivejukebox.model;
 
 
+import java.sql.Timestamp;
+
 public class HistoryEntry {
 
-    private int trackId;
-    private int radioId;
-    private int userId;
+    private int id;
+    private Track track;
+    private Radio radio;
+    private User user;
+    private Timestamp time;
 
-    public int getTrackId() {
-        return trackId;
+    public HistoryEntry(){}
+
+    public HistoryEntry(int id, Track track, Radio radio, User user, Timestamp time) {
+        this.id = id;
+        this.track = track;
+        this.radio = radio;
+        this.user = user;
+        this.time = time;
     }
 
-    public void setTrackId(int trackId) {
-        this.trackId = trackId;
+    public int getId() {
+        return id;
     }
 
-    public int getRadioId() {
-        return radioId;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public void setRadioId(int radioId) {
-        this.radioId = radioId;
+    public Track getTrack() {
+        return track;
     }
 
-    public int getUserId() {
-        return userId;
+    public void setTrack(Track track) {
+        this.track = track;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public Radio getRadio() {
+        return radio;
+    }
+
+    public void setRadio(Radio radio) {
+        this.radio = radio;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Timestamp getTime() {
+        return time;
+    }
+
+    public void setTime(Timestamp time) {
+        this.time = time;
     }
 
     @Override
     public String toString() {
-        return "[user=" + userId +
-                ", track=" + trackId +
-                ", radio=" + radioId +
+        return "[user=" + user +
+                ", track=" + track +
+                ", radio=" + radio +
                 "]";
+    }
+
+    public HistoryEntryD getHistoryEntryD(){
+        return new HistoryEntryD(id,track.getId(),radio.getId(),user.getId(),time);
     }
 }

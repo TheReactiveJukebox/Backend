@@ -20,7 +20,8 @@ public class UserDataFactory implements Factory<User> {
 
     @Override
     public User provide() {
-        return (User) context.getProperty("User");
+        User user = (User) context.getProperty("User");
+        return user;
     }
 
     @Override

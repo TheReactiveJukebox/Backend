@@ -77,7 +77,7 @@ public class UserService {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/register")
-    public Response register(User auth) {
+    public Response register(UserD auth) {
         System.out.printf("register " + auth);
         try {
             try {

@@ -20,6 +20,7 @@ public class Track implements MusicEntity {
         this.file = hash.substring(0, 1) + "/" + hash.substring(1, 2) + "/" + hash.substring(2) + ".mp3";
     }
 
+    public Track(){}
 
     public int getId() {
         return id;

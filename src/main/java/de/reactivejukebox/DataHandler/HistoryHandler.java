@@ -1,29 +1,29 @@
 package de.reactivejukebox.DataHandler;
 
-import de.reactivejukebox.database.DatabaseFactory;
-import de.reactivejukebox.model.HistoryEntry;
+import de.reactivejukebox.database.DatabaseAccessObject;
+import de.reactivejukebox.model.HistoryEntries;
+import de.reactivejukebox.model.HistoryEntryD;
 import de.reactivejukebox.model.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 
 public class HistoryHandler {
-    protected Connection con;
+    private HistoryEntries historyEntries;
     /** adds a new HistoryEntry to the Database
      *
      * @param entry HistoryHandler with Radio and Track id
      * @param user
      * @throws SQLException if something goes wrong
      */
-    public void addHistoryEntry(HistoryEntry entry, User user) throws SQLException {
-        con = DatabaseFactory.getInstance().getDatabase().getConnection();
-        PreparedStatement addEntry = con.prepareStatement("INSERT INTO \"history\" (SongId, UserId, RadioId) VALUES ( ?, ?, ?);");
-        addEntry.setInt(1, entry.getTrackId());
-        addEntry.setInt(2, user.getId());
-        addEntry.setInt(3, entry.getRadioId());
-        addEntry.executeUpdate();
-        con.close();
+    public HistoryHandler(){
+        historyEntries = DatabaseAccessObject.getInstance().getHistoryEntries();
     }
+
+    public void addHistoryEntry(HistoryEntryD entry, User user) throws SQLException {
+        entry.setUserId(user.getId());
+        historyEntries.addEntry(entry);
+    }
+
+    //TODO Add methods to get and filter History
 }
