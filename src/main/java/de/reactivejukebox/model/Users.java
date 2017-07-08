@@ -21,7 +21,7 @@ public class Users {
         userByToken = new ConcurrentHashMap<>();
     }
 
-    public User add(UserD user) throws SQLException {
+    public User add(UserPlain user) throws SQLException {
         toDB(user);
         User newUser = fromDB("name", user.getUsername());
         generateToken(newUser);
@@ -72,7 +72,7 @@ public class Users {
         return user;
     }
 
-    public User get(UserD userD) throws SQLException {
+    public User get(UserPlain userD) throws SQLException {
         return get(userD.username);
     }
 
@@ -101,7 +101,7 @@ public class Users {
 
     }
 
-    private void toDB(UserD user) throws SQLException {
+    private void toDB(UserPlain user) throws SQLException {
         con = DatabaseFactory.getInstance().getDatabase().getConnection();
         PreparedStatement addUser = con.prepareStatement("INSERT INTO jukebox_user (name, password, token) VALUES ( ?, ?, ?);");
         addUser.setString(1, user.getUsername());

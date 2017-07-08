@@ -2,7 +2,7 @@ package de.reactivejukebox.DataHandler;
 
 import de.reactivejukebox.database.DatabaseAccessObject;
 import de.reactivejukebox.model.User;
-import de.reactivejukebox.model.UserD;
+import de.reactivejukebox.model.UserPlain;
 import de.reactivejukebox.model.Users;
 
 import javax.security.auth.login.FailedLoginException;
@@ -26,7 +26,7 @@ public class TokenHandler {
      * @throws SQLException        if the user does not exist
      * @throws FailedLoginException if the user credentials are wrong
      */
-    public UserD checkUser(UserD user) throws SQLException, FailedLoginException {
+    public UserPlain checkUser(UserPlain user) throws SQLException, FailedLoginException {
         //compare password and username with database
         User dbUser = users.get(user);
         if (!dbUser.getUsername().equals(user.getUsername())
@@ -34,7 +34,7 @@ public class TokenHandler {
             throw new FailedLoginException("Wrong Username or Password");
         }
         dbUser = users.changeToken(dbUser);
-        return dbUser.getUserD();
+        return dbUser.getUserPlain();
     }
 
     /**
@@ -43,8 +43,8 @@ public class TokenHandler {
      *
      * @throws SQLException if the token is invalid
      */
-    public UserD checkToken(UserD token) throws SQLException {
-        return users.getByToken(token.getToken()).getUserD();
+    public UserPlain checkToken(UserPlain token) throws SQLException {
+        return users.getByToken(token.getToken()).getUserPlain();
     }
 
     /**
@@ -52,7 +52,7 @@ public class TokenHandler {
      *
      * @param token to remove
      */
-    public void logout(UserD token) throws SQLException {
+    public void logout(UserPlain token) throws SQLException {
         User user = users.getByToken(token.getToken());
         users.changeToken(user);
     }
@@ -63,9 +63,9 @@ public class TokenHandler {
      * @param newUser name and password of the new User
      * @throws SQLException if the user already exist
      */
-    public UserD register(UserD newUser) throws SQLException {
+    public UserPlain register(UserPlain newUser) throws SQLException {
         //generate Token and try to register
         //if there are any conflicts, the database will throw an exception
-        return users.add(newUser).getUserD();
+        return users.add(newUser).getUserPlain();
     }
 }

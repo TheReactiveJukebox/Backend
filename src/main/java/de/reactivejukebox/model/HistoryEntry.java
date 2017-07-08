@@ -69,7 +69,7 @@ public class HistoryEntry {
                 "]";
     }
 
-    public HistoryEntryD getHistoryEntryD(){
-        return new HistoryEntryD(id,track.getId(),radio.getId(),user.getId(),time);
+    public HistoryEntryPlain getHistroyEntryPlain(){
+        return new HistoryEntryPlain(id,track.getId(),radio.getId(),user.getId(),time);
     }
 }

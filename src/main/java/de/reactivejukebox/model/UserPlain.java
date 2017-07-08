@@ -4,17 +4,17 @@ import de.reactivejukebox.database.DatabaseAccessObject;
 
 import java.sql.SQLException;
 
-public class UserD {
+public class UserPlain {
     Integer id;
     String username;
     String pwHash;
     String token;
     String inviteKey;
 
-    public UserD() {
+    public UserPlain() {
     }
 
-    public UserD(int id, String username, String token) {
+    public UserPlain(int id, String username, String token) {
         this.id = id;
         this.username = username;
         this.token = token;

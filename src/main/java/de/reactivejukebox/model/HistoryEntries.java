@@ -5,7 +5,6 @@ import de.reactivejukebox.database.PreparedStatementBuilder;
 
 import java.sql.*;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -23,7 +22,7 @@ public class HistoryEntries {
         this.users = users;
     }
 
-    public HistoryEntry addEntry(HistoryEntryD entry) throws SQLException {
+    public HistoryEntry addEntry(HistoryEntryPlain entry) throws SQLException {
         if (entry.getTime() == null) {
             LocalDateTime lt = LocalDateTime.now(ZoneId.of("UTC"));
             Timestamp t = Timestamp.valueOf(lt);
@@ -46,7 +45,7 @@ public class HistoryEntries {
         return entry;
     }
 
-    public HistoryEntry get(HistoryEntryD entry) throws SQLException {
+    public HistoryEntry get(HistoryEntryPlain entry) throws SQLException {
         HistoryEntry newEntry;
         if (entry.getId() != null) {
             newEntry = get(entry.getId());
@@ -63,7 +62,7 @@ public class HistoryEntries {
         return build(fromDB("UserId", id));
     }
 
-    private HistoryEntry build(HistoryEntryD entry) throws SQLException {
+    private HistoryEntry build(HistoryEntryPlain entry) throws SQLException {
         //TODO get real Objects
         Track t = new Track();
         t.setId(entry.getTrackId());
@@ -73,16 +72,16 @@ public class HistoryEntries {
         return new HistoryEntry(entry.getId(), t, r, u, entry.getTime());
     }
 
-    private ArrayList<HistoryEntry> build(ArrayList<HistoryEntryD> entries) throws SQLException {
+    private ArrayList<HistoryEntry> build(ArrayList<HistoryEntryPlain> entries) throws SQLException {
         ArrayList<HistoryEntry> newList = new ArrayList<>();
-        Iterator<HistoryEntryD> iterator = entries.listIterator();
+        Iterator<HistoryEntryPlain> iterator = entries.listIterator();
         while (iterator.hasNext()) {
             newList.add(build(iterator.next()));
         }
         return newList;
     }
 
-    private HistoryEntryD fromDB(HistoryEntryD entry) throws SQLException {
+    private HistoryEntryPlain fromDB(HistoryEntryPlain entry) throws SQLException {
 
         con = DatabaseFactory.getInstance().getDatabase().getConnection();
         stmnt = new PreparedStatementBuilder();
@@ -95,7 +94,7 @@ public class HistoryEntries {
         return fromDB().get(0);
     }
 
-    private ArrayList<HistoryEntryD> fromDB(String col, Object o) throws SQLException {
+    private ArrayList<HistoryEntryPlain> fromDB(String col, Object o) throws SQLException {
         con = DatabaseFactory.getInstance().getDatabase().getConnection();
         stmnt = new PreparedStatementBuilder();
         stmnt.select("*");
@@ -105,12 +104,12 @@ public class HistoryEntries {
     }
 
 
-    private ArrayList<HistoryEntryD> fromDB() throws SQLException {
+    private ArrayList<HistoryEntryPlain> fromDB() throws SQLException {
         PreparedStatement dbQuery = stmnt.prepare(con);
-        ArrayList<HistoryEntryD> results = new ArrayList<>();
+        ArrayList<HistoryEntryPlain> results = new ArrayList<>();
         ResultSet rs = dbQuery.executeQuery();
         while (rs.next()) {
-            HistoryEntryD entry = new HistoryEntryD();
+            HistoryEntryPlain entry = new HistoryEntryPlain();
             entry.setId(rs.getInt("id"));
             entry.setTrackId(rs.getInt("songId"));
             entry.setRadioId(rs.getInt("radioId"));
@@ -122,7 +121,7 @@ public class HistoryEntries {
         return results;
     }
 
-    private void toDB(HistoryEntryD entry) throws SQLException {
+    private void toDB(HistoryEntryPlain entry) throws SQLException {
         con = DatabaseFactory.getInstance().getDatabase().getConnection();
         PreparedStatement addEntry = con.prepareStatement("INSERT INTO history (songId, userId, radioId,time) VALUES ( ?, ?, ?,?);");
         addEntry.setInt(1, entry.getTrackId());

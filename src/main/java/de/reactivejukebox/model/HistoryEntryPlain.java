@@ -3,16 +3,16 @@ package de.reactivejukebox.model;
 
 import java.sql.Timestamp;
 
-public class HistoryEntryD {
-    private Integer id;
+public class HistoryEntryPlain {
+    private int id;
     private int trackId;
     private int radioId;
     private int userId;
     private Timestamp time;
 
-    public HistoryEntryD(){}
+    public HistoryEntryPlain(){}
 
-    public HistoryEntryD(int id,int trackId, int radioId, int userId, Timestamp time){
+    public HistoryEntryPlain(int id, int trackId, int radioId, int userId, Timestamp time){
         this.id = id;
         this.trackId =trackId;
         this.userId =userId;

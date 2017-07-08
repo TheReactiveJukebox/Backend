@@ -2,7 +2,7 @@ package de.reactivejukebox.DataHandler;
 
 import de.reactivejukebox.database.DatabaseAccessObject;
 import de.reactivejukebox.model.HistoryEntries;
-import de.reactivejukebox.model.HistoryEntryD;
+import de.reactivejukebox.model.HistoryEntryPlain;
 import de.reactivejukebox.model.User;
 
 import java.sql.SQLException;
@@ -20,7 +20,7 @@ public class HistoryHandler {
         historyEntries = DatabaseAccessObject.getInstance().getHistoryEntries();
     }
 
-    public void addHistoryEntry(HistoryEntryD entry, User user) throws SQLException {
+    public void addHistoryEntry(HistoryEntryPlain entry, User user) throws SQLException {
         entry.setUserId(user.getId());
         historyEntries.addEntry(entry);
     }
