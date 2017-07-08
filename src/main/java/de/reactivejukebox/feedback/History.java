@@ -10,14 +10,15 @@ import java.sql.SQLException;
 
 
 public class History {
+    protected Connection con;
     /** adds a new HistoryEntry to the Database
      *
      * @param entry History with Radio and Track id
      * @param user
      * @throws SQLException if something goes wrong
      */
-    public static void addHistoryEntry(HistoryEntry entry, User user) throws SQLException {
-        Connection con = DatabaseFactory.getInstance().getDatabase().getConnection();
+    public void addHistoryEntry(HistoryEntry entry, User user) throws SQLException {
+        con = DatabaseFactory.getInstance().getDatabase().getConnection();
         PreparedStatement addEntry = con.prepareStatement("INSERT INTO \"history\" (SongId, UserId, RadioId) VALUES ( ?, ?, ?);");
         addEntry.setInt(1, entry.getTrackId());
         addEntry.setInt(2, user.getId());
