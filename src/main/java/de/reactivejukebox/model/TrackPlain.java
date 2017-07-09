@@ -10,14 +10,14 @@ public class TrackPlain implements MusicEntityPlain {
     int duration; //song duration in seconds
     String file;
 
-    public TrackPlain(int id, String title, int artist, int album, String cover, String hash, int duration) {
+    public TrackPlain(int id, String title, int artist, int album, String cover, String file, int duration) {
         this.id = id;
         this.title = title;
         this.artist = artist;
         this.album = album;
         this.cover = cover;
         this.duration = duration;
-        this.file = hash.substring(0, 1) + "/" + hash.substring(1, 2) + "/" + hash.substring(2) + ".mp3";
+        this.file = file;
     }
 
     public TrackPlain(){}
