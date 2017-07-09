@@ -37,7 +37,7 @@ public class ArtistService {
             Stream<Artist> s = Model.getInstance().getArtists().stream();
             if (nameSubstring != null) {
                 Database db = DatabaseProvider.getInstance().getDatabase();
-                s.filter(artist ->
+                s = s.filter(artist ->
                         db.normalize(artist.getName()).startsWith(db.normalize(nameSubstring)));
             }
             result = s.map(Artist::getPlainObject).collect(Collectors.toList());
