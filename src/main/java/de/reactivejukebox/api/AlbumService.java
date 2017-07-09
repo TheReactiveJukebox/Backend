@@ -3,7 +3,7 @@ package de.reactivejukebox.api;
 import de.reactivejukebox.core.Search;
 import de.reactivejukebox.core.Secured;
 import de.reactivejukebox.database.DatabaseFactory;
-import de.reactivejukebox.model.MusicEntity;
+import de.reactivejukebox.model.MusicEntityPlain;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -27,7 +27,7 @@ public class AlbumService {
             @QueryParam("artist") int artist,
             @QueryParam("count") int resultCount) {
         try {
-            List<MusicEntity> results = Search.forAlbum(DatabaseFactory.getInstance().getDatabase(), albumid, titleSubstring, artist).execute(resultCount);
+            List<MusicEntityPlain> results = Search.forAlbum(DatabaseFactory.getInstance().getDatabase(), albumid, titleSubstring, artist).execute(resultCount);
             return Response.status(200)
                     .entity(results)
                     .build();

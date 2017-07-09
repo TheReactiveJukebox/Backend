@@ -1,9 +1,17 @@
 package de.reactivejukebox.model;
 
-public class Artist implements MusicEntity {
+public class ArtistPlain implements MusicEntityPlain {
 
-    protected int id;
     protected String name;
+    protected int id;
+
+    public ArtistPlain() {
+    }
+
+    public ArtistPlain(String name, int id) {
+        this.name = name;
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -19,10 +27,5 @@ public class Artist implements MusicEntity {
 
     public int getId() {
         return id;
-    }
-
-    @Override
-    public MusicEntityPlain getPlainObject() {
-        return new ArtistPlain(getName(), getId());
     }
 }

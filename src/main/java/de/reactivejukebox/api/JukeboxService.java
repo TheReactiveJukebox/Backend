@@ -4,7 +4,7 @@ import de.reactivejukebox.core.Secured;
 import de.reactivejukebox.database.DatabaseFactory;
 import de.reactivejukebox.model.Artist;
 import de.reactivejukebox.model.Radio;
-import de.reactivejukebox.model.Track;
+import de.reactivejukebox.model.TrackPlain;
 import de.reactivejukebox.model.User;
 
 import javax.ws.rs.*;
@@ -135,7 +135,7 @@ public class JukeboxService {
         PreparedStatement query;
         Radio currentRadiostation;
         ResultSet rs;
-        ArrayList<Track> results = new ArrayList<>();
+        ArrayList<TrackPlain> results = new ArrayList<>();
 
         try (Connection con = DatabaseFactory.getInstance().getDatabase().getConnection()) {
             query = con.prepareStatement(QUERY_RADIOSTATION_BY_USER_ID);
@@ -158,12 +158,11 @@ public class JukeboxService {
                 while (rs.next()) {
                     Artist tmpArtist = new Artist();
                     tmpArtist.setName(rs.getString(rs.findColumn("Artists")));
-                    tmpArtist.setId(rs.getInt(rs.findColumn("ArtistID")));
-                    results.add(new Track(
+                    results.add(new TrackPlain(
                             rs.getInt(rs.findColumn("SongId")),
                             rs.getString(rs.findColumn("SongTitle")),
-                            tmpArtist,
-                            rs.getString(rs.findColumn("AlbumTitle")),
+                            rs.getInt(rs.findColumn("ArtistID")),
+                            rs.getInt(rs.findColumn("AlbumId")),
                             rs.getString(rs.findColumn("AlbumCover")),
                             rs.getString(rs.findColumn("SongHash")),
                             rs.getInt(rs.findColumn("SongDuration"))

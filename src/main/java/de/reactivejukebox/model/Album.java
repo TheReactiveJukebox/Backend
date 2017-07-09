@@ -2,9 +2,9 @@ package de.reactivejukebox.model;
 
 public class Album implements MusicEntity {
 
-    protected String title;
-    protected String artist;
     protected int id;
+    protected String title;
+    protected Artist artist;
 
     public String getTitle() {
         return title;
@@ -14,19 +14,28 @@ public class Album implements MusicEntity {
         this.title = title;
     }
 
-    public String getArtist() {
+    public Artist getArtist() {
         return artist;
     }
 
-    public void setArtist(String artist) {
+    public void setArtist(Artist artist) {
         this.artist = artist;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public void setId(int id) {
         this.id = id;
     }
 
-    public int getId() {
-        return id;
+    @Override
+    public MusicEntityPlain getPlainObject() {
+        AlbumPlain plainObject = new AlbumPlain();
+        plainObject.setArtist(getArtist().getId());
+        plainObject.setId(getId());
+        plainObject.setTitle(getTitle());
+        return plainObject;
     }
 }

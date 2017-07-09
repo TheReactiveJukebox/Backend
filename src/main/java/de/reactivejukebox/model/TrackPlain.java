@@ -1,26 +1,26 @@
 package de.reactivejukebox.model;
 
-public class Track implements MusicEntity {
+public class TrackPlain implements MusicEntityPlain {
 
     int id; //global track id
     String title;
-    Artist artist;
-    Album album;
+    int artist;
+    int album;
     String cover;
     int duration; //song duration in seconds
-    String hash;
+    String file;
 
-    public Track(int id, String title, Artist artist, Album album, String cover, String hash, int duration) {
+    public TrackPlain(int id, String title, int artist, int album, String cover, String hash, int duration) {
         this.id = id;
         this.title = title;
         this.artist = artist;
         this.album = album;
         this.cover = cover;
         this.duration = duration;
-        this.hash = hash;
+        this.file = hash.substring(0, 1) + "/" + hash.substring(1, 2) + "/" + hash.substring(2) + ".mp3";
     }
 
-    public Track(){}
+    public TrackPlain(){}
 
     public int getId() {
         return id;
@@ -30,19 +30,19 @@ public class Track implements MusicEntity {
         this.id = id;
     }
 
-    public Artist getArtist() {
+    public int getArtist() {
         return artist;
     }
 
-    public void setArtist(Artist artist) {
+    public void setArtist(int artist) {
         this.artist = artist;
     }
 
-    public Album getAlbum() {
+    public int getAlbum() {
         return album;
     }
 
-    public void setAlbum(Album album) {
+    public void setAlbum(int album) {
         this.album = album;
     }
 
@@ -70,17 +70,8 @@ public class Track implements MusicEntity {
         this.title = title;
     }
 
-    public String getHash() {
-        return hash;
-    }
+    public String getFile() { return file; }
 
-    public void setHash(String hash) {
-        this.hash = hash;
-    }
+    public void setFile(String file) { this.file = file; }
 
-    @Override
-    public MusicEntityPlain getPlainObject() {
-        String file = hash.substring(0, 1) + "/" + hash.substring(1, 2) + "/" + hash.substring(2) + ".mp3";
-        return new TrackPlain(id, title, artist.getId(), album.getId(), cover, file, duration);
-    }
 }

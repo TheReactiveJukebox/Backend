@@ -3,10 +3,7 @@ package de.reactivejukebox.core;
 import de.reactivejukebox.database.Database;
 import de.reactivejukebox.database.DatabaseFactory;
 import de.reactivejukebox.database.PreparedStatementBuilder;
-import de.reactivejukebox.model.Album;
-import de.reactivejukebox.model.Artist;
-import de.reactivejukebox.model.MusicEntity;
-import de.reactivejukebox.model.Track;
+import de.reactivejukebox.model.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -31,7 +28,7 @@ public class Search {
 
     protected PreparedStatementBuilder stmnt;
     protected Connection con;
-    protected List<MusicEntity> result = null;
+    protected List<MusicEntityPlain> result = null;
     protected For musicObject;
 
     protected Search(For musicObject, PreparedStatementBuilder stmnt) {
@@ -43,10 +40,10 @@ public class Search {
      * Execute the search.
      *
      * @param resultCount optional parameter to limit the number of results. Set to 0 for all results
-     * @return A list of MusicEntity objects (Album, Artist, Track) matching the search parameters
+     * @return A list of MusicEntityPlain objects (AlbumPlain, Artist, TrackPlain) matching the search parameters
      * @throws SQLException when an SQLException is thrown during statement execution or result set parsing
      */
-    public List<MusicEntity> execute(int resultCount) throws SQLException {
+    public List<MusicEntityPlain> execute(int resultCount) throws SQLException {
         if (stmnt == null) {
             // if stmnt is not set, return empty list
             return new ArrayList<>();
@@ -55,7 +52,7 @@ public class Search {
         PreparedStatement dbQuery = stmnt.prepare(con);
         if (result == null) {
             ResultSet rs = dbQuery.executeQuery();
-            ArrayList<MusicEntity> results = new ArrayList<>();
+            ArrayList<MusicEntityPlain> results = new ArrayList<>();
 
             // set count to max if parameter not present
             if (resultCount == 0) {
@@ -65,33 +62,27 @@ public class Search {
             // find out what we're looking for and parse dbQuery result accordingly
             if (musicObject == For.Track) {
                 while (resultCount-- > 0 && rs.next()) {
-                    // create Artist object
-                    Artist a = new Artist();
-                    a.setName(rs.getString(rs.findColumn("name")));
-                    a.setId(rs.getInt(rs.findColumn("artistid")));
-                    // create Track object referencing the artist
-                    Track t = new Track(
+                    results.add(new TrackPlain(
                             rs.getInt(rs.findColumn("songid")),
                             rs.getString(rs.findColumn("title")),
-                            a,
-                            rs.getString(rs.findColumn("albumtitle")),
+                            rs.getInt(rs.findColumn("artistid")),
+                            rs.getInt(rs.findColumn("albumid")),
                             rs.getString(rs.findColumn("cover")),
                             rs.getString(rs.findColumn("hash")),
                             rs.getInt(rs.findColumn("duration"))
-                    );
-                    results.add(t);
+                    ));
                 }
             } else if (musicObject == For.Album) {
                 while (resultCount-- > 0 && rs.next()) {
-                    Album a = new Album();
+                    AlbumPlain a = new AlbumPlain();
                     a.setId(rs.getInt(rs.findColumn("id")));
-                    a.setArtist(rs.getString(rs.findColumn("name")));
+                    a.setArtist(rs.getInt(rs.findColumn("artistid")));
                     a.setTitle(rs.getString(rs.findColumn("title")));
                     results.add(a);
                 }
             } else if (musicObject == For.Artist) {
                 while (resultCount-- > 0 && rs.next()) {
-                    Artist a = new Artist();
+                    ArtistPlain a = new ArtistPlain();
                     a.setId(rs.getInt(rs.findColumn("id")));
                     a.setName(rs.getString(rs.findColumn("name")));
                     results.add(a);
@@ -116,7 +107,8 @@ public class Search {
      */
     public static Search forTrack(Database database, int id, String titleSubstring, int artist) {
         PreparedStatementBuilder builder = new PreparedStatementBuilder();
-        builder.select("song.id as songid, song.title, artist.id as artistid, artist.name, album.title as albumtitle, album.cover, song.hash, song.duration")
+        builder.select("song.id as songid, song.title, artist.id as artistid, artist.name, " +
+                "album.id as albumid, album.title as albumtitle, album.cover, song.hash, song.duration")
                 .from("song, song_artist, artist, album")
                 .addFilter("song.albumid=album.id")
                 .addFilter("song.id=song_artist.songid")
@@ -146,10 +138,9 @@ public class Search {
      */
     public static Search forAlbum(Database database, int id, String titleSubstring, int artist) {
         PreparedStatementBuilder builder = new PreparedStatementBuilder()
-                .select("album.id, album.title, artist.name")
-                .from("album, artist, album_artist")
-                .addFilter("album.id=album_artist.albumid")
-                .addFilter("artist.id=album_artist.artistid");
+                .select("album.id, album.title, artistid")
+                .from("album, album_artist")
+                .addFilter("album.id=album_artist.albumid");
         if (id != 0) {
             builder.addFilter("album.id=?", (query, i) -> query.setInt(i, id));
         } else {
@@ -158,7 +149,7 @@ public class Search {
                         (query, i) -> query.setString(i, database.normalize(titleSubstring) + "%"));
             }
             if (artist != 0) {
-                builder.addFilter("artist.id=?", (query, i) -> query.setInt(i, artist));
+                builder.addFilter("artistid=?", (query, i) -> query.setInt(i, artist));
             }
         }
         return new Search(For.Album, builder);

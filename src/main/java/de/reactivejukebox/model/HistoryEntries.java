@@ -64,7 +64,7 @@ public class HistoryEntries {
 
     private HistoryEntry build(HistoryEntryPlain entry) throws SQLException {
         //TODO get real Objects
-        Track t = new Track();
+        TrackPlain t = new TrackPlain();
         t.setId(entry.getTrackId());
         Radio r = new Radio();
         r.setId(entry.getRadioId());

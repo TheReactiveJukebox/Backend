@@ -5,16 +5,16 @@ import java.io.Serializable;
 public class Radio implements Serializable {
 
     private int id;
-    private boolean isRandom;
+    private boolean random;
     private String[] genres;
     private String mood;
     private int startYear;
     private int endYear;
 
 
-    public Radio(int id, String feedbacklink, String[] genres, String mood, int startYear, int endYear ,  boolean isRandom) {
+    public Radio(int id, String feedbacklink, String[] genres, String mood, int startYear, int endYear, boolean random) {
         this.id = id;
-        this.isRandom = isRandom;
+        this.random = random;
     }
 
     public Radio(){
@@ -31,11 +31,11 @@ public class Radio implements Serializable {
     }
 
     public boolean isRandom() {
-        return isRandom;
+        return random;
     }
 
     public void setRandom(boolean random) {
-        this.isRandom = random;
+        this.random = random;
     }
 
     public String[] getGenres() {

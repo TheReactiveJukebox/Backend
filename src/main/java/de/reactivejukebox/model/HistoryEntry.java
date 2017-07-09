@@ -6,14 +6,14 @@ import java.sql.Timestamp;
 public class HistoryEntry {
 
     private int id;
-    private Track track;
+    private TrackPlain track;
     private Radio radio;
     private User user;
     private Timestamp time;
 
     public HistoryEntry(){}
 
-    public HistoryEntry(int id, Track track, Radio radio, User user, Timestamp time) {
+    public HistoryEntry(int id, TrackPlain track, Radio radio, User user, Timestamp time) {
         this.id = id;
         this.track = track;
         this.radio = radio;
@@ -29,11 +29,11 @@ public class HistoryEntry {
         this.id = id;
     }
 
-    public Track getTrack() {
+    public TrackPlain getTrack() {
         return track;
     }
 
-    public void setTrack(Track track) {
+    public void setTrack(TrackPlain track) {
         this.track = track;
     }
 

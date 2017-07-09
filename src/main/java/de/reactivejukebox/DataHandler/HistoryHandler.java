@@ -12,7 +12,7 @@ public class HistoryHandler {
     private HistoryEntries historyEntries;
     /** adds a new HistoryEntry to the Database
      *
-     * @param entry HistoryHandler with Radio and Track id
+     * @param entry HistoryHandler with Radio and TrackPlain id
      * @param user
      * @throws SQLException if something goes wrong
      */
