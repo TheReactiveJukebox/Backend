@@ -5,9 +5,14 @@ import de.reactivejukebox.database.PreparedStatementBuilder;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.util.Iterator;
+import java.util.Spliterator;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
-public class Users {
+public class Users implements Iterable<User>{
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
     protected PreparedStatementBuilder stmnt;
     protected Connection con;
@@ -21,7 +26,7 @@ public class Users {
         userByToken = new ConcurrentHashMap<>();
     }
 
-    public User add(UserPlain user) throws SQLException {
+    public User put(UserPlain user) throws SQLException {
         toDB(user);
         User newUser = fromDB("name", user.getUsername());
         generateToken(newUser);
@@ -75,6 +80,22 @@ public class Users {
     public User get(UserPlain userD) throws SQLException {
         return get(userD.username);
     }
+
+    @Override
+    public Iterator<User> iterator() {
+        return userById.values().iterator();
+    }
+
+    @Override
+    public void forEach(Consumer<? super User> consumer) {
+        userById.values().forEach(consumer);
+    }
+
+    @Override
+    public Spliterator<User> spliterator() {
+        return userById.values().spliterator();
+    }
+    public Stream<User> stream() {        return StreamSupport.stream(spliterator(), false);    }
 
     private User fromDB(String col, Object o) throws SQLException {
         con = DatabaseProvider.getInstance().getDatabase().getConnection();

@@ -113,7 +113,7 @@ public class User implements Serializable {
         }
         return new String(hexChars);
     }
-    public UserPlain getUserPlain(){
+    public UserPlain getPlainObject(){
         return new UserPlain(userID,username,token);
     }
 }
