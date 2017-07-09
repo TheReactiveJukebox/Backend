@@ -1,4 +1,4 @@
-package de.reactivejukebox.DataHandler;
+package de.reactivejukebox.datahandlers;
 
 import de.reactivejukebox.model.Model;
 import de.reactivejukebox.model.HistoryEntries;

@@ -1,7 +1,7 @@
 package de.reactivejukebox.api;
 
 import de.reactivejukebox.core.Secured;
-import de.reactivejukebox.DataHandler.TokenHandler;
+import de.reactivejukebox.datahandlers.TokenHandler;
 import de.reactivejukebox.model.UserPlain;
 
 import javax.ws.rs.*;

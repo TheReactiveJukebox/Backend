@@ -1,7 +1,7 @@
 package de.reactivejukebox.api;
 
 import de.reactivejukebox.core.Secured;
-import de.reactivejukebox.DataHandler.HistoryHandler;
+import de.reactivejukebox.datahandlers.HistoryHandler;
 import de.reactivejukebox.model.HistoryEntryPlain;
 import de.reactivejukebox.model.User;
 
