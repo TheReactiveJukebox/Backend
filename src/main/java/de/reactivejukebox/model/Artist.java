@@ -1,9 +1,19 @@
 package de.reactivejukebox.model;
 
+import de.reactivejukebox.database.DatabaseFactory;
+
 public class Artist implements MusicEntity {
 
     protected int id;
     protected String name;
+
+    public Artist() {
+    }
+
+    public Artist(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     public String getName() {
         return name;
@@ -11,6 +21,10 @@ public class Artist implements MusicEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getNameNormalized() {
+        return DatabaseFactory.getInstance().getDatabase().normalize(getName());
     }
 
     public void setId(int id) {

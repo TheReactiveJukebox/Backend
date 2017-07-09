@@ -6,6 +6,15 @@ public class Album implements MusicEntity {
     protected String title;
     protected Artist artist;
 
+    public Album() {
+    }
+
+    public Album(int id, String title, Artist artist) {
+        this.id = id;
+        this.title = title;
+        this.artist = artist;
+    }
+
     public String getTitle() {
         return title;
     }
