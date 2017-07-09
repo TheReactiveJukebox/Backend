@@ -15,10 +15,10 @@ public class Model {
     private Tracks tracks;
     private Artists artists;
     private Albums albums;
+    private Radios radios;
 
     private Model() {
         users = new Users();
-        historyEntries = new HistoryEntries(users);
         try (Connection con = DatabaseProvider.getInstance().getDatabase().getConnection()) {
             artists = new Artists(con);
             albums = new Albums(con, artists);
@@ -31,6 +31,8 @@ public class Model {
             albums = new Albums();
             tracks = new Tracks();
         }
+        radios = new Radios(users);
+        historyEntries = new HistoryEntries(users,tracks,radios);
     }
 
     public static synchronized Model getInstance() {
@@ -57,4 +59,6 @@ public class Model {
     public Albums getAlbums() {
         return albums;
     }
+
+    public Radios getRadios() { return radios; }
 }

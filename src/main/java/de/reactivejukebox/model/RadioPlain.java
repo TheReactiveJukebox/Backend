@@ -1,21 +1,18 @@
 package de.reactivejukebox.model;
 
-import java.io.Serializable;
 
-public class Radio implements Serializable {
-
+public class RadioPlain {
     private int id;
-    private User user;
+    private int userId;
     private boolean random;
     private String[] genres;
     private String mood;
     private int startYear;
     private int endYear;
 
-
-    public Radio(int id, User user, boolean random, String[] genres, String mood, int startYear, int endYear) {
+    public RadioPlain(int id, int userId, boolean random, String[] genres, String mood, int startYear, int endYear) {
         this.id = id;
-        this.user = user;
+        this.userId = userId;
         this.random = random;
         this.genres = genres;
         this.mood = mood;
@@ -23,16 +20,16 @@ public class Radio implements Serializable {
         this.endYear = endYear;
     }
 
-    public Radio(){
+    public RadioPlain(){
 
     }
 
-    public User getUser() {
-        return user;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public int getId() {
@@ -81,10 +78,6 @@ public class Radio implements Serializable {
 
     public void setEndYear(int endYear) {
         this.endYear = endYear;
-    }
-
-    public RadioPlain getPlainObject(){
-        return new RadioPlain(id, user.getId(),random,genres,mood,startYear,endYear);
     }
 
 }
