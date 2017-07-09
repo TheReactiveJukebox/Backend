@@ -1,6 +1,6 @@
 package de.reactivejukebox.model;
 
-import de.reactivejukebox.database.DatabaseFactory;
+import de.reactivejukebox.database.DatabaseProvider;
 import de.reactivejukebox.database.PreparedStatementBuilder;
 
 import java.sql.*;
@@ -77,7 +77,7 @@ public class Users {
     }
 
     private User fromDB(String col, Object o) throws SQLException {
-        con = DatabaseFactory.getInstance().getDatabase().getConnection();
+        con = DatabaseProvider.getInstance().getDatabase().getConnection();
         stmnt = new PreparedStatementBuilder();
         stmnt.select("*");
         stmnt.from("jukebox_user");
@@ -102,7 +102,7 @@ public class Users {
     }
 
     private void toDB(UserPlain user) throws SQLException {
-        con = DatabaseFactory.getInstance().getDatabase().getConnection();
+        con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement addUser = con.prepareStatement("INSERT INTO jukebox_user (name, password, token) VALUES ( ?, ?, ?);");
         addUser.setString(1, user.getUsername());
         addUser.setString(2, user.getPassword());
@@ -114,7 +114,7 @@ public class Users {
     private void generateToken(User user) throws SQLException {
         String t = sdf.format(new Timestamp(System.currentTimeMillis())) + user.getUsername().substring(0, 2);
         user.setToken(t);
-        con = DatabaseFactory.getInstance().getDatabase().getConnection();
+        con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement updateToken = con.prepareStatement("UPDATE jukebox_user SET token = ? WHERE id = ?;");
         updateToken.setString(1, user.getToken());
         updateToken.setInt(2, user.getId());

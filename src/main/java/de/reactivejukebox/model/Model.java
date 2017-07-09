@@ -1,7 +1,7 @@
 package de.reactivejukebox.model;
 
 
-import de.reactivejukebox.database.DatabaseFactory;
+import de.reactivejukebox.database.DatabaseProvider;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -19,7 +19,7 @@ public class Model {
     private Model() {
         users = new Users();
         historyEntries = new HistoryEntries(users);
-        try (Connection con = DatabaseFactory.getInstance().getDatabase().getConnection()) {
+        try (Connection con = DatabaseProvider.getInstance().getDatabase().getConnection()) {
             artists = new Artists(con);
             albums = new Albums(con, artists);
             tracks = new Tracks(con, artists, albums);

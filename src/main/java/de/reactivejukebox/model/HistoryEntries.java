@@ -1,6 +1,6 @@
 package de.reactivejukebox.model;
 
-import de.reactivejukebox.database.DatabaseFactory;
+import de.reactivejukebox.database.DatabaseProvider;
 import de.reactivejukebox.database.PreparedStatementBuilder;
 
 import java.sql.*;
@@ -83,7 +83,7 @@ public class HistoryEntries {
 
     private HistoryEntryPlain fromDB(HistoryEntryPlain entry) throws SQLException {
 
-        con = DatabaseFactory.getInstance().getDatabase().getConnection();
+        con = DatabaseProvider.getInstance().getDatabase().getConnection();
         stmnt = new PreparedStatementBuilder();
         stmnt.select("*");
         stmnt.from("history");
@@ -95,7 +95,7 @@ public class HistoryEntries {
     }
 
     private ArrayList<HistoryEntryPlain> fromDB(String col, Object o) throws SQLException {
-        con = DatabaseFactory.getInstance().getDatabase().getConnection();
+        con = DatabaseProvider.getInstance().getDatabase().getConnection();
         stmnt = new PreparedStatementBuilder();
         stmnt.select("*");
         stmnt.from("history");
@@ -122,7 +122,7 @@ public class HistoryEntries {
     }
 
     private void toDB(HistoryEntryPlain entry) throws SQLException {
-        con = DatabaseFactory.getInstance().getDatabase().getConnection();
+        con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement addEntry = con.prepareStatement("INSERT INTO history (songId, userId, radioId,time) VALUES ( ?, ?, ?,?);");
         addEntry.setInt(1, entry.getTrackId());
         addEntry.setInt(2, entry.getUserId());

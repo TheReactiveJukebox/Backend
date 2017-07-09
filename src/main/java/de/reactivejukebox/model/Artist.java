@@ -1,6 +1,6 @@
 package de.reactivejukebox.model;
 
-import de.reactivejukebox.database.DatabaseFactory;
+import de.reactivejukebox.database.DatabaseProvider;
 
 public class Artist implements MusicEntity {
 
@@ -24,7 +24,7 @@ public class Artist implements MusicEntity {
     }
 
     public String getNameNormalized() {
-        return DatabaseFactory.getInstance().getDatabase().normalize(getName());
+        return DatabaseProvider.getInstance().getDatabase().normalize(getName());
     }
 
     public void setId(int id) {

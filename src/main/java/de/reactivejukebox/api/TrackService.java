@@ -2,7 +2,7 @@ package de.reactivejukebox.api;
 
 import de.reactivejukebox.core.Search;
 import de.reactivejukebox.core.Secured;
-import de.reactivejukebox.database.DatabaseFactory;
+import de.reactivejukebox.database.DatabaseProvider;
 import de.reactivejukebox.model.MusicEntityPlain;
 
 import javax.ws.rs.GET;
@@ -26,7 +26,7 @@ public class TrackService {
                            @QueryParam("artist") int artist,
                            @QueryParam("count") int countResults) {
         try {
-            List<MusicEntityPlain> results = Search.forTrack(DatabaseFactory.getInstance().getDatabase(), trackId, titleSubstring, artist).execute(countResults);
+            List<MusicEntityPlain> results = Search.forTrack(DatabaseProvider.getInstance().getDatabase(), trackId, titleSubstring, artist).execute(countResults);
             return Response.status(200)
                     .entity(results)
                     .build();

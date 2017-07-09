@@ -1,17 +1,17 @@
 package de.reactivejukebox.database;
 
-public class DatabaseFactory {
+public class DatabaseProvider {
 
-    private static DatabaseFactory instance;
+    private static DatabaseProvider instance;
     private Database db;
 
-    private DatabaseFactory() {
+    private DatabaseProvider() {
         db = new DatabaseImpl();
     }
 
-    public static DatabaseFactory getInstance() {
+    public static DatabaseProvider getInstance() {
         if (instance == null) {
-            instance = new DatabaseFactory();
+            instance = new DatabaseProvider();
         }
         return instance;
     }

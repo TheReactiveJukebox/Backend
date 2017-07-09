@@ -1,7 +1,7 @@
 package de.reactivejukebox.api;
 
 import de.reactivejukebox.core.Secured;
-import de.reactivejukebox.database.DatabaseFactory;
+import de.reactivejukebox.database.DatabaseProvider;
 import de.reactivejukebox.model.Artist;
 import de.reactivejukebox.model.Radio;
 import de.reactivejukebox.model.TrackPlain;
@@ -58,7 +58,7 @@ public class JukeboxService {
         Radio currentRadiostation;
         ResultSet rs;
 
-        try (Connection con = DatabaseFactory.getInstance().getDatabase().getConnection()) {
+        try (Connection con = DatabaseProvider.getInstance().getDatabase().getConnection()) {
             query = con.prepareStatement(QUERY_RADIOSTATION_BY_USER_ID);
             query.setInt(1, user.getId());
             rs = query.executeQuery();
@@ -93,7 +93,7 @@ public class JukeboxService {
         Radio radiostation;
         ResultSet rs;
 
-        try (Connection con = DatabaseFactory.getInstance().getDatabase().getConnection()) {
+        try (Connection con = DatabaseProvider.getInstance().getDatabase().getConnection()) {
 
             query = con.prepareStatement(QUERY_CREATE_NEW_RADIOSTATION);
             query.setInt(1, user.getId());
@@ -137,7 +137,7 @@ public class JukeboxService {
         ResultSet rs;
         ArrayList<TrackPlain> results = new ArrayList<>();
 
-        try (Connection con = DatabaseFactory.getInstance().getDatabase().getConnection()) {
+        try (Connection con = DatabaseProvider.getInstance().getDatabase().getConnection()) {
             query = con.prepareStatement(QUERY_RADIOSTATION_BY_USER_ID);
             query.setInt(1, user.getId());
             rs = query.executeQuery();
