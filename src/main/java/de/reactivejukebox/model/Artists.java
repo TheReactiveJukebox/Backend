@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Spliterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public final class Artists implements Iterable<Artist> {
 
@@ -57,5 +59,9 @@ public final class Artists implements Iterable<Artist> {
 
     public Artist remove(int id) {
         return artists.remove(id);
+    }
+
+    public Stream<Artist> stream() {
+        return StreamSupport.stream(spliterator(), false);
     }
 }

@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Spliterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class Albums implements Iterable<Album> {
 
@@ -63,6 +65,10 @@ public class Albums implements Iterable<Album> {
     @Override
     public Spliterator<Album> spliterator() {
         return albums.values().spliterator();
+    }
+
+    public Stream<Album> stream() {
+        return StreamSupport.stream(spliterator(), false);
     }
 }
 
