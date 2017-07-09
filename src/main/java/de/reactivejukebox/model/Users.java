@@ -95,6 +95,7 @@ public class Users implements Iterable<User>{
     public Spliterator<User> spliterator() {
         return userById.values().spliterator();
     }
+
     public Stream<User> stream() {        return StreamSupport.stream(spliterator(), false);    }
 
     private User fromDB(String col, Object o) throws SQLException {

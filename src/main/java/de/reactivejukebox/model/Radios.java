@@ -10,9 +10,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Spliterator;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
-public class Radios {
+public class Radios implements Iterable<Radio>{
     protected Users users;
     protected PreparedStatementBuilder stmnt;
     protected Connection con;
@@ -64,6 +68,24 @@ public class Radios {
     public Radio get(RadioPlain radio) throws SQLException {
         return get(radio.getId());
     }
+
+
+    @Override
+    public Iterator<Radio> iterator() {
+        return radioById.values().iterator();
+    }
+
+    @Override
+    public void forEach(Consumer<? super Radio> consumer) {
+        radioById.values().forEach(consumer);
+    }
+
+    @Override
+    public Spliterator<Radio> spliterator() {
+        return radioById.values().spliterator();
+    }
+
+    public Stream<Radio> stream() {        return StreamSupport.stream(spliterator(), false);    }
 
     private Radio build(RadioPlain radio) throws SQLException {
         Radio newRadio = new Radio();
