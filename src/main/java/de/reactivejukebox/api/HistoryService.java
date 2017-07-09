@@ -28,7 +28,7 @@ public class HistoryService {
     public Response getMessage(@Context User user, HistoryEntryPlain history) {
         try {
             new HistoryHandler().addHistoryEntry(history, user);
-            return Response.status(200).build();
+            return Response.ok().build();
         }catch (SQLException e){
             return Response.status(500).entity(e).build();
         }
