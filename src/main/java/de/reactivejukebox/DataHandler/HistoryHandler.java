@@ -1,6 +1,6 @@
 package de.reactivejukebox.DataHandler;
 
-import de.reactivejukebox.database.DatabaseAccessObject;
+import de.reactivejukebox.model.Model;
 import de.reactivejukebox.model.HistoryEntries;
 import de.reactivejukebox.model.HistoryEntryPlain;
 import de.reactivejukebox.model.User;
@@ -17,7 +17,7 @@ public class HistoryHandler {
      * @throws SQLException if something goes wrong
      */
     public HistoryHandler(){
-        historyEntries = DatabaseAccessObject.getInstance().getHistoryEntries();
+        historyEntries = Model.getInstance().getHistoryEntries();
     }
 
     public void addHistoryEntry(HistoryEntryPlain entry, User user) throws SQLException {

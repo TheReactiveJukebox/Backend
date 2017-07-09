@@ -1,9 +1,5 @@
 package de.reactivejukebox.model;
 
-import de.reactivejukebox.database.DatabaseAccessObject;
-
-import java.sql.SQLException;
-
 public class UserPlain {
     Integer id;
     String username;

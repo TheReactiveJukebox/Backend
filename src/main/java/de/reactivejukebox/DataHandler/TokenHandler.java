@@ -1,6 +1,6 @@
 package de.reactivejukebox.DataHandler;
 
-import de.reactivejukebox.database.DatabaseAccessObject;
+import de.reactivejukebox.model.Model;
 import de.reactivejukebox.model.User;
 import de.reactivejukebox.model.UserPlain;
 import de.reactivejukebox.model.Users;
@@ -16,7 +16,7 @@ public class TokenHandler {
     private Users users;
 
     public TokenHandler(){
-        users = DatabaseAccessObject.getInstance().getUsers();
+        users = Model.getInstance().getUsers();
     }
     /**
      * Checks the login credentials of a user and generates a valid token. In short: the login is performed.

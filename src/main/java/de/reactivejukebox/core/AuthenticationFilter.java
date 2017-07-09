@@ -1,6 +1,6 @@
 package de.reactivejukebox.core;
 
-import de.reactivejukebox.database.DatabaseAccessObject;
+import de.reactivejukebox.model.Model;
 import de.reactivejukebox.model.User;
 
 import javax.annotation.Priority;
@@ -40,7 +40,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         String token = authorizationHeader.substring("Bearer".length()).trim();
         try {
             // Validate the token
-            User user = DatabaseAccessObject.getInstance().getUsers().getByToken(token);
+            User user = Model.getInstance().getUsers().getByToken(token);
             requestContext.setProperty("User", user);
             if (user == null){
                 System.out.printf("no User found");

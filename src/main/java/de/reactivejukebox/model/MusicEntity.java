@@ -10,8 +10,8 @@ public interface MusicEntity {
      * Sending, for example, the Artist and AlbumPlain objects embedded in a track object leaves
      * the question when to stop embedding more objects if there are cyclic references.
      * <p>
-     * Therefore, the API should only return "dumb" versions of the MusicEntities where
-     * references to other MusicEntities are replaced by their IDs.
+     * Therefore, the API should only return "dumb" versions of the Model where
+     * references to other Model are replaced by their IDs.
      *
      * @return a plain version of this MusicEntity
      */

@@ -1,14 +1,14 @@
-package de.reactivejukebox.database;
+package de.reactivejukebox.model;
 
 
-import de.reactivejukebox.model.*;
+import de.reactivejukebox.database.DatabaseFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class DatabaseAccessObject {
+public class Model {
 
-    private static DatabaseAccessObject instance;
+    private static Model instance;
 
     private Users users;
     private HistoryEntries historyEntries;
@@ -16,11 +16,10 @@ public class DatabaseAccessObject {
     private Artists artists;
     private Albums albums;
 
-    private DatabaseAccessObject() {
+    private Model() {
         users = new Users();
         historyEntries = new HistoryEntries(users);
-        try {
-            Connection con = DatabaseFactory.getInstance().getDatabase().getConnection();
+        try (Connection con = DatabaseFactory.getInstance().getDatabase().getConnection()) {
             artists = new Artists(con);
             albums = new Albums(con, artists);
             tracks = new Tracks(con, artists, albums);
@@ -34,11 +33,11 @@ public class DatabaseAccessObject {
         }
     }
 
-    public static synchronized DatabaseAccessObject getInstance() {
-        if (DatabaseAccessObject.instance == null) {
-            DatabaseAccessObject.instance = new DatabaseAccessObject();
+    public static synchronized Model getInstance() {
+        if (Model.instance == null) {
+            Model.instance = new Model();
         }
-        return DatabaseAccessObject.instance;
+        return Model.instance;
     }
 
     public Users getUsers(){
