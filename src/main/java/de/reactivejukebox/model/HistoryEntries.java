@@ -8,21 +8,31 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Spliterator;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
-public class HistoryEntries {
+
+//TODO don't keep the entire History in RAM
+public class HistoryEntries implements Iterable<HistoryEntry>{
     protected Connection con;
     protected PreparedStatementBuilder stmnt;
     protected ArrayList<HistoryEntry> entryList;
     private ConcurrentHashMap<Integer, HistoryEntry> entryById;
     private Users users;
+    private Tracks tracks;
+    private Radios radios;
 
-    public HistoryEntries(Users users) {
+    public HistoryEntries(Users users, Tracks tracks, Radios radios) {
         entryById = new ConcurrentHashMap<>();
         this.users = users;
+        this.tracks = tracks;
+        this.radios = radios;
     }
 
-    public HistoryEntry addEntry(HistoryEntryPlain entry) throws SQLException {
+    public HistoryEntry put(HistoryEntryPlain entry) throws SQLException {
         if (entry.getTime() == null) {
             LocalDateTime lt = LocalDateTime.now(ZoneId.of("UTC"));
             Timestamp t = Timestamp.valueOf(lt);
@@ -41,6 +51,7 @@ public class HistoryEntries {
             entry = entryById.get(id);
         } else {
             entry = build(fromDB("Id", id).get(0));
+            entryById.putIfAbsent(entry.getId(), entry);
         }
         return entry;
     }
@@ -62,12 +73,30 @@ public class HistoryEntries {
         return build(fromDB("UserId", id));
     }
 
+    public ArrayList<HistoryEntry> getListbyRadioId(int id) throws SQLException {
+        return build(fromDB("RadioId", id));
+    }
+
+    @Override
+    public Iterator<HistoryEntry> iterator() {
+        return entryById.values().iterator();
+    }
+
+    @Override
+    public void forEach(Consumer<? super HistoryEntry> consumer) {
+        entryById.values().forEach(consumer);
+    }
+
+    @Override
+    public Spliterator<HistoryEntry> spliterator() {
+        return entryById.values().spliterator();
+    }
+
+    public Stream<HistoryEntry> stream() {        return StreamSupport.stream(spliterator(), false);    }
+
     private HistoryEntry build(HistoryEntryPlain entry) throws SQLException {
-        //TODO get real Objects
-        TrackPlain t = new TrackPlain();
-        t.setId(entry.getTrackId());
-        Radio r = new Radio();
-        r.setId(entry.getRadioId());
+        Track t = tracks.get(entry.getTrackId());
+        Radio r = radios.get(entry.getRadioId());
         User u = users.get(entry.getUserId());
         return new HistoryEntry(entry.getId(), t, r, u, entry.getTime());
     }
