@@ -12,8 +12,6 @@ public class HistoryHandler {
     private HistoryEntries historyEntries;
     /** adds a new HistoryEntry to the Database
      *
-     * @param entry HistoryHandler with Radio and TrackPlain id
-     * @param user
      * @throws SQLException if something goes wrong
      */
     public HistoryHandler(){
@@ -22,7 +20,7 @@ public class HistoryHandler {
 
     public void addHistoryEntry(HistoryEntryPlain entry, User user) throws SQLException {
         entry.setUserId(user.getId());
-        historyEntries.addEntry(entry);
+        historyEntries.put(entry);
     }
 
     //TODO Add methods to get and filter History
