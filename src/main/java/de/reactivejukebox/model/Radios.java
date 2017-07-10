@@ -141,7 +141,6 @@ public class Radios implements Iterable<Radio>{
             radio.setId(rs.getInt("id"));
             radio.setUserId(rs.getInt("userid"));
             radio.setRandom(rs.getBoolean("israndom"));
-            con.close();
             results.add(radio);
         }
         con.close();
