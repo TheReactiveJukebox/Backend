@@ -59,7 +59,7 @@ public class JukeboxService {
     @Path("/next")
     public Response getNextSongs(@Context User user, @QueryParam("count") int count) {
         try {
-            List<Track> results = new RadioHandler().getSongs(count, user);
+            List<TrackPlain> results = new RadioHandler().getSongs(count, user);
             return Response.ok(results)
                     .build();
         } catch (SQLException e) {

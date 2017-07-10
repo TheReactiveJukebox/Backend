@@ -18,13 +18,9 @@ public class Tracks implements Iterable<Track> {
             "WHERE song.albumid=album.id " +
             "      AND song.id=song_artist.songid";
     protected Map<Integer, Track> tracks;
-    List<Integer> keys;
-    Random rng;
 
     public Tracks() {
         tracks = new ConcurrentHashMap<>();
-        keys = new ArrayList<Integer>(tracks.keySet());
-        rng = new Random();
     }
 
     public Tracks(Connection con, Artists artists, Albums albums) throws SQLException {
@@ -43,21 +39,12 @@ public class Tracks implements Iterable<Track> {
                     rs.getInt("duration")
             ));
         }
-        keys = new ArrayList<Integer>(tracks.keySet());
     }
 
     public Track get(int id) {
         return tracks.get(id);
     }
 
-    //TODO improve performance
-    public ArrayList<Track> getRandom(int count){
-        ArrayList<Track> results = new ArrayList<>();
-        for(int i =0;i<count;i++) {
-            results.add(tracks.get(keys.get(rng.nextInt(keys.size()))));
-        }
-        return results;
-    }
 
     // TODO if need be: write changes back to database
     public Track put(int id, Track track) {
@@ -67,6 +54,8 @@ public class Tracks implements Iterable<Track> {
     public Track remove(int id) {
         return tracks.remove(id);
     }
+
+    public int size(){return tracks.size();}
 
     @Override
     public Iterator<Track> iterator() {

@@ -9,6 +9,7 @@ public class RadioHandler {
     private Radios radios;
     private HistoryEntries historyEntries;
     private Tracks tracks;
+    private Random random;
 
     public RadioHandler() {
         radios = Model.getInstance().getRadios();
@@ -25,27 +26,54 @@ public class RadioHandler {
         return radios.put(radio).getPlainObject();
     }
 
-    public List<Track> getSongs(int count, User user) throws SQLException {
+    public List<TrackPlain> getSongs(int count, User user) throws SQLException {
         Radio radio = radios.getByUserId(user.getId());
         if (radio.isRandom()) {
             ArrayList<HistoryEntry> history = historyEntries.getListbyRadioId(radio.getId());
-            Collection<Track> usedTracks = new ArrayList<>();
+            ArrayList<Track> tracksList;
+            Collection<Track> usedTracks = new ArrayList<Track>();
             for (HistoryEntry entry : history) {
                 usedTracks.add(entry.getTrack());
             }
             ArrayList<Track> randomTracks = new ArrayList<>();
             int i = 0;
             while (randomTracks.size() < count) {
-                randomTracks = tracks.getRandom(count);
+
+                randomTracks = pickSample(tracks, count, random);
+
                 if (i < 5) {
                     randomTracks.removeAll(usedTracks);
                 } else {
                     //TODO clear History
                 }
             }
-            return randomTracks.subList(0, count - 1);
-        }else{
-            return new ArrayList<Track>();
+            randomTracks.subList(0, count - 1);
+            List<TrackPlain> result= new ArrayList<>();
+            for (Track t :randomTracks){
+                result.add((TrackPlain) t.getPlainObject());
+            }
+            return result;
+        } else {
+            return new ArrayList<TrackPlain>();
         }
+    }
+
+    private ArrayList<Track> pickSample(Tracks population, int nSamplesNeeded, Random r) {
+        ArrayList<Track> list = new ArrayList<>();
+        Iterator<Track> iter = population.iterator();
+        int nLeft = population.size();
+        while (nSamplesNeeded > 0) {
+            int rand = r.nextInt(nLeft);
+            if (iter.hasNext()) {
+                if (rand < nSamplesNeeded) {
+                    list.add(iter.next());
+                    nSamplesNeeded--;
+                } else {
+                    iter.next();
+                }
+            }
+            nLeft--;
+        }
+        return list;
     }
 }
