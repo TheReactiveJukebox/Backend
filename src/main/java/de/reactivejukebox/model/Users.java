@@ -30,9 +30,9 @@ public class Users implements Iterable<User>{
         toDB(user);
         User newUser = fromDB("name", user.getUsername());
         generateToken(newUser);
-        userByName.put(user.getUsername(), newUser);
-        userById.put(user.getId(), newUser);
-        userByToken.put(user.getToken(), newUser);
+        userByName.put(newUser.getUsername(), newUser);
+        userById.put(newUser.getId(), newUser);
+        userByToken.put(newUser.getToken(), newUser);
         return newUser;
     }
 

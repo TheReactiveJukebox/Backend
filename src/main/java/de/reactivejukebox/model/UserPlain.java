@@ -53,6 +53,6 @@ public class UserPlain {
     }
 
     public void setInviteKey(String inviteKey) {
-        inviteKey = inviteKey;
+        this.inviteKey = inviteKey;
     }
 }
