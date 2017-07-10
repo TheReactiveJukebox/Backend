@@ -1,5 +1,6 @@
 package de.reactivejukebox.core;
 
+import de.reactivejukebox.model.Model;
 import de.reactivejukebox.model.User;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.process.internal.RequestScoped;
@@ -10,6 +11,7 @@ import org.glassfish.jersey.server.ResourceConfig;
  * javax.ws.rs.Application Class
  */
 public class ReactiveJukebox extends ResourceConfig {
+    private Model model;
     public ReactiveJukebox() {
         packages(true, "de.reactivejukebox.api");
         register(CORSResponseFilter.class);
@@ -22,5 +24,6 @@ public class ReactiveJukebox extends ResourceConfig {
                         .in(RequestScoped.class);
             }
         });
+        model = Model.getInstance();
     }
 }
