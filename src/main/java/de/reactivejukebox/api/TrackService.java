@@ -16,6 +16,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -27,27 +29,25 @@ public class TrackService {
     @Produces(MediaType.APPLICATION_JSON)
     @Secured
     @Path("/")
-    public Response search(@QueryParam("id") int trackId,
+    public Response search(@QueryParam("id") List<Integer> id,
                            @QueryParam("titlesubstr") String titleSubstring,
                            @QueryParam("artist") int artist,
                            @QueryParam("count") int countResults) {
         List<MusicEntityPlain> result;
-        if (trackId != 0) {
-            result = new ArrayList<>();
-            result.add(Model.getInstance().getTracks().get(trackId).getPlainObject());
-
-        } else {
-            Stream<Track> s = Model.getInstance().getTracks().stream();
-            if (titleSubstring != null) {
-                Database db = DatabaseProvider.getInstance().getDatabase();
-                s = s.filter(track ->
-                        db.normalize(track.getTitle()).startsWith(db.normalize(titleSubstring)));
-            }
-            if (artist != 0) {
-                s = s.filter(track -> track.getArtist().getId() == artist);
-            }
-            result = s.map(Track::getPlainObject).collect(Collectors.toList());
+        Set<Integer> ids = new TreeSet<>(id);
+        Stream<Track> s = Model.getInstance().getTracks().stream();
+        if (!ids.isEmpty()) {
+            s = s.filter(track -> ids.contains(track.getId()));
         }
+        if (titleSubstring != null) {
+            Database db = DatabaseProvider.getInstance().getDatabase();
+            s = s.filter(track ->
+                    db.normalize(track.getTitle()).startsWith(db.normalize(titleSubstring)));
+        }
+        if (artist != 0) {
+            s = s.filter(track -> track.getArtist().getId() == artist);
+        }
+        result = s.map(Track::getPlainObject).collect(Collectors.toList());
         return Response.status(200)
                 .entity(result)
                 .build();
