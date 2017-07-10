@@ -15,6 +15,7 @@ public class RadioHandler {
         radios = Model.getInstance().getRadios();
         historyEntries = Model.getInstance().getHistoryEntries();
         tracks = Model.getInstance().getTracks();
+        random = new Random();
     }
 
     public RadioPlain getRadiostation(User user) throws SQLException {
@@ -39,7 +40,7 @@ public class RadioHandler {
             int i = 0;
             while (randomTracks.size() < count) {
 
-                randomTracks = pickSample(tracks, count, random);
+                randomTracks = pickSample(tracks, count);
 
                 if (i < 5) {
                     randomTracks.removeAll(usedTracks);
@@ -58,12 +59,12 @@ public class RadioHandler {
         }
     }
 
-    private ArrayList<Track> pickSample(Tracks population, int nSamplesNeeded, Random r) {
+    private ArrayList<Track> pickSample(Tracks population, int nSamplesNeeded) {
         ArrayList<Track> list = new ArrayList<>();
         Iterator<Track> iter = population.iterator();
         int nLeft = population.size();
         while (nSamplesNeeded > 0) {
-            int rand = r.nextInt(nLeft);
+            int rand = random.nextInt(nLeft);
             if (iter.hasNext()) {
                 if (rand < nSamplesNeeded) {
                     list.add(iter.next());
