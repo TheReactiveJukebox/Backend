@@ -39,7 +39,7 @@ public class HistoryEntries implements Iterable<HistoryEntry> {
             entry.setTime(t);
         }
         toDB(entry);
-        HistoryEntry newEntry = build(fromDB(entry));
+        HistoryEntry newEntry = build(entry);
         entryById.putIfAbsent(newEntry.getId(), newEntry);
         return newEntry;
     }
