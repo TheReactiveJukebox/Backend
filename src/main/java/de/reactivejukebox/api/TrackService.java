@@ -6,7 +6,6 @@ import de.reactivejukebox.database.DatabaseProvider;
 import de.reactivejukebox.model.Model;
 import de.reactivejukebox.model.MusicEntityPlain;
 import de.reactivejukebox.model.Track;
-import de.reactivejukebox.model.TrackPlain;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -14,13 +13,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 @Path("/track")
 public class TrackService {

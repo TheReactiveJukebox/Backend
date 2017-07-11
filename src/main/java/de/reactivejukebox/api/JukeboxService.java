@@ -1,19 +1,16 @@
 package de.reactivejukebox.api;
 
 import de.reactivejukebox.core.Secured;
-import de.reactivejukebox.database.DatabaseProvider;
 import de.reactivejukebox.datahandlers.RadioHandler;
-import de.reactivejukebox.model.*;
+import de.reactivejukebox.model.RadioPlain;
+import de.reactivejukebox.model.TrackPlain;
+import de.reactivejukebox.model.User;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Path("/jukebox")
