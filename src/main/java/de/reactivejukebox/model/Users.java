@@ -46,7 +46,7 @@ public class Users implements Iterable<User> {
             PreparedStatementBuilder builder = new PreparedStatementBuilder()
                     .select("*")
                     .from("jukebox_user")
-                    .addFilter("name=?", (query, i) -> query.setInt(i, id));
+                    .addFilter("id=?", (query, i) -> query.setInt(i, id));
             user = createUserFromStatement(builder);
         }
         return user;
