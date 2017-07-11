@@ -30,7 +30,7 @@ public class RadioHandler {
     public List<TrackPlain> getSongs(int count, User user) throws SQLException {
         Radio radio = radios.getByUserId(user.getId());
         if (radio.isRandom()) {
-            ArrayList<HistoryEntry> history = historyEntries.getListbyRadioId(radio.getId());
+            ArrayList<HistoryEntry> history = historyEntries.getListByRadioId(radio.getId());
             ArrayList<Track> tracksList;
             Collection<Track> usedTracks = new ArrayList<Track>();
             for (HistoryEntry entry : history) {

@@ -68,11 +68,11 @@ public class HistoryEntries implements Iterable<HistoryEntry> {
         return newEntry;
     }
 
-    public ArrayList<HistoryEntry> getListbyUserId(int id) throws SQLException {
+    public ArrayList<HistoryEntry> getListByUserId(int id) throws SQLException {
         return build(fromDB("UserId", id));
     }
 
-    public ArrayList<HistoryEntry> getListbyRadioId(int id) throws SQLException {
+    public ArrayList<HistoryEntry> getListByRadioId(int id) throws SQLException {
         return build(fromDB("RadioId", id));
     }
 
