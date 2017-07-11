@@ -30,7 +30,7 @@ public class HistoryService {
     @Path("/")
     public Response getMessage(@Context User user, HistoryEntryPlain history) {
         try {
-            HistoryEntry historyEntry = new HistoryHandler().addHistoryEntry(history, user);
+            HistoryEntryPlain historyEntry = new HistoryHandler().addHistoryEntry(history, user).getPlainObject();
             return Response.ok().entity(historyEntry).build();
         } catch (SQLException e) {
             return Response.status(500).entity(e).build();
