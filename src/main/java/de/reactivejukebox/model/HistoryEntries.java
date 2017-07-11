@@ -95,6 +95,10 @@ public class HistoryEntries implements Iterable<HistoryEntry> {
         return StreamSupport.stream(spliterator(), false);
     }
 
+    /**
+     * Build a HistoryEntry object from a HistoryEntryPlain object.
+     *
+     */
     private HistoryEntry build(HistoryEntryPlain entry) throws SQLException {
         Track t = tracks.get(entry.getTrackId());
         Radio r = radios.get(entry.getRadioId());
@@ -151,6 +155,10 @@ public class HistoryEntries implements Iterable<HistoryEntry> {
         return results;
     }
 
+    /**
+     * Insert HistoryEntryPlain in database table history and set historyId in history object.
+     *
+     */
     private void toDB(HistoryEntryPlain entry) throws SQLException {
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement addEntry = con.prepareStatement("INSERT INTO history (songId, userId, radioId, time) VALUES (?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
