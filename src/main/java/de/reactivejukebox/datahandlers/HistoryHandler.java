@@ -1,12 +1,8 @@
 package de.reactivejukebox.datahandlers;
 
-import de.reactivejukebox.model.Model;
-import de.reactivejukebox.model.HistoryEntries;
-import de.reactivejukebox.model.HistoryEntryPlain;
-import de.reactivejukebox.model.User;
+import de.reactivejukebox.model.*;
 
 import java.sql.SQLException;
-
 
 public class HistoryHandler {
     private HistoryEntries historyEntries;
@@ -18,9 +14,9 @@ public class HistoryHandler {
         historyEntries = Model.getInstance().getHistoryEntries();
     }
 
-    public void addHistoryEntry(HistoryEntryPlain entry, User user) throws SQLException {
+    public HistoryEntry addHistoryEntry(HistoryEntryPlain entry, User user) throws SQLException {
         entry.setUserId(user.getId());
-        historyEntries.put(entry);
+        return historyEntries.put(entry);
     }
 
     //TODO Add methods to get and filter History
