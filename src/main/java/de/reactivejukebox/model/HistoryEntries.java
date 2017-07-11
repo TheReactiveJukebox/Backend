@@ -153,12 +153,17 @@ public class HistoryEntries implements Iterable<HistoryEntry> {
 
     private void toDB(HistoryEntryPlain entry) throws SQLException {
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        PreparedStatement addEntry = con.prepareStatement("INSERT INTO history (songId, userId, radioId, time) VALUES (?, ?, ?, ?);");
+        PreparedStatement addEntry = con.prepareStatement("INSERT INTO history (songId, userId, radioId, time) VALUES (?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
         addEntry.setInt(1, entry.getTrackId());
         addEntry.setInt(2, entry.getUserId());
         addEntry.setInt(3, entry.getRadioId());
         addEntry.setTimestamp(4, entry.getTime());
         addEntry.executeUpdate();
+        // add new id from database to entry object
+        ResultSet rs = addEntry.getGeneratedKeys();
+        if (rs.next()) {
+            entry.setId(rs.getInt(1));
+        }
         con.close();
     }
 
