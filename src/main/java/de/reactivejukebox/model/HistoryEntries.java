@@ -16,10 +16,9 @@ import java.util.stream.StreamSupport;
 
 
 //TODO don't keep the entire History in RAM
-public class HistoryEntries implements Iterable<HistoryEntry>{
+public class HistoryEntries implements Iterable<HistoryEntry> {
     protected Connection con;
     protected PreparedStatementBuilder stmnt;
-    protected ArrayList<HistoryEntry> entryList;
     private ConcurrentHashMap<Integer, HistoryEntry> entryById;
     private Users users;
     private Tracks tracks;
@@ -92,7 +91,9 @@ public class HistoryEntries implements Iterable<HistoryEntry>{
         return entryById.values().spliterator();
     }
 
-    public Stream<HistoryEntry> stream() {        return StreamSupport.stream(spliterator(), false);    }
+    public Stream<HistoryEntry> stream() {
+        return StreamSupport.stream(spliterator(), false);
+    }
 
     private HistoryEntry build(HistoryEntryPlain entry) throws SQLException {
         Track t = tracks.get(entry.getTrackId());
@@ -113,22 +114,22 @@ public class HistoryEntries implements Iterable<HistoryEntry>{
     private HistoryEntryPlain fromDB(HistoryEntryPlain entry) throws SQLException {
 
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        stmnt = new PreparedStatementBuilder();
-        stmnt.select("*");
-        stmnt.from("history");
-        stmnt.addFilter("SongId = '" + entry.getTrackId() + "'");
-        stmnt.addFilter("RadioId = '" + entry.getRadioId() + "'");
-        stmnt.addFilter("UserId = '" + entry.getUserId() + "'");
-        stmnt.addFilter("Time = '" + entry.getTime() + "'");
+        stmnt = new PreparedStatementBuilder()
+                .select("*")
+                .from("history")
+                .addFilter("SongId=?", (query, i) -> query.setInt(i, entry.getTrackId()))
+                .addFilter("RadioId=?", (query, i) -> query.setInt(i, entry.getRadioId()))
+                .addFilter("UserId=?", (query, i) -> query.setInt(i, entry.getUserId()))
+                .addFilter("Time=?", (query, i) -> query.setTimestamp(i, entry.getTime()));
         return fromDB().get(0);
     }
 
-    private ArrayList<HistoryEntryPlain> fromDB(String col, Object o) throws SQLException {
+    private ArrayList<HistoryEntryPlain> fromDB(String col, int id) throws SQLException {
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        stmnt = new PreparedStatementBuilder();
-        stmnt.select("*");
-        stmnt.from("history");
-        stmnt.addFilter(col + " = '" + o.toString() + "'");
+        stmnt = new PreparedStatementBuilder()
+                .select("*")
+                .from("history")
+                .addFilter(col + "=?", (query, i) -> query.setInt(i, id));
         return fromDB();
     }
 
@@ -152,11 +153,11 @@ public class HistoryEntries implements Iterable<HistoryEntry>{
 
     private void toDB(HistoryEntryPlain entry) throws SQLException {
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        PreparedStatement addEntry = con.prepareStatement("INSERT INTO history (songId, userId, radioId,time) VALUES ( ?, ?, ?,?);");
+        PreparedStatement addEntry = con.prepareStatement("INSERT INTO history (songId, userId, radioId, time) VALUES (?, ?, ?, ?);");
         addEntry.setInt(1, entry.getTrackId());
         addEntry.setInt(2, entry.getUserId());
         addEntry.setInt(3, entry.getRadioId());
-        addEntry.setTimestamp(4,entry.getTime());
+        addEntry.setTimestamp(4, entry.getTime());
         addEntry.executeUpdate();
         con.close();
     }

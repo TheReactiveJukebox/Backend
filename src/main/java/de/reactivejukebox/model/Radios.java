@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class Radios implements Iterable<Radio>{
+public class Radios implements Iterable<Radio> {
     protected Users users;
     protected PreparedStatementBuilder stmnt;
     protected Connection con;
@@ -44,9 +44,9 @@ public class Radios implements Iterable<Radio>{
         if (radioById.containsKey(id)) {
             radio = radioById.get(id);
         } else {
-            radio = build(fromDB("Id", id).get(0));
+            radio = build(fromDB(id).get(0));
             radioById.putIfAbsent(radio.getId(), radio);
-            radioByUserId.putIfAbsent(radio.getUser().getId(),radio);
+            radioByUserId.putIfAbsent(radio.getUser().getId(), radio);
         }
         return radio;
     }
@@ -60,7 +60,7 @@ public class Radios implements Iterable<Radio>{
             dummy.setUserId(id);
             radio = build(fromDB(dummy));
             radioById.putIfAbsent(radio.getId(), radio);
-            radioByUserId.putIfAbsent(radio.getUser().getId(),radio);
+            radioByUserId.putIfAbsent(radio.getUser().getId(), radio);
         }
         return radio;
     }
@@ -85,7 +85,9 @@ public class Radios implements Iterable<Radio>{
         return radioById.values().spliterator();
     }
 
-    public Stream<Radio> stream() {        return StreamSupport.stream(spliterator(), false);    }
+    public Stream<Radio> stream() {
+        return StreamSupport.stream(spliterator(), false);
+    }
 
     private Radio build(RadioPlain radio) throws SQLException {
         Radio newRadio = new Radio();
@@ -126,13 +128,12 @@ public class Radios implements Iterable<Radio>{
     }
 
 
-    private ArrayList<RadioPlain> fromDB(String col, Object o) throws SQLException {
+    private ArrayList<RadioPlain> fromDB(int id) throws SQLException {
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        stmnt = new PreparedStatementBuilder();
-        stmnt.select("*");
-        stmnt.from("radio");
-        stmnt.addFilter(col + " = '" + o.toString() + "'");
-
+        stmnt = new PreparedStatementBuilder()
+                .select("*")
+                .from("radio")
+                .addFilter("Id=?", (query, i) -> query.setInt(i, id));
         PreparedStatement dbQuery = stmnt.prepare(con);
         ArrayList<RadioPlain> results = new ArrayList<>();
         ResultSet rs = dbQuery.executeQuery();

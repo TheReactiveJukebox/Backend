@@ -12,10 +12,8 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class Users implements Iterable<User>{
+public class Users implements Iterable<User> {
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-    protected PreparedStatementBuilder stmnt;
-    protected Connection con;
     private ConcurrentHashMap<String, User> userByName;
     private ConcurrentHashMap<Integer, User> userById;
     private ConcurrentHashMap<String, User> userByToken;
@@ -28,7 +26,11 @@ public class Users implements Iterable<User>{
 
     public User put(UserPlain user) throws SQLException {
         toDB(user);
-        User newUser = fromDB("name", user.getUsername());
+        PreparedStatementBuilder builder = new PreparedStatementBuilder()
+                .select("*")
+                .from("jukebox_user")
+                .addFilter("name=?", (query, i) -> query.setString(i, user.getUsername()));
+        User newUser = createUserFromStatement(builder);
         generateToken(newUser);
         userByName.put(newUser.getUsername(), newUser);
         userById.put(newUser.getId(), newUser);
@@ -41,7 +43,11 @@ public class Users implements Iterable<User>{
         if (userById.containsKey(id)) {
             user = userById.get(id);
         } else {
-            user = fromDB("id", id);
+            PreparedStatementBuilder builder = new PreparedStatementBuilder()
+                    .select("*")
+                    .from("jukebox_user")
+                    .addFilter("name=?", (query, i) -> query.setInt(i, id));
+            user = createUserFromStatement(builder);
         }
         return user;
     }
@@ -51,7 +57,11 @@ public class Users implements Iterable<User>{
         if (userByToken.containsKey(name)) {
             user = userByToken.get(name);
         } else {
-            user = fromDB("name", name);
+            PreparedStatementBuilder builder = new PreparedStatementBuilder()
+                    .select("*")
+                    .from("jukebox_user")
+                    .addFilter("name=?", (query, i) -> query.setString(i, name));
+            user = createUserFromStatement(builder);
         }
         return user;
     }
@@ -61,7 +71,11 @@ public class Users implements Iterable<User>{
         if (userByToken.containsKey(token)) {
             user = userByToken.get(token);
         } else {
-            user = fromDB("token", token);
+            PreparedStatementBuilder builder = new PreparedStatementBuilder()
+                    .select("*")
+                    .from("jukebox_user")
+                    .addFilter("token=?", (query, i) -> query.setString(i, token));
+            user = createUserFromStatement(builder);
         }
         return user;
     }
@@ -70,10 +84,8 @@ public class Users implements Iterable<User>{
         user = get(user.getUsername());
         String oldT = user.getToken();
         generateToken(user);
-        try{
-            userByToken.remove(oldT);
-        }catch (Exception e){}
-        userByToken.put(user.getToken(),user);
+        userByToken.remove(oldT);
+        userByToken.put(user.getToken(), user);
         return user;
     }
 
@@ -96,36 +108,36 @@ public class Users implements Iterable<User>{
         return userById.values().spliterator();
     }
 
-    public Stream<User> stream() {        return StreamSupport.stream(spliterator(), false);    }
+    public Stream<User> stream() {
+        return StreamSupport.stream(spliterator(), false);
+    }
 
-    private User fromDB(String col, Object o) throws SQLException {
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        stmnt = new PreparedStatementBuilder();
-        stmnt.select("*");
-        stmnt.from("jukebox_user");
-        stmnt.addFilter(col + " = '" + o.toString() + "'");
-        stmnt.prepare(con);
-        PreparedStatement dbQuery = stmnt.prepare(con);
-
-        User user = new User();
-        ResultSet rs = dbQuery.executeQuery();
-        if (rs.next()) {
-            user.setUserID(rs.getInt("id"));
-            user.setUsername(rs.getString("name"));
-            user.setHashedPassword(rs.getString("password"));
-            user.setToken((rs.getString("token")));
-            con.close();
-            return user;
-        } else {
-            con.close();
-            throw new SQLException();
+    private User createUserFromStatement(PreparedStatementBuilder builder) throws SQLException {
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet res = null;
+        try {
+            con = DatabaseProvider.getInstance().getDatabase().getConnection();
+            statement = builder.prepare(con);
+            res = statement.executeQuery();
+            User user = new User();
+            if (res.next()) {
+                user.setUserID(res.getInt("id"));
+                user.setUsername(res.getString("name"));
+                user.setHashedPassword(res.getString("password"));
+                user.setToken((res.getString("token")));
+                return user;
+            } else throw new SQLException();
+        } finally {
+            if (con != null) con.close();
+            if (res != null) res.close();
+            if (statement != null) statement.close();
         }
-
     }
 
     private void toDB(UserPlain user) throws SQLException {
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        PreparedStatement addUser = con.prepareStatement("INSERT INTO jukebox_user (name, password, token) VALUES ( ?, ?, ?);");
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        PreparedStatement addUser = con.prepareStatement("INSERT INTO jukebox_user (name, password, token) VALUES (?, ?, ?);");
         addUser.setString(1, user.getUsername());
         addUser.setString(2, user.getPassword());
         addUser.setString(3, user.getToken());
@@ -136,7 +148,7 @@ public class Users implements Iterable<User>{
     private void generateToken(User user) throws SQLException {
         String t = sdf.format(new Timestamp(System.currentTimeMillis())) + user.getUsername().substring(0, 2);
         user.setToken(t);
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement updateToken = con.prepareStatement("UPDATE jukebox_user SET token = ? WHERE id = ?;");
         updateToken.setString(1, user.getToken());
         updateToken.setInt(2, user.getId());
