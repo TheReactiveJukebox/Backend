@@ -62,9 +62,11 @@ public class HistoryEntryPlain {
 
     @Override
     public String toString() {
-        return "[user=" + userId +
-                ", track=" + trackId +
-                ", radio=" + radioId +
+        return "[id=" + id +
+                ", userId=" + userId +
+                ", trackId=" + trackId +
+                ", radioId=" + radioId +
+                ", time="+ time +
                 "]";
     }
 }
