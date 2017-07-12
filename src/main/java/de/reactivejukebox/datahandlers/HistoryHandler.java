@@ -19,5 +19,9 @@ public class HistoryHandler {
         return historyEntries.put(entry);
     }
 
+    public void deleteHistoryEntry(Integer historyId) throws SQLException {
+        historyEntries.delete(historyId);
+    }
+
     //TODO Add methods to get and filter History
 }

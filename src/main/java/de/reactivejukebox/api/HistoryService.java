@@ -2,14 +2,10 @@ package de.reactivejukebox.api;
 
 import de.reactivejukebox.core.Secured;
 import de.reactivejukebox.datahandlers.HistoryHandler;
-import de.reactivejukebox.model.HistoryEntry;
 import de.reactivejukebox.model.HistoryEntryPlain;
 import de.reactivejukebox.model.User;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -32,6 +28,18 @@ public class HistoryService {
         try {
             HistoryEntryPlain historyEntry = new HistoryHandler().addHistoryEntry(history, user).getPlainObject();
             return Response.ok().entity(historyEntry).build();
+        } catch (SQLException e) {
+            return Response.status(500).entity(e).build();
+        }
+    }
+
+    @DELETE
+    @Secured
+    @Path("/")
+    public Response deleteEntry(@QueryParam("id") Integer historyId) {
+        try {
+            new HistoryHandler().deleteHistoryEntry(historyId);
+            return Response.ok().build();
         } catch (SQLException e) {
             return Response.status(500).entity(e).build();
         }
