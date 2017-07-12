@@ -1,8 +1,7 @@
 package de.reactivejukebox.core;
 
-import de.reactivejukebox.user.Token;
-import de.reactivejukebox.user.TokenHandler;
-import de.reactivejukebox.user.UserData;
+import de.reactivejukebox.model.Model;
+import de.reactivejukebox.model.User;
 
 import javax.annotation.Priority;
 import javax.ws.rs.NotAuthorizedException;
@@ -16,7 +15,7 @@ import java.io.IOException;
 
 
 /**
- * Checks whether the {@link Token} exists.
+ * Checks whether the Token exists.
  * If Token Exists adds user to Context
  * <p>
  * else Sets Response.Status.UNAUTHORIZED
@@ -41,8 +40,11 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         String token = authorizationHeader.substring("Bearer".length()).trim();
         try {
             // Validate the token
-            UserData user = TokenHandler.getTokenHandler().getUser(new Token(token));
-            requestContext.setProperty("UserData", user);
+            User user = Model.getInstance().getUsers().getByToken(token);
+            requestContext.setProperty("User", user);
+            if (user == null){
+                System.out.printf("no User found");
+            }
         } catch (Exception e) {
             requestContext.abortWith(
                     Response.status(Response.Status.UNAUTHORIZED).build());

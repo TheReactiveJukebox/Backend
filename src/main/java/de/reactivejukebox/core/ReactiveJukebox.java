@@ -1,6 +1,7 @@
 package de.reactivejukebox.core;
 
-import de.reactivejukebox.user.UserData;
+import de.reactivejukebox.model.Model;
+import de.reactivejukebox.model.User;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.process.internal.RequestScoped;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -10,6 +11,7 @@ import org.glassfish.jersey.server.ResourceConfig;
  * javax.ws.rs.Application Class
  */
 public class ReactiveJukebox extends ResourceConfig {
+    private Model model;
     public ReactiveJukebox() {
         packages(true, "de.reactivejukebox.api");
         register(CORSResponseFilter.class);
@@ -18,9 +20,10 @@ public class ReactiveJukebox extends ResourceConfig {
             @Override
             protected void configure() {
                 bindFactory(UserDataFactory.class)
-                        .to(UserData.class)
+                        .to(User.class)
                         .in(RequestScoped.class);
             }
         });
+        model = Model.getInstance();
     }
 }
