@@ -1,6 +1,6 @@
 package de.reactivejukebox.core;
 
-import de.reactivejukebox.user.UserData;
+import de.reactivejukebox.model.User;
 import org.glassfish.hk2.api.Factory;
 
 import javax.inject.Inject;
@@ -8,9 +8,9 @@ import javax.ws.rs.container.ContainerRequestContext;
 
 
 /**
- * Generates UserData for "@Context UserData user"
+ * Generates User for "@Context User user"
  */
-public class UserDataFactory implements Factory<UserData> {
+public class UserDataFactory implements Factory<User> {
     private final ContainerRequestContext context;
 
     @Inject
@@ -19,11 +19,12 @@ public class UserDataFactory implements Factory<UserData> {
     }
 
     @Override
-    public UserData provide() {
-        return (UserData) context.getProperty("UserData");
+    public User provide() {
+        User user = (User) context.getProperty("User");
+        return user;
     }
 
     @Override
-    public void dispose(UserData t) {
+    public void dispose(User t) {
     }
 }

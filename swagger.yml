@@ -1,0 +1,361 @@
+#
+# Section with general information about the API
+#
+swagger: "2.0"
+info:
+  description: "Specification for the Reactive Jukebox API"
+  version: "0.0.1"
+  title: "The Reactive Jukebox"
+host: "reactivejukebox.de"
+basePath: "/api"
+tags:
+- name: "track"
+  description: "Everything about tracks"
+- name: "jukebox"
+  description: "Everything about jukeboxes"
+schemes:
+- "http"
+
+#
+# Specification of individual API endpoints
+#
+paths:
+
+  /track:
+    get:
+      tags:
+        - "track"
+      summary: "Get information about tracks"
+      operationId: "getTracks"
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/track'
+        400:
+          description: "The provided query is malformed"
+      parameters:
+        - name: "id"
+          in: "query"
+          description: "An id to a track"
+          type: number
+          format: int64
+        - name: "name"
+          in: "query"
+          description: "A (partial) name of a track"
+          type: string
+        - name: "startyear"
+          in: "query"
+          description: "Filter tracks released before this year"
+          type: number
+          format: int32
+        - name: "endyear"
+          in: "query"
+          description: "Filter tracks released after this year"
+          type: number
+          format: int32
+        - name: "genres"
+          in: "query"
+          description: "An array of genres"
+          type: array
+          items:
+            type: string
+
+
+  /track/feedback:
+    post:
+      tags:
+        - "track"
+      summary: "An endpoint to push feedback about a track to"
+      operationId: "pushTrackFeedback"
+      parameters:
+        - in: "body"
+          name: "feedback"
+          description: "An object containing the feedback"
+          required: true
+          schema:
+            $ref: '#/definitions/trackFeedback'
+        - name: "trackId"
+          in: "query"
+          type: number
+          format: int64
+          required: true
+          description: "The track to give feedback to"
+      responses:
+        200:
+          description: OK
+        400:
+          description: "The provided feedback is malformed"
+
+
+  /album:
+    get:
+      tags:
+        - track
+      operationId: getAlbum
+      parameters: 
+        - name: artistid
+          in: query
+          type: number
+          format: int64
+          description: The ID of the artist from whom to get the albums
+        - name: id
+          type: number
+          format: int64
+          in: query
+          description: The album ID 
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/album'
+
+
+  /jukebox:
+    get:
+      tags:
+        - "jukebox"
+      summary: "Get your current jukebox"
+      operationId: "getJukebox"
+      parameters: 
+        - name: "id"
+          type: number
+          format: int64
+          in: query
+          required: false
+          description: "If given, returns specified jukebox, else returns last jukebox this user created"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/jukebox'
+    post:
+      tags:
+        - "jukebox"
+      summary: "Push a newly created jukebox"
+      parameters:
+        - name: "jukebox"
+          in: "body"
+          schema:
+            $ref: '#/definitions/jukebox'
+          required: true
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/jukebox'
+        400:
+          description: "The provided jukebox object is malformed"
+
+
+  /jukebox/feedback:
+    post:
+      tags:
+        - "jukebox"
+      summary: "An endpoint to push feedback about the current jukebox to"
+      operationId: "pushJukeboxFeedback"
+      parameters:
+        - in: "body"
+          name: "feedback"
+          description: "an object containing the feedback"
+          required: true
+          schema:
+            $ref: '#/definitions/jukeboxFeedback'
+        - in: query
+          name: id
+          type: number
+          format: int64
+          description: The ID of the jukebox to give feedback to (default is latest)
+          required: false
+      responses:
+        200:
+          description: OK
+        400:
+          description: "The provided feedback is malformed"
+
+
+  /jukebox/next:
+    get:
+      tags:
+        - "jukebox"
+      summary: "Endpoint to receive new tracks for this jukebox"
+      operationId: "getNextTracks"
+      parameters:
+        - name: "count"
+          in: "query"
+          description: "Number of tracks to get"
+          required: true
+          type: number
+          format: int32
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/track'
+        411:
+          description: "No number of tracks specified"
+
+
+  /artist:
+    get:
+      summary: "Get information about an artist"
+      operationId: "getArtist"
+      parameters:
+        - name: "id"
+          in: "query"
+          description: "The id associated with an artist"
+          type: integer
+          format: int64
+        - name: "name"
+          in: "query"
+          description: "The (partial) name of an artist"
+          type: string
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/artist'
+        400:
+          description: "The provided query is malformed"
+
+
+  /user:
+    get:
+      summary: "Get information and settings about the user"
+      operationId: "getUser"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/user'
+
+
+  /history:
+    post:
+      summary: "Push a track to the history when a user listened to it"
+      operationId: "pushHistory"
+      parameters:
+        - name: "entry"
+          in: "body"
+          description: "A history entry"
+          required: true
+          schema:
+            $ref: '#/definitions/historyEntry'
+      responses:
+        200:
+          description: OK
+        400:
+          description: "The provided history entry is malformed"
+
+#
+# Definitions for data types that endpoints may produce or consume
+#
+definitions:
+  track:
+    type: object
+    properties:
+      id:
+        type: number
+        format: int64
+      title:
+        type: string
+      file:
+        type: string
+      cover:
+        type: string
+      artistid:
+        type: number
+        format: int64
+      genres:
+        type: array
+        items:
+          type: string
+      releaseYear:
+        type: number
+        format: int32
+
+
+  artist:
+    type: object
+    properties:
+      id:
+        type: number
+        format: int64
+      name:
+        type: string
+
+
+  album:
+    type: object
+    properties:
+      id:
+        type: number
+        format: int64
+        description: The ID of this album
+      title:
+        type: string
+      artistid:
+        type: number
+        format: int64
+        description: The artist's ID for this album
+      trackids:
+        type: array
+        items:
+          type: number
+          format: int64
+          description: Tracks as IDs for this album
+
+
+  trackFeedback:
+    type: object
+
+
+  jukebox:
+    type: object
+    properties:
+      id:
+        type: number
+        format: int64
+      genres:
+        type: array
+      mood:
+        type: string
+      startyear:
+        type: number
+        format: int32
+      endyear:
+        type: number
+        format: int32
+      isRandom:
+        type: boolean
+
+
+  jukeboxFeedback:
+    type: object
+
+
+  user:
+    type: object
+    properties:
+      id:
+        type: number
+        format: int64
+      name:
+        type: string
+
+
+  historyEntry:
+    type: object
+    properties:
+      trackid:
+        type: number
+        format: int64
+        description: ID of the track for this history entry

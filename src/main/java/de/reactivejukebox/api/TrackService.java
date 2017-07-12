@@ -1,9 +1,11 @@
 package de.reactivejukebox.api;
 
-import de.reactivejukebox.core.Database;
-import de.reactivejukebox.core.Search;
 import de.reactivejukebox.core.Secured;
-import de.reactivejukebox.model.MusicEntity;
+import de.reactivejukebox.database.Database;
+import de.reactivejukebox.database.DatabaseProvider;
+import de.reactivejukebox.model.Model;
+import de.reactivejukebox.model.MusicEntityPlain;
+import de.reactivejukebox.model.Track;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -11,8 +13,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.sql.SQLException;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Path("/track")
 public class TrackService {
@@ -21,20 +26,28 @@ public class TrackService {
     @Produces(MediaType.APPLICATION_JSON)
     @Secured
     @Path("/")
-    public Response search(@QueryParam("id") int trackId,
+    public Response search(@QueryParam("id") List<Integer> id,
                            @QueryParam("titlesubstr") String titleSubstring,
                            @QueryParam("artist") int artist,
                            @QueryParam("count") int countResults) {
-        try {
-            List<MusicEntity> results = Search.forTrack(Database.getInstance(), trackId, titleSubstring, artist).execute(countResults);
-            return Response.status(200)
-                    .entity(results)
-                    .build();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return Response.status(500)
-                    .entity("An error occured while querying the database for tracks.")
-                    .build();
+        List<MusicEntityPlain> result;
+        Set<Integer> ids = new TreeSet<>(id);
+        Stream<Track> s = Model.getInstance().getTracks().stream();
+        if (!ids.isEmpty()) {
+            s = s.filter(track -> ids.contains(track.getId()));
         }
+        if (titleSubstring != null) {
+            Database db = DatabaseProvider.getInstance().getDatabase();
+            s = s.filter(track ->
+                    db.normalize(track.getTitle()).startsWith(db.normalize(titleSubstring)));
+        }
+        if (artist != 0) {
+            s = s.filter(track -> track.getArtist().getId() == artist);
+        }
+        result = s.map(Track::getPlainObject).collect(Collectors.toList());
+        return Response.status(200)
+                .entity(result)
+                .build();
+
     }
 }

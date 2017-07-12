@@ -1,4 +1,4 @@
-package de.reactivejukebox.user;
+package de.reactivejukebox.model;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -9,13 +9,14 @@ import java.util.List;
 /**
  * This is a simple class to store the retrieved JSON-Login credentials and hash the password.
  **/
-public class UserData implements Serializable {
+public class User implements Serializable {
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
     protected String username;
     protected String password;
     protected String pwHash;
     protected String inviteKey;
-    protected int userID;
+    protected Integer userID;
+    protected String token;
     protected List<String> roles;
 
     public String getUsername() {
@@ -68,13 +69,13 @@ public class UserData implements Serializable {
         this.pwHash = hashedPassword;
     }
 
-    private String generateSHA256(String message) {
+    protected static String generateSHA256(String message) {
         String hashedMessage = null;
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(message.getBytes(StandardCharsets.UTF_8));
 
-            hashedMessage = this.bytesToHexString(hash).toLowerCase();
+            hashedMessage = User.bytesToHexString(hash).toLowerCase();
         } catch (NoSuchAlgorithmException e) {
             //will never happen
             System.err.println("SHA-256 is not available anymore");
@@ -90,12 +91,20 @@ public class UserData implements Serializable {
         this.userID = id;
     }
 
-    @Override
-    public String toString() {
-        return "UserData [username=" + username + ", userID=" + userID + "]";
+    public String getToken() {
+        return token;
     }
 
-    private String bytesToHexString(byte[] bytes) {
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    @Override
+    public String toString() {
+        return "User [username=" + username + ", userID=" + userID + "]";
+    }
+
+    private static String bytesToHexString(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
         for (int j = 0; j < bytes.length; j++) {
             int v = bytes[j] & 0xFF;
@@ -103,5 +112,8 @@ public class UserData implements Serializable {
             hexChars[j * 2 + 1] = hexArray[v & 0x0F];
         }
         return new String(hexChars);
+    }
+    public UserPlain getPlainObject(){
+        return new UserPlain(userID,username,token);
     }
 }
