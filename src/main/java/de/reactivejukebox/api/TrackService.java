@@ -50,4 +50,16 @@ public class TrackService {
                 .build();
 
     }
+	
+	@GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Secured
+    @Path("/feedback")
+	public Response pushTrackFeedback (@QueryParam("id") Integer id) {
+		//TODO: implement
+		return Response.status(500);
+	}
+	
+	
+	
 }
