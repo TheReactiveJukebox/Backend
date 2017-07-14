@@ -9,8 +9,9 @@ public class TrackPlain implements MusicEntityPlain {
     String cover;
     int duration; //song duration in seconds
     String file;
+    int playCount;
 
-    public TrackPlain(int id, String title, int artist, int album, String cover, String file, int duration) {
+    public TrackPlain(int id, String title, int artist, int album, String cover, String file, int duration, int playCount) {
         this.id = id;
         this.title = title;
         this.artist = artist;
@@ -18,9 +19,18 @@ public class TrackPlain implements MusicEntityPlain {
         this.cover = cover;
         this.duration = duration;
         this.file = file;
+        this.playCount = playCount;
     }
 
     public TrackPlain(){}
+
+    public int getPlayCount() {
+        return playCount;
+    }
+
+    public void setPlayCount(int playCount) {
+        this.playCount = playCount;
+    }
 
     public int getId() {
         return id;

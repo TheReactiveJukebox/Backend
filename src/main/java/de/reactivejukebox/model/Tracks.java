@@ -13,7 +13,7 @@ import java.util.stream.StreamSupport;
 public class Tracks implements Iterable<Track> {
 
     private static final String SQL_QUERY =
-            "SELECT song.id, song.title, song_artist.artistid, song.albumid, album.cover, song.hash, song.duration " +
+            "SELECT song.id, song.title, song_artist.artistid, song.albumid, album.cover, song.hash, song.duration, song.playcount " +
             "FROM song, song_artist, album " +
             "WHERE song.albumid=album.id " +
             "      AND song.id=song_artist.songid";
@@ -36,7 +36,8 @@ public class Tracks implements Iterable<Track> {
                     albums.get(rs.getInt("albumid")),
                     rs.getString("cover"),
                     rs.getString("hash"),
-                    rs.getInt("duration")
+                    rs.getInt("duration"),
+                    rs.getInt("playcount")
             ));
         }
     }
