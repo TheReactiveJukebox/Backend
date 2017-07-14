@@ -3,6 +3,8 @@ package de.reactivejukebox.recommendations.strategies;
 import de.reactivejukebox.model.*;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
 import org.mockito.Mockito;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -15,7 +17,7 @@ import static org.testng.Assert.*;
 public class SameArtistGreatestHitsTest {
 
     @BeforeClass
-    private void prepareDummyData() {
+    private void setUp() {
         Artists artists = new Artists();
         Tracks tracks = new Tracks();
         Albums albums = new Albums();
@@ -25,14 +27,7 @@ public class SameArtistGreatestHitsTest {
         Mockito.when(m.getArtists()).thenReturn(artists);
         Mockito.when(m.getTracks()).thenReturn(tracks);
 
-
-        try {
-            Field instance = Model.class.getDeclaredField("instance");
-            instance.setAccessible(true);
-            instance.set(null, m);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            System.err.println("Could not set instance field of model class using reflection!");
-        }
+        setModelInstance(m);
 
         Artist artistA = new Artist(1, "Artist A");
         Album albumA = new Album(1, "Album A", artistA);
@@ -72,4 +67,19 @@ public class SameArtistGreatestHitsTest {
 
     }
 
+    @AfterClass
+    public void tearDown() {
+        setModelInstance(null);
+    }
+
+    private void setModelInstance(Model m) {
+        try {
+            Field instance = Model.class.getDeclaredField("instance");
+            instance.setAccessible(true);
+            instance.set(null, m);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            System.err.println("Could not set instance field of model class using reflection!");
+            Assert.fail();
+        }
+    }
 }
