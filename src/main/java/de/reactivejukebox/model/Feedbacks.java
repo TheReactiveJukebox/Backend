@@ -13,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Spliterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -219,6 +220,7 @@ public class Feedbacks implements Iterable<Feedback> {
         return feedback;
     }
 
+
     private ArrayList<FeedbackPlain> fromDbByRadioId(int id) throws SQLException {
         ArrayList<FeedbackPlain> feedbacks = new ArrayList<>();
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
@@ -251,16 +253,56 @@ public class Feedbacks implements Iterable<Feedback> {
 
     }
 
-    private void toDB(FeedbackPlain feedback) throws SQLException {
-        //TODO: Write feedback to DB
+    private int[] convertReasonTypesToInts(FeedbackPlain feedback) {
+        int[] list = new int[7];
+        if(feedback.isSongLiked()) list[0] = 1;
+        if(feedback.isSongDisliked()) list[0] = -1;
+        if(!feedback.isSongLiked() && !feedback.isSongDisliked()) list[0] = 0;
 
-        /* example
+        if(feedback.isArtistLiked()) list[1] = 1;
+        if(feedback.isArtistDisliked()) list[1] = -1;
+        if(!feedback.isArtistLiked() && !feedback.isArtistDisliked()) list[1] = 0;
+
+        if(feedback.isSpeedLiked()) list[2] = 1;
+        if(feedback.isSpeedDisliked()) list[2] = -1;
+        if(!feedback.isSpeedLiked() && !feedback.isSpeedDisliked()) list[2] = 0;
+
+        if(feedback.isGenreLiked()) list[3] = 1;
+        if(feedback.isGenreDisliked()) list[3] = -1;
+        if(!feedback.isGenreLiked() && !feedback.isGenreDisliked()) list[3] = 0;
+
+        if(feedback.isDynamicsLiked()) list[4] = 1;
+        if(feedback.isDynamicsDisliked()) list[4] = -1;
+        if(!feedback.isDynamicsLiked() && !feedback.isDynamicsDisliked()) list[4] = 0;
+
+        if(feedback.isPeriodLiked()) list[5] = 1;
+        if(feedback.isPeriodDisliked()) list[5] = -1;
+        if(!feedback.isPeriodLiked() && !feedback.isPeriodDisliked()) list[5] = 0;
+
+        if(feedback.isMoodLiked()) list[6] = 1;
+        if(feedback.isMoodDisliked()) list[6] = -1;
+        if(!feedback.isMoodLiked() && !feedback.isMoodDisliked()) list[6] = 0;
+
+        return list;
+    }
+
+    private void toDB(FeedbackPlain feedback) throws SQLException {
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        PreparedStatement addFeedback = con.prepareStatement("INSERT INTO radio (userid, israndom) VALUES (?, ?);");
-        addUser.setInt(1, radio.getUserId());
-        addUser.setBoolean(2, radio.isRandom());
-        addUser.executeUpdate();
+        PreparedStatement addFeedback = con.prepareStatement("INSERT INTO feedback (userid, songid, radioid, " +
+                "feedbacksong, feedbackartist, feedbackspeed, feedbackgenre, feedbackdynamics, feedbackperiod," +
+                "feedbackmood) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+        addFeedback.setInt(1, feedback.getUserId());
+        addFeedback.setInt(2, feedback.getId());
+        addFeedback.setInt(3, feedback.getRadioId());
+
+        int[] values = convertReasonTypesToInts(feedback);
+        int len = Math.min(values.length, 7);
+        for(int i = 0; i < len; i++) {
+            addFeedback.setInt(i+4, values[i]);
+        }
+
+        addFeedback.executeUpdate();
         con.close();
-        */
+        
     }
 }
