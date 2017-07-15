@@ -1,6 +1,5 @@
 package de.reactivejukebox.model;
 
-
 public class RadioPlain {
     private int id;
     private int userId;
@@ -9,8 +8,19 @@ public class RadioPlain {
     private String mood;
     private int startYear;
     private int endYear;
+    private String algorithm;
+    private int[] startTracks;
 
-    public RadioPlain(int id, int userId, boolean random, String[] genres, String mood, int startYear, int endYear) {
+    public RadioPlain(
+            int id,
+            int userId,
+            boolean random,
+            String[] genres,
+            String mood,
+            int startYear,
+            int endYear,
+            String algorithm,
+            int[] startTracks) {
         this.id = id;
         this.userId = userId;
         this.random = random;
@@ -18,9 +28,11 @@ public class RadioPlain {
         this.mood = mood;
         this.startYear = startYear;
         this.endYear = endYear;
+        this.algorithm = algorithm;
+        this.startTracks = startTracks;
     }
 
-    public RadioPlain(){
+    public RadioPlain() {
 
     }
 
@@ -80,4 +92,19 @@ public class RadioPlain {
         this.endYear = endYear;
     }
 
+    public String getAlgorithm() {
+        return algorithm;
+    }
+
+    public void setAlgorithm(String algorithm) {
+        this.algorithm = algorithm;
+    }
+
+    public int[] getStartTracks() {
+        return startTracks;
+    }
+
+    public void setStartTracks(int[] startTracks) {
+        this.startTracks = startTracks;
+    }
 }

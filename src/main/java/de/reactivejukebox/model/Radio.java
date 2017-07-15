@@ -1,6 +1,9 @@
 package de.reactivejukebox.model;
 
+import de.reactivejukebox.recommendations.strategies.StrategyType;
+
 import java.io.Serializable;
+import java.util.List;
 
 public class Radio implements Serializable {
 
@@ -11,9 +14,20 @@ public class Radio implements Serializable {
     private String mood;
     private int startYear;
     private int endYear;
+    private List<Track> startTracks;
+    private StrategyType algorithm;
 
 
-    public Radio(int id, User user, boolean random, String[] genres, String mood, int startYear, int endYear) {
+    public Radio(
+            int id,
+            User user,
+            boolean random,
+            String[] genres,
+            String mood,
+            int startYear,
+            int endYear,
+            List<Track> startTracks,
+            StrategyType algorithm) {
         this.id = id;
         this.user = user;
         this.random = random;
@@ -21,9 +35,11 @@ public class Radio implements Serializable {
         this.mood = mood;
         this.startYear = startYear;
         this.endYear = endYear;
+        this.startTracks = startTracks;
+        this.algorithm = algorithm;
     }
 
-    public Radio(){
+    public Radio() {
 
     }
 
@@ -83,8 +99,30 @@ public class Radio implements Serializable {
         this.endYear = endYear;
     }
 
-    public RadioPlain getPlainObject(){
-        return new RadioPlain(id, user.getId(),random,genres,mood,startYear,endYear);
+    public List<Track> getStartTracks() {
+        return startTracks;
     }
 
+    public void setStartTracks(List<Track> startTracks) {
+        this.startTracks = startTracks;
+    }
+
+    public StrategyType getAlgorithm() {
+        return algorithm;
+    }
+
+    public void setAlgorithm(StrategyType algorithm) {
+        this.algorithm = algorithm;
+    }
+
+    public RadioPlain getPlainObject() {
+        int[] ids = null;
+        if (startTracks != null) {
+            ids = new int[startTracks.size()];
+            for (int i = 0; i < startTracks.size(); i++) {
+                ids[i] = startTracks.get(i).getId();
+            }
+        }
+        return new RadioPlain(id, user.getId(), random, genres, mood, startYear, endYear, algorithm.name(), ids);
+    }
 }
