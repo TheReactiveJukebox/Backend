@@ -1,15 +1,17 @@
 package de.reactivejukebox.model;
 
-import java.io.Serializable;
+/**
+ * Created by Ben Wilkes on 13.07.2017.
+ */
 
 /**
- * Created by Ben on 13.07.2017.
+ * TrackFeedbackPlain is a model for a track feedback containing only ids for user and radio
  */
-public class Feedback implements Serializable {
+public class TrackFeedbackPlain {
 
     private int id; //global feedback id
-    private User user;
-    private Radio radio;
+    private int userId;
+    private int radioId;
     private boolean songLiked;
     private boolean songDisliked;
     private boolean artistLiked;
@@ -25,10 +27,14 @@ public class Feedback implements Serializable {
     private boolean moodLiked;
     private boolean moodDisliked;
 
-    public Feedback(int id, User user, Radio radio, boolean songLiked, boolean songDisliked, boolean artistLiked, boolean artistDisliked, boolean speedLiked, boolean speedDisliked, boolean genreLiked, boolean genreDisliked, boolean dynamicsLiked, boolean dynamicsDisliked, boolean periodLiked, boolean periodDisliked, boolean moodLiked, boolean moodDisliked) {
+
+    public TrackFeedbackPlain() {
+    }
+
+    public TrackFeedbackPlain(int id, int userId, int radioId, boolean songLiked, boolean songDisliked, boolean artistLiked, boolean artistDisliked, boolean speedLiked, boolean speedDisliked, boolean genreLiked, boolean genreDisliked, boolean dynamicsLiked, boolean dynamicsDisliked, boolean periodLiked, boolean periodDisliked, boolean moodLiked, boolean moodDisliked) {
         this.id = id;
-        this.user = user;
-        this.radio = radio;
+        this.userId = userId;
+        this.radioId = radioId;
         this.songLiked = songLiked;
         this.songDisliked = songDisliked;
         this.artistLiked = artistLiked;
@@ -45,9 +51,6 @@ public class Feedback implements Serializable {
         this.moodDisliked = moodDisliked;
     }
 
-    public Feedback() {
-    }
-
     public int getId() {
         return id;
     }
@@ -56,20 +59,20 @@ public class Feedback implements Serializable {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
-    public Radio getRadio() {
-        return radio;
+    public int getRadioId() {
+        return radioId;
     }
 
-    public void setRadio(Radio radio) {
-        this.radio = radio;
+    public void setRadioId(int radioId) {
+        this.radioId = radioId;
     }
 
     public boolean isSongLiked() {

@@ -16,7 +16,7 @@ public class Model {
     private Artists artists;
     private Albums albums;
     private Radios radios;
-    private Feedbacks feedbacks;
+    private TrackFeedbacks trackFeedbacks;
 
     private Model() {
         users = new Users();
@@ -33,7 +33,7 @@ public class Model {
             tracks = new Tracks();
         }
         radios = new Radios(users);
-        feedbacks = new Feedbacks(users, radios);
+        trackFeedbacks = new TrackFeedbacks(users, radios);
         historyEntries = new HistoryEntries(users, tracks, radios);
     }
 
@@ -64,7 +64,11 @@ public class Model {
         return albums;
     }
 
-    public Radios getRadios() { return radios; }
+    public Radios getRadios() {
+        return radios;
+    }
 
-    public Feedbacks getFeedbacks() { return feedbacks; }
+    public TrackFeedbacks getTrackFeedbacks() {
+        return trackFeedbacks;
+    }
 }

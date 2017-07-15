@@ -1,13 +1,19 @@
 package de.reactivejukebox.model;
 
+import java.io.Serializable;
 /**
  * Created by Ben Wilkes on 13.07.2017.
  */
-public class FeedbackPlain {
+
+
+/**
+ * The TrackFeedback class is a model for a single track feedback
+ */
+public class TrackFeedback implements Serializable {
 
     private int id; //global feedback id
-    private int userId;
-    private int radioId;
+    private User user;
+    private Radio radio;
     private boolean songLiked;
     private boolean songDisliked;
     private boolean artistLiked;
@@ -23,14 +29,10 @@ public class FeedbackPlain {
     private boolean moodLiked;
     private boolean moodDisliked;
 
-
-    public FeedbackPlain() {
-    }
-
-    public FeedbackPlain(int id, int userId, int radioId, boolean songLiked, boolean songDisliked, boolean artistLiked, boolean artistDisliked, boolean speedLiked, boolean speedDisliked, boolean genreLiked, boolean genreDisliked, boolean dynamicsLiked, boolean dynamicsDisliked, boolean periodLiked, boolean periodDisliked, boolean moodLiked, boolean moodDisliked) {
+    public TrackFeedback(int id, User user, Radio radio, boolean songLiked, boolean songDisliked, boolean artistLiked, boolean artistDisliked, boolean speedLiked, boolean speedDisliked, boolean genreLiked, boolean genreDisliked, boolean dynamicsLiked, boolean dynamicsDisliked, boolean periodLiked, boolean periodDisliked, boolean moodLiked, boolean moodDisliked) {
         this.id = id;
-        this.userId = userId;
-        this.radioId = radioId;
+        this.user = user;
+        this.radio = radio;
         this.songLiked = songLiked;
         this.songDisliked = songDisliked;
         this.artistLiked = artistLiked;
@@ -47,6 +49,9 @@ public class FeedbackPlain {
         this.moodDisliked = moodDisliked;
     }
 
+    public TrackFeedback() {
+    }
+
     public int getId() {
         return id;
     }
@@ -55,20 +60,20 @@ public class FeedbackPlain {
         this.id = id;
     }
 
-    public int getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public int getRadioId() {
-        return radioId;
+    public Radio getRadio() {
+        return radio;
     }
 
-    public void setRadioId(int radioId) {
-        this.radioId = radioId;
+    public void setRadio(Radio radio) {
+        this.radio = radio;
     }
 
     public boolean isSongLiked() {
@@ -182,4 +187,40 @@ public class FeedbackPlain {
     public void setMoodDisliked(boolean moodDisliked) {
         this.moodDisliked = moodDisliked;
     }
+
+    /**
+     * Creates a matching TrackFeedbackPlain object.
+     *
+     * @return the matching TrackFeedbackPlain object with the same attributes as this TrackFeedback object
+     */
+    public TrackFeedbackPlain getPlainObject() {
+        TrackFeedbackPlain plainFeedback = new TrackFeedbackPlain();
+        plainFeedback.setUserId(this.getUser().getId());
+        plainFeedback.setRadioId(this.getRadio().getId());
+        plainFeedback.setId(this.getId());
+
+        plainFeedback.setSongDisliked(this.isSongDisliked());
+        plainFeedback.setSongLiked(this.isSongLiked());
+
+        plainFeedback.setArtistDisliked(this.isArtistDisliked());
+        plainFeedback.setArtistLiked(this.isArtistLiked());
+
+        plainFeedback.setSpeedDisliked(this.isSpeedDisliked());
+        plainFeedback.setSpeedLiked(this.isSpeedLiked());
+
+        plainFeedback.setGenreDisliked(this.isGenreDisliked());
+        plainFeedback.setGenreLiked(this.isGenreLiked());
+
+        plainFeedback.setPeriodDisliked(this.isPeriodDisliked());
+        plainFeedback.setPeriodLiked(this.isPeriodLiked());
+
+        plainFeedback.setMoodDisliked(this.isMoodDisliked());
+        plainFeedback.setMoodLiked(this.isMoodLiked());
+
+        plainFeedback.setDynamicsDisliked(this.isDynamicsDisliked());
+        plainFeedback.setDynamicsLiked(this.isDynamicsLiked());
+
+        return plainFeedback;
+    }
 }
+

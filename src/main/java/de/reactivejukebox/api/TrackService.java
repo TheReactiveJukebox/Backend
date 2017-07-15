@@ -3,22 +3,24 @@ package de.reactivejukebox.api;
 import de.reactivejukebox.core.Secured;
 import de.reactivejukebox.database.Database;
 import de.reactivejukebox.database.DatabaseProvider;
-import de.reactivejukebox.model.Model;
-import de.reactivejukebox.model.MusicEntityPlain;
-import de.reactivejukebox.model.Track;
+import de.reactivejukebox.datahandlers.TrackFeedbackHandler;
+import de.reactivejukebox.model.*;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+
+/**
+ * Class for handling things concerning tracks, such as providing information on tracks or giving feedback to certain tracks
+ */
 @Path("/track")
 public class TrackService {
 
@@ -50,16 +52,32 @@ public class TrackService {
                 .build();
 
     }
-	
-	@GET
-    @Produces(MediaType.APPLICATION_JSON)
+
+    /**
+     * Post feedback to a track with a given id
+     *
+     * @param feedback posted feedback
+     * @param id       id of the track of the feedback
+     * @param user     user who gave the feedback
+     * @return TrackFeedbackPlain Object of the feedback actually written to the DB
+     */
+    @POST
     @Secured
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     @Path("/feedback")
-	public Response pushTrackFeedback (@QueryParam("id") Integer id) {
-		//TODO: implement
-		return Response.status(500);
-	}
-	
-	
-	
+    public Response pushTrackFeedback(TrackFeedbackPlain feedback, @QueryParam("id") Integer id, @Context User user) {
+
+        System.out.printf("Pushing track feedback: " + feedback.toString());
+
+        try {
+            TrackFeedbackPlain feedbackReturn = new TrackFeedbackHandler().addTrackFeedback(feedback, user).getPlainObject();
+            return Response.ok().entity(feedbackReturn).build();
+        } catch (SQLException e) {
+            return Response.status(500).entity(e).build();
+        }
+
+    }
+
+
 }
