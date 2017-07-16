@@ -14,6 +14,7 @@ public class TrackFeedback implements Serializable {
     private int id; //global feedback id
     private User user;
     private Radio radio;
+    private Track track;
     private boolean songLiked;
     private boolean songDisliked;
     private boolean artistLiked;
@@ -29,10 +30,11 @@ public class TrackFeedback implements Serializable {
     private boolean moodLiked;
     private boolean moodDisliked;
 
-    public TrackFeedback(int id, User user, Radio radio, boolean songLiked, boolean songDisliked, boolean artistLiked, boolean artistDisliked, boolean speedLiked, boolean speedDisliked, boolean genreLiked, boolean genreDisliked, boolean dynamicsLiked, boolean dynamicsDisliked, boolean periodLiked, boolean periodDisliked, boolean moodLiked, boolean moodDisliked) {
+    public TrackFeedback(int id, User user, Radio radio, Track track, boolean songLiked, boolean songDisliked, boolean artistLiked, boolean artistDisliked, boolean speedLiked, boolean speedDisliked, boolean genreLiked, boolean genreDisliked, boolean dynamicsLiked, boolean dynamicsDisliked, boolean periodLiked, boolean periodDisliked, boolean moodLiked, boolean moodDisliked) {
         this.id = id;
         this.user = user;
         this.radio = radio;
+        this.track = track;
         this.songLiked = songLiked;
         this.songDisliked = songDisliked;
         this.artistLiked = artistLiked;
@@ -75,6 +77,10 @@ public class TrackFeedback implements Serializable {
     public void setRadio(Radio radio) {
         this.radio = radio;
     }
+
+    public Track getTrack() { return track; }
+
+    public void setTrack(Track track) { this.track = track; }
 
     public boolean isSongLiked() {
         return songLiked;

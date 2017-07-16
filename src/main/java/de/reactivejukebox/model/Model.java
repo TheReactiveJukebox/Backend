@@ -33,7 +33,7 @@ public class Model {
             tracks = new Tracks();
         }
         radios = new Radios(users);
-        trackFeedbacks = new TrackFeedbacks(users, radios);
+        trackFeedbacks = new TrackFeedbacks(users, tracks, radios);
         historyEntries = new HistoryEntries(users, tracks, radios);
     }
 

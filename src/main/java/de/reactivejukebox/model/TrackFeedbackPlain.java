@@ -12,6 +12,7 @@ public class TrackFeedbackPlain {
     private int id; //global feedback id
     private int userId;
     private int radioId;
+    private int trackId;
     private boolean songLiked;
     private boolean songDisliked;
     private boolean artistLiked;
@@ -31,10 +32,11 @@ public class TrackFeedbackPlain {
     public TrackFeedbackPlain() {
     }
 
-    public TrackFeedbackPlain(int id, int userId, int radioId, boolean songLiked, boolean songDisliked, boolean artistLiked, boolean artistDisliked, boolean speedLiked, boolean speedDisliked, boolean genreLiked, boolean genreDisliked, boolean dynamicsLiked, boolean dynamicsDisliked, boolean periodLiked, boolean periodDisliked, boolean moodLiked, boolean moodDisliked) {
+    public TrackFeedbackPlain(int id, int userId, int radioId, int trackId, boolean songLiked, boolean songDisliked, boolean artistLiked, boolean artistDisliked, boolean speedLiked, boolean speedDisliked, boolean genreLiked, boolean genreDisliked, boolean dynamicsLiked, boolean dynamicsDisliked, boolean periodLiked, boolean periodDisliked, boolean moodLiked, boolean moodDisliked) {
         this.id = id;
         this.userId = userId;
         this.radioId = radioId;
+        this.trackId = trackId;
         this.songLiked = songLiked;
         this.songDisliked = songDisliked;
         this.artistLiked = artistLiked;
@@ -74,6 +76,10 @@ public class TrackFeedbackPlain {
     public void setRadioId(int radioId) {
         this.radioId = radioId;
     }
+
+    public int getTrackId() { return trackId; }
+
+    public void setTrackId(int trackId) { this.trackId = trackId; }
 
     public boolean isSongLiked() {
         return songLiked;

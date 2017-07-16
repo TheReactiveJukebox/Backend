@@ -68,6 +68,8 @@ public class TrackService {
     @Path("/feedback")
     public Response pushTrackFeedback(TrackFeedbackPlain feedback, @QueryParam("id") Integer id, @Context User user) {
 
+        feedback.setTrackId(id);
+        feedback.setUserId(user.getId());
         System.out.printf("Pushing track feedback: " + feedback.toString());
 
         try {

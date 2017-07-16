@@ -26,23 +26,25 @@ import java.util.stream.StreamSupport;
 public class TrackFeedbacks implements Iterable<TrackFeedback> {
     protected Users users;
     protected Radios radios;
+    protected Tracks tracks;
     protected PreparedStatementBuilder stmnt;
     protected Connection con;
     protected ConcurrentHashMap<Integer, TrackFeedback> feedbackById;
     protected ConcurrentHashMap<Integer, ArrayList<TrackFeedback>> feedbacksByUserId;
     protected ConcurrentHashMap<Integer, ArrayList<TrackFeedback>> feedbacksByRadioId;
 
-    public TrackFeedbacks(Users users, Radios radios) {
+    public TrackFeedbacks(Users users, Tracks tracks, Radios radios) {
         feedbackById = new ConcurrentHashMap<>();
         feedbacksByUserId = new ConcurrentHashMap<>();
         feedbacksByRadioId = new ConcurrentHashMap<>();
         this.users = users;
         this.radios = radios;
+        this.tracks = tracks;
     }
 
     public TrackFeedback put(TrackFeedbackPlain feedback) throws SQLException {
         toDB(feedback);
-        feedback = fromDB(feedback.getId());
+        feedback = fromDbByFeedback(feedback);
         TrackFeedback newTrackFeedback = build(feedback);
 
         feedbackById.putIfAbsent(newTrackFeedback.getId(), newTrackFeedback);
@@ -133,6 +135,8 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
 
         newTrackFeedback.setRadio(radios.get(feedback.getRadioId()));
         newTrackFeedback.setUser(users.get(feedback.getUserId()));
+        newTrackFeedback.setId(feedback.getId());
+        newTrackFeedback.setTrack(tracks.get(feedback.getTrackId()));
 
         newTrackFeedback.setSongDisliked(feedback.isSongDisliked());
         newTrackFeedback.setSongLiked(feedback.isSongLiked());
@@ -188,11 +192,30 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
         return feedbacks;
     }
 
+    private TrackFeedbackPlain fromDbByFeedback(TrackFeedbackPlain feedback) throws SQLException {
+        con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM feedback WHERE userid = ? AND radioid = ?  AND songid = ? ORDER BY id DESC;");
+        getFeedback.setInt(1, feedback.getUserId());
+        getFeedback.setInt(2, feedback.getRadioId());
+        getFeedback.setInt(3, feedback.getTrackId());
+        ResultSet rs = getFeedback.executeQuery();
+        if (rs.next()) {
+            TrackFeedbackPlain result = this.buildPlain(rs);
+            con.close();
+            return result;
+        } else {
+            con.close();
+            throw new SQLException("TrackFeedback was not found");
+        }
+
+    }
+
     private TrackFeedbackPlain buildPlain(ResultSet rs) throws SQLException {
         TrackFeedbackPlain feedback = new TrackFeedbackPlain();
         feedback.setId(rs.getInt("id"));
         feedback.setUserId(rs.getInt("userid"));
         feedback.setRadioId(rs.getInt("radioid"));
+        feedback.setTrackId(rs.getInt("songid"));
 
         if (rs.getInt("feedbacksong") > 0) {
             feedback.setSongLiked(true);
@@ -312,7 +335,7 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
                 "feedbacksong, feedbackartist, feedbackspeed, feedbackgenre, feedbackdynamics, feedbackperiod," +
                 "feedbackmood) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
         addFeedback.setInt(1, feedback.getUserId());
-        addFeedback.setInt(2, feedback.getId());
+        addFeedback.setInt(2, feedback.getTrackId());
         addFeedback.setInt(3, feedback.getRadioId());
 
         int[] values = convertReasonTypesToInts(feedback);
