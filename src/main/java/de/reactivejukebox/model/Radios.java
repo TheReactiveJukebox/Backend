@@ -3,20 +3,23 @@ package de.reactivejukebox.model;
 
 import de.reactivejukebox.database.DatabaseProvider;
 import de.reactivejukebox.database.PreparedStatementBuilder;
+import de.reactivejukebox.recommendations.strategies.StrategyType;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Spliterator;
+import java.sql.*;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public class Radios implements Iterable<Radio> {
+
+    private static final String INSERT_RADIO =
+            "INSERT INTO radio (userid, AlgorithmName, ReferenceSongID) VALUES (?, ?, ?);";
+    private  static final String SELECT_RADIO =
+            "SELECT * FROM radio WHERE userid = ? ORDER BY id DESC LIMIT 1;";
+
     protected Users users;
     protected PreparedStatementBuilder stmnt;
     protected Connection con;
@@ -90,15 +93,23 @@ public class Radios implements Iterable<Radio> {
     }
 
     private Radio build(RadioPlain radio) throws SQLException {
-        Radio newRadio = new Radio();
-        newRadio.setRandom(radio.isRandom());
-        newRadio.setUser(users.get(radio.getUserId()));
-        newRadio.setId(radio.getId());
-        newRadio.setEndYear(radio.getEndYear());
-        newRadio.setGenres(radio.getGenres());
-        newRadio.setStartYear(radio.getStartYear());
-        newRadio.setMood(radio.getMood());
-        return newRadio;
+        // convert track id array to List<Track>
+        List<Track> startTracks = Arrays.stream(radio.getStartTracks())
+                .boxed()
+                .map(i -> Model.getInstance().getTracks().get(i))
+                .collect(Collectors.toList());
+
+        // return rich radio object
+        return new Radio(
+                radio.getId(),
+                users.get(radio.getUserId()),
+                radio.getGenres(),
+                radio.getMood(),
+                radio.getStartYear(),
+                radio.getEndYear(),
+                startTracks,
+                StrategyType.valueOf(radio.getAlgorithm())
+        );
     }
 
     private ArrayList<Radio> build(ArrayList<RadioPlain> radioList) throws SQLException {
@@ -112,13 +123,15 @@ public class Radios implements Iterable<Radio> {
 
     private RadioPlain fromDB(RadioPlain radio) throws SQLException {
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        PreparedStatement getRadio = con.prepareStatement("SELECT * FROM radio WHERE userid = ? ORDER BY id DESC LIMIT 1;");
+        PreparedStatement getRadio = con.prepareStatement(SELECT_RADIO);
         getRadio.setInt(1, radio.getUserId());
         ResultSet rs = getRadio.executeQuery();
         if (rs.next()) {
             radio.setId(rs.getInt("id"));
             radio.setUserId(rs.getInt("userid"));
-            radio.setRandom(rs.getBoolean("israndom"));
+            radio.setAlgorithm(rs.getString("AlgorithmName"));
+            // TODO when support for more than one reference song is implemented, update this
+            radio.setStartTracks(new int[] {rs.getInt("ReferenceSongId")});
             con.close();
             return radio;
         } else {
@@ -141,7 +154,9 @@ public class Radios implements Iterable<Radio> {
             RadioPlain radio = new RadioPlain();
             radio.setId(rs.getInt("id"));
             radio.setUserId(rs.getInt("userid"));
-            radio.setRandom(rs.getBoolean("israndom"));
+            radio.setAlgorithm(rs.getString("AlgorithmName"));
+            // TODO when support for more than one reference song is implemented, update this
+            radio.setStartTracks(new int[] {rs.getInt("ReferenceSongId")});
             results.add(radio);
         }
         con.close();
@@ -150,9 +165,15 @@ public class Radios implements Iterable<Radio> {
 
     private void toDB(RadioPlain radio) throws SQLException {
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        PreparedStatement addUser = con.prepareStatement("INSERT INTO radio (userid, israndom) VALUES (?, ?);");
+        PreparedStatement addUser = con.prepareStatement(INSERT_RADIO);
         addUser.setInt(1, radio.getUserId());
-        addUser.setBoolean(2, radio.isRandom());
+        addUser.setString(2, radio.getAlgorithm());
+        // TODO when support for more than one reference song is implemented, update this
+        if (radio.getStartTracks().length == 0) {
+            addUser.setNull(3, Types.INTEGER);
+        } else {
+            addUser.setInt(3, radio.getStartTracks()[0]);
+        }
         addUser.executeUpdate();
         con.close();
     }

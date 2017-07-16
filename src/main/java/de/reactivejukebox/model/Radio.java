@@ -9,7 +9,6 @@ public class Radio implements Serializable {
 
     private int id;
     private User user;
-    private boolean random;
     private String[] genres;
     private String mood;
     private int startYear;
@@ -21,7 +20,6 @@ public class Radio implements Serializable {
     public Radio(
             int id,
             User user,
-            boolean random,
             String[] genres,
             String mood,
             int startYear,
@@ -30,7 +28,6 @@ public class Radio implements Serializable {
             StrategyType algorithm) {
         this.id = id;
         this.user = user;
-        this.random = random;
         this.genres = genres;
         this.mood = mood;
         this.startYear = startYear;
@@ -57,14 +54,6 @@ public class Radio implements Serializable {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public boolean isRandom() {
-        return random;
-    }
-
-    public void setRandom(boolean random) {
-        this.random = random;
     }
 
     public String[] getGenres() {
@@ -123,6 +112,7 @@ public class Radio implements Serializable {
                 ids[i] = startTracks.get(i).getId();
             }
         }
-        return new RadioPlain(id, user.getId(), random, genres, mood, startYear, endYear, algorithm.name(), ids);
+        String algorithmName = algorithm != null ? algorithm.name() : null; // workaround for misuse of plain object
+        return new RadioPlain(id, user.getId(), genres, mood, startYear, endYear, algorithmName, ids);
     }
 }

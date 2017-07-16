@@ -3,7 +3,6 @@ package de.reactivejukebox.model;
 public class RadioPlain {
     private int id;
     private int userId;
-    private boolean random;
     private String[] genres;
     private String mood;
     private int startYear;
@@ -14,7 +13,6 @@ public class RadioPlain {
     public RadioPlain(
             int id,
             int userId,
-            boolean random,
             String[] genres,
             String mood,
             int startYear,
@@ -23,7 +21,6 @@ public class RadioPlain {
             int[] startTracks) {
         this.id = id;
         this.userId = userId;
-        this.random = random;
         this.genres = genres;
         this.mood = mood;
         this.startYear = startYear;
@@ -50,14 +47,6 @@ public class RadioPlain {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public boolean isRandom() {
-        return random;
-    }
-
-    public void setRandom(boolean random) {
-        this.random = random;
     }
 
     public String[] getGenres() {
