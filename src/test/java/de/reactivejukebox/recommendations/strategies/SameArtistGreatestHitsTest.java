@@ -9,10 +9,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.testng.Assert.*;
 
@@ -59,7 +56,8 @@ public class SameArtistGreatestHitsTest {
     @Test
     public void testGetRecommendations() throws Exception {
         List<Track> list = new ArrayList<>();
-        Set<Track> history = Collections.emptySet(); // TODO test history awareness of SAGH
+        Set<Track> history = new HashSet<>();
+        history.add(Model.getInstance().getTracks().get(6));
         list.add(Model.getInstance().getTracks().get(1));
 
         RecommendationStrategy algorithm = new SameArtistGreatestHits(history, list, Integer.MAX_VALUE);
@@ -67,7 +65,7 @@ public class SameArtistGreatestHitsTest {
 
         assertTrue(list.contains(Model.getInstance().getTracks().get(7)));
         assertFalse(list.contains(Model.getInstance().getTracks().get(8)));
-
+        assertFalse(list.contains(Model.getInstance().getTracks().get(6)));
     }
 
     @AfterClass
