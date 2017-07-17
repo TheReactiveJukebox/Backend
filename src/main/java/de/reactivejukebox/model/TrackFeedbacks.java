@@ -339,20 +339,22 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
     }
 
     private void updateFeedbackInDB(TrackFeedbackPlain feedback) throws SQLException {
+        System.out.println("update Feedback!");
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        PreparedStatement updateFeedback = con.prepareStatement("UPDATE feedback SET , " +
+        PreparedStatement updateFeedback = con.prepareStatement("UPDATE feedback SET " +
                 "feedbacksong = ?, feedbackartist = ?, feedbackspeed = ?, feedbackgenre = ?, feedbackdynamics = ?, feedbackperiod = ?," +
-                "feedbackmood = ?) WHERE userid = ? AND songid = ? AND radioid = ?;");
+                "feedbackmood = ? WHERE userid = ? AND songid = ? AND radioid = ?;");
 
         int[] values = convertReasonTypesToInts(feedback);
         int len = Math.min(values.length, 7);
         for (int i = 0; i < len; i++) {
-            updateFeedback.setInt(i, values[i]);
+            updateFeedback.setInt(i + 1, values[i]);
         }
         updateFeedback.setInt(8, feedback.getUserId());
         updateFeedback.setInt(9, feedback.getTrackId());
         updateFeedback.setInt(10, feedback.getRadioId());
 
+        System.out.println(updateFeedback.toString());
         updateFeedback.executeUpdate();
         con.close();
     }
@@ -364,7 +366,7 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
             updateFeedbackInDB(feedback);
             return;
         }
-
+        System.out.println("Insert Feedback!");
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement addFeedback = con.prepareStatement("INSERT INTO feedback (userid, songid, radioid, " +
                 "feedbacksong, feedbackartist, feedbackspeed, feedbackgenre, feedbackdynamics, feedbackperiod," +
