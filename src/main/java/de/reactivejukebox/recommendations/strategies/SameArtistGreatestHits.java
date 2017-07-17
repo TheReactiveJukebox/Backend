@@ -26,7 +26,6 @@ public class SameArtistGreatestHits implements RecommendationStrategy  {
     @Override
     public List<Track> getRecommendations() {
         return base.stream()
-                .filter(track -> !history.contains(track)) // ignore recent history
                 .map(Track::getArtist) // get artist for each track
                 .distinct() // eliminate duplicates
                 .flatMap(this::greatestHits) // get every artist's greatest hits in a single stream
@@ -37,6 +36,7 @@ public class SameArtistGreatestHits implements RecommendationStrategy  {
 
     private Stream<Track> greatestHits(Artist a) {
         return Model.getInstance().getTracks().stream()
+                .filter(track -> !history.contains(track)) // ignore recent history
                 .filter(track -> track.getArtist() == a) // get all tracks for artist
                 .sorted(Comparator.comparingInt(Track::getPlayCount).reversed()) // sort by popularity
                 .limit(HITS_PER_ARTIST); // get first HITS_PER_ARTIST tracks
