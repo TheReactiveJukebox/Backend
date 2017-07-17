@@ -48,20 +48,22 @@ public class Users implements Iterable<User> {
                     .from("jukebox_user")
                     .addFilter("id=?", (query, i) -> query.setInt(i, id));
             user = createUserFromStatement(builder);
+            userById.putIfAbsent(user.getId(),user);
         }
         return user;
     }
 
     public User get(String name) throws SQLException {
         User user;
-        if (userByToken.containsKey(name)) {
-            user = userByToken.get(name);
+        if (userByName.containsKey(name)) {
+            user = userByName.get(name);
         } else {
             PreparedStatementBuilder builder = new PreparedStatementBuilder()
                     .select("*")
                     .from("jukebox_user")
                     .addFilter("name=?", (query, i) -> query.setString(i, name));
             user = createUserFromStatement(builder);
+            userByName.putIfAbsent(user.getUsername(),user);
         }
         return user;
     }
@@ -84,7 +86,9 @@ public class Users implements Iterable<User> {
         user = get(user.getUsername());
         String oldT = user.getToken();
         generateToken(user);
-        userByToken.remove(oldT);
+        if( oldT != null && userByToken.containsKey(oldT)) {
+            userByToken.remove(oldT);
+        }
         userByToken.put(user.getToken(), user);
         return user;
     }
