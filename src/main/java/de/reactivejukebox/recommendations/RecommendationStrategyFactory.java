@@ -1,6 +1,7 @@
 package de.reactivejukebox.recommendations;
 
 import de.reactivejukebox.model.*;
+import de.reactivejukebox.recommendations.strategies.RandomTracks;
 import de.reactivejukebox.recommendations.strategies.SameArtistGreatestHits;
 import de.reactivejukebox.recommendations.strategies.StrategyType;
 import de.reactivejukebox.recommendations.strategies.traits.HistoryAwareness;
@@ -29,8 +30,8 @@ public class RecommendationStrategyFactory {
             Collection<Track> base = radio.getStartTracks();
             return new SameArtistGreatestHits(history, base, resultCount);
         } else if (s == StrategyType.RANDOM) {
-            // TODO return "Random" Recommendation Algorithm
-            throw new NotImplementedException();
+            Collection<Track> history = HistoryAwareness.recentHistory(radio.getUser());
+            return new RandomTracks(history,resultCount);
         } else throw new NoSuchStrategyException();
     }
 
