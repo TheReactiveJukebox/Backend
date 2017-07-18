@@ -20,8 +20,8 @@ public class RecommendationStrategyFactory {
         this.radio = radio;
     }
 
-    public RecommendationStrategy createStrategy(int count) {
-        return createStrategy(radio.getAlgorithm(), count);
+    public RecommendationStrategy createStrategy(int resultCount) {
+        return createStrategy(radio.getAlgorithm(), resultCount);
     }
 
     public RecommendationStrategy createStrategy(StrategyType s, int resultCount) {
