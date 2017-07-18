@@ -12,7 +12,6 @@ public class TrackFeedbackHandler {
 
     private TrackFeedbacks trackFeedbacks;
 
-
     public TrackFeedbackHandler() {
         trackFeedbacks = Model.getInstance().getTrackFeedbacks();
     }

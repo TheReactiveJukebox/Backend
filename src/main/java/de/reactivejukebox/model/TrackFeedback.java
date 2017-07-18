@@ -204,6 +204,7 @@ public class TrackFeedback implements Serializable {
         plainFeedback.setUserId(this.getUser().getId());
         plainFeedback.setRadioId(this.getRadio().getId());
         plainFeedback.setId(this.getId());
+        plainFeedback.setTrackId(this.getTrack().getId());
 
         plainFeedback.setSongDisliked(this.isSongDisliked());
         plainFeedback.setSongLiked(this.isSongLiked());
