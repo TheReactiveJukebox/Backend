@@ -15,6 +15,7 @@ public class RandomTracks implements RecommendationStrategy {
 
     public RandomTracks(Collection<Track> history, int resultCount) {
         this.history = history;
+        this.resultCount=resultCount;
     }
 
     @Override
