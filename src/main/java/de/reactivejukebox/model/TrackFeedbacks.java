@@ -343,7 +343,7 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement updateFeedback = con.prepareStatement("UPDATE feedback SET " +
                 "feedbacksong = ?, feedbackartist = ?, feedbackspeed = ?, feedbackgenre = ?, feedbackdynamics = ?, feedbackperiod = ?," +
-                "feedbackmood = ? WHERE userid = ? AND songid = ? AND radioid = ?;");
+                "feedbackmood = ?, time = CURRENT_TIMESTAMP WHERE userid = ? AND songid = ? AND radioid = ?;");
 
         int[] values = convertReasonTypesToInts(feedback);
         int len = Math.min(values.length, 7);
@@ -360,7 +360,6 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
     }
 
     private void toDB(TrackFeedbackPlain feedback) throws SQLException {
-        //TODO: If TrackFeedback to given song already exists, update instead of insert
 
         if(testFeedbackInDB(feedback)) {
             updateFeedbackInDB(feedback);
@@ -371,7 +370,7 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
         PreparedStatement addFeedback = con.prepareStatement("INSERT INTO feedback (userid, songid, radioid, " +
                 "feedbacksong, feedbackartist, feedbackspeed, feedbackgenre, feedbackdynamics, feedbackperiod," +
                 "feedbackmood) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
-        System.out.println("UserId is " + feedback.getUserId());
+        
         addFeedback.setInt(1, feedback.getUserId());
         addFeedback.setInt(2, feedback.getTrackId());
         addFeedback.setInt(3, feedback.getRadioId());
