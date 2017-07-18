@@ -71,6 +71,16 @@ public class RandomTracksTest {
         list = algorithm.getRecommendations(); //run algorithm
         assertTrue(list.size() == 5); //test list size
 
+        // request no tracks
+        algorithm = new RandomTracks(history, 0);
+        list = algorithm.getRecommendations(); //run algorithm
+        assertTrue(list.size() == 0); //test list size
+
+        // negative number of requested tracks
+        algorithm = new RandomTracks(history, -42);
+        list = algorithm.getRecommendations(); //run algorithm
+        assertTrue(list.size() == 0); //test list size
+
         //request all tracks
         algorithm = new RandomTracks(history, TRACKSARTIST_A + TRACKSARTIST_B);
         list = algorithm.getRecommendations(); //run algorithm
