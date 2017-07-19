@@ -154,7 +154,7 @@ public class Radios implements Iterable<Radio> {
         PreparedStatement dbQuery = stmnt.prepare(con);
         ArrayList<RadioPlain> results = new ArrayList<>();
         ResultSet rs = dbQuery.executeQuery();
-        while (rs.next()) {
+        if (rs.next()) {
             RadioPlain radio = new RadioPlain();
             radio.setId(rs.getInt("id"));
             radio.setUserId(rs.getInt("userid"));
