@@ -16,7 +16,7 @@ import java.util.stream.StreamSupport;
 public class Radios implements Iterable<Radio> {
 
     private static final String INSERT_RADIO =
-            "INSERT INTO radio (userid, AlgorithmName) VALUES (?, ?);";
+            "INSERT INTO radio (userid, AlgorithmName, StartYear, EndYear) VALUES (?, ?, ?, ?);";
     private  static final String SELECT_RADIO =
             "SELECT * FROM radio WHERE userid = ? ORDER BY id DESC LIMIT 1;";
     private static final String INSERT_REFERENCE_SONG =
@@ -133,6 +133,8 @@ public class Radios implements Iterable<Radio> {
             radio.setId(rs.getInt("id"));
             radio.setUserId(rs.getInt("userid"));
             radio.setAlgorithm(rs.getString("AlgorithmName"));
+            radio.setStartYear(rs.getInt("StartYear"));
+            radio.setEndYear(rs.getInt("EndYear"));
             // TODO read more radio attributes
             radio.setStartTracks(fromDBReferenceSongs(radio.getId(), con));
             con.close();
@@ -158,6 +160,8 @@ public class Radios implements Iterable<Radio> {
             radio.setId(rs.getInt("id"));
             radio.setUserId(rs.getInt("userid"));
             radio.setAlgorithm(rs.getString("AlgorithmName"));
+            radio.setStartYear(rs.getInt("StartYear"));
+            radio.setEndYear(rs.getInt("EndYear"));
             // TODO read more radio attributes
             radio.setStartTracks(fromDBReferenceSongs(id, con));
         }
@@ -187,6 +191,16 @@ public class Radios implements Iterable<Radio> {
         PreparedStatement addRadio = con.prepareStatement(INSERT_RADIO, Statement.RETURN_GENERATED_KEYS);
         addRadio.setInt(1, radio.getUserId());
         addRadio.setString(2, radio.getAlgorithm());
+        if (radio.getStartYear() == 0) {
+            addRadio.setNull(3, Types.INTEGER);
+        } else {
+            addRadio.setInt(3, radio.getStartYear());
+        }
+        if (radio.getEndYear() == 0) {
+            addRadio.setNull(4, Types.INTEGER);
+        } else {
+            addRadio.setInt(4, radio.getEndYear());
+        }
         // TODO ad more radio attributes here
         addRadio.executeUpdate();
         // add new id from database to entry object
