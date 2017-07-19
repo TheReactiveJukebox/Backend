@@ -24,13 +24,13 @@ public class HistoryService {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/")
-    public Response getMessage(@Context User user, HistoryEntryPlain history) {
+    public Response createHistoryEntry(@Context User user, HistoryEntryPlain history) {
         try {
             HistoryEntryPlain historyEntry = new HistoryHandler().addHistoryEntry(history, user).getPlainObject();
             return Response.ok().entity(historyEntry).build();
         } catch (SQLException e) {
             e.printStackTrace();
-            return Response.status(500).entity(e).build();
+            return Response.status(500).entity("An error occurred while communicating with the database.").build();
         }
     }
 
@@ -43,7 +43,7 @@ public class HistoryService {
             return Response.ok().build();
         } catch (SQLException e) {
             e.printStackTrace();
-            return Response.status(500).entity(e).build();
+            return Response.status(500).entity("An error occurred while communicating with the database.").build();
         }
     }
 }
