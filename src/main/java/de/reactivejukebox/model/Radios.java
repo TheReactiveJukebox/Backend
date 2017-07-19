@@ -21,6 +21,8 @@ public class Radios implements Iterable<Radio> {
             "SELECT * FROM radio WHERE userid = ? ORDER BY id DESC LIMIT 1;";
     private static final String INSERT_REFERENCE_SONG =
             "INSERT INTO radio_song (radioid, songid, position) VALUES (?, ?, ?);";
+    private static final String SELECT_REFERENCE_SONG =
+            "SELECT SongId FROM radio_song WHERE RadioId = ? ORDER BY Position;";
 
     protected Users users;
     protected PreparedStatementBuilder stmnt;
@@ -132,8 +134,8 @@ public class Radios implements Iterable<Radio> {
             radio.setId(rs.getInt("id"));
             radio.setUserId(rs.getInt("userid"));
             radio.setAlgorithm(rs.getString("AlgorithmName"));
-            // TODO when support for more than one reference song is implemented, update this
-            radio.setStartTracks(new int[] {rs.getInt("ReferenceSongId")});
+            // TODO read more radio attributes
+            radio.setStartTracks(fromDBReferenceSongs(radio.getId(), con));
             con.close();
             return radio;
         } else {
@@ -157,12 +159,26 @@ public class Radios implements Iterable<Radio> {
             radio.setId(rs.getInt("id"));
             radio.setUserId(rs.getInt("userid"));
             radio.setAlgorithm(rs.getString("AlgorithmName"));
-            // TODO when support for more than one reference song is implemented, update this
-            radio.setStartTracks(new int[] {rs.getInt("ReferenceSongId")});
+            // TODO read more radio attributes
+            radio.setStartTracks(fromDBReferenceSongs(id, con));
             results.add(radio);
         }
         con.close();
         return results;
+    }
+
+    private int[] fromDBReferenceSongs(int id, Connection con) throws SQLException {
+        PreparedStatement getReferenceSongs = con.prepareStatement(SELECT_REFERENCE_SONG);
+        getReferenceSongs.setInt(1, id);
+        ResultSet rs = getReferenceSongs.executeQuery();
+        List<Integer> list = new LinkedList<>();
+        while (rs.next()) {
+            list.add(rs.getInt("SongId"));
+        }
+        int[] result = list.stream()
+                .mapToInt(i->i)
+                .toArray();
+        return result;
     }
 
     private void toDB(RadioPlain radio) throws SQLException {
