@@ -54,9 +54,7 @@ public class RandomTracks implements RecommendationStrategy {
         ArrayList<Track> list = new ArrayList<Track>();
         if (resultCount >= population.size()) {
             list.addAll(population); //add all, no random needed
-        }
-
-        if (list.size() < resultCount) {
+        }else if (list.size() < resultCount) {
             int nLeft = resultCount - list.size();
             HashSet<Track> selectedItems = new HashSet<Track>();
             // choice resultCount different tracks
