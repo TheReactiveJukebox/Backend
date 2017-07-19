@@ -38,7 +38,6 @@ public class Radios implements Iterable<Radio> {
 
     public Radio put(RadioPlain radio) throws SQLException {
         toDB(radio);
-        radio = fromDB(radio);
         Radio newRadio = build(radio);
         radioById.putIfAbsent(newRadio.getId(), newRadio);
         radioByUserId.remove(radio.getUserId());
