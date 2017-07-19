@@ -68,6 +68,12 @@ public class HistoryEntries implements Iterable<HistoryEntry> {
         return newEntry;
     }
 
+    public void delete(Integer historyId) throws SQLException {
+        deleteFromDB(historyId);
+        if(entryById.containsKey(historyId))
+            entryById.remove(historyId);
+    }
+
     public ArrayList<HistoryEntry> getListByUserId(int id) throws SQLException {
         return build(fromDB("UserId", id));
     }
@@ -175,5 +181,12 @@ public class HistoryEntries implements Iterable<HistoryEntry> {
         con.close();
     }
 
+    private void deleteFromDB(Integer historyId) throws SQLException {
+        con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        PreparedStatement deleteEntry = con.prepareStatement("DELETE FROM history WHERE id = ?;");
+        deleteEntry.setInt(1, historyId);
+        deleteEntry.executeUpdate();
+        con.close();
+    }
 
 }
