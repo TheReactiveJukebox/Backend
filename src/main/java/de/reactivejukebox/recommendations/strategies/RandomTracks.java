@@ -47,14 +47,13 @@ public class RandomTracks implements RecommendationStrategy {
 
     /**
      * Choice randomly resultCount differ tracks from population and return them as list.
-     * If resultCount greater then count of tracks in population then add tracks more then once.
+     * If resultCount greater then count of tracks in population add the whole population once.
+     * Resulting list size can be lower than population if resultCount>population.size()
      */
     private ArrayList<Track> pickSample(List<Track> population, final int resultCount) {
         ArrayList<Track> list = new ArrayList<Track>();
         if (resultCount >= population.size()) {
-            for (int i = 0; i < resultCount/population.size(); i++) {
-                list.addAll(population);
-            }
+            list.addAll(population); //add all, no random needed
         }
 
         if (list.size() < resultCount) {
