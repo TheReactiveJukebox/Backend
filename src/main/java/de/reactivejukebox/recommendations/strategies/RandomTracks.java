@@ -45,23 +45,35 @@ public class RandomTracks implements RecommendationStrategy {
 
     }
 
-    private ArrayList<Track> pickSample(List<Track> population, int nSamplesNeeded) {
-        ArrayList<Track> list = new ArrayList<>();
-        Iterator<Track> iter = population.iterator();
-        int nLeft = population.size(); //available / possible tracks
-        while (nSamplesNeeded > 0 && nLeft > 0) {
-            int rand = random.nextInt(nLeft);//random number between 0 and nLeft (=population.size())
-
-            if (iter.hasNext()) { //song available
-                if (rand < nSamplesNeeded) {
-                    list.add(iter.next());
-                    nSamplesNeeded--;
-                } else {
-                    iter.next();
-                }
+    /**
+     * Choice randomly resultCount differ tracks from population and return them as list.
+     * If resultCount greater then count of tracks in population then add tracks more then once.
+     */
+    private ArrayList<Track> pickSample(List<Track> population, final int resultCount) {
+        ArrayList<Track> list = new ArrayList<Track>();
+        if (resultCount >= population.size()) {
+            for (int i = 0; i < resultCount/population.size(); i++) {
+                list.addAll(population);
             }
-            nLeft--;
         }
+
+        if (list.size() < resultCount) {
+            int nLeft = resultCount - list.size();
+            HashSet<Track> selectedItems = new HashSet<Track>();
+            // choice resultCount different tracks
+            while (selectedItems.size() < nLeft) {
+                // get random number between 0 and population.size()
+                int rand = random.nextInt(population.size());
+                // get track on position rand
+                Track track = population.get(rand);
+                // add track in result set
+                selectedItems.add(track);
+            }
+            list.addAll(selectedItems);
+        }
+        // shuffle result list
+        Collections.shuffle(list, random);
+
         return list;
     }
 }
