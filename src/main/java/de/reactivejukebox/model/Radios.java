@@ -50,7 +50,7 @@ public class Radios implements Iterable<Radio> {
         if (radioById.containsKey(id)) {
             radio = radioById.get(id);
         } else {
-            radio = build(fromDB(id).get(0));
+            radio = build(fromDB(id));
             radioById.putIfAbsent(radio.getId(), radio);
             radioByUserId.putIfAbsent(radio.getUser().getId(), radio);
         }
@@ -144,26 +144,25 @@ public class Radios implements Iterable<Radio> {
     }
 
 
-    private ArrayList<RadioPlain> fromDB(int id) throws SQLException {
+    private RadioPlain fromDB(int id) throws SQLException {
+        RadioPlain radio = null;
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
         stmnt = new PreparedStatementBuilder()
                 .select("*")
                 .from("radio")
                 .addFilter("Id=?", (query, i) -> query.setInt(i, id));
         PreparedStatement dbQuery = stmnt.prepare(con);
-        ArrayList<RadioPlain> results = new ArrayList<>();
         ResultSet rs = dbQuery.executeQuery();
         if (rs.next()) {
-            RadioPlain radio = new RadioPlain();
+            radio = new RadioPlain();
             radio.setId(rs.getInt("id"));
             radio.setUserId(rs.getInt("userid"));
             radio.setAlgorithm(rs.getString("AlgorithmName"));
             // TODO read more radio attributes
             radio.setStartTracks(fromDBReferenceSongs(id, con));
-            results.add(radio);
         }
         con.close();
-        return results;
+        return radio;
     }
 
     private int[] fromDBReferenceSongs(int id, Connection con) throws SQLException {
