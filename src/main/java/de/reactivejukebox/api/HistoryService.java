@@ -29,6 +29,7 @@ public class HistoryService {
             HistoryEntryPlain historyEntry = new HistoryHandler().addHistoryEntry(history, user).getPlainObject();
             return Response.ok().entity(historyEntry).build();
         } catch (SQLException e) {
+            e.printStackTrace();
             return Response.status(500).entity(e).build();
         }
     }
@@ -41,6 +42,7 @@ public class HistoryService {
             new HistoryHandler().deleteHistoryEntry(historyId);
             return Response.ok().build();
         } catch (SQLException e) {
+            e.printStackTrace();
             return Response.status(500).entity(e).build();
         }
     }
