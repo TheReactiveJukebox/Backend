@@ -16,9 +16,11 @@ import java.util.stream.StreamSupport;
 public class Radios implements Iterable<Radio> {
 
     private static final String INSERT_RADIO =
-            "INSERT INTO radio (userid, AlgorithmName, ReferenceSongID) VALUES (?, ?, ?);";
+            "INSERT INTO radio (userid, AlgorithmName) VALUES (?, ?);";
     private  static final String SELECT_RADIO =
             "SELECT * FROM radio WHERE userid = ? ORDER BY id DESC LIMIT 1;";
+    private static final String INSERT_REFERENCE_SONG =
+            "INSERT INTO radio_song (radioid, songid, position) VALUES (?, ?, ?);";
 
     protected Users users;
     protected PreparedStatementBuilder stmnt;
@@ -165,16 +167,37 @@ public class Radios implements Iterable<Radio> {
 
     private void toDB(RadioPlain radio) throws SQLException {
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        PreparedStatement addUser = con.prepareStatement(INSERT_RADIO);
-        addUser.setInt(1, radio.getUserId());
-        addUser.setString(2, radio.getAlgorithm());
-        // TODO when support for more than one reference song is implemented, update this
-        if (radio.getStartTracks().length == 0) {
-            addUser.setNull(3, Types.INTEGER);
-        } else {
-            addUser.setInt(3, radio.getStartTracks()[0]);
+        // use a transaction
+        con.setAutoCommit(false);
+        // insert new radio in database
+        PreparedStatement addRadio = con.prepareStatement(INSERT_RADIO, Statement.RETURN_GENERATED_KEYS);
+        addRadio.setInt(1, radio.getUserId());
+        addRadio.setString(2, radio.getAlgorithm());
+        // TODO ad more radio attributes here
+        addRadio.executeUpdate();
+        // add new id from database to entry object
+        ResultSet rs = addRadio.getGeneratedKeys();
+        if (rs.next()) {
+            radio.setId(rs.getInt(1));
         }
-        addUser.executeUpdate();
+        // insert reference songs
+        int[] referenceSongs = radio.getStartTracks();
+        if (referenceSongs.length > 0) {
+            PreparedStatement addReferenceSong = con.prepareStatement(INSERT_REFERENCE_SONG);
+            for (int i = 0; i < referenceSongs.length;) {
+                addReferenceSong.setInt(1, radio.getId());
+                addReferenceSong.setInt(2, referenceSongs[i]);
+                i++;
+                addReferenceSong.setInt(3, i);
+                addReferenceSong.addBatch();
+            }
+            addReferenceSong.executeBatch();
+        }
+        // end transaction
+        con.commit();
+
+        // TODO check of needs to reset auto commit settings
+        con.setAutoCommit(true);
         con.close();
     }
 }
