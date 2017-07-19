@@ -27,6 +27,7 @@ public class JukeboxService {
             Radio radio = Model.getInstance().getRadios().getByUserId(user.getId());
             return Response.ok(radio.getPlainObject()).build();
         } catch (SQLException e) {
+            e.printStackTrace();
             return Response.status(503)
                     .entity("Error no Radiostation available")
                     .build();
@@ -44,6 +45,7 @@ public class JukeboxService {
             Radio radio = Model.getInstance().getRadios().put(r);
             return Response.ok(radio.getPlainObject()).build();
         } catch (SQLException e) {
+            e.printStackTrace();
             return Response.status(503)
                     .entity("Error while writing/reading database")
                     .build();
@@ -54,16 +56,25 @@ public class JukeboxService {
     @Secured
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/next")
-    public Response getNextSongs(@Context User user, @QueryParam("count") int count) {
+    public Response getNextSongs(@Context User user,
+                                 @QueryParam("count") int count,
+                                 @QueryParam("upcoming") List<Integer> upcoming) {
         try {
+            // upcomingTracks contains tracks that are already in the listening queue
+            List<Track> upcomingTracks = upcoming.stream()
+                    .map(i -> Model.getInstance().getTracks().get(i))
+                    .collect(Collectors.toList());
+            // build algorithm for user's current jukebox
             Radio radio = Model.getInstance().getRadios().getByUserId(user.getId());
-            RecommendationStrategy algorithm = new RecommendationStrategyFactory(radio)
+            RecommendationStrategy algorithm = new RecommendationStrategyFactory(radio, upcomingTracks)
                     .createStrategy(count);
+            // obtain results
             List<MusicEntityPlain> results = algorithm.getRecommendations().stream()
                     .map(Track::getPlainObject)
                     .collect(Collectors.toList());
             return Response.ok(results).build();
         } catch (SQLException e) {
+            e.printStackTrace();
             return Response.status(502)
                     .entity("Error while communicating with database.")
                     .build();
