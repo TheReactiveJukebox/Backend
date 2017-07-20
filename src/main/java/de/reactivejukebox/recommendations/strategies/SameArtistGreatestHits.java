@@ -12,7 +12,6 @@ import java.util.stream.Stream;
 
 public class SameArtistGreatestHits implements RecommendationStrategy  {
 
-    private static final int HITS_PER_ARTIST = 5;
     private Collection<Track> history;
     private Collection<Track> base;
     private int resultCount;
@@ -38,7 +37,6 @@ public class SameArtistGreatestHits implements RecommendationStrategy  {
         return Model.getInstance().getTracks().stream()
                 .filter(track -> !history.contains(track)) // ignore recent history
                 .filter(track -> track.getArtist() == a) // get all tracks for artist
-                .sorted(Comparator.comparingInt(Track::getPlayCount).reversed()) // sort by popularity
-                .limit(HITS_PER_ARTIST); // get first HITS_PER_ARTIST tracks
+                .sorted(Comparator.comparingInt(Track::getPlayCount).reversed()); // sort by popularity
     }
 }
