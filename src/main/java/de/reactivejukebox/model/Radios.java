@@ -25,6 +25,8 @@ public class Radios implements Iterable<Radio> {
             "SELECT SongId FROM radio_song WHERE RadioId = ? ORDER BY Position;";
     private static final String INSERT_GENRE =
             "INSERT INTO radio_genre (RadioId, GenreId) VALUES (?, (SELECT genre.Id FROM genre WHERE genre.name = ?));";
+    private static final String SELECT_GENRE =
+            "SELECT genre.Name AS GenreName, genre.Id AS GenreId FROM radio JOIN radio_genre ON radio.Id = radio_genre.RadioId JOIN genre ON radio_genre.GenreId = genre.Id WHERE radio.Id = ?;";
 
     protected Users users;
     protected PreparedStatementBuilder stmnt;
@@ -139,6 +141,7 @@ public class Radios implements Iterable<Radio> {
             radio.setEndYear(rs.getInt("EndYear"));
             // TODO read more radio attributes
             radio.setStartTracks(fromDBReferenceSongs(radio.getId(), con));
+            radio.setGenres(fromDBGenres(radio.getId(), con));
             con.close();
             return radio;
         } else {
@@ -166,6 +169,7 @@ public class Radios implements Iterable<Radio> {
             radio.setEndYear(rs.getInt("EndYear"));
             // TODO read more radio attributes
             radio.setStartTracks(fromDBReferenceSongs(id, con));
+            radio.setGenres(fromDBGenres(id, con));
         }
         con.close();
         return radio;
@@ -182,6 +186,18 @@ public class Radios implements Iterable<Radio> {
         int[] result = list.stream()
                 .mapToInt(i->i)
                 .toArray();
+        return result;
+    }
+
+    private String[] fromDBGenres(int id, Connection con) throws SQLException {
+        PreparedStatement getGenres = con.prepareStatement(SELECT_GENRE);
+        getGenres.setInt(1, id);
+        ResultSet rs = getGenres.executeQuery();
+        ArrayList<String> list = new ArrayList<>();
+        while (rs.next()) {
+            list.add(rs.getString("GenreName"));
+        }
+        String[] result = (String[]) list.toArray();
         return result;
     }
 
