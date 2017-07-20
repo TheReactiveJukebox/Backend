@@ -23,6 +23,8 @@ public class Radios implements Iterable<Radio> {
             "INSERT INTO radio_song (radioid, songid, position) VALUES (?, ?, ?);";
     private static final String SELECT_REFERENCE_SONG =
             "SELECT SongId FROM radio_song WHERE RadioId = ? ORDER BY Position;";
+    private static final String INSERT_GENRE =
+            "INSERT INTO radio_genre (RadioId, GenreId) VALUES (?, (SELECT genre.Id FROM genre WHERE genre.name = ?));";
 
     protected Users users;
     protected PreparedStatementBuilder stmnt;
@@ -220,6 +222,17 @@ public class Radios implements Iterable<Radio> {
                 addReferenceSong.addBatch();
             }
             addReferenceSong.executeBatch();
+        }
+        // insert genres
+        String[] genres = radio.getGenres();
+        if (genres.length > 0) {
+            PreparedStatement addGenre = con.prepareStatement(INSERT_GENRE);
+            for (String genre: genres) {
+                addGenre.setInt(1, radio.getId());
+                addGenre.setString(2, genre);
+                addGenre.addBatch();
+            }
+            addGenre.executeBatch();
         }
         // end transaction
         con.commit();
