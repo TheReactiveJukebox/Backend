@@ -197,8 +197,7 @@ public class Radios implements Iterable<Radio> {
         while (rs.next()) {
             list.add(rs.getString("GenreName"));
         }
-        String[] result = (String[]) list.toArray();
-        return result;
+        return list.toArray(new String[list.size()]);
     }
 
     private void toDB(RadioPlain radio) throws SQLException {
