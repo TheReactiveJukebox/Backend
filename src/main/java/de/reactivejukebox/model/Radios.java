@@ -101,10 +101,14 @@ public class Radios implements Iterable<Radio> {
 
     private Radio build(RadioPlain radio) throws SQLException {
         // convert track id array to List<Track>
-        List<Track> startTracks = Arrays.stream(radio.getStartTracks())
-                .boxed()
-                .map(i -> Model.getInstance().getTracks().get(i))
-                .collect(Collectors.toList());
+        List<Track> startTracks = null;
+        int[] tracks = radio.getStartTracks();
+        if (tracks != null) {
+            startTracks = Arrays.stream(radio.getStartTracks())
+                    .boxed()
+                    .map(i -> Model.getInstance().getTracks().get(i))
+                    .collect(Collectors.toList());
+        }
 
         // return rich radio object
         return new Radio(
@@ -227,7 +231,7 @@ public class Radios implements Iterable<Radio> {
         }
         // insert reference songs
         int[] referenceSongs = radio.getStartTracks();
-        if (referenceSongs.length > 0) {
+        if (referenceSongs != null && referenceSongs.length > 0) {
             PreparedStatement addReferenceSong = con.prepareStatement(INSERT_REFERENCE_SONG);
             for (int i = 0; i < referenceSongs.length;) {
                 addReferenceSong.setInt(1, radio.getId());
@@ -240,7 +244,7 @@ public class Radios implements Iterable<Radio> {
         }
         // insert genres
         String[] genres = radio.getGenres();
-        if (genres.length > 0) {
+        if (genres != null && genres.length > 0) {
             PreparedStatement addGenre = con.prepareStatement(INSERT_GENRE);
             for (String genre: genres) {
                 addGenre.setInt(1, radio.getId());
