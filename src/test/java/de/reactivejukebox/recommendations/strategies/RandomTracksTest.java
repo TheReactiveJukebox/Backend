@@ -53,7 +53,7 @@ public class RandomTracksTest {
         Model.getInstance().getAlbums().put(albumB.getId(), albumB);
 
         int _startindex = Model.getInstance().getTracks().size();
-        for (int i = _startindex; i < TRACKSARTIST_B + _startindex + 1; i++) {
+        for (int i = _startindex+1; i < TRACKSARTIST_B + _startindex + 1; i++) {
             Model.getInstance().getTracks().put(i, new Track(
                     i, "Track B" + i, artistB, albumB, "", "", 191, 4211 - i
             ));
