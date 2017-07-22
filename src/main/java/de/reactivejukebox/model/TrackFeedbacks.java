@@ -42,6 +42,14 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
         this.tracks = tracks;
     }
 
+    /**
+     * Adds the given feedback to the database or updates a feedback with the same userid, songid and radioid as the
+     * given feedback, adds the feedback to the hash map if it is absent and returns the feedback as TrackFeedback object.
+     *
+     * @param feedback
+     * @return
+     * @throws SQLException
+     */
     public TrackFeedback put(TrackFeedbackPlain feedback) throws SQLException {
         toDB(feedback);
         feedback = fromDbByFeedback(feedback);
@@ -194,7 +202,8 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
 
     private TrackFeedbackPlain fromDbByFeedback(TrackFeedbackPlain feedback) throws SQLException {
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM feedback WHERE userid = ? AND radioid = ?  AND songid = ? ORDER BY id DESC;");
+        PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM feedback WHERE userid = ? " +
+                "AND radioid = ?  AND songid = ? ORDER BY id DESC;");
         getFeedback.setInt(1, feedback.getUserId());
         getFeedback.setInt(2, feedback.getRadioId());
         getFeedback.setInt(3, feedback.getTrackId());
@@ -329,47 +338,17 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
     }
 
 
-    private boolean testFeedbackInDB(TrackFeedbackPlain feedback) {
-        try {
-            fromDbByFeedback(feedback);
-            return  true;
-        } catch(SQLException sqlEx) {
-            return false;
-        }
-    }
-
-    private void updateFeedbackInDB(TrackFeedbackPlain feedback) throws SQLException {
-        System.out.println("update Feedback!");
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        PreparedStatement updateFeedback = con.prepareStatement("UPDATE feedback SET " +
-                "feedbacksong = ?, feedbackartist = ?, feedbackspeed = ?, feedbackgenre = ?, feedbackdynamics = ?, feedbackperiod = ?," +
-                "feedbackmood = ?, time = CURRENT_TIMESTAMP WHERE userid = ? AND songid = ? AND radioid = ?;");
-
-        int[] values = convertReasonTypesToInts(feedback);
-        int len = Math.min(values.length, 7);
-        for (int i = 0; i < len; i++) {
-            updateFeedback.setInt(i + 1, values[i]);
-        }
-        updateFeedback.setInt(8, feedback.getUserId());
-        updateFeedback.setInt(9, feedback.getTrackId());
-        updateFeedback.setInt(10, feedback.getRadioId());
-
-        System.out.println(updateFeedback.toString());
-        updateFeedback.executeUpdate();
-        con.close();
-    }
 
     private void toDB(TrackFeedbackPlain feedback) throws SQLException {
 
-        if(testFeedbackInDB(feedback)) {
-            updateFeedbackInDB(feedback);
-            return;
-        }
-        System.out.println("Insert Feedback!");
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        PreparedStatement addFeedback = con.prepareStatement("INSERT INTO feedback (userid, songid, radioid, " +
-                "feedbacksong, feedbackartist, feedbackspeed, feedbackgenre, feedbackdynamics, feedbackperiod," +
-                "feedbackmood) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+        PreparedStatement addFeedback = con.prepareStatement("INSERT INTO feedback (userid, songid, radioid," +
+                " feedbacksong, feedbackartist, feedbackspeed, feedbackgenre, feedbackdynamics, feedbackperiod, feedbackmood) " +
+                "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+                "ON Conflict (userid, songid, radioid) Do " +
+                "UPDATE Set (feedbacksong, feedbackartist, feedbackspeed, feedbackgenre, " +
+                "feedbackdynamics, feedbackperiod, feedbackmood, time) = " +
+                "(?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP);");
         
         addFeedback.setInt(1, feedback.getUserId());
         addFeedback.setInt(2, feedback.getTrackId());
@@ -377,8 +356,12 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
 
         int[] values = convertReasonTypesToInts(feedback);
         int len = Math.min(values.length, 7);
-        for (int i = 0; i < len; i++) {
+        for (int i = 0; i < len; i++) { // feedback values for INSERT
             int index = i+4;
+            addFeedback.setInt(index, values[i]);
+        }
+        for (int i = 0; i < len; i++) { // feedback values for UPDATE
+            int index = i+4+7;
             addFeedback.setInt(index, values[i]);
         }
 
