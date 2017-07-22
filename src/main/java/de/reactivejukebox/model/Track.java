@@ -9,8 +9,9 @@ public class Track implements MusicEntity {
     String cover;
     int duration; //song duration in seconds
     String hash;
+    int playCount;
 
-    public Track(int id, String title, Artist artist, Album album, String cover, String hash, int duration) {
+    public Track(int id, String title, Artist artist, Album album, String cover, String hash, int duration, int playCount) {
         this.id = id;
         this.title = title;
         this.artist = artist;
@@ -18,9 +19,18 @@ public class Track implements MusicEntity {
         this.cover = cover;
         this.duration = duration;
         this.hash = hash;
+        this.playCount = playCount;
     }
 
     public Track(){}
+
+    public int getPlayCount() {
+        return playCount;
+    }
+
+    public void setPlayCount(int playCount) {
+        this.playCount = playCount;
+    }
 
     public int getId() {
         return id;
@@ -81,6 +91,6 @@ public class Track implements MusicEntity {
     @Override
     public MusicEntityPlain getPlainObject() {
         String file = hash.substring(0, 1) + "/" + hash.substring(1, 2) + "/" + hash.substring(2) + ".mp3";
-        return new TrackPlain(id, title, artist.getId(), album.getId(), cover, file, duration);
+        return new TrackPlain(id, title, artist.getId(), album.getId(), cover, file, duration, playCount);
     }
 }
