@@ -15,41 +15,16 @@ public class TrackFeedback implements Serializable {
     private User user;
     private Radio radio;
     private Track track;
-    private boolean songLiked;
-    private boolean songDisliked;
-    private boolean artistLiked;
-    private boolean artistDisliked;
-    private boolean speedLiked;
-    private boolean speedDisliked;
-    private boolean genreLiked;
-    private boolean genreDisliked;
-    private boolean dynamicsLiked;
-    private boolean dynamicsDisliked;
-    private boolean periodLiked;
-    private boolean periodDisliked;
-    private boolean moodLiked;
-    private boolean moodDisliked;
 
-    public TrackFeedback(int id, User user, Radio radio, Track track, boolean songLiked, boolean songDisliked, boolean artistLiked, boolean artistDisliked, boolean speedLiked, boolean speedDisliked, boolean genreLiked, boolean genreDisliked, boolean dynamicsLiked, boolean dynamicsDisliked, boolean periodLiked, boolean periodDisliked, boolean moodLiked, boolean moodDisliked) {
-        this.id = id;
-        this.user = user;
-        this.radio = radio;
-        this.track = track;
-        this.songLiked = songLiked;
-        this.songDisliked = songDisliked;
-        this.artistLiked = artistLiked;
-        this.artistDisliked = artistDisliked;
-        this.speedLiked = speedLiked;
-        this.speedDisliked = speedDisliked;
-        this.genreLiked = genreLiked;
-        this.genreDisliked = genreDisliked;
-        this.dynamicsLiked = dynamicsLiked;
-        this.dynamicsDisliked = dynamicsDisliked;
-        this.periodLiked = periodLiked;
-        this.periodDisliked = periodDisliked;
-        this.moodLiked = moodLiked;
-        this.moodDisliked = moodDisliked;
-    }
+    private int songFeedback;
+    private int artistFeedback;
+    private int speedFeedback;
+    private int genreFeedback;
+    private int dynamicsFeedback;
+    private int periodFeedback;
+    private int moodFeedback;
+
+
 
     public TrackFeedback() {
     }
@@ -82,117 +57,69 @@ public class TrackFeedback implements Serializable {
 
     public void setTrack(Track track) { this.track = track; }
 
-    public boolean isSongLiked() {
-        return songLiked;
+    public int getSongFeedback() {
+        return songFeedback;
     }
 
-    public void setSongLiked(boolean songLiked) {
-        this.songLiked = songLiked;
+    public void setSongFeedback(int songFeedback) {
+        this.songFeedback = songFeedback;
     }
 
-    public boolean isSongDisliked() {
-        return songDisliked;
+
+    public int getArtistFeedback() {
+        return artistFeedback;
     }
 
-    public void setSongDisliked(boolean songDisliked) {
-        this.songDisliked = songDisliked;
+    public void setArtistFeedback(int artistFeedback) {
+        this.artistFeedback = artistFeedback;
     }
 
-    public boolean isArtistLiked() {
-        return artistLiked;
+
+    public int getSpeedFeedback() {
+        return speedFeedback;
     }
 
-    public void setArtistLiked(boolean artistLiked) {
-        this.artistLiked = artistLiked;
+    public void setSpeedFeedback(int speedFeedback) {
+        this.speedFeedback = speedFeedback;
     }
 
-    public boolean isArtistDisliked() {
-        return artistDisliked;
+
+    public int getGenreFeedback() {
+        return genreFeedback;
     }
 
-    public void setArtistDisliked(boolean artistDisliked) {
-        this.artistDisliked = artistDisliked;
+    public void setGenreFeedback(int genreFeedback) {
+        this.genreFeedback = genreFeedback;
     }
 
-    public boolean isSpeedLiked() {
-        return speedLiked;
+
+    public int getDynamicsFeedback() {
+        return dynamicsFeedback;
     }
 
-    public void setSpeedLiked(boolean speedLiked) {
-        this.speedLiked = speedLiked;
+    public void setDynamicsFeedback(int dynamicsFeedback) {
+        this.dynamicsFeedback = dynamicsFeedback;
     }
 
-    public boolean isSpeedDisliked() {
-        return speedDisliked;
+
+    public int getPeriodFeedback() {
+        return periodFeedback;
     }
 
-    public void setSpeedDisliked(boolean speedDisliked) {
-        this.speedDisliked = speedDisliked;
+    public void setPeriodFeedback(int periodFeedback) {
+        this.periodFeedback = periodFeedback;
     }
 
-    public boolean isGenreLiked() {
-        return genreLiked;
+
+    public int getMoodFeedback() {
+        return moodFeedback;
     }
 
-    public void setGenreLiked(boolean genreLiked) {
-        this.genreLiked = genreLiked;
+    public void setMoodFeedback(int moodFeedback) {
+        this.moodFeedback = moodFeedback;
     }
 
-    public boolean isGenreDisliked() {
-        return genreDisliked;
-    }
 
-    public void setGenreDisliked(boolean genreDisliked) {
-        this.genreDisliked = genreDisliked;
-    }
-
-    public boolean isDynamicsLiked() {
-        return dynamicsLiked;
-    }
-
-    public void setDynamicsLiked(boolean dynamicsLiked) {
-        this.dynamicsLiked = dynamicsLiked;
-    }
-
-    public boolean isDynamicsDisliked() {
-        return dynamicsDisliked;
-    }
-
-    public void setDynamicsDisliked(boolean dynamicsDisliked) {
-        this.dynamicsDisliked = dynamicsDisliked;
-    }
-
-    public boolean isPeriodLiked() {
-        return periodLiked;
-    }
-
-    public void setPeriodLiked(boolean periodLiked) {
-        this.periodLiked = periodLiked;
-    }
-
-    public boolean isPeriodDisliked() {
-        return periodDisliked;
-    }
-
-    public void setPeriodDisliked(boolean periodDisliked) {
-        this.periodDisliked = periodDisliked;
-    }
-
-    public boolean isMoodLiked() {
-        return moodLiked;
-    }
-
-    public void setMoodLiked(boolean moodLiked) {
-        this.moodLiked = moodLiked;
-    }
-
-    public boolean isMoodDisliked() {
-        return moodDisliked;
-    }
-
-    public void setMoodDisliked(boolean moodDisliked) {
-        this.moodDisliked = moodDisliked;
-    }
 
     /**
      * Creates a matching TrackFeedbackPlain object.
@@ -206,28 +133,30 @@ public class TrackFeedback implements Serializable {
         plainFeedback.setId(this.getId());
         plainFeedback.setTrackId(this.getTrack().getId());
 
-        plainFeedback.setSongDisliked(this.isSongDisliked());
-        plainFeedback.setSongLiked(this.isSongLiked());
+        plainFeedback.setSongDisliked(this.songFeedback < 0);
+        plainFeedback.setSongLiked(this.songFeedback > 0);
 
-        plainFeedback.setArtistDisliked(this.isArtistDisliked());
-        plainFeedback.setArtistLiked(this.isArtistLiked());
+        plainFeedback.setArtistDisliked(this.artistFeedback < 0);
+        plainFeedback.setArtistLiked(this.artistFeedback > 0);
 
-        plainFeedback.setSpeedDisliked(this.isSpeedDisliked());
-        plainFeedback.setSpeedLiked(this.isSpeedLiked());
+        plainFeedback.setSpeedDisliked(this.speedFeedback < 0);
+        plainFeedback.setSpeedLiked(this.speedFeedback > 0);
 
-        plainFeedback.setGenreDisliked(this.isGenreDisliked());
-        plainFeedback.setGenreLiked(this.isGenreLiked());
+        plainFeedback.setGenreDisliked(this.genreFeedback < 0);
+        plainFeedback.setGenreLiked(this.genreFeedback > 0);
 
-        plainFeedback.setPeriodDisliked(this.isPeriodDisliked());
-        plainFeedback.setPeriodLiked(this.isPeriodLiked());
+        plainFeedback.setPeriodDisliked(this.periodFeedback < 0);
+        plainFeedback.setPeriodLiked(this.periodFeedback > 0);
 
-        plainFeedback.setMoodDisliked(this.isMoodDisliked());
-        plainFeedback.setMoodLiked(this.isMoodLiked());
+        plainFeedback.setMoodDisliked(this.moodFeedback < 0);
+        plainFeedback.setMoodLiked(this.moodFeedback > 0);
 
-        plainFeedback.setDynamicsDisliked(this.isDynamicsDisliked());
-        plainFeedback.setDynamicsLiked(this.isDynamicsLiked());
+        plainFeedback.setDynamicsDisliked(this.dynamicsFeedback < 0);
+        plainFeedback.setDynamicsLiked(this.dynamicsFeedback > 0);
 
         return plainFeedback;
     }
+
+
 }
 

@@ -146,28 +146,21 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
         newTrackFeedback.setId(feedback.getId());
         newTrackFeedback.setTrack(tracks.get(feedback.getTrackId()));
 
-        newTrackFeedback.setSongDisliked(feedback.isSongDisliked());
-        newTrackFeedback.setSongLiked(feedback.isSongLiked());
-
-        newTrackFeedback.setArtistDisliked(feedback.isArtistDisliked());
-        newTrackFeedback.setArtistLiked(feedback.isArtistLiked());
-
-        newTrackFeedback.setSpeedDisliked(feedback.isSpeedDisliked());
-        newTrackFeedback.setSpeedLiked(feedback.isSpeedLiked());
-
-        newTrackFeedback.setGenreDisliked(feedback.isGenreDisliked());
-        newTrackFeedback.setGenreLiked(feedback.isGenreLiked());
-
-        newTrackFeedback.setDynamicsDisliked(feedback.isDynamicsDisliked());
-        newTrackFeedback.setDynamicsLiked(feedback.isDynamicsLiked());
-
-        newTrackFeedback.setPeriodDisliked(feedback.isPeriodDisliked());
-        newTrackFeedback.setPeriodLiked(feedback.isPeriodLiked());
-
-        newTrackFeedback.setMoodDisliked(feedback.isMoodDisliked());
-        newTrackFeedback.setMoodLiked(feedback.isMoodLiked());
+        newTrackFeedback.setSongFeedback(convertToInt(feedback.isSongLiked(), feedback.isSongDisliked()));
+        newTrackFeedback.setArtistFeedback(convertToInt(feedback.isArtistLiked(), feedback.isArtistDisliked()));
+        newTrackFeedback.setSpeedFeedback(convertToInt(feedback.isSpeedLiked(), feedback.isSpeedDisliked()));
+        newTrackFeedback.setGenreFeedback(convertToInt(feedback.isGenreLiked(), feedback.isGenreDisliked()));
+        newTrackFeedback.setDynamicsFeedback(convertToInt(feedback.isDynamicsLiked(), feedback.isDynamicsDisliked()));
+        newTrackFeedback.setPeriodFeedback(convertToInt(feedback.isPeriodLiked(), feedback.isPeriodDisliked()));
+        newTrackFeedback.setMoodFeedback(convertToInt(feedback.isMoodLiked(), feedback.isMoodDisliked()));
 
         return newTrackFeedback;
+    }
+
+    private int convertToInt(boolean liked, boolean notLiked) {
+        if (liked) return 1;
+        if (notLiked) return -1;
+        return 0;
     }
 
     /**
@@ -226,47 +219,26 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
         feedback.setRadioId(rs.getInt("radioid"));
         feedback.setTrackId(rs.getInt("songid"));
 
-        if (rs.getInt("feedbacksong") > 0) {
-            feedback.setSongLiked(true);
-        } else if (rs.getInt("feedbacksong") < 0) {
-            feedback.setSongDisliked(true);
-        }
+        feedback.setSongLiked(rs.getInt("feedbacksong") > 0);
+        feedback.setSongDisliked(rs.getInt("feedbacksong")< 0);
 
-        if (rs.getInt("feedbackartist") > 0) {
-            feedback.setArtistLiked(true);
-        } else if (rs.getInt("feedbackartist") < 0) {
-            feedback.setArtistDisliked(true);
-        }
+        feedback.setArtistLiked(rs.getInt("feedbackartist") > 0);
+        feedback.setArtistDisliked(rs.getInt("feedbackartist")< 0);
 
-        if (rs.getInt("feedbackspeed") > 0) {
-            feedback.setSpeedLiked(true);
-        } else if (rs.getInt("feedbackspeed") < 0) {
-            feedback.setSpeedDisliked(true);
-        }
+        feedback.setSpeedLiked(rs.getInt("feedbackspeed") > 0);
+        feedback.setSpeedDisliked(rs.getInt("feedbackspeed")< 0);
 
-        if (rs.getInt("feedbackgenre") > 0) {
-            feedback.setGenreLiked(true);
-        } else if (rs.getInt("feedbackgenre") < 0) {
-            feedback.setGenreDisliked(true);
-        }
+        feedback.setGenreLiked(rs.getInt("feedbackgenre") > 0);
+        feedback.setGenreDisliked(rs.getInt("feedbackgenre")< 0);
 
-        if (rs.getInt("feedbackdynamics") > 0) {
-            feedback.setDynamicsLiked(true);
-        } else if (rs.getInt("feedbackdynamics") < 0) {
-            feedback.setDynamicsDisliked(true);
-        }
+        feedback.setDynamicsLiked(rs.getInt("feedbackdynamics") > 0);
+        feedback.setDynamicsDisliked(rs.getInt("feedbackdynamics")< 0);
 
-        if (rs.getInt("feedbackperiod") > 0) {
-            feedback.setPeriodLiked(true);
-        } else if (rs.getInt("feedbackperiod") < 0) {
-            feedback.setPeriodDisliked(true);
-        }
+        feedback.setPeriodLiked(rs.getInt("feedbackperiod") > 0);
+        feedback.setPeriodDisliked(rs.getInt("feedbackperiod")< 0);
 
-        if (rs.getInt("feedbackmood") > 0) {
-            feedback.setMoodLiked(true);
-        } else if (rs.getInt("feedbackmood") < 0) {
-            feedback.setMoodDisliked(true);
-        }
+        feedback.setMoodLiked(rs.getInt("feedbackmood") > 0);
+        feedback.setMoodDisliked(rs.getInt("feedbackmood")< 0);
 
         return feedback;
     }
@@ -306,33 +278,14 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
 
     private int[] convertReasonTypesToInts(TrackFeedbackPlain feedback) {
         int[] list = new int[7];
-        if (feedback.isSongLiked()) list[0] = 1;
-        if (feedback.isSongDisliked()) list[0] = -1;
-        if (!feedback.isSongLiked() && !feedback.isSongDisliked()) list[0] = 0;
 
-        if (feedback.isArtistLiked()) list[1] = 1;
-        if (feedback.isArtistDisliked()) list[1] = -1;
-        if (!feedback.isArtistLiked() && !feedback.isArtistDisliked()) list[1] = 0;
-
-        if (feedback.isSpeedLiked()) list[2] = 1;
-        if (feedback.isSpeedDisliked()) list[2] = -1;
-        if (!feedback.isSpeedLiked() && !feedback.isSpeedDisliked()) list[2] = 0;
-
-        if (feedback.isGenreLiked()) list[3] = 1;
-        if (feedback.isGenreDisliked()) list[3] = -1;
-        if (!feedback.isGenreLiked() && !feedback.isGenreDisliked()) list[3] = 0;
-
-        if (feedback.isDynamicsLiked()) list[4] = 1;
-        if (feedback.isDynamicsDisliked()) list[4] = -1;
-        if (!feedback.isDynamicsLiked() && !feedback.isDynamicsDisliked()) list[4] = 0;
-
-        if (feedback.isPeriodLiked()) list[5] = 1;
-        if (feedback.isPeriodDisliked()) list[5] = -1;
-        if (!feedback.isPeriodLiked() && !feedback.isPeriodDisliked()) list[5] = 0;
-
-        if (feedback.isMoodLiked()) list[6] = 1;
-        if (feedback.isMoodDisliked()) list[6] = -1;
-        if (!feedback.isMoodLiked() && !feedback.isMoodDisliked()) list[6] = 0;
+        list[0] = convertToInt(feedback.isSongLiked(), feedback.isSongDisliked());
+        list[1] = convertToInt(feedback.isArtistLiked(), feedback.isArtistDisliked());
+        list[2] = convertToInt(feedback.isSpeedLiked(), feedback.isSpeedDisliked());
+        list[3] = convertToInt(feedback.isGenreLiked(), feedback.isGenreDisliked());
+        list[4] = convertToInt(feedback.isDynamicsLiked(), feedback.isDynamicsDisliked());
+        list[5] = convertToInt(feedback.isPeriodLiked(), feedback.isPeriodDisliked());
+        list[6] = convertToInt(feedback.isMoodLiked(), feedback.isMoodDisliked());
 
         return list;
     }
