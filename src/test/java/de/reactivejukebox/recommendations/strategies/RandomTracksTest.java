@@ -9,10 +9,13 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
@@ -27,7 +30,7 @@ public class RandomTracksTest {
         Tracks tracks = new Tracks();
         Albums albums = new Albums();
 
-        Model m = Mockito.mock(Model.class);
+        Model m = mock(Model.class);
         Mockito.when(m.getAlbums()).thenReturn(albums);
         Mockito.when(m.getArtists()).thenReturn(artists);
         Mockito.when(m.getTracks()).thenReturn(tracks);
@@ -53,7 +56,7 @@ public class RandomTracksTest {
         Model.getInstance().getAlbums().put(albumB.getId(), albumB);
 
         int _startindex = Model.getInstance().getTracks().size();
-        for (int i = _startindex+1; i < TRACKSARTIST_B + _startindex + 1; i++) {
+        for (int i = _startindex + 1; i < TRACKSARTIST_B + _startindex + 1; i++) {
             Model.getInstance().getTracks().put(i, new Track(
                     i, "Track B" + i, artistB, albumB, "", "", 191, 4211 - i
             ));
@@ -125,24 +128,38 @@ public class RandomTracksTest {
         }
     }
 
+    /**
+     * Test if history tracks are recommended if more tracks are requested than available
+     */
     @Test
-    public void testRecommendationsWithHistory_RequestMoreSongsThanAvailable() throws Exception {
-        /*
-        Test if history tracks are recommended if more tracks are requested than available
-         */
-        List<Track> list;
-        Set<Track> history = new HashSet<>();
-        history.add(Model.getInstance().getTracks().get(1)); //Add track to history
-        history.add(Model.getInstance().getTracks().get(2)); //Add track to history
-        history.add(Model.getInstance().getTracks().get(3)); //Add track to history
-
-        RecommendationStrategy algorithm = new RandomTracks(history, (TRACKSARTIST_A + TRACKSARTIST_B));
-        list = algorithm.getRecommendations(); //run algorithm
-
-        for (int i = 1; i < TRACKSARTIST_A + TRACKSARTIST_B + 1; i++) { //all songs
-            //all songs should be in list, even tracks from the history
-            assertTrue(list.contains(Model.getInstance().getTracks().get(i)));
+    public void testRecommendationsWithHistory_RequestMoreSongsThanAvailable() {
+        // Arrange
+        List<Track> allTracks = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            allTracks.add(someTrack(i));
         }
+
+        Set<Track> history = new HashSet<>();
+        history.add(allTracks.get(1));
+        history.add(allTracks.get(2));
+        history.add(allTracks.get(3));
+
+        Tracks tracks = mock(Tracks.class);
+        when(tracks.stream()).then(i -> allTracks.stream());
+
+        // Act
+        RecommendationStrategy algorithm = new RandomTracks(history, allTracks.size(), tracks);
+        List<Track> result = algorithm.getRecommendations(); //run algorithm
+
+        // Assert
+        assert result.containsAll(allTracks);
+    }
+
+    private static Track someTrack(int id) {
+        Track track = new Track();
+        track.setId(id);
+        track.setTitle("Track " + id);
+        return track;
     }
 
     @Test
