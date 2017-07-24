@@ -16,6 +16,7 @@ public class Model {
     private Artists artists;
     private Albums albums;
     private Radios radios;
+    private TrackFeedbacks trackFeedbacks;
 
     private Model() {
         users = new Users();
@@ -32,7 +33,8 @@ public class Model {
             tracks = new Tracks();
         }
         radios = new Radios(users);
-        historyEntries = new HistoryEntries(users,tracks,radios);
+        trackFeedbacks = new TrackFeedbacks(users, tracks, radios);
+        historyEntries = new HistoryEntries(users, tracks, radios);
     }
 
     public static synchronized Model getInstance() {
@@ -42,11 +44,13 @@ public class Model {
         return Model.instance;
     }
 
-    public Users getUsers(){
+    public Users getUsers() {
         return users;
     }
 
-    public HistoryEntries getHistoryEntries(){return historyEntries;}
+    public HistoryEntries getHistoryEntries() {
+        return historyEntries;
+    }
 
     public Tracks getTracks() {
         return tracks;
@@ -60,5 +64,11 @@ public class Model {
         return albums;
     }
 
-    public Radios getRadios() { return radios; }
+    public Radios getRadios() {
+        return radios;
+    }
+
+    public TrackFeedbacks getTrackFeedbacks() {
+        return trackFeedbacks;
+    }
 }
