@@ -2,6 +2,7 @@ package de.reactivejukebox.recommendations.strategies;
 
 import de.reactivejukebox.model.Model;
 import de.reactivejukebox.model.Track;
+import de.reactivejukebox.model.Tracks;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
 
 import java.util.*;
@@ -12,29 +13,29 @@ public class RandomTracks implements RecommendationStrategy {
     private Collection<Track> history;
     private int resultCount;
     private static Random random = new Random();
-    private Model model;
+    private Tracks tracks;
 
     public RandomTracks(Collection<Track> history, int resultCount) {
-        this(history, resultCount, Model.getInstance());
+        this(history, resultCount, Model.getInstance().getTracks());
     }
 
-    public RandomTracks(Collection<Track> history, int resultCount, Model model) {
+    public RandomTracks(Collection<Track> history, int resultCount, Tracks tracks) {
         this.history = history;
         this.resultCount = resultCount;
-        this.model = model;
+        this.tracks = tracks;
     }
 
     @Override
     public List<Track> getRecommendations() {
 
-        List<Track> possibleTracks = model.getTracks().stream()
+        List<Track> possibleTracks = tracks.stream()
                 .filter(track -> !history.contains(track)) // ignore recent history
                 .collect(Collectors.toList()); // collect into list
 
         if (possibleTracks.size() >= resultCount) { //enough tracks without history available
             return pickSample(possibleTracks, resultCount);
         } else { //not enough tracks without history available
-            possibleTracks = model.getTracks().stream() //include history tracks
+            possibleTracks = tracks.stream() //include history tracks
                     .collect(Collectors.toList()); // collect into list
 
             if (possibleTracks.size() >= resultCount) { //enough tracks with history tracks available

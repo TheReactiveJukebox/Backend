@@ -3,6 +3,7 @@ package de.reactivejukebox.recommendations.strategies;
 import de.reactivejukebox.model.Artist;
 import de.reactivejukebox.model.Model;
 import de.reactivejukebox.model.Track;
+import de.reactivejukebox.model.Tracks;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
 
 import java.util.Collection;
@@ -16,17 +17,17 @@ public class SameArtistGreatestHits implements RecommendationStrategy {
     private Collection<Track> history;
     private Collection<Track> base;
     private int resultCount;
-    private Model model;
+    private Tracks tracks;
 
     public SameArtistGreatestHits(Collection<Track> history, Collection<Track> base, int resultCount) {
-        this(history, base, resultCount, Model.getInstance());
+        this(history, base, resultCount, Model.getInstance().getTracks());
     }
 
-    public SameArtistGreatestHits(Collection<Track> history, Collection<Track> base, int resultCount, Model model) {
+    public SameArtistGreatestHits(Collection<Track> history, Collection<Track> base, int resultCount, Tracks tracks) {
         this.resultCount = resultCount;
         this.history = history;
         this.base = base;
-        this.model = model;
+        this.tracks = tracks;
     }
 
     @Override
@@ -41,7 +42,7 @@ public class SameArtistGreatestHits implements RecommendationStrategy {
     }
 
     private Stream<Track> greatestHits(Artist a) {
-        return model.getTracks().stream()
+        return tracks.stream()
                 .filter(track -> !history.contains(track)) // ignore recent history
                 .filter(track -> track.getArtist() == a) // get all tracks for artist
                 .sorted(Comparator.comparingInt(Track::getPlayCount).reversed()); // sort by popularity
