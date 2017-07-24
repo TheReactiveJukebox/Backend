@@ -69,7 +69,6 @@ public class TrackService {
     public Response pushTrackFeedback(TrackFeedbackPlain feedback, @Context User user) {
 
         feedback.setUserId(user.getId());
-        System.out.printf("Pushing track feedback: " + feedback.toString());
 
         try {
             TrackFeedbackPlain feedbackReturn = new TrackFeedbackHandler().addTrackFeedback(feedback, user).getPlainObject();
