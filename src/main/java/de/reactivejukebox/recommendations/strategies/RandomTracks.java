@@ -12,23 +12,29 @@ public class RandomTracks implements RecommendationStrategy {
     private Collection<Track> history;
     private int resultCount;
     private static Random random = new Random();
+    private Model model;
 
     public RandomTracks(Collection<Track> history, int resultCount) {
+        this(history, resultCount, Model.getInstance());
+    }
+
+    public RandomTracks(Collection<Track> history, int resultCount, Model model) {
         this.history = history;
         this.resultCount = resultCount;
+        this.model = model;
     }
 
     @Override
     public List<Track> getRecommendations() {
 
-        List<Track> possibleTracks = Model.getInstance().getTracks().stream()
+        List<Track> possibleTracks = model.getTracks().stream()
                 .filter(track -> !history.contains(track)) // ignore recent history
                 .collect(Collectors.toList()); // collect into list
 
         if (possibleTracks.size() >= resultCount) { //enough tracks without history available
             return pickSample(possibleTracks, resultCount);
         } else { //not enough tracks without history available
-            possibleTracks = Model.getInstance().getTracks().stream() //include history tracks
+            possibleTracks = model.getTracks().stream() //include history tracks
                     .collect(Collectors.toList()); // collect into list
 
             if (possibleTracks.size() >= resultCount) { //enough tracks with history tracks available
@@ -54,7 +60,7 @@ public class RandomTracks implements RecommendationStrategy {
         ArrayList<Track> list = new ArrayList<Track>();
         if (resultCount >= population.size()) {
             list.addAll(population); //add all, no random needed
-        }else if (list.size() < resultCount) {
+        } else if (list.size() < resultCount) {
             int nLeft = resultCount - list.size();
             HashSet<Track> selectedItems = new HashSet<Track>();
             // choice resultCount different tracks
