@@ -66,9 +66,8 @@ public class TrackService {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/feedback")
-    public Response pushTrackFeedback(TrackFeedbackPlain feedback, @QueryParam("id") Integer id, @Context User user) {
+    public Response pushTrackFeedback(TrackFeedbackPlain feedback, @Context User user) {
 
-        feedback.setTrackId(id);
         feedback.setUserId(user.getId());
         System.out.printf("Pushing track feedback: " + feedback.toString());
 
