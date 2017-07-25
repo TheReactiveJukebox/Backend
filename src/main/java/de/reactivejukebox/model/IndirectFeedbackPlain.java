@@ -58,6 +58,22 @@ public class IndirectFeedbackPlain {
         this.userId = userId;
     }
 
+    public boolean isValid() {
+        if (id == 0 || radioId == 0 || userId == 0 || trackId == 0 || position < 0) {
+            return false;
+        }
+        try {
+            IndirectFeedbackName name = IndirectFeedbackName.valueOf(feedbackName);
+            switch (name) {
+                case MULTI_SKIP:
+                    if (toTrackId == 0) {
+                        return false;
+                    }
+                    break;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
-
 }
