@@ -71,8 +71,7 @@ public class IndirectFeedbackPlain {
             return false;
         }
         try {
-            IndirectFeedbackName name = IndirectFeedbackName.valueOf(feedbackName);
-            switch (name) {
+            switch (IndirectFeedbackName.valueOf(feedbackName)) {
                 case MULTI_SKIP:
                     if (toTrackId == 0) {
                         return false;
