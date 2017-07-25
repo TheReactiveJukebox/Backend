@@ -55,7 +55,7 @@ public class IndirectFeedbackPlain {
     }
 
     public boolean isValid() {
-        if (id == 0 || radioId == 0 || userId == 0 || trackId == 0 || position < 0) {
+        if (radioId == 0 || userId == 0 || trackId == 0 || position < 0) {
             return false;
         }
         try {
