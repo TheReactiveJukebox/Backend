@@ -79,5 +79,21 @@ public class TrackService {
 
     }
 
+    /**
+     * Post indirect feedback to the database
+     */
+    @POST
+    @Secured
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/indirect_feedback")
+    public Response pushIndirectFeedback(IndirectFeedbackPlain feedbackPlain, @Context User user) {
+        try {
+            // TODO save feedback
+            return Response.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(500).entity("An error occurred.").build();
+        }
+    }
 
 }
