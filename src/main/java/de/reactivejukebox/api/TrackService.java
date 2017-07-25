@@ -85,7 +85,7 @@ public class TrackService {
     @POST
     @Secured
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path("/indirect_feedback")
+    @Path("/indirect-feedback")
     public Response pushIndirectFeedback(IndirectFeedbackPlain feedbackPlain, @Context User user) {
         try {
             // TODO save feedback
