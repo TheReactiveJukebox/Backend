@@ -54,6 +54,18 @@ public class IndirectFeedbackPlain {
         this.userId = userId;
     }
 
+    public String getFeedbackName() {
+        return feedbackName;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public int getToTrackId() {
+        return toTrackId;
+    }
+
     public boolean isValid() {
         if (radioId == 0 || userId == 0 || trackId == 0 || position < 0) {
             return false;
