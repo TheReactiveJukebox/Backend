@@ -1,7 +1,5 @@
 package de.reactivejukebox.model;
 
-import java.sql.Timestamp;
-
 public class IndirectFeedbackPlain {
     private int id; // Id in database for this entry
     private int radioId;
@@ -10,12 +8,11 @@ public class IndirectFeedbackPlain {
     private int position; // Position in seconds in the Song
     private int toTrackId; // skip to this song
     private String feedbackName; // Name of the feedback
-    private Timestamp time;
 
     public IndirectFeedbackPlain() {
     }
 
-    public IndirectFeedbackPlain(int id, int radioId, int userId, int trackId, int position, int toTrackId, String feedbackName, Timestamp time) {
+    public IndirectFeedbackPlain(int id, int radioId, int userId, int trackId, int position, int toTrackId, String feedbackName) {
         this.id = id;
         this.radioId = radioId;
         this.userId = userId;
@@ -23,7 +20,6 @@ public class IndirectFeedbackPlain {
         this.position = position;
         this.toTrackId = toTrackId;
         this.feedbackName = feedbackName;
-        this.time = time;
     }
 
     public Integer getId() {
