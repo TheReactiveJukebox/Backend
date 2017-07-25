@@ -88,11 +88,18 @@ public class TrackService {
     @Path("/indirect-feedback")
     public Response pushIndirectFeedback(IndirectFeedbackPlain feedbackPlain, @Context User user) {
         try {
-            // TODO save feedback
+            feedbackPlain.setUserId(user.getId());
+            // Validate input
+            if (!feedbackPlain.isValid()) {
+                return Response.status(Response.Status.BAD_REQUEST).build();
+            }
+            // Process input
+            IndirectFeedbackEntrys.put(feedbackPlain);
+            // Build response
             return Response.ok().build();
         } catch (Exception e) {
             e.printStackTrace();
-            return Response.status(500).entity("An error occurred.").build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
 
