@@ -1,9 +1,8 @@
-image: dockette/alpine:latest
-
 stages:
 - build_backend
 
 build_backend:
   stage: build_backend
+  image: dockette/mvn
   script:
     - mvn -B compiler:compile war:war
