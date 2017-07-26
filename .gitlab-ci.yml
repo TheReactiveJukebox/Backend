@@ -6,7 +6,7 @@ build_backend:
   stage: build_backend
   image: dockette/mvn
   script:
-    - mvn -B compiler:compile war:war
+    - mvn --batch-mode --quiet --fail-at-end compiler:compile war:war
   artifacts:
     paths:
     - target/server.war
