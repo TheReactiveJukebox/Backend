@@ -6,4 +6,4 @@ stages:
 build_backend:
   stage: build_backend
   script:
-    - cd backend && mvn -B compiler:compile war:war
+    - mvn -B compiler:compile war:war
