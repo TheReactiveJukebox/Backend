@@ -1,8 +1,20 @@
 stages:
 - build_backend
+- build_image
 
 build_backend:
   stage: build_backend
   image: dockette/mvn
   script:
     - mvn -B compiler:compile war:war
+  artifacts:
+    paths:
+    - target/server.war
+
+build_image_dev:
+  stage: build_image
+  only:
+    - master
+    - ft/gitlab_ci
+  script:
+    - docker build -t backend -f Dockerfile.dev
