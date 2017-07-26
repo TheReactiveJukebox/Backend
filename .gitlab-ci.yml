@@ -5,6 +5,9 @@ stages:
 variables:
   IMAGE_DEV_TAG: 129.217.62.109:4790/jukebox/jukebox/backend_dev:$CI_COMMIT_REF_SLUG
 
+before_script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN 129.217.62.109:4790
+
 build_backend:
   stage: build_backend
   image: dockette/mvn
@@ -20,6 +23,5 @@ build_image_dev:
     - master
     - ft/gitlab_ci
   script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN 129.217.62.109:4790
     - docker build --pull -t $IMAGE_DEV_TAG -f Dockerfile.dev .
     - docker push $IMAGE_DEV_TAG
