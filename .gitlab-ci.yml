@@ -17,4 +17,4 @@ build_image_dev:
     - master
     - ft/gitlab_ci
   script:
-    - docker build -t backend -f Dockerfile.dev
+    - docker build -t backend -f Dockerfile.dev .
