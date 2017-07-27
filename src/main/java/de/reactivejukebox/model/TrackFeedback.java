@@ -1,10 +1,6 @@
 package de.reactivejukebox.model;
 
 import java.io.Serializable;
-/**
- * Created by Ben Wilkes on 13.07.2017.
- */
-
 
 /**
  * The TrackFeedback class is a model for a single track feedback

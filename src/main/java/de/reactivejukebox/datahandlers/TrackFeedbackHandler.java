@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 
 /**
- * The TokenHandler is used manage TrackFeedbacks
+ * The TrackFeedbackHandler is used manage TrackFeedbacks
  */
 public class TrackFeedbackHandler {
 
