@@ -5,12 +5,14 @@ import de.reactivejukebox.recommendations.strategies.RandomTracks;
 import de.reactivejukebox.recommendations.strategies.SameArtistGreatestHits;
 import de.reactivejukebox.recommendations.strategies.StrategyType;
 import de.reactivejukebox.recommendations.strategies.traits.HistoryAwareness;
+import de.reactivejukebox.recommendations.strategies.traits.HistoryPredicate;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class RecommendationStrategyFactory {
 
@@ -28,8 +30,7 @@ public class RecommendationStrategyFactory {
 
     public RecommendationStrategy createStrategy(StrategyType s, int resultCount) {
         if (s == StrategyType.SAGH) {
-            Collection<Track> history = HistoryAwareness.recentHistory(radio.getUser());
-            history.addAll(upcoming);
+            Predicate<Track> history = HistoryPredicate.getHistoryPredicate(radio.getUser(), upcoming);
             Collection<Track> base = radio.getStartTracks();
             return new SameArtistGreatestHits(history, base, resultCount);
         } else if (s == StrategyType.RANDOM) {

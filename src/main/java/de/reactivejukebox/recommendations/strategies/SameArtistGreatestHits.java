@@ -9,21 +9,22 @@ import de.reactivejukebox.recommendations.RecommendationStrategy;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SameArtistGreatestHits implements RecommendationStrategy {
 
-    private Collection<Track> history;
+    private Predicate<Track> history;
     private Collection<Track> base;
     private int resultCount;
     private Tracks tracks;
 
-    public SameArtistGreatestHits(Collection<Track> history, Collection<Track> base, int resultCount) {
+    public SameArtistGreatestHits(Predicate<Track> history, Collection<Track> base, int resultCount) {
         this(history, base, resultCount, Model.getInstance().getTracks());
     }
 
-    public SameArtistGreatestHits(Collection<Track> history, Collection<Track> base, int resultCount, Tracks tracks) {
+    public SameArtistGreatestHits(Predicate<Track> history, Collection<Track> base, int resultCount, Tracks tracks) {
         this.resultCount = resultCount;
         this.history = history;
         this.base = base;
@@ -43,7 +44,7 @@ public class SameArtistGreatestHits implements RecommendationStrategy {
 
     private Stream<Track> greatestHits(Artist a) {
         return tracks.stream()
-                .filter(track -> !history.contains(track)) // ignore recent history
+                .filter(history) // ignore recent history
                 .filter(track -> track.getArtist() == a) // get all tracks for artist
                 .sorted(Comparator.comparingInt(Track::getPlayCount).reversed()); // sort by popularity
     }
