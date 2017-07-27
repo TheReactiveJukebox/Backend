@@ -1,9 +1,20 @@
 stages:
+- test
 - build_backend
 - build_image
 
 variables:
   IMAGE_DEV_TAG: 129.217.62.109:4790/jukebox/jukebox/backend_dev:$CI_COMMIT_REF_SLUG
+
+test_backend:
+  stage: test
+  image: dockette/mvn
+  script:
+    - mvn --batch-mode --quiet --fail-at-end test
+  artifacts:
+    paths:
+    - target/
+    expire_in: 1 week
 
 build_backend:
   stage: build_backend
@@ -12,7 +23,8 @@ build_backend:
     - mvn --batch-mode --quiet --fail-at-end compiler:compile war:war
   artifacts:
     paths:
-    - target/server.war
+    - target/
+    expire_in: 1 week
 
 build_image_dev:
   stage: build_image
