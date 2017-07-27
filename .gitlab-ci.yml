@@ -4,7 +4,7 @@ stages:
 - build_image
 
 variables:
-  IMAGE_DEV_TAG: 129.217.62.109:4790/jukebox/jukebox/backend_dev:$CI_COMMIT_REF_SLUG
+  IMAGE_DEV_TAG: 129.217.62.109:4790/jukebox/backend_dev:$CI_COMMIT_REF_SLUG
 
 test_backend:
   stage: test
