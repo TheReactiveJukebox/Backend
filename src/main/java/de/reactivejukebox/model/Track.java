@@ -1,5 +1,8 @@
 package de.reactivejukebox.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Track implements MusicEntity {
 
     int id; //global track id
@@ -10,8 +13,10 @@ public class Track implements MusicEntity {
     int duration; //song duration in seconds
     String hash;
     int playCount;
+    List<String> genres;
 
     public Track(int id, String title, Artist artist, Album album, String cover, String hash, int duration, int playCount) {
+        this();
         this.id = id;
         this.title = title;
         this.artist = artist;
@@ -22,7 +27,7 @@ public class Track implements MusicEntity {
         this.playCount = playCount;
     }
 
-    public Track(){}
+    public Track(){genres = new ArrayList<>();}
 
     public int getPlayCount() {
         return playCount;
@@ -88,9 +93,15 @@ public class Track implements MusicEntity {
         this.hash = hash;
     }
 
+    public List getGenres() {
+        return genres;
+    }
+
+    public void setGenres(List<String> genres) { this.genres = genres; }
+
     @Override
     public MusicEntityPlain getPlainObject() {
         String file = hash.substring(0, 1) + "/" + hash.substring(1, 2) + "/" + hash.substring(2) + ".mp3";
-        return new TrackPlain(id, title, artist.getId(), album.getId(), cover, file, duration, playCount);
+        return new TrackPlain(id, title, artist.getId(), album.getId(), cover, file, duration, playCount, genres);
     }
 }

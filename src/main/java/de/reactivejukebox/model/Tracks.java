@@ -17,6 +17,11 @@ public class Tracks implements Iterable<Track> {
             "FROM song, song_artist, album " +
             "WHERE song.albumid=album.id " +
             "      AND song.id=song_artist.songid";
+
+    private static final String SQL_GENRE =
+            "SELECT genre.name FROM genre, song_genre WHERE song_genre.songid  = ? " +
+                    "AND song_genre.genreid = genre.id";
+
     protected Map<Integer, Track> tracks;
 
     public Tracks() {
@@ -39,6 +44,15 @@ public class Tracks implements Iterable<Track> {
                     rs.getInt("duration"),
                     rs.getInt("playcount")
             ));
+        }
+        for (Track t: this){
+            int id = t.getId();
+            stmnt = con.prepareStatement(SQL_GENRE);
+            stmnt.setInt(1,id);
+            rs = stmnt.executeQuery();
+            while (rs.next()){
+                t.getGenres().add(rs.getString("name"));
+            }
         }
     }
 

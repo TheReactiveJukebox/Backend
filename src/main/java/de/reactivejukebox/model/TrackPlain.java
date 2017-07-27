@@ -1,5 +1,7 @@
 package de.reactivejukebox.model;
 
+import java.util.List;
+
 public class TrackPlain implements MusicEntityPlain {
 
     int id; //global track id
@@ -10,8 +12,9 @@ public class TrackPlain implements MusicEntityPlain {
     int duration; //song duration in seconds
     String file;
     int playCount;
+    List<String> genres;
 
-    public TrackPlain(int id, String title, int artist, int album, String cover, String file, int duration, int playCount) {
+    public TrackPlain(int id, String title, int artist, int album, String cover, String file, int duration, int playCount, List<String> genres) {
         this.id = id;
         this.title = title;
         this.artist = artist;
@@ -20,6 +23,7 @@ public class TrackPlain implements MusicEntityPlain {
         this.duration = duration;
         this.file = file;
         this.playCount = playCount;
+        this.genres = genres;
     }
 
     public TrackPlain(){}
@@ -83,5 +87,9 @@ public class TrackPlain implements MusicEntityPlain {
     public String getFile() { return file; }
 
     public void setFile(String file) { this.file = file; }
+
+    public List<String> getGenres() { return genres; }
+
+    public void setGenres(List<String> genres) { this.genres = genres; }
 
 }

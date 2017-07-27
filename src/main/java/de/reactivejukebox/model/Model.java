@@ -17,10 +17,12 @@ public class Model {
     private Albums albums;
     private Radios radios;
     private TrackFeedbacks trackFeedbacks;
+    private Genres genres;
 
     private Model() {
         users = new Users();
         try (Connection con = DatabaseProvider.getInstance().getDatabase().getConnection()) {
+            genres = new Genres();
             artists = new Artists(con);
             albums = new Albums(con, artists);
             tracks = new Tracks(con, artists, albums);
@@ -67,6 +69,8 @@ public class Model {
     public Radios getRadios() {
         return radios;
     }
+
+    public Genres getGenres() { return genres; }
 
     public TrackFeedbacks getTrackFeedbacks() {
         return trackFeedbacks;
