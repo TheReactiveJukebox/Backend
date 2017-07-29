@@ -20,8 +20,10 @@ public class GenrePredicate implements Predicate<Track>{
 
     public GenrePredicate(Genres genres, Radio radio){
         Set<String> selGenres = new HashSet<>();
-        for (String s : radio.getGenres()) {
-            selGenres.addAll(genres.getGenre(s));
+        if (radio.getGenres()!= null){
+            for (String s : radio.getGenres()) {
+                selGenres.addAll(genres.getGenre(s));
+            }
         }
         List<String> allGenres = genres.genreList();
         excludedGenres = new HashSet<>();
