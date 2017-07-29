@@ -1,9 +1,11 @@
 package de.reactivejukebox.recommendations.strategies;
 
 import de.reactivejukebox.model.Model;
+import de.reactivejukebox.model.Radio;
 import de.reactivejukebox.model.Track;
 import de.reactivejukebox.model.Tracks;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
+import de.reactivejukebox.recommendations.traits.Filter;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -11,26 +13,30 @@ import java.util.stream.Collectors;
 
 public class RandomTracks implements RecommendationStrategy {
 
-    private Predicate<Track> history;
     private int resultCount;
     private static Random random = new Random();
     private Tracks tracks;
+    private Filter filter;
+    private Collection<Track> upcoming;
+    private  Radio radio;
 
-    public RandomTracks(Predicate<Track> history, int resultCount) {
-        this(history, resultCount, Model.getInstance().getTracks());
+
+    public RandomTracks(Radio radio,Collection<Track> upcoming, int resultCount) {
+        this(radio, upcoming, resultCount, Model.getInstance().getTracks());
     }
 
-    public RandomTracks(Predicate<Track> history, int resultCount, Tracks tracks) {
-        this.history = history;
+    public RandomTracks(Radio radio, Collection<Track> upcoming, int resultCount, Tracks tracks) {
+        this.radio = radio;
         this.resultCount = resultCount;
         this.tracks = tracks;
+        this.upcoming = upcoming;
+        this.filter = new Filter(radio,upcoming);
     }
 
     @Override
     public List<Track> getRecommendations() {
 
-        List<Track> possibleTracks = tracks.stream()
-                .filter(history) // ignore recent history
+        List<Track> possibleTracks = filter.byRadio(tracks.stream()) // filter by Radio (properties and history
                 .collect(Collectors.toList()); // collect into list
 
         if (possibleTracks.size() >= resultCount) { //enough tracks without history available
@@ -42,8 +48,8 @@ public class RandomTracks implements RecommendationStrategy {
             if (possibleTracks.size() >= resultCount) { //enough tracks with history tracks available
                 return pickSample(possibleTracks, resultCount);
             } else { //more songs requested than in database
-                ArrayList<Track> pickedTracks = pickSample(possibleTracks, resultCount); //pick possible tracks w/ history
-                //pick the remaining tracks from alredy picked tracks. Tracks will be added multiple times
+                List<Track> pickedTracks = pickSample(possibleTracks, resultCount); //pick possible tracks w/ history
+                //pick the remaining tracks from already picked tracks. Tracks will be added multiple times
                 while (resultCount - pickedTracks.size() > 0) {
                     pickedTracks.addAll(pickSample(possibleTracks, (resultCount - pickedTracks.size())));
                 }
@@ -58,7 +64,7 @@ public class RandomTracks implements RecommendationStrategy {
      * If resultCount greater then count of tracks in population add the whole population once.
      * Resulting list size can be lower than population if resultCount>population.size()
      */
-    private ArrayList<Track> pickSample(List<Track> population, final int resultCount) {
+    private List<Track> pickSample(List<Track> population, final int resultCount) {
         ArrayList<Track> list = new ArrayList<Track>();
         if (resultCount >= population.size()) {
             list.addAll(population); //add all, no random needed

@@ -1,34 +1,34 @@
 package de.reactivejukebox.recommendations.strategies;
 
-import de.reactivejukebox.model.Artist;
-import de.reactivejukebox.model.Model;
-import de.reactivejukebox.model.Track;
-import de.reactivejukebox.model.Tracks;
+import de.reactivejukebox.model.*;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
+import de.reactivejukebox.recommendations.traits.Filter;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SameArtistGreatestHits implements RecommendationStrategy {
 
-    private Predicate<Track> history;
     private Collection<Track> base;
     private int resultCount;
     private Tracks tracks;
+    private Radio radio;
+    private Filter filter;
+    private Collection<Track> upcoming;
 
-    public SameArtistGreatestHits(Predicate<Track> history, Collection<Track> base, int resultCount) {
-        this(history, base, resultCount, Model.getInstance().getTracks());
+    public SameArtistGreatestHits(Radio radio, Collection<Track> upcoming, int resultCount) {
+        this(radio,upcoming, resultCount, Model.getInstance().getTracks());
     }
 
-    public SameArtistGreatestHits(Predicate<Track> history, Collection<Track> base, int resultCount, Tracks tracks) {
+    public SameArtistGreatestHits(Radio radio, Collection<Track> upcoming, int resultCount, Tracks tracks) {
         this.resultCount = resultCount;
-        this.history = history;
-        this.base = base;
+        this.radio = radio;
+        this.upcoming = upcoming;
+        this.base = radio.getStartTracks();
         this.tracks = tracks;
+        this.filter = new Filter(radio, upcoming);
     }
 
     @Override
@@ -43,9 +43,10 @@ public class SameArtistGreatestHits implements RecommendationStrategy {
     }
 
     private Stream<Track> greatestHits(Artist a) {
-        return tracks.stream()
-                .filter(history) // ignore recent history
-                .filter(track -> track.getArtist() == a) // get all tracks for artist
-                .sorted(Comparator.comparingInt(Track::getPlayCount).reversed()); // sort by popularity
+        Set<Artist> artists = new HashSet<>();
+        artists.add(a);
+        Stream<Track> possibleTracks= filter.byRadio(tracks.stream()); // filter by History and Genre
+        return filter.forArtist(possibleTracks,artists)                // filter by Artists
+                .sorted(Comparator.comparingInt(Track::getPlayCount).reversed());   // Sort
     }
 }

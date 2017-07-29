@@ -5,6 +5,7 @@ import de.reactivejukebox.model.*;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
 import de.reactivejukebox.recommendations.RecommendationStrategyFactory;
 import de.reactivejukebox.recommendations.strategies.StrategyType;
+import de.reactivejukebox.recommendations.traits.Filter;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -14,6 +15,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Path("/jukebox")
 public class JukeboxService {
@@ -66,8 +68,6 @@ public class JukeboxService {
                     .collect(Collectors.toList());
             // build algorithm for user's current jukebox
             Radio radio = Model.getInstance().getRadios().getByUserId(user.getId());
-
-            //Filter
 
             RecommendationStrategy algorithm = new RecommendationStrategyFactory(radio, upcomingTracks)
                     .createStrategy(count);
