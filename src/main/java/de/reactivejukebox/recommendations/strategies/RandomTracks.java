@@ -6,20 +6,21 @@ import de.reactivejukebox.model.Tracks;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class RandomTracks implements RecommendationStrategy {
 
-    private Collection<Track> history;
+    private Predicate<Track> history;
     private int resultCount;
     private static Random random = new Random();
     private Tracks tracks;
 
-    public RandomTracks(Collection<Track> history, int resultCount) {
+    public RandomTracks(Predicate<Track> history, int resultCount) {
         this(history, resultCount, Model.getInstance().getTracks());
     }
 
-    public RandomTracks(Collection<Track> history, int resultCount, Tracks tracks) {
+    public RandomTracks(Predicate<Track> history, int resultCount, Tracks tracks) {
         this.history = history;
         this.resultCount = resultCount;
         this.tracks = tracks;
@@ -29,7 +30,7 @@ public class RandomTracks implements RecommendationStrategy {
     public List<Track> getRecommendations() {
 
         List<Track> possibleTracks = tracks.stream()
-                .filter(track -> !history.contains(track)) // ignore recent history
+                .filter(history) // ignore recent history
                 .collect(Collectors.toList()); // collect into list
 
         if (possibleTracks.size() >= resultCount) { //enough tracks without history available
