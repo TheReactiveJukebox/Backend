@@ -1,4 +1,4 @@
-package de.reactivejukebox.recommendations.strategies.traits;
+package de.reactivejukebox.recommendations.traits;
 
 import de.reactivejukebox.model.HistoryEntry;
 import de.reactivejukebox.model.Model;
