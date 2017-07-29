@@ -4,7 +4,6 @@ import de.reactivejukebox.model.*;
 import de.reactivejukebox.recommendations.strategies.RandomTracks;
 import de.reactivejukebox.recommendations.strategies.SameArtistGreatestHits;
 import de.reactivejukebox.recommendations.strategies.StrategyType;
-import de.reactivejukebox.recommendations.traits.HistoryAwareness;
 import de.reactivejukebox.recommendations.traits.HistoryPredicate;
 
 import java.util.Collection;
