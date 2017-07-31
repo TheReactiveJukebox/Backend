@@ -58,12 +58,24 @@ public class IndirectFeedbackPlain {
         return feedbackName;
     }
 
+    public void setFeedbackName(String name) {
+        this.feedbackName = name;
+    }
+
     public int getPosition() {
         return position;
     }
 
+    public void setPosition(int pos) {
+        this.position = pos;
+    }
+
     public int getToTrackId() {
         return toTrackId;
+    }
+
+    public void setToTrackId(int track) {
+        this.toTrackId = track;
     }
 
     public boolean isValid() {
