@@ -179,7 +179,7 @@ public class Tendencies implements Iterable<Tendency> {
         return tendencies;
     }
 
-    private TendencyPlain fromDbByFeedback(TendencyPlain feedback) throws SQLException {
+    private TendencyPlain fromDbByTendency(TendencyPlain feedback) throws SQLException {
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM tendency WHERE userid = ? " +
                 "AND radioid = ?  ORDER BY id DESC;");
@@ -202,7 +202,13 @@ public class Tendencies implements Iterable<Tendency> {
         tendency.setId(rs.getInt("id"));
         tendency.setUserId(rs.getInt("userid"));
         tendency.setRadioId(rs.getInt("radioid"));
-        //TODO: What does the table look like?
+        tendency.setMoreDynamics(rs.getBoolean("moredynamics"));
+        tendency.setLessDynamics(rs.getBoolean("lessdynamics"));
+        tendency.setFaster(rs.getBoolean("faster"));
+        tendency.setSlower(rs.getBoolean("slower"));
+        tendency.setOlder(rs.getBoolean("older"));
+        tendency.setNewer(rs.getBoolean("newer"));
+        tendency.setMoreOfGenre(rs.getString("moreofgenre"));
 
         return tendency;
     }
@@ -244,13 +250,20 @@ public class Tendencies implements Iterable<Tendency> {
     private void toDB(TendencyPlain tendency) throws SQLException {
 
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        PreparedStatement addFeedback = con.prepareStatement("INSERT INTO feedback (userid, radioid," +
-                " ) " +
-                "VALUES( ?, ?) ");
+        PreparedStatement addFeedback = con.prepareStatement("INSERT INTO tendency (userid, radioid," +
+                "MoreDynamics, LessDynamics, Faster, Slower, Older, Newer, MoreOfGenre ) " +
+                "VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?) ");
 
         addFeedback.setInt(1, tendency.getUserId());
         addFeedback.setInt(2, tendency.getRadioId());
-        //TODO: What does the table look like?
+        addFeedback.setBoolean(3, tendency.isMoreDynamics());
+        addFeedback.setBoolean(4, tendency.isLessDynamics());
+        addFeedback.setBoolean(5, tendency.isFaster());
+        addFeedback.setBoolean(6, tendency.isSlower());
+        addFeedback.setBoolean(7, tendency.isOlder());
+        addFeedback.setBoolean(8, tendency.isNewer());
+        addFeedback.setObject(9, tendency.getMoreOfGenre());
+
 
         addFeedback.executeUpdate();
         con.close();
