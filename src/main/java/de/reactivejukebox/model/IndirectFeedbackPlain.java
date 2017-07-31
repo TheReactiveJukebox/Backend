@@ -79,13 +79,13 @@ public class IndirectFeedbackPlain {
     }
 
     public boolean isValid() {
-        if (radioId == 0 || userId == 0 || trackId == 0 || position < 0) {
+        if (radioId <= 0 || userId <= 0 || trackId <= 0 || position < 0) {
             return false;
         }
         try {
             switch (IndirectFeedbackName.valueOf(feedbackName)) {
                 case MULTI_SKIP:
-                    if (toTrackId == 0) {
+                    if (toTrackId <= 0) {
                         return false;
                     }
                     break;
