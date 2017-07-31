@@ -18,7 +18,10 @@ public class Tendency implements Serializable {
     private boolean older;
     private boolean newer;
     private String moreOfGenre;
-
+    private float preferredDynamics;
+    private int preferredSpeed;
+    private int preferredPeriodStart;
+    private int preferredPeriodEnd;
 
     public Tendency() {
     }
@@ -103,6 +106,38 @@ public class Tendency implements Serializable {
         this.moreOfGenre = moreOfGenre;
     }
 
+    public float getPreferredDynamics() {
+        return preferredDynamics;
+    }
+
+    public void setPreferredDynamics(float preferredDynamics) {
+        this.preferredDynamics = preferredDynamics;
+    }
+
+    public int getPreferredSpeed() {
+        return preferredSpeed;
+    }
+
+    public void setPreferredSpeed(int preferredSpeed) {
+        this.preferredSpeed = preferredSpeed;
+    }
+
+    public int getPreferredPeriodStart() {
+        return preferredPeriodStart;
+    }
+
+    public void setPreferredPeriodStart(int preferredPeriodStart) {
+        this.preferredPeriodStart = preferredPeriodStart;
+    }
+
+    public int getPreferredPeriodEnd() {
+        return preferredPeriodEnd;
+    }
+
+    public void setPreferredPeriodEnd(int preferredPeriodEnd) {
+        this.preferredPeriodEnd = preferredPeriodEnd;
+    }
+
     /**
      * Creates a matching TendencyPlain object.
      *
@@ -120,7 +155,14 @@ public class Tendency implements Serializable {
         plainTendency.setSlower(this.isSlower());
         plainTendency.setNewer(this.isNewer());
         plainTendency.setOlder(this.isOlder());
+
+        plainTendency.setPreferredDynamics(this.getPreferredDynamics());
+        plainTendency.setPreferredPeriodEnd(this.getPreferredPeriodEnd());
+        plainTendency.setPreferredPeriodStart(this.getPreferredPeriodStart());
+        plainTendency.setPreferredSpeed(this.getPreferredSpeed());
+
         plainTendency.setMoreOfGenre(this.getMoreOfGenre());
+
         return plainTendency;
     }
 

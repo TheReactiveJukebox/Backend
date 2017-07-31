@@ -1,5 +1,6 @@
 package de.reactivejukebox.model;
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
 import de.reactivejukebox.database.DatabaseProvider;
 import de.reactivejukebox.database.PreparedStatementBuilder;
 
@@ -44,7 +45,7 @@ public class Tendencies implements Iterable<Tendency> {
      * @return
      * @throws SQLException
      */
-    public Tendency put(TendencyPlain tendency) throws SQLException {
+    public Tendency put(TendencyPlain tendency) throws SQLException, InvalidArgumentException {
         toDB(tendency);
         tendency = fromDbByTendency(tendency);
         Tendency newTendency = build(tendency);
@@ -145,6 +146,11 @@ public class Tendencies implements Iterable<Tendency> {
         newTendency.setMoreDynamics(tendency.isMoreDynamics());
         newTendency.setMoreOfGenre(tendency.getMoreOfGenre());
 
+        newTendency.setPreferredDynamics(tendency.getPreferredDynamics());
+        newTendency.setPreferredPeriodEnd(tendency.getPreferredPeriodEnd());
+        newTendency.setPreferredPeriodStart(tendency.getPreferredPeriodStart());
+        newTendency.setPreferredSpeed(tendency.getPreferredSpeed());
+
         return newTendency;
     }
 
@@ -210,6 +216,10 @@ public class Tendencies implements Iterable<Tendency> {
         tendency.setNewer(rs.getBoolean("newer"));
         tendency.setMoreOfGenre(rs.getString("moreofgenre"));
 
+        tendency.setPreferredSpeed(rs.getInt("preferredspeed"));
+        tendency.setPreferredPeriodStart(rs.getInt("preferredperiodstart"));
+        tendency.setPreferredPeriodEnd(rs.getInt("preferredperiodend"));
+        tendency.setPreferredDynamics(rs.getFloat("preferreddynamics"));
         return tendency;
     }
 
@@ -247,12 +257,20 @@ public class Tendencies implements Iterable<Tendency> {
     }
 
 
-    private void toDB(TendencyPlain tendency) throws SQLException {
+    private void toDB(TendencyPlain tendency) throws SQLException, IllegalArgumentException {
+        if(tendency.getPreferredPeriodEnd()<tendency.getPreferredPeriodStart()||
+                tendency.getPreferredDynamics()<0||
+                tendency.getPreferredDynamics()>1||
+                tendency.getPreferredSpeed()<=0
+                ){
+            throw(new IllegalArgumentException("Tendency is maleformed"));
+        }
 
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement addFeedback = con.prepareStatement("INSERT INTO tendency (userid, radioid," +
-                "MoreDynamics, LessDynamics, Faster, Slower, Older, Newer, MoreOfGenre ) " +
-                "VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?) ");
+                "MoreDynamics, LessDynamics, Faster, Slower, Older, Newer, MoreOfGenre,  PreferredDynamics, " +
+                "PreferredSpeed, PreferredPeriodStart, PreferredPeriodEnd) " +
+                "VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ");
 
         addFeedback.setInt(1, tendency.getUserId());
         addFeedback.setInt(2, tendency.getRadioId());
@@ -263,7 +281,10 @@ public class Tendencies implements Iterable<Tendency> {
         addFeedback.setBoolean(7, tendency.isOlder());
         addFeedback.setBoolean(8, tendency.isNewer());
         addFeedback.setObject(9, tendency.getMoreOfGenre());
-
+        addFeedback.setFloat(10, tendency.getPreferredDynamics());
+        addFeedback.setInt(11,tendency.getPreferredSpeed());
+        addFeedback.setInt(12,tendency.getPreferredPeriodStart());
+        addFeedback.setInt(13,tendency.getPreferredPeriodEnd());
 
         addFeedback.executeUpdate();
         con.close();
