@@ -22,15 +22,19 @@ public class IndirectFeedbackEntrys {
         switch (IndirectFeedbackName.valueOf(entry.getFeedbackName())) {
             case SKIP:
                 addEntry.setInt(5, entry.getPosition());
-                addEntry.setNull(6, Types.INTEGER);
+                if (entry.getToTrackId() > 0) {
+                    addEntry.setInt(6, entry.getToTrackId());
+                } else {
+                    addEntry.setNull(6, Types.INTEGER); // to Track
+                }
                 break;
             case MULTI_SKIP:
                 addEntry.setInt(5, entry.getPosition());
                 addEntry.setInt(6, entry.getToTrackId());
                 break;
             case DELETE:
-                addEntry.setNull(5, Types.INTEGER);
-                addEntry.setNull(6, Types.INTEGER);
+                addEntry.setNull(5, Types.INTEGER); // Position
+                addEntry.setNull(6, Types.INTEGER); // to Track
                 break;
         }
         addEntry.executeUpdate();
