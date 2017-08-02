@@ -56,7 +56,7 @@ public class Filter {
         if(radio.getGenres()!= null && radio.getGenres().length>0){
             trackStream = trackStream.filter(genre);
         }
-        if(radio.getStartYear() > 0 || radio.getEndYear() > 0){
+        if(radio.getStartYear() > 0 && radio.getEndYear() > 0){
             trackStream = trackStream.filter(published);
         }
 

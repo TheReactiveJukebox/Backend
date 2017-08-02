@@ -34,7 +34,11 @@ public class Tracks implements Iterable<Track> {
         ResultSet rs = stmnt.executeQuery();
         while (rs.next()) {
             int id = rs.getInt("id");
-            java.util.Date javaDate = new Date(rs.getDate("published").getTime());
+            java.sql.Date newDate = rs.getDate("published");
+            java.util.Date javaDate = null;
+            if(newDate != null) {
+                javaDate = new Date(rs.getDate("published").getTime());
+            }
             tracks.put(id, new Track(
                     id,
                     rs.getString("title"),
