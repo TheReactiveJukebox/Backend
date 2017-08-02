@@ -13,7 +13,7 @@ import java.util.stream.StreamSupport;
 public class Tracks implements Iterable<Track> {
 
     private static final String SQL_QUERY =
-            "SELECT song.id, song.title, song_artist.artistid, song.albumid, album.cover, song.hash, song.duration, song.playcount " +
+            "SELECT song.id, song.title, song_artist.artistid, song.albumid, album.cover, song.hash, song.duration, song.playcount, song.published " +
             "FROM song, song_artist, album " +
             "WHERE song.albumid=album.id " +
             "      AND song.id=song_artist.songid";
@@ -34,6 +34,7 @@ public class Tracks implements Iterable<Track> {
         ResultSet rs = stmnt.executeQuery();
         while (rs.next()) {
             int id = rs.getInt("id");
+            java.util.Date javaDate = new Date(rs.getDate("published").getTime());
             tracks.put(id, new Track(
                     id,
                     rs.getString("title"),
@@ -42,7 +43,8 @@ public class Tracks implements Iterable<Track> {
                     rs.getString("cover"),
                     rs.getString("hash"),
                     rs.getInt("duration"),
-                    rs.getInt("playcount")
+                    rs.getInt("playcount"),
+                    javaDate
             ));
         }
         for (Track t: this){

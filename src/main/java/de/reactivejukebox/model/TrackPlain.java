@@ -1,5 +1,6 @@
 package de.reactivejukebox.model;
 
+import java.util.Date;
 import java.util.List;
 
 public class TrackPlain implements MusicEntityPlain {
@@ -13,8 +14,9 @@ public class TrackPlain implements MusicEntityPlain {
     String file;
     int playCount;
     List<String> genres;
+    Date date;
 
-    public TrackPlain(int id, String title, int artist, int album, String cover, String file, int duration, int playCount, List<String> genres) {
+    public TrackPlain(int id, String title, int artist, int album, String cover, String file, int duration, int playCount, List<String> genres, Date date) {
         this.id = id;
         this.title = title;
         this.artist = artist;
@@ -24,6 +26,7 @@ public class TrackPlain implements MusicEntityPlain {
         this.file = file;
         this.playCount = playCount;
         this.genres = genres;
+        this.date = date;
     }
 
     public TrackPlain(){}
@@ -92,4 +95,7 @@ public class TrackPlain implements MusicEntityPlain {
 
     public void setGenres(List<String> genres) { this.genres = genres; }
 
+    public Date getDate() { return date; }
+
+    public void setDate(Date date) { this.date = date; }
 }

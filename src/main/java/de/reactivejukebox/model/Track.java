@@ -1,6 +1,7 @@
 package de.reactivejukebox.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Track implements MusicEntity {
@@ -14,8 +15,9 @@ public class Track implements MusicEntity {
     String hash;
     int playCount;
     List<String> genres;
+    Date date;
 
-    public Track(int id, String title, Artist artist, Album album, String cover, String hash, int duration, int playCount) {
+    public Track(int id, String title, Artist artist, Album album, String cover, String hash, int duration, int playCount, Date date) {
         this();
         this.id = id;
         this.title = title;
@@ -25,6 +27,7 @@ public class Track implements MusicEntity {
         this.duration = duration;
         this.hash = hash;
         this.playCount = playCount;
+        this.date = date;
     }
 
     public Track(){genres = new ArrayList<>();}
@@ -53,9 +56,7 @@ public class Track implements MusicEntity {
         this.artist = artist;
     }
 
-    public Album getAlbum() {
-        return album;
-    }
+    public Album getAlbum() {return album; }
 
     public void setAlbum(Album album) {
         this.album = album;
@@ -99,9 +100,13 @@ public class Track implements MusicEntity {
 
     public void setGenres(List<String> genres) { this.genres = genres; }
 
+    public Date getDate() { return date; }
+
+    public void setDate(Date date) { this.date = date; }
+
     @Override
     public MusicEntityPlain getPlainObject() {
         String file = hash.substring(0, 1) + "/" + hash.substring(1, 2) + "/" + hash.substring(2) + ".mp3";
-        return new TrackPlain(id, title, artist.getId(), album.getId(), cover, file, duration, playCount, genres);
+        return new TrackPlain(id, title, artist.getId(), album.getId(), cover, file, duration, playCount, genres, date);
     }
 }
