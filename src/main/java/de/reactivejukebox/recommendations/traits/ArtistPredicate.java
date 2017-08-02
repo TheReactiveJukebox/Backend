@@ -15,6 +15,11 @@ public class ArtistPredicate implements Predicate<Track> {
         this.artists = artists;
     }
 
+    public ArtistPredicate(Artist artist){
+        this.artists = new HashSet<>();
+        this.artists.add(artist);
+    }
+
     @Override
     public boolean test(Track track) {
         return artists.contains(track.getArtist());

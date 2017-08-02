@@ -5,7 +5,6 @@ import de.reactivejukebox.model.Model;
 import de.reactivejukebox.model.Radio;
 import de.reactivejukebox.model.Track;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

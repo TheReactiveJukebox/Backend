@@ -30,22 +30,21 @@ public class RandomTracks implements RecommendationStrategy {
         this.resultCount = resultCount;
         this.tracks = tracks;
         this.upcoming = upcoming;
-        this.filter = new Filter(radio,upcoming);
+        this.filter = new Filter(radio, upcoming, resultCount);
     }
 
     @Override
     public List<Track> getRecommendations() {
 
-        List<Track> possibleTracks = filter.byRadio(tracks.stream()) // filter by Radio (properties and history
+        List<Track> possibleTracks = filter.byRadio(tracks.stream()) // filter by Radio properties and history
                 .collect(Collectors.toList()); // collect into list
 
         if (possibleTracks.size() >= resultCount) { //enough tracks without history available
             return pickSample(possibleTracks, resultCount);
-        } else { //not enough tracks without history available
-            possibleTracks = tracks.stream() //include history tracks
+        } else { //not enough tracks by radio properties
+            possibleTracks = tracks.stream() //include all Tracks
                     .collect(Collectors.toList()); // collect into list
-
-            if (possibleTracks.size() >= resultCount) { //enough tracks with history tracks available
+            if (possibleTracks.size() >= resultCount) { //enough tracks available
                 return pickSample(possibleTracks, resultCount);
             } else { //more songs requested than in database
                 List<Track> pickedTracks = pickSample(possibleTracks, resultCount); //pick possible tracks w/ history

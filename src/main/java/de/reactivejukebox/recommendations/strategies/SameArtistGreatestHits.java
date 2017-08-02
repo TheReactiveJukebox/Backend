@@ -2,6 +2,7 @@ package de.reactivejukebox.recommendations.strategies;
 
 import de.reactivejukebox.model.*;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
+import de.reactivejukebox.recommendations.traits.ArtistPredicate;
 import de.reactivejukebox.recommendations.traits.Filter;
 
 import java.util.*;
@@ -28,7 +29,7 @@ public class SameArtistGreatestHits implements RecommendationStrategy {
         this.upcoming = upcoming;
         this.base = radio.getStartTracks();
         this.tracks = tracks;
-        this.filter = new Filter(radio, upcoming);
+        this.filter = new Filter(radio, upcoming, resultCount);
     }
 
     @Override
@@ -43,10 +44,8 @@ public class SameArtistGreatestHits implements RecommendationStrategy {
     }
 
     private Stream<Track> greatestHits(Artist a) {
-        Set<Artist> artists = new HashSet<>();
-        artists.add(a);
-        Stream<Track> possibleTracks= filter.byRadio(tracks.stream()); // filter by History and Genre
-        return filter.forArtist(possibleTracks,artists)                // filter by Artists
-                .sorted(Comparator.comparingInt(Track::getPlayCount).reversed());   // Sort
+         // filter by History and Genre
+        Stream<Track> possibleTracks =  tracks.stream().filter(new ArtistPredicate(a));                // filter by Artists
+        return filter.byRadio(possibleTracks).sorted(Comparator.comparingInt(Track::getPlayCount).reversed()); // sort
     }
 }
