@@ -14,8 +14,10 @@ public class TendencyPlain implements Serializable {
     private boolean lessDynamics;
     private boolean slower;
     private boolean faster;
-    private boolean older;
-    private boolean newer;
+    private boolean startOlder;
+    private boolean startNewer;
+    private boolean endOlder;
+    private boolean endNewer;
     private String moreOfGenre;
     private float preferredDynamics;
     private int preferredSpeed;
@@ -82,21 +84,25 @@ public class TendencyPlain implements Serializable {
         this.faster = faster;
     }
 
-    public boolean isOlder() {
-        return older;
+    public boolean isStartOlder() {
+        return startOlder;
     }
 
-    public void setOlder(boolean older) {
-        this.older = older;
+    public void setStartOlder(boolean startOlder) {
+        this.startOlder = startOlder;
     }
 
-    public boolean isNewer() {
-        return newer;
-    }
+    public boolean isStartNewer() { return startNewer; }
 
-    public void setNewer(boolean newer) {
-        this.newer = newer;
-    }
+    public void setStartNewer(boolean startNewer) { this.startNewer = startNewer; }
+
+    public boolean isEndOlder() { return endOlder; }
+
+    public void setEndOlder(boolean endOlder) { this.endOlder = endOlder; }
+
+    public boolean isEndNewer() { return endNewer; }
+
+    public void setEndNewer(boolean endNewer) { this.endNewer = endNewer; }
 
     public String getMoreOfGenre() {
         return moreOfGenre;

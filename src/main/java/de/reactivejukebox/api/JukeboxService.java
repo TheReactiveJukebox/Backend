@@ -1,6 +1,5 @@
 package de.reactivejukebox.api;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import de.reactivejukebox.core.Secured;
 import de.reactivejukebox.datahandlers.TendencyHandler;
 import de.reactivejukebox.model.*;
@@ -12,6 +11,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.sql.SQLDataException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
@@ -104,10 +104,11 @@ public class JukeboxService {
         try {
             TendencyPlain tendencyReturn = new TendencyHandler().addTendency(tendency, user).getPlainObject();
             return Response.ok().entity(tendencyReturn).build();
+        } catch (SQLDataException e) {
+            return Response.status(400).entity(e).build();
+
         } catch (SQLException e) {
             return Response.status(500).entity(e).build();
-        } catch (InvalidArgumentException e) {
-            return Response.status(400).entity(e).build();
         }
 
     }

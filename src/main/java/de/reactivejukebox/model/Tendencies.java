@@ -1,13 +1,8 @@
 package de.reactivejukebox.model;
-
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import de.reactivejukebox.database.DatabaseProvider;
 import de.reactivejukebox.database.PreparedStatementBuilder;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Spliterator;
@@ -45,7 +40,7 @@ public class Tendencies implements Iterable<Tendency> {
      * @return
      * @throws SQLException
      */
-    public Tendency put(TendencyPlain tendency) throws SQLException, InvalidArgumentException {
+    public Tendency put(TendencyPlain tendency) throws SQLException {
         toDB(tendency);
         tendency = fromDbByTendency(tendency);
         Tendency newTendency = build(tendency);
@@ -140,8 +135,10 @@ public class Tendencies implements Iterable<Tendency> {
         newTendency.setId(tendency.getId());
         newTendency.setFaster(tendency.isFaster());
         newTendency.setSlower(tendency.isSlower());
-        newTendency.setNewer(tendency.isNewer());
-        newTendency.setOlder(tendency.isOlder());
+        newTendency.setStartNewer(tendency.isStartNewer());
+        newTendency.setStartOlder(tendency.isStartOlder());
+        newTendency.setEndNewer(tendency.isEndNewer());
+        newTendency.setEndOlder(tendency.isEndOlder());
         newTendency.setLessDynamics(tendency.isLessDynamics());
         newTendency.setMoreDynamics(tendency.isMoreDynamics());
         newTendency.setMoreOfGenre(tendency.getMoreOfGenre());
@@ -212,8 +209,10 @@ public class Tendencies implements Iterable<Tendency> {
         tendency.setLessDynamics(rs.getBoolean("lessdynamics"));
         tendency.setFaster(rs.getBoolean("faster"));
         tendency.setSlower(rs.getBoolean("slower"));
-        tendency.setOlder(rs.getBoolean("older"));
-        tendency.setNewer(rs.getBoolean("newer"));
+        tendency.setStartOlder(rs.getBoolean("periodstartolder"));
+        tendency.setStartNewer(rs.getBoolean("periodstartnewer"));
+        tendency.setEndOlder(rs.getBoolean("periodendolder"));
+        tendency.setEndNewer(rs.getBoolean("periodendnewer"));
         tendency.setMoreOfGenre(rs.getString("moreofgenre"));
 
         tendency.setPreferredSpeed(rs.getInt("preferredspeed"));
@@ -249,6 +248,7 @@ public class Tendencies implements Iterable<Tendency> {
         if (rs.next()) {
             con.close();
             return (this.buildPlain(rs));
+
         } else {
             con.close();
             throw new SQLException("Tendency with ID=" + id + " was not found");
@@ -257,20 +257,20 @@ public class Tendencies implements Iterable<Tendency> {
     }
 
 
-    private void toDB(TendencyPlain tendency) throws SQLException, IllegalArgumentException {
-        if(tendency.getPreferredPeriodEnd()<tendency.getPreferredPeriodStart()||
-                tendency.getPreferredDynamics()<0||
-                tendency.getPreferredDynamics()>1||
-                tendency.getPreferredSpeed()<=0
-                ){
-            throw(new IllegalArgumentException("Tendency is maleformed"));
+    private void toDB(TendencyPlain tendency) throws SQLException, SQLDataException {
+        if (tendency.getPreferredPeriodEnd() <= tendency.getPreferredPeriodStart() ||
+                tendency.getPreferredDynamics() < 0 ||
+                tendency.getPreferredDynamics() > 1 ||
+                tendency.getPreferredSpeed() <= 0
+                ) {
+            throw (new SQLDataException("Tendency is malformed"));
         }
 
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement addFeedback = con.prepareStatement("INSERT INTO tendency (userid, radioid," +
-                "MoreDynamics, LessDynamics, Faster, Slower, Older, Newer, MoreOfGenre,  PreferredDynamics, " +
-                "PreferredSpeed, PreferredPeriodStart, PreferredPeriodEnd) " +
-                "VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ");
+                "MoreDynamics, LessDynamics, Faster, Slower, PeriodStartOlder, PeriodStartNewer, MoreOfGenre,  PreferredDynamics, " +
+                "PreferredSpeed, PreferredPeriodStart, PreferredPeriodEnd, PeriodEndOlder, PeriodEndNewer) " +
+                "VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ");
 
         addFeedback.setInt(1, tendency.getUserId());
         addFeedback.setInt(2, tendency.getRadioId());
@@ -278,13 +278,15 @@ public class Tendencies implements Iterable<Tendency> {
         addFeedback.setBoolean(4, tendency.isLessDynamics());
         addFeedback.setBoolean(5, tendency.isFaster());
         addFeedback.setBoolean(6, tendency.isSlower());
-        addFeedback.setBoolean(7, tendency.isOlder());
-        addFeedback.setBoolean(8, tendency.isNewer());
+        addFeedback.setBoolean(7, tendency.isStartOlder());
+        addFeedback.setBoolean(8, tendency.isStartNewer());
         addFeedback.setObject(9, tendency.getMoreOfGenre());
         addFeedback.setFloat(10, tendency.getPreferredDynamics());
-        addFeedback.setInt(11,tendency.getPreferredSpeed());
-        addFeedback.setInt(12,tendency.getPreferredPeriodStart());
-        addFeedback.setInt(13,tendency.getPreferredPeriodEnd());
+        addFeedback.setInt(11, tendency.getPreferredSpeed());
+        addFeedback.setInt(12, tendency.getPreferredPeriodStart());
+        addFeedback.setInt(13, tendency.getPreferredPeriodEnd());
+        addFeedback.setBoolean(14, tendency.isEndOlder());
+        addFeedback.setBoolean(15, tendency.isEndNewer());
 
         addFeedback.executeUpdate();
         con.close();

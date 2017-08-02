@@ -1,8 +1,8 @@
 package de.reactivejukebox.datahandlers;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import de.reactivejukebox.model.*;
 
+import java.sql.SQLDataException;
 import java.sql.SQLException;
 
 
@@ -22,7 +22,7 @@ public class TendencyHandler {
      *
      * @throws SQLException if something goes wrong
      */
-    public Tendency addTendency(TendencyPlain tendency, User user) throws SQLException, InvalidArgumentException {
+    public Tendency addTendency(TendencyPlain tendency, User user) throws SQLException {
         tendency.setUserId(user.getId());
         return tendencies.put(tendency);
     }
