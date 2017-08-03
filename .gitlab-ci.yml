@@ -4,8 +4,8 @@ stages:
 - build_image
 
 variables:
-  IMAGE_NAME_DEV: backend_dev:$CI_COMMIT_REF_SLUG
-  IMAGE_NAME: backend_dev:$CI_COMMIT_REF_SLUG
+  IMAGE_NAME_DEV: $CI_REGISTRY/jukebox/backend/dev:$CI_COMMIT_REF_SLUG
+  IMAGE_NAME: $CI_REGISTRY/jukebox/backend/pro:$CI_COMMIT_REF_SLUG
 
 test_backend:
   stage: test
@@ -32,13 +32,19 @@ build_image_dev:
   only:
     - master
     - ft/gitlab_ci
+    - ft/gitlab_ci_test
   script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker build --pull -t $IMAGE_NAME_DEV -f Dockerfile.dev .
+    - docker push $IMAGE_NAME
 
 build_image:
   stage: build_image
   only:
     - master
     - ft/gitlab_ci
+    - ft/gitlab_ci_test
   script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker build --pull -t $IMAGE_NAME .
+    - docker push $IMAGE_NAME
