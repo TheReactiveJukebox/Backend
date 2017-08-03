@@ -94,7 +94,7 @@ public class TrackService {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
             // Process input
-            IndirectFeedbackEntrys.put(feedbackPlain);
+            IndirectFeedbackEntries.put(feedbackPlain);
             // Build response
             return Response.ok().build();
         } catch (Exception e) {

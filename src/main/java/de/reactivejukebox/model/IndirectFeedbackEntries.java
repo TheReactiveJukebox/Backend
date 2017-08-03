@@ -4,7 +4,7 @@ import de.reactivejukebox.database.DatabaseProvider;
 
 import java.sql.*;
 
-public class IndirectFeedbackEntrys {
+public class IndirectFeedbackEntries {
     static private final String INSERT_INDIRECT_FEEDBACK = "INSERT INTO indirectFeedback (SongId, UserId, RadioId, Type, Position, ToSongId) VALUES (?, ?, ?, ?, ?, ?);";
 
     public static IndirectFeedbackPlain put(IndirectFeedbackPlain entry) throws SQLException {
