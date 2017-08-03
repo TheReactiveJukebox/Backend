@@ -4,7 +4,7 @@ stages:
 - build_image
 
 variables:
-  IMAGE_DEV_TAG: 129.217.62.109:4790/jukebox/backend_dev:$CI_COMMIT_REF_SLUG
+  IMAGE_NAME_DEV: backend_dev:$CI_COMMIT_REF_SLUG
 
 test_backend:
   stage: test
@@ -32,6 +32,4 @@ build_image_dev:
     - master
     - ft/gitlab_ci
   script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN 129.217.62.109:4790
-    - docker build --pull -t $IMAGE_DEV_TAG -f Dockerfile.dev .
-    - docker push $IMAGE_DEV_TAG
+    - docker build --pull -t $IMAGE_NAME_DEV -f Dockerfile.dev .
