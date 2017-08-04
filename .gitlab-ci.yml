@@ -1,13 +1,13 @@
 stages:
 - test
-- build_backend
+- build
 - build_image
 
 variables:
   IMAGE_NAME_DEV: backend_dev:$CI_COMMIT_REF_SLUG
   IMAGE_NAME_PRO: backend_pro:$CI_COMMIT_REF_SLUG
 
-test_backend:
+unit_test:
   stage: test
   image: dockette/mvn
   script:
@@ -17,8 +17,8 @@ test_backend:
     - target/
     expire_in: 1 week
 
-build_backend:
-  stage: build_backend
+backend:
+  stage: build
   image: dockette/mvn
   script:
     - mvn --batch-mode --quiet --fail-at-end compiler:compile war:war
@@ -27,7 +27,7 @@ build_backend:
     - target/
     expire_in: 1 week
 
-build_image_dev:
+development:
   stage: build_image
   only:
     - master
@@ -35,7 +35,7 @@ build_image_dev:
   script:
     - docker build --pull -t $IMAGE_NAME_DEV -f Dockerfile.dev .
 
-build_image:
+production:
   stage: build_image
   only:
     - master
