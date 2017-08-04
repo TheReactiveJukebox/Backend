@@ -47,4 +47,4 @@ production:
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker build --pull -t $IMAGE_NAME_PRO .
-    - docker push $IMAGE_NAME
+    - docker push $IMAGE_NAME_PRO
