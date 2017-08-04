@@ -12,6 +12,7 @@ unit_test:
   image: dockette/mvn
   script:
     - mvn --batch-mode --quiet --fail-at-end test
+    - cat target/site/jacoco/index.html
   artifacts:
     paths:
     - target/
