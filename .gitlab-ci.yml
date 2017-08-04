@@ -5,7 +5,7 @@ stages:
 
 variables:
   IMAGE_NAME_DEV: backend_dev:$CI_COMMIT_REF_SLUG
-  IMAGE_NAME: backend_dev:$CI_COMMIT_REF_SLUG
+  IMAGE_NAME_PRO: backend_pro:$CI_COMMIT_REF_SLUG
 
 test_backend:
   stage: test
@@ -41,4 +41,4 @@ build_image:
     - master
     - ft/gitlab_ci
   script:
-    - docker build --pull -t $IMAGE_NAME .
+    - docker build --pull -t $IMAGE_NAME_PRO .
