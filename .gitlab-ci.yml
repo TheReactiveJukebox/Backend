@@ -16,6 +16,7 @@ unit_test:
   artifacts:
     paths:
     - target/
+    - target/site/jacoco/
     expire_in: 1 week
 
 backend:
