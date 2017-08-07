@@ -57,7 +57,6 @@ public class TrackService {
      * Post feedback to a track with a given id
      *
      * @param feedback posted feedback
-     * @param id       id of the track of the feedback
      * @param user     user who gave the feedback
      * @return TrackFeedbackPlain Object of the feedback actually written to the DB
      */
@@ -74,7 +73,8 @@ public class TrackService {
             TrackFeedbackPlain feedbackReturn = new TrackFeedbackHandler().addTrackFeedback(feedback, user).getPlainObject();
             return Response.ok().entity(feedbackReturn).build();
         } catch (SQLException e) {
-            return Response.status(500).entity(e).build();
+            e.printStackTrace();
+            return Response.status(500).build();
         }
 
     }
