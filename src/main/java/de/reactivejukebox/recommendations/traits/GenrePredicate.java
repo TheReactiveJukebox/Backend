@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
+/**
+ * Returns TRUE if the Track belongs to given Genre
+ */
 public class GenrePredicate implements Predicate<Track>{
     private Set<String> excludedGenres;
 

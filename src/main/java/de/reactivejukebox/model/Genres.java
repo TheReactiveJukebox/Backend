@@ -12,15 +12,22 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+/**
+ * Genres is a Class that contains the mapping information From Frontend to Backend/Database Genres.
+ */
 public class Genres implements Iterable<String>{
     private ConcurrentHashMap<String,String> genreToMetagenre;
     private ConcurrentHashMap<String,ArrayList<String>> metagenreToGenre;
     private static String SQL_QUERY = "SELECT g.name as metagenre, genre.name FROM genre JOIN genre g ON genre.metagenreid = g.id";
 
-    public Genres() throws SQLException {
+    public Genres(){
         genreToMetagenre = new ConcurrentHashMap<>();
         metagenreToGenre = new ConcurrentHashMap<>();
-        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
+    }
+
+    public Genres(Connection con) throws SQLException {
+        genreToMetagenre = new ConcurrentHashMap<>();
+        metagenreToGenre = new ConcurrentHashMap<>();
         PreparedStatement stmnt = con.prepareStatement(SQL_QUERY);
         ResultSet rs = stmnt.executeQuery();
         String genre;
@@ -40,22 +47,57 @@ public class Genres implements Iterable<String>{
         }
     }
 
+    /**
+     *
+     * @param genreName Name of a Genre
+     * @return Name of the matching Metagenre
+     */
     public String getMetaGenre(String genreName){
         return genreToMetagenre.get(genreName);
     }
 
+    /**
+     *
+     * @param metaGenreName Name of a Metagenre
+     * @return Name of all Matchign Genres
+     */
     public ArrayList<String> getGenre(String metaGenreName){
         return metagenreToGenre.get(metaGenreName);
     }
 
+    /**
+     *
+     * @return List of all Metagenres
+     */
     public List<String> metaList(){
         Enumeration<String> e = metagenreToGenre.keys();
         return Collections.list(e);
     }
 
+    /**
+     *
+     * @return List of all Genres
+     */
     public List<String> genreList(){
         Enumeration<String> e = genreToMetagenre.keys();
         return Collections.list(e);
+    }
+
+    /**
+     *
+     * @param genre Name of the new Genre
+     * @param metagenre Name of the new Metagenre
+     */
+    public void put(String genre, String metagenre){
+        if(!genreToMetagenre.containsKey(genre)){
+            genreToMetagenre.putIfAbsent(genre, metagenre);
+        }
+        if(!metagenreToGenre.containsKey(metagenre)){
+            ArrayList<String> metalist = new ArrayList<>();
+            metalist.add(metagenre);
+            metagenreToGenre.putIfAbsent(metagenre, metalist);
+        }
+        metagenreToGenre.get(metagenre).add(genre);
     }
 
     @Override

@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
+/**
+ * Returns TRUE if Track belongs to given Artist.
+ */
 public class ArtistPredicate implements Predicate<Track> {
     private Set<Artist> artists;
 

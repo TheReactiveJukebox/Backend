@@ -8,6 +8,9 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+/**
+ * Returns TRUE if Track is not within the history of given radio
+ */
 public class HistoryPredicate implements Predicate<Track> {
     private Set<Track>finalHistory;
 

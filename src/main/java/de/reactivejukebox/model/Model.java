@@ -22,7 +22,7 @@ public class Model {
     private Model() {
         users = new Users();
         try (Connection con = DatabaseProvider.getInstance().getDatabase().getConnection()) {
-            genres = new Genres();
+            genres = new Genres(con);
             artists = new Artists(con);
             albums = new Albums(con, artists);
             tracks = new Tracks(con, artists, albums);
