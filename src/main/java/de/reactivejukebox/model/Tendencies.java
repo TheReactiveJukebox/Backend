@@ -258,7 +258,7 @@ public class Tendencies implements Iterable<Tendency> {
 
 
     private void toDB(TendencyPlain tendency) throws SQLException, SQLDataException {
-        if (tendency.getPreferredPeriodEnd() <= tendency.getPreferredPeriodStart() ||
+        if (tendency.getPreferredPeriodEnd() < tendency.getPreferredPeriodStart() ||
                 tendency.getPreferredDynamics() < 0 ||
                 tendency.getPreferredDynamics() > 1 ||
                 tendency.getPreferredSpeed() <= 0
