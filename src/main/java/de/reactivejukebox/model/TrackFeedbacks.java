@@ -1,8 +1,5 @@
 package de.reactivejukebox.model;
 
-/**
- * Created by Ben Wilkes on 13.07.2017.
- */
 
 import de.reactivejukebox.database.DatabaseProvider;
 import de.reactivejukebox.database.PreparedStatementBuilder;
