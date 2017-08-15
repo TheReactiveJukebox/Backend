@@ -15,7 +15,7 @@ unit_test:
     - cat target/site/jacoco/index.html
     - cp -r target/site/jacoco .
   artifacts:
-    name: "codecavarage_$CI_COMMIT_REF_NAME"
+    name: code_coverage_$CI_COMMIT_REF_SLUG
     paths:
     - jacoco/
 
