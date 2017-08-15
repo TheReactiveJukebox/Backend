@@ -1,4 +1,4 @@
-package de.reactivejukebox.recommendations.traits;
+package de.reactivejukebox.recommendations.filters;
 
 import de.reactivejukebox.model.Genres;
 import de.reactivejukebox.model.Model;
@@ -13,16 +13,16 @@ import java.util.function.Predicate;
 /**
  * Returns TRUE if the Track belongs to given Genre
  */
-public class GenrePredicate implements Predicate<Track>{
+public class GenrePredicate implements Predicate<Track> {
     private Set<String> excludedGenres;
 
-    public GenrePredicate(Radio radio){
-        this(Model.getInstance().getGenres(),radio);
+    public GenrePredicate(Radio radio) {
+        this(Model.getInstance().getGenres(), radio);
     }
 
-    public GenrePredicate(Genres genres, Radio radio){
+    public GenrePredicate(Genres genres, Radio radio) {
         Set<String> selGenres = new HashSet<>();
-        if (radio.getGenres()!= null){
+        if (radio.getGenres() != null) {
             for (String s : radio.getGenres()) {
                 selGenres.addAll(genres.getGenre(s));
             }

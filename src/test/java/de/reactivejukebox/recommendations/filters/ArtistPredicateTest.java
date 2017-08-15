@@ -1,8 +1,9 @@
-package de.reactivejukebox.recommendations.traits;
+package de.reactivejukebox.recommendations.filters;
 
 import de.reactivejukebox.model.Album;
 import de.reactivejukebox.model.Artist;
 import de.reactivejukebox.model.Track;
+import de.reactivejukebox.recommendations.filters.ArtistPredicate;
 import org.testng.annotations.Test;
 
 import java.util.Date;

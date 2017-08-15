@@ -1,9 +1,9 @@
-package de.reactivejukebox.recommendations.traits;
+package de.reactivejukebox.recommendations.filters;
 
-import de.reactivejukebox.model.*;
+import de.reactivejukebox.model.Artist;
+import de.reactivejukebox.model.Track;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -14,11 +14,11 @@ public class ArtistPredicate implements Predicate<Track> {
     private Set<Artist> artists;
 
 
-    public ArtistPredicate(Set<Artist> artists){
+    public ArtistPredicate(Set<Artist> artists) {
         this.artists = artists;
     }
 
-    public ArtistPredicate(Artist artist){
+    public ArtistPredicate(Artist artist) {
         this.artists = new HashSet<>();
         this.artists.add(artist);
     }

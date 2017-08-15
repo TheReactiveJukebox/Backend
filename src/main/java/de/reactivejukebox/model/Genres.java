@@ -1,7 +1,5 @@
 package de.reactivejukebox.model;
 
-import de.reactivejukebox.database.DatabaseProvider;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,12 +13,12 @@ import java.util.stream.StreamSupport;
 /**
  * Genres is a Class that contains the mapping information From Frontend to Backend/Database Genres.
  */
-public class Genres implements Iterable<String>{
-    private ConcurrentHashMap<String,String> genreToMetagenre;
-    private ConcurrentHashMap<String,ArrayList<String>> metagenreToGenre;
+public class Genres implements Iterable<String> {
     private static String SQL_QUERY = "SELECT g.name as metagenre, genre.name FROM genre JOIN genre g ON genre.metagenreid = g.id";
+    private ConcurrentHashMap<String, String> genreToMetagenre;
+    private ConcurrentHashMap<String, ArrayList<String>> metagenreToGenre;
 
-    public Genres(){
+    public Genres() {
         genreToMetagenre = new ConcurrentHashMap<>();
         metagenreToGenre = new ConcurrentHashMap<>();
     }
@@ -32,13 +30,11 @@ public class Genres implements Iterable<String>{
         ResultSet rs = stmnt.executeQuery();
         String genre;
         String metagenre;
-        while(rs.next()) {
+        while (rs.next()) {
             genre = rs.getString("name");
-            metagenre  = rs.getString("metagenre");
-            if(!genreToMetagenre.containsKey(genre)){
-                genreToMetagenre.putIfAbsent(genre, metagenre);
-            }
-            if(!metagenreToGenre.containsKey(metagenre)){
+            metagenre = rs.getString("metagenre");
+            genreToMetagenre.putIfAbsent(genre, metagenre);
+            if (!metagenreToGenre.containsKey(metagenre)) {
                 ArrayList<String> metalist = new ArrayList<>();
                 metalist.add(metagenre);
                 metagenreToGenre.putIfAbsent(metagenre, metalist);
@@ -48,51 +44,46 @@ public class Genres implements Iterable<String>{
     }
 
     /**
-     *
      * @param genreName Name of a Genre
      * @return Name of the matching Metagenre
      */
-    public String getMetaGenre(String genreName){
+    public String getMetaGenre(String genreName) {
         return genreToMetagenre.get(genreName);
     }
 
     /**
-     *
      * @param metaGenreName Name of a Metagenre
      * @return Name of all Matchign Genres
      */
-    public ArrayList<String> getGenre(String metaGenreName){
+    public ArrayList<String> getGenre(String metaGenreName) {
         return metagenreToGenre.get(metaGenreName);
     }
 
     /**
-     *
      * @return List of all Metagenres
      */
-    public List<String> metaList(){
+    public List<String> metaList() {
         Enumeration<String> e = metagenreToGenre.keys();
         return Collections.list(e);
     }
 
     /**
-     *
      * @return List of all Genres
      */
-    public List<String> genreList(){
+    public List<String> genreList() {
         Enumeration<String> e = genreToMetagenre.keys();
         return Collections.list(e);
     }
 
     /**
-     *
-     * @param genre Name of the new Genre
+     * @param genre     Name of the new Genre
      * @param metagenre Name of the new Metagenre
      */
-    public void put(String genre, String metagenre){
-        if(!genreToMetagenre.containsKey(genre)){
+    public void put(String genre, String metagenre) {
+        if (!genreToMetagenre.containsKey(genre)) {
             genreToMetagenre.putIfAbsent(genre, metagenre);
         }
-        if(!metagenreToGenre.containsKey(metagenre)){
+        if (!metagenreToGenre.containsKey(metagenre)) {
             ArrayList<String> metalist = new ArrayList<>();
             metalist.add(metagenre);
             metagenreToGenre.putIfAbsent(metagenre, metalist);

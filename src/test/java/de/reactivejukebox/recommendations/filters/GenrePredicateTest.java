@@ -1,6 +1,7 @@
-package de.reactivejukebox.recommendations.traits;
+package de.reactivejukebox.recommendations.filters;
 
 import de.reactivejukebox.model.*;
+import de.reactivejukebox.recommendations.filters.GenrePredicate;
 import de.reactivejukebox.recommendations.strategies.StrategyType;
 import org.testng.annotations.Test;
 

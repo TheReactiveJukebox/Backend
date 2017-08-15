@@ -1,4 +1,5 @@
-package de.reactivejukebox.recommendations.traits;
+package de.reactivejukebox.recommendations.filters;
+
 import de.reactivejukebox.model.*;
 
 import java.sql.SQLException;
@@ -12,17 +13,17 @@ import java.util.stream.Collectors;
  * Returns TRUE if Track is not within the history of given radio
  */
 public class HistoryPredicate implements Predicate<Track> {
-    private Set<Track>finalHistory;
+    private Set<Track> finalHistory;
 
-    public HistoryPredicate(Radio radio,Collection<Track> upcoming){
-        this(Model.getInstance().getHistoryEntries(),radio,upcoming);
+    public HistoryPredicate(Radio radio, Collection<Track> upcoming) {
+        this(Model.getInstance().getHistoryEntries(), radio, upcoming);
     }
 
-    public HistoryPredicate(HistoryEntries history, Radio radio, Collection<Track> upcoming){
+    public HistoryPredicate(HistoryEntries history, Radio radio, Collection<Track> upcoming) {
         Set<Track> tracks = Collections.EMPTY_SET;
         User user = radio.getUser();
         try {
-             tracks = history
+            tracks = history
                     .getListByUserId(user.getId())
                     .stream()
                     .map(HistoryEntry::getTrack)
