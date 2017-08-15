@@ -70,7 +70,7 @@ public class HistoryEntries implements Iterable<HistoryEntry> {
 
     public void delete(Integer historyId) throws SQLException {
         deleteFromDB(historyId);
-        if(entryById.containsKey(historyId))
+        if (entryById.containsKey(historyId))
             entryById.remove(historyId);
     }
 
@@ -103,7 +103,6 @@ public class HistoryEntries implements Iterable<HistoryEntry> {
 
     /**
      * Build a HistoryEntry object from a HistoryEntryPlain object.
-     *
      */
     private HistoryEntry build(HistoryEntryPlain entry) throws SQLException {
         Track t = tracks.get(entry.getTrackId());
@@ -163,7 +162,6 @@ public class HistoryEntries implements Iterable<HistoryEntry> {
 
     /**
      * Insert HistoryEntryPlain in database table history and set historyId in history object.
-     *
      */
     private void toDB(HistoryEntryPlain entry) throws SQLException {
         con = DatabaseProvider.getInstance().getDatabase().getConnection();

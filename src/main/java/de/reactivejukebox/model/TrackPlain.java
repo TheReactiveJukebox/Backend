@@ -29,7 +29,8 @@ public class TrackPlain implements MusicEntityPlain {
         this.date = date;
     }
 
-    public TrackPlain(){}
+    public TrackPlain() {
+    }
 
     public int getPlayCount() {
         return playCount;
@@ -87,15 +88,27 @@ public class TrackPlain implements MusicEntityPlain {
         this.title = title;
     }
 
-    public String getFile() { return file; }
+    public String getFile() {
+        return file;
+    }
 
-    public void setFile(String file) { this.file = file; }
+    public void setFile(String file) {
+        this.file = file;
+    }
 
-    public List<String> getGenres() { return genres; }
+    public List<String> getGenres() {
+        return genres;
+    }
 
-    public void setGenres(List<String> genres) { this.genres = genres; }
+    public void setGenres(List<String> genres) {
+        this.genres = genres;
+    }
 
-    public Date getDate() { return date; }
+    public Date getDate() {
+        return date;
+    }
 
-    public void setDate(Date date) { this.date = date; }
+    public void setDate(Date date) {
+        this.date = date;
+    }
 }

@@ -2,11 +2,12 @@ package de.reactivejukebox.recommendations.strategies;
 
 import de.reactivejukebox.model.*;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
-import de.reactivejukebox.recommendations.traits.ArtistPredicate;
-import de.reactivejukebox.recommendations.traits.Filter;
+import de.reactivejukebox.recommendations.filters.ArtistPredicate;
+import de.reactivejukebox.recommendations.filters.Filter;
 
-import java.util.*;
-import java.util.function.Predicate;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -20,7 +21,7 @@ public class SameArtistGreatestHits implements RecommendationStrategy {
     private Collection<Track> upcoming;
 
     public SameArtistGreatestHits(Radio radio, Collection<Track> upcoming, int resultCount) {
-        this(radio,upcoming, resultCount, Model.getInstance().getTracks());
+        this(radio, upcoming, resultCount, Model.getInstance().getTracks());
     }
 
     public SameArtistGreatestHits(Radio radio, Collection<Track> upcoming, int resultCount, Tracks tracks) {
@@ -44,8 +45,8 @@ public class SameArtistGreatestHits implements RecommendationStrategy {
     }
 
     private Stream<Track> greatestHits(Artist a) {
-         // filter by History and Genre
-        Stream<Track> possibleTracks =  tracks.stream().filter(new ArtistPredicate(a));                // filter by Artists
+        // filter by History and Genre
+        Stream<Track> possibleTracks = tracks.stream().filter(new ArtistPredicate(a));                // filter by Artists
         return filter.byRadio(possibleTracks).sorted(Comparator.comparingInt(Track::getPlayCount).reversed()); // sort
     }
 }

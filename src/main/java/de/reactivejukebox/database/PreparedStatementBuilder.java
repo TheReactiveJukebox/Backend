@@ -9,37 +9,11 @@ import java.util.Queue;
 
 public class PreparedStatementBuilder {
 
-    /**
-     * With prepared statements, the statement skeleton needs to be sent to the server.
-     * After that, the values are set individually. A PreparedStatementSetter is a callback
-     * that allows the values to be set before prepare() is called.
-     * <p>
-     * Can be written in lambda notation like so:
-     * <p>
-     * (dbQuery, i) -> dbQuery.setString(i, "myvalue")
-     * <p>
-     * To be used as a parameter for PreparedStatementBuilder.addFilter().
-     */
-    public interface PreparedStatementSetter {
-
-        /**
-         * Callback where the parameter of the PreparedStatement is set.
-         * Possible implementation: (dbQuery, i) -> dbQuery.setString(i, "myvalue")
-         *
-         * @param query PreparedStatement reference
-         * @param i     parameter index
-         * @throws SQLException when the dbQuery.set*() call throws an SQL Exception
-         */
-        void execute(PreparedStatement query, int i) throws SQLException;
-    }
-
     private Queue<PreparedStatementSetter> valueSetters;
     private String projection;
     private String databaseObjects;
     private StringBuilder query;
     private boolean firstExpressionSpecified = false;
-
-
     public PreparedStatementBuilder() {
         valueSetters = new LinkedList<>();
         query = new StringBuilder();
@@ -89,10 +63,11 @@ public class PreparedStatementBuilder {
 
     /**
      * Creates the PreparedStatement using the given Connection object and sets its parameters
+     *
      * @param con Connection to the database
      * @return a PreparedStatement object with all parameters set
      * @throws SQLException when con.prepareStatement or any of the PreparedStatementSetter.execute()
-     * calls throw an SQLException
+     *                      calls throw an SQLException
      */
     public PreparedStatement prepare(Connection con) throws SQLException {
         String queryString = "SELECT " + projection + " FROM " + databaseObjects + " " + query;
@@ -102,5 +77,29 @@ public class PreparedStatementBuilder {
             cmd.execute(stmnt, i);
         }
         return stmnt;
+    }
+
+    /**
+     * With prepared statements, the statement skeleton needs to be sent to the server.
+     * After that, the values are set individually. A PreparedStatementSetter is a callback
+     * that allows the values to be set before prepare() is called.
+     * <p>
+     * Can be written in lambda notation like so:
+     * <p>
+     * (dbQuery, i) -> dbQuery.setString(i, "myvalue")
+     * <p>
+     * To be used as a parameter for PreparedStatementBuilder.addFilter().
+     */
+    public interface PreparedStatementSetter {
+
+        /**
+         * Callback where the parameter of the PreparedStatement is set.
+         * Possible implementation: (dbQuery, i) -> dbQuery.setString(i, "myvalue")
+         *
+         * @param query PreparedStatement reference
+         * @param i     parameter index
+         * @throws SQLException when the dbQuery.set*() call throws an SQL Exception
+         */
+        void execute(PreparedStatement query, int i) throws SQLException;
     }
 }

@@ -5,23 +5,22 @@ import de.reactivejukebox.model.Radio;
 import de.reactivejukebox.model.Track;
 import de.reactivejukebox.model.Tracks;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
-import de.reactivejukebox.recommendations.traits.Filter;
+import de.reactivejukebox.recommendations.filters.Filter;
 
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class RandomTracks implements RecommendationStrategy {
 
-    private int resultCount;
     private static Random random = new Random();
+    private int resultCount;
     private Tracks tracks;
     private Filter filter;
     private Collection<Track> upcoming;
-    private  Radio radio;
+    private Radio radio;
 
 
-    public RandomTracks(Radio radio,Collection<Track> upcoming, int resultCount) {
+    public RandomTracks(Radio radio, Collection<Track> upcoming, int resultCount) {
         this(radio, upcoming, resultCount, Model.getInstance().getTracks());
     }
 

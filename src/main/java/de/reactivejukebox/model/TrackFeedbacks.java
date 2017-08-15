@@ -217,25 +217,25 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
         feedback.setTrackId(rs.getInt("songid"));
 
         feedback.setSongLiked(rs.getInt("feedbacksong") > 0);
-        feedback.setSongDisliked(rs.getInt("feedbacksong")< 0);
+        feedback.setSongDisliked(rs.getInt("feedbacksong") < 0);
 
         feedback.setArtistLiked(rs.getInt("feedbackartist") > 0);
-        feedback.setArtistDisliked(rs.getInt("feedbackartist")< 0);
+        feedback.setArtistDisliked(rs.getInt("feedbackartist") < 0);
 
         feedback.setSpeedLiked(rs.getInt("feedbackspeed") > 0);
-        feedback.setSpeedDisliked(rs.getInt("feedbackspeed")< 0);
+        feedback.setSpeedDisliked(rs.getInt("feedbackspeed") < 0);
 
         feedback.setGenreLiked(rs.getInt("feedbackgenre") > 0);
-        feedback.setGenreDisliked(rs.getInt("feedbackgenre")< 0);
+        feedback.setGenreDisliked(rs.getInt("feedbackgenre") < 0);
 
         feedback.setDynamicsLiked(rs.getInt("feedbackdynamics") > 0);
-        feedback.setDynamicsDisliked(rs.getInt("feedbackdynamics")< 0);
+        feedback.setDynamicsDisliked(rs.getInt("feedbackdynamics") < 0);
 
         feedback.setPeriodLiked(rs.getInt("feedbackperiod") > 0);
-        feedback.setPeriodDisliked(rs.getInt("feedbackperiod")< 0);
+        feedback.setPeriodDisliked(rs.getInt("feedbackperiod") < 0);
 
         feedback.setMoodLiked(rs.getInt("feedbackmood") > 0);
-        feedback.setMoodDisliked(rs.getInt("feedbackmood")< 0);
+        feedback.setMoodDisliked(rs.getInt("feedbackmood") < 0);
 
         return feedback;
     }
@@ -288,7 +288,6 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
     }
 
 
-
     private void toDB(TrackFeedbackPlain feedback) throws SQLException {
 
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
@@ -299,7 +298,7 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
                 "UPDATE Set (feedbacksong, feedbackartist, feedbackspeed, feedbackgenre, " +
                 "feedbackdynamics, feedbackperiod, feedbackmood, time) = " +
                 "(?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP);");
-        
+
         addFeedback.setInt(1, feedback.getUserId());
         addFeedback.setInt(2, feedback.getTrackId());
         addFeedback.setInt(3, feedback.getRadioId());
@@ -307,11 +306,11 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
         int[] values = convertReasonTypesToInts(feedback);
         int len = Math.min(values.length, 7);
         for (int i = 0; i < len; i++) { // feedback values for INSERT
-            int index = i+4;
+            int index = i + 4;
             addFeedback.setInt(index, values[i]);
         }
         for (int i = 0; i < len; i++) { // feedback values for UPDATE
-            int index = i+4+7;
+            int index = i + 4 + 7;
             addFeedback.setInt(index, values[i]);
         }
 

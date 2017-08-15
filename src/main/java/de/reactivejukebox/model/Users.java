@@ -48,7 +48,7 @@ public class Users implements Iterable<User> {
                     .from("jukebox_user")
                     .addFilter("id=?", (query, i) -> query.setInt(i, id));
             user = createUserFromStatement(builder);
-            userById.putIfAbsent(user.getId(),user);
+            userById.putIfAbsent(user.getId(), user);
         }
         return user;
     }
@@ -63,7 +63,7 @@ public class Users implements Iterable<User> {
                     .from("jukebox_user")
                     .addFilter("name=?", (query, i) -> query.setString(i, name));
             user = createUserFromStatement(builder);
-            userByName.putIfAbsent(user.getUsername(),user);
+            userByName.putIfAbsent(user.getUsername(), user);
         }
         return user;
     }
@@ -86,7 +86,7 @@ public class Users implements Iterable<User> {
         user = get(user.getUsername());
         String oldT = user.getToken();
         generateToken(user);
-        if( oldT != null && userByToken.containsKey(oldT)) {
+        if (oldT != null && userByToken.containsKey(oldT)) {
             userByToken.remove(oldT);
         }
         userByToken.put(user.getToken(), user);

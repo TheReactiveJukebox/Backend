@@ -4,7 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Spliterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -14,9 +17,9 @@ public class Tracks implements Iterable<Track> {
 
     private static final String SQL_QUERY =
             "SELECT song.id, song.title, song_artist.artistid, song.albumid, album.cover, song.hash, song.duration, song.playcount, song.published " +
-            "FROM song, song_artist, album " +
-            "WHERE song.albumid=album.id " +
-            "      AND song.id=song_artist.songid";
+                    "FROM song, song_artist, album " +
+                    "WHERE song.albumid=album.id " +
+                    "      AND song.id=song_artist.songid";
 
     private static final String SQL_GENRE =
             "SELECT genre.name FROM genre, song_genre WHERE song_genre.songid  = ? " +
@@ -36,7 +39,7 @@ public class Tracks implements Iterable<Track> {
             int id = rs.getInt("id");
             java.sql.Date newDate = rs.getDate("published");
             java.util.Date javaDate = null;
-            if(newDate != null) {
+            if (newDate != null) {
                 javaDate = new Date(rs.getDate("published").getTime());
             }
             tracks.put(id, new Track(
@@ -51,12 +54,12 @@ public class Tracks implements Iterable<Track> {
                     javaDate
             ));
         }
-        for (Track t: this){
+        for (Track t : this) {
             int id = t.getId();
             stmnt = con.prepareStatement(SQL_GENRE);
-            stmnt.setInt(1,id);
+            stmnt.setInt(1, id);
             rs = stmnt.executeQuery();
-            while (rs.next()){
+            while (rs.next()) {
                 t.getGenres().add(rs.getString("name"));
             }
         }
@@ -76,7 +79,9 @@ public class Tracks implements Iterable<Track> {
         return tracks.remove(id);
     }
 
-    public int size(){return tracks.size();}
+    public int size() {
+        return tracks.size();
+    }
 
     @Override
     public Iterator<Track> iterator() {

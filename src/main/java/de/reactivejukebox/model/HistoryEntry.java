@@ -11,7 +11,8 @@ public class HistoryEntry {
     private User user;
     private Timestamp time;
 
-    public HistoryEntry(){}
+    public HistoryEntry() {
+    }
 
     public HistoryEntry(int id, Track track, Radio radio, User user, Timestamp time) {
         this.id = id;
@@ -69,7 +70,7 @@ public class HistoryEntry {
                 "]";
     }
 
-    public HistoryEntryPlain getPlainObject(){
-        return new HistoryEntryPlain(id,track.getId(),radio.getId(),user.getId(),time);
+    public HistoryEntryPlain getPlainObject() {
+        return new HistoryEntryPlain(id, track.getId(), radio.getId(), user.getId(), time);
     }
 }

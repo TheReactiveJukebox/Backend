@@ -6,7 +6,7 @@ import de.reactivejukebox.model.UserPlain;
 import de.reactivejukebox.model.Users;
 
 import javax.security.auth.login.FailedLoginException;
-import java.sql.*;
+import java.sql.SQLException;
 
 
 /**
@@ -15,15 +15,16 @@ import java.sql.*;
 public class TokenHandler {
     private Users users;
 
-    public TokenHandler(){
+    public TokenHandler() {
         users = Model.getInstance().getUsers();
     }
+
     /**
      * Checks the login credentials of a user and generates a valid token. In short: the login is performed.
      *
      * @param user the retrieved login credentials
      * @return a new valid {@link } for the user
-     * @throws SQLException        if the user does not exist
+     * @throws SQLException         if the user does not exist
      * @throws FailedLoginException if the user credentials are wrong
      */
     public UserPlain checkUser(UserPlain user) throws SQLException, FailedLoginException {

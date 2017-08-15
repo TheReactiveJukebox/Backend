@@ -44,6 +44,7 @@ public class DatabaseImpl implements Database {
 
     /**
      * Normalization procedure we defined for some of our music metadata in the database.
+     *
      * @param str String to normalize
      * @return normalized string
      */

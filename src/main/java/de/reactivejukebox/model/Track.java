@@ -30,7 +30,9 @@ public class Track implements MusicEntity {
         this.date = date;
     }
 
-    public Track(){genres = new ArrayList<>();}
+    public Track() {
+        genres = new ArrayList<>();
+    }
 
     public int getPlayCount() {
         return playCount;
@@ -56,7 +58,9 @@ public class Track implements MusicEntity {
         this.artist = artist;
     }
 
-    public Album getAlbum() {return album; }
+    public Album getAlbum() {
+        return album;
+    }
 
     public void setAlbum(Album album) {
         this.album = album;
@@ -98,11 +102,17 @@ public class Track implements MusicEntity {
         return genres;
     }
 
-    public void setGenres(List<String> genres) { this.genres = genres; }
+    public void setGenres(List<String> genres) {
+        this.genres = genres;
+    }
 
-    public Date getDate() { return date; }
+    public Date getDate() {
+        return date;
+    }
 
-    public void setDate(Date date) { this.date = date; }
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
     @Override
     public MusicEntityPlain getPlainObject() {

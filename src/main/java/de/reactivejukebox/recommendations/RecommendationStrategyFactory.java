@@ -1,9 +1,11 @@
 package de.reactivejukebox.recommendations;
 
-import de.reactivejukebox.model.*;
+import de.reactivejukebox.model.Radio;
+import de.reactivejukebox.model.Track;
 import de.reactivejukebox.recommendations.strategies.RandomTracks;
 import de.reactivejukebox.recommendations.strategies.SameArtistGreatestHits;
 import de.reactivejukebox.recommendations.strategies.StrategyType;
+
 import java.util.Collection;
 
 

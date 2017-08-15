@@ -37,7 +37,7 @@ public class Model {
         }
         radios = new Radios(users);
         trackFeedbacks = new TrackFeedbacks(users, tracks, radios);
-        tendencies = new Tendencies(users,radios);
+        tendencies = new Tendencies(users, radios);
         historyEntries = new HistoryEntries(users, tracks, radios);
 
     }
@@ -73,11 +73,15 @@ public class Model {
         return radios;
     }
 
-    public Genres getGenres() { return genres; }
+    public Genres getGenres() {
+        return genres;
+    }
 
     public TrackFeedbacks getTrackFeedbacks() {
         return trackFeedbacks;
     }
 
-    public Tendencies getTendencies() { return tendencies; }
+    public Tendencies getTendencies() {
+        return tendencies;
+    }
 }

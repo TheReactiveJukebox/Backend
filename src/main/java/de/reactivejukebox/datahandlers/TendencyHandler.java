@@ -2,7 +2,6 @@ package de.reactivejukebox.datahandlers;
 
 import de.reactivejukebox.model.*;
 
-import java.sql.SQLDataException;
 import java.sql.SQLException;
 
 
