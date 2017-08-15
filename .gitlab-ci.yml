@@ -13,11 +13,11 @@ unit_test:
   script:
     - mvn --batch-mode --quiet --fail-at-end test
     - cat target/site/jacoco/index.html
+    - cp -r target/site/jacoco .
   artifacts:
+    name: "codecavarage_$CI_COMMIT_REF_NAME"
     paths:
-    - target/
-    - target/site/jacoco/
-    expire_in: 1 week
+    - jacoco/
 
 backend:
   stage: build
