@@ -21,6 +21,7 @@ unit_test:
 
 backend:
   stage: build
+  dependencies: []
   image: dockette/mvn
   script:
     - mvn --batch-mode --quiet --fail-at-end compiler:compile war:war
@@ -31,6 +32,8 @@ backend:
 
 docker_images:
   stage: build_image
+  dependencies:
+    - backend
   script:
     - docker build --pull -t $IMAGE_NAME_PRO .
     - docker build --pull -t $IMAGE_NAME_DEV -f Dockerfile.dev .
