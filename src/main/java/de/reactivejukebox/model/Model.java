@@ -18,6 +18,7 @@ public class Model {
     private Radios radios;
     private TrackFeedbacks trackFeedbacks;
     private Genres genres;
+    private Tendencies tendencies;
 
     private Model() {
         users = new Users();
@@ -36,7 +37,9 @@ public class Model {
         }
         radios = new Radios(users);
         trackFeedbacks = new TrackFeedbacks(users, tracks, radios);
+        tendencies = new Tendencies(users,radios);
         historyEntries = new HistoryEntries(users, tracks, radios);
+
     }
 
     public static synchronized Model getInstance() {
@@ -75,4 +78,6 @@ public class Model {
     public TrackFeedbacks getTrackFeedbacks() {
         return trackFeedbacks;
     }
+
+    public Tendencies getTendencies() { return tendencies; }
 }

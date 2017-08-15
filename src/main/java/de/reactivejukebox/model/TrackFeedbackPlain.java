@@ -1,9 +1,4 @@
 package de.reactivejukebox.model;
-
-/**
- * Created by Ben Wilkes on 13.07.2017.
- */
-
 /**
  * TrackFeedbackPlain is a model for a track feedback containing only ids for user and radio
  */

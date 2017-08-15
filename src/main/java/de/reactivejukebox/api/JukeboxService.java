@@ -1,6 +1,7 @@
 package de.reactivejukebox.api;
 
 import de.reactivejukebox.core.Secured;
+import de.reactivejukebox.datahandlers.TendencyHandler;
 import de.reactivejukebox.model.*;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
 import de.reactivejukebox.recommendations.RecommendationStrategyFactory;
@@ -11,6 +12,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.sql.SQLDataException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
@@ -91,5 +93,26 @@ public class JukeboxService {
     public Response getAlgorithms() {
         List<String> algorithms = Arrays.stream(StrategyType.values()).map(Enum::name).collect(Collectors.toList());
         return Response.ok(algorithms).build();
+    }
+
+    @POST
+    @Secured
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/tendency")
+    public Response pushTendency(TendencyPlain tendency, @Context User user) {
+
+        tendency.setUserId(user.getId());
+
+        try {
+            TendencyPlain tendencyReturn = new TendencyHandler().addTendency(tendency, user).getPlainObject();
+            return Response.ok().entity(tendencyReturn).build();
+        } catch (SQLDataException e) {
+            return Response.status(400).entity(e).build();
+
+        } catch (SQLException e) {
+            return Response.status(500).entity(e).build();
+        }
+
     }
 }
