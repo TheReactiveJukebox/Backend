@@ -24,7 +24,7 @@ public class HistoryPredicate implements Predicate<Track> {
         User user = radio.getUser();
         try {
             tracks = history
-                    .getListByUserId(user.getId())
+                    .getListByRadioId(radio.getId())
                     .stream()
                     .map(HistoryEntry::getTrack)
                     .collect(Collectors.toSet());

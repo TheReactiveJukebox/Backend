@@ -82,6 +82,7 @@ public class HistoryEntries implements Iterable<HistoryEntry> {
         return build(fromDB("RadioId", id));
     }
 
+
     @Override
     public Iterator<HistoryEntry> iterator() {
         return entryById.values().iterator();

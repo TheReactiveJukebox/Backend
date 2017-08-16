@@ -54,7 +54,7 @@ public class HistoryPredicateTest {
         upcoming.add(t3);
 
         history = Mockito.mock(HistoryEntries.class);
-        Mockito.when(history.getListByUserId(1)).thenReturn(historyList);
+        Mockito.when(history.getListByRadioId(1)).thenReturn(historyList);
     }
 
     @Test

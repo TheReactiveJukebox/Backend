@@ -1,9 +1,12 @@
 package de.reactivejukebox.model;
 
+import de.reactivejukebox.recommendations.filters.GenrePredicate;
+import de.reactivejukebox.recommendations.filters.PublishedPredicate;
 import de.reactivejukebox.recommendations.strategies.StrategyType;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class Radio implements Serializable {
 
@@ -102,6 +105,16 @@ public class Radio implements Serializable {
 
     public void setAlgorithm(StrategyType algorithm) {
         this.algorithm = algorithm;
+    }
+
+    public Stream<Track> filter (Stream<Track> trackStream){
+        if (getGenres() != null && getGenres().length > 0) {
+            trackStream = trackStream.filter(new GenrePredicate(this));
+        }
+        if (getStartYear() > 0 && getEndYear() > 0) {
+            trackStream = trackStream.filter(new PublishedPredicate(this));
+        }
+        return trackStream;
     }
 
     public RadioPlain getPlainObject() {

@@ -1,6 +1,11 @@
 package de.reactivejukebox.model;
 
 import de.reactivejukebox.database.DatabaseProvider;
+import de.reactivejukebox.recommendations.filters.ArtistPredicate;
+
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class Artist implements MusicEntity {
 
@@ -33,6 +38,12 @@ public class Artist implements MusicEntity {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public Stream<Track> filter(Stream<Track> trackStream) {
+        Predicate<Track> artistPredicate = new ArtistPredicate(this);
+        trackStream = trackStream.filter(artistPredicate);
+        return trackStream;
     }
 
     @Override
