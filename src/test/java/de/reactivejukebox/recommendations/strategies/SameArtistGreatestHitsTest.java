@@ -9,22 +9,30 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Field;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.*;
 
+import static org.mockito.Mockito.mock;
 import static org.testng.Assert.*;
 
 public class SameArtistGreatestHitsTest {
+    public static int TRACKSARTIST_A = 8;
+    public static int TRACKSARTIST_B = 8;
 
     @BeforeClass
-    private void setUp() {
+    private void setUp() throws SQLException {
         Artists artists = new Artists();
         Tracks tracks = new Tracks();
         Albums albums = new Albums();
 
-        Model m = Mockito.mock(Model.class);
+        HistoryEntries h = mock(HistoryEntries.class);
+
+        Model m = mock(Model.class);
         Mockito.when(m.getAlbums()).thenReturn(albums);
         Mockito.when(m.getArtists()).thenReturn(artists);
         Mockito.when(m.getTracks()).thenReturn(tracks);
+        Mockito.when(m.getHistoryEntries()).thenReturn(h);
 
         setModelInstance(m);
 
@@ -34,9 +42,9 @@ public class SameArtistGreatestHitsTest {
         m.getArtists().put(artistA.getId(), artistA);
         m.getAlbums().put(albumA.getId(), albumA);
 
-        for (int i = 1; i < 8; i++) {
+        for (int i = 0; i < TRACKSARTIST_A ; i++) {
             Model.getInstance().getTracks().put(i, new Track(
-                    i, "Track A" + i, artistA, albumA, "", "", 180, 4711 + i
+                    i, "Track A" + i, artistA, albumA, "", "", 180, 4711 + i, new Date()
             ));
         }
 
@@ -46,26 +54,59 @@ public class SameArtistGreatestHitsTest {
         Model.getInstance().getArtists().put(artistB.getId(), artistB);
         Model.getInstance().getAlbums().put(albumB.getId(), albumB);
 
-        for (int i = 8; i < 12; i++) {
+        int _startindex = Model.getInstance().getTracks().size();
+        for (int i = _startindex ; i < TRACKSARTIST_B + _startindex; i++) {
             Model.getInstance().getTracks().put(i, new Track(
-                    i, "Track B" + i, artistB, albumB, "", "", 190, 4211 - i
+                    i, "Track B" + i, artistB, albumB, "", "", 191, 4211 - i, new Date()
             ));
         }
+
+
+        Radio radio = new Radio();
+
+        ArrayList<HistoryEntry> history = new ArrayList<>();
+        history.add(new HistoryEntry(1,Model.getInstance().getTracks().get(1),radio,new User(),new Timestamp(1))); //Add track to history
+        history.add(new HistoryEntry(2,Model.getInstance().getTracks().get(2),radio,new User(),new Timestamp(2))); //Add track to history
+        history.add(new HistoryEntry(3,Model.getInstance().getTracks().get(9),radio,new User(),new Timestamp(3))); //Add track to history
+
+
+
+        Mockito.when(h.getListByRadioId(1)).thenReturn(new ArrayList<>());
+        Mockito.when(h.getListByRadioId(2)).thenReturn(history);
+
+
     }
 
     @Test
     public void testGetRecommendations() throws Exception {
         List<Track> list = new ArrayList<>();
-        Set<Track> history = new HashSet<>();
-        history.add(Model.getInstance().getTracks().get(6));
-        list.add(Model.getInstance().getTracks().get(1));
 
-        RecommendationStrategy algorithm = new SameArtistGreatestHits(history, list, Integer.MAX_VALUE);
+        Radio radio = new Radio();
+        radio.setId(2);
+        radio.getStartTracks().add(Model.getInstance().getTracks().get(1));
+
+        RecommendationStrategy algorithm = new SameArtistGreatestHits(radio, new HashSet<>(), 5);
         list = algorithm.getRecommendations();
 
         assertTrue(list.contains(Model.getInstance().getTracks().get(7)));
         assertFalse(list.contains(Model.getInstance().getTracks().get(8)));
-        assertFalse(list.contains(Model.getInstance().getTracks().get(6)));
+        assertFalse(list.contains(Model.getInstance().getTracks().get(2)));
+    }
+
+    @Test
+    public void testGetRecommendationsMoreTracks() throws Exception {
+        List<Track> list = new ArrayList<>();
+
+        Radio radio = new Radio();
+        radio.setId(2);
+        radio.getStartTracks().add(Model.getInstance().getTracks().get(1));
+
+        RecommendationStrategy algorithm = new SameArtistGreatestHits(radio, new HashSet<>(), Integer.MAX_VALUE);
+        list = algorithm.getRecommendations();
+
+        assertTrue(list.contains(Model.getInstance().getTracks().get(7)));
+        assertFalse(list.contains(Model.getInstance().getTracks().get(8)));
+        assertTrue(list.contains(Model.getInstance().getTracks().get(3)));
     }
 
     @AfterClass

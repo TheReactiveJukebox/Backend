@@ -5,6 +5,7 @@ import de.reactivejukebox.recommendations.filters.PublishedPredicate;
 import de.reactivejukebox.recommendations.strategies.StrategyType;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -40,7 +41,7 @@ public class Radio implements Serializable {
     }
 
     public Radio() {
-
+        startTracks = new LinkedList<>();
     }
 
     public User getUser() {
