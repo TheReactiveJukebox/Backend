@@ -13,7 +13,7 @@ import java.util.List;
 @Path("/genre")
 public class GenreService {
     @GET
-    @Path("/list")
+    @Path("")
     @Secured
     @Produces(MediaType.APPLICATION_JSON)
     public Response getGenreList() {
