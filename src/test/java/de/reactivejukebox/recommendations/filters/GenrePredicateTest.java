@@ -46,13 +46,13 @@ public class GenrePredicateTest {
         genres.put("genre5", "meta2");
 
         String[] radioGenres= new String[1];
-        radioGenres[0] = "meta2";
+        radioGenres[0] = "meta1";
         Radio r = new Radio(1, new User(), radioGenres, "mood", 1990, 2000, new LinkedList<Track>(), StrategyType.RANDOM);
 
         Track t1 = new Track(1, "Title1", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date());
         Track t2 = new Track(2, "Title2", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date());
-        t1.getGenres().add("genre1");
-        t2.getGenres().add("genre2");
+        t1.getGenres().add("genre4");
+        t2.getGenres().add("genre5");
 
         Predicate<Track> genrePred = new GenrePredicate(genres,r);
 

@@ -41,6 +41,8 @@ public class Tracks implements Iterable<Track> {
             java.util.Date javaDate = null;
             if (newDate != null) {
                 javaDate = new Date(rs.getDate("published").getTime());
+            }else {
+                javaDate = new Date();
             }
             tracks.put(id, new Track(
                     id,
