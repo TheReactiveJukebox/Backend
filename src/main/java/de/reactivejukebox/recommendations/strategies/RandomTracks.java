@@ -5,7 +5,6 @@ import de.reactivejukebox.model.Radio;
 import de.reactivejukebox.model.Track;
 import de.reactivejukebox.model.Tracks;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
-import de.reactivejukebox.recommendations.filters.HistoryFilter;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -16,7 +15,6 @@ public class RandomTracks implements RecommendationStrategy {
     private static Random random = new Random();
     private int resultCount;
     private Tracks tracks;
-    private HistoryFilter historyFilter;
     private Collection<Track> upcoming;
     private Radio radio;
 
@@ -30,13 +28,12 @@ public class RandomTracks implements RecommendationStrategy {
         this.resultCount = resultCount;
         this.tracks = tracks;
         this.upcoming = upcoming;
-        this.historyFilter = new HistoryFilter(radio, upcoming, resultCount);
     }
 
     @Override
     public List<Track> getRecommendations() {
         Stream<Track> trackStream = radio.filter(tracks.stream());
-        List<Track> possibleTracks = historyFilter.forHistory(trackStream) // historyFilter by Radio properties and history
+        List<Track> possibleTracks = radio.filterHistory(trackStream,upcoming,resultCount) // historyFilter by Radio properties and history
                 .collect(Collectors.toList()); // collect into list
 
         if (possibleTracks.size() >= resultCount) { //enough tracks without history available

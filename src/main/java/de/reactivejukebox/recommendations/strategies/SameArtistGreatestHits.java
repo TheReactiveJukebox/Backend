@@ -3,7 +3,6 @@ package de.reactivejukebox.recommendations.strategies;
 import de.reactivejukebox.model.*;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
 import de.reactivejukebox.recommendations.filters.ArtistPredicate;
-import de.reactivejukebox.recommendations.filters.HistoryFilter;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -17,7 +16,6 @@ public class SameArtistGreatestHits implements RecommendationStrategy {
     private int resultCount;
     private Tracks tracks;
     private Radio radio;
-    private HistoryFilter historyFilter;
     private Collection<Track> upcoming;
 
     public SameArtistGreatestHits(Radio radio, Collection<Track> upcoming, int resultCount) {
@@ -30,7 +28,6 @@ public class SameArtistGreatestHits implements RecommendationStrategy {
         this.upcoming = upcoming;
         this.base = radio.getStartTracks();
         this.tracks = tracks;
-        this.historyFilter = new HistoryFilter(radio, upcoming, resultCount);
     }
 
     @Override
@@ -48,6 +45,6 @@ public class SameArtistGreatestHits implements RecommendationStrategy {
         // historyFilter by History and Genre
         Stream<Track> possibleTracks = tracks.stream().filter(new ArtistPredicate(a));                // historyFilter by Artists
         possibleTracks = a.filter(possibleTracks);
-        return historyFilter.forHistory(possibleTracks).sorted(Comparator.comparingInt(Track::getPlayCount).reversed()); // sort
+        return radio.filterHistory(possibleTracks,upcoming,resultCount).sorted(Comparator.comparingInt(Track::getPlayCount).reversed()); // sort
     }
 }
