@@ -21,7 +21,6 @@ public class TrackFeedback implements Serializable {
     private int moodFeedback;
 
 
-
     public TrackFeedback() {
     }
 
@@ -49,9 +48,13 @@ public class TrackFeedback implements Serializable {
         this.radio = radio;
     }
 
-    public Track getTrack() { return track; }
+    public Track getTrack() {
+        return track;
+    }
 
-    public void setTrack(Track track) { this.track = track; }
+    public void setTrack(Track track) {
+        this.track = track;
+    }
 
     public int getSongFeedback() {
         return songFeedback;
@@ -114,7 +117,6 @@ public class TrackFeedback implements Serializable {
     public void setMoodFeedback(int moodFeedback) {
         this.moodFeedback = moodFeedback;
     }
-
 
 
     /**

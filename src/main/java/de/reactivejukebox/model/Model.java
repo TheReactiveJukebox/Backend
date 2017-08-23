@@ -17,11 +17,13 @@ public class Model {
     private Albums albums;
     private Radios radios;
     private TrackFeedbacks trackFeedbacks;
+    private Genres genres;
     private Tendencies tendencies;
 
     private Model() {
         users = new Users();
         try (Connection con = DatabaseProvider.getInstance().getDatabase().getConnection()) {
+            genres = new Genres(con);
             artists = new Artists(con);
             albums = new Albums(con, artists);
             tracks = new Tracks(con, artists, albums);
@@ -35,7 +37,7 @@ public class Model {
         }
         radios = new Radios(users);
         trackFeedbacks = new TrackFeedbacks(users, tracks, radios);
-        tendencies = new Tendencies(users,radios);
+        tendencies = new Tendencies(users, radios);
         historyEntries = new HistoryEntries(users, tracks, radios);
 
     }
@@ -71,9 +73,15 @@ public class Model {
         return radios;
     }
 
+    public Genres getGenres() {
+        return genres;
+    }
+
     public TrackFeedbacks getTrackFeedbacks() {
         return trackFeedbacks;
     }
 
-    public Tendencies getTendencies() { return tendencies; }
+    public Tendencies getTendencies() {
+        return tendencies;
+    }
 }

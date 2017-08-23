@@ -85,7 +85,7 @@ public class UserService {
                 } else {
                     return Response.status(441).entity("invalid InviteKey").build();
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 return Response.status(441).entity("invalid InviteKey").build();
             }
             UserPlain token = new TokenHandler().register(auth);

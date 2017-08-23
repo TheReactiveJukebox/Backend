@@ -1,4 +1,5 @@
 package de.reactivejukebox.model;
+
 import de.reactivejukebox.database.DatabaseProvider;
 import de.reactivejukebox.database.PreparedStatementBuilder;
 

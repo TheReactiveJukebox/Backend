@@ -17,7 +17,7 @@ public class Radios implements Iterable<Radio> {
 
     private static final String INSERT_RADIO =
             "INSERT INTO radio (userid, AlgorithmName, StartYear, EndYear) VALUES (?, ?, ?, ?);";
-    private  static final String SELECT_RADIO =
+    private static final String SELECT_RADIO =
             "SELECT * FROM radio WHERE userid = ? ORDER BY id DESC LIMIT 1;";
     private static final String INSERT_REFERENCE_SONG =
             "INSERT INTO radio_song (radioid, songid, position) VALUES (?, ?, ?);";
@@ -188,7 +188,7 @@ public class Radios implements Iterable<Radio> {
             list.add(rs.getInt("SongId"));
         }
         int[] result = list.stream()
-                .mapToInt(i->i)
+                .mapToInt(i -> i)
                 .toArray();
         return result;
     }
@@ -233,7 +233,7 @@ public class Radios implements Iterable<Radio> {
         int[] referenceSongs = radio.getStartTracks();
         if (referenceSongs != null && referenceSongs.length > 0) {
             PreparedStatement addReferenceSong = con.prepareStatement(INSERT_REFERENCE_SONG);
-            for (int i = 0; i < referenceSongs.length;) {
+            for (int i = 0; i < referenceSongs.length; ) {
                 addReferenceSong.setInt(1, radio.getId());
                 addReferenceSong.setInt(2, referenceSongs[i]);
                 i++;
@@ -246,7 +246,7 @@ public class Radios implements Iterable<Radio> {
         String[] genres = radio.getGenres();
         if (genres != null && genres.length > 0) {
             PreparedStatement addGenre = con.prepareStatement(INSERT_GENRE);
-            for (String genre: genres) {
+            for (String genre : genres) {
                 addGenre.setInt(1, radio.getId());
                 addGenre.setString(2, genre);
                 addGenre.addBatch();

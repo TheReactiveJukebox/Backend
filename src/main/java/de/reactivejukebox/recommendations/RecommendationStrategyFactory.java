@@ -1,16 +1,13 @@
 package de.reactivejukebox.recommendations;
 
-import de.reactivejukebox.model.*;
+import de.reactivejukebox.model.Radio;
+import de.reactivejukebox.model.Track;
 import de.reactivejukebox.recommendations.strategies.RandomTracks;
 import de.reactivejukebox.recommendations.strategies.SameArtistGreatestHits;
 import de.reactivejukebox.recommendations.strategies.StrategyType;
-import de.reactivejukebox.recommendations.strategies.traits.HistoryAwareness;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+
 
 public class RecommendationStrategyFactory {
 
@@ -28,14 +25,9 @@ public class RecommendationStrategyFactory {
 
     public RecommendationStrategy createStrategy(StrategyType s, int resultCount) {
         if (s == StrategyType.SAGH) {
-            Collection<Track> history = HistoryAwareness.recentHistory(radio.getUser());
-            history.addAll(upcoming);
-            Collection<Track> base = radio.getStartTracks();
-            return new SameArtistGreatestHits(history, base, resultCount);
+            return new SameArtistGreatestHits(radio, upcoming, resultCount);
         } else if (s == StrategyType.RANDOM) {
-            Collection<Track> history = HistoryAwareness.recentHistory(radio.getUser());
-            history.addAll(upcoming);
-            return new RandomTracks(history,resultCount);
+            return new RandomTracks(radio, upcoming, resultCount);
         } else throw new NoSuchStrategyException();
     }
 

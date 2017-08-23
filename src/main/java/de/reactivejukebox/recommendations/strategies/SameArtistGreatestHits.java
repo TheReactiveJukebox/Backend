@@ -1,10 +1,8 @@
 package de.reactivejukebox.recommendations.strategies;
 
-import de.reactivejukebox.model.Artist;
-import de.reactivejukebox.model.Model;
-import de.reactivejukebox.model.Track;
-import de.reactivejukebox.model.Tracks;
+import de.reactivejukebox.model.*;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
+import de.reactivejukebox.recommendations.filters.ArtistPredicate;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -14,19 +12,21 @@ import java.util.stream.Stream;
 
 public class SameArtistGreatestHits implements RecommendationStrategy {
 
-    private Collection<Track> history;
     private Collection<Track> base;
     private int resultCount;
     private Tracks tracks;
+    private Radio radio;
+    private Collection<Track> upcoming;
 
-    public SameArtistGreatestHits(Collection<Track> history, Collection<Track> base, int resultCount) {
-        this(history, base, resultCount, Model.getInstance().getTracks());
+    public SameArtistGreatestHits(Radio radio, Collection<Track> upcoming, int resultCount) {
+        this(radio, upcoming, resultCount, Model.getInstance().getTracks());
     }
 
-    public SameArtistGreatestHits(Collection<Track> history, Collection<Track> base, int resultCount, Tracks tracks) {
+    public SameArtistGreatestHits(Radio radio, Collection<Track> upcoming, int resultCount, Tracks tracks) {
         this.resultCount = resultCount;
-        this.history = history;
-        this.base = base;
+        this.radio = radio;
+        this.upcoming = upcoming;
+        this.base = radio.getStartTracks();
         this.tracks = tracks;
     }
 
@@ -42,9 +42,10 @@ public class SameArtistGreatestHits implements RecommendationStrategy {
     }
 
     private Stream<Track> greatestHits(Artist a) {
-        return tracks.stream()
-                .filter(track -> !history.contains(track)) // ignore recent history
-                .filter(track -> track.getArtist() == a) // get all tracks for artist
-                .sorted(Comparator.comparingInt(Track::getPlayCount).reversed()); // sort by popularity
+        // historyFilter by History and Genre
+        Stream<Track> possibleTracks = tracks.stream().filter(new ArtistPredicate(a));  // Filter by Artists
+        possibleTracks = radio.filter(possibleTracks);  // Filter for radio properties
+        return radio.filterHistory(possibleTracks, upcoming, resultCount) //Filter History
+                .sorted(Comparator.comparingInt(Track::getPlayCount).reversed()); // sort
     }
 }

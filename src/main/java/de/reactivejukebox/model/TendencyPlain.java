@@ -92,17 +92,29 @@ public class TendencyPlain implements Serializable {
         this.startOlder = startOlder;
     }
 
-    public boolean isStartNewer() { return startNewer; }
+    public boolean isStartNewer() {
+        return startNewer;
+    }
 
-    public void setStartNewer(boolean startNewer) { this.startNewer = startNewer; }
+    public void setStartNewer(boolean startNewer) {
+        this.startNewer = startNewer;
+    }
 
-    public boolean isEndOlder() { return endOlder; }
+    public boolean isEndOlder() {
+        return endOlder;
+    }
 
-    public void setEndOlder(boolean endOlder) { this.endOlder = endOlder; }
+    public void setEndOlder(boolean endOlder) {
+        this.endOlder = endOlder;
+    }
 
-    public boolean isEndNewer() { return endNewer; }
+    public boolean isEndNewer() {
+        return endNewer;
+    }
 
-    public void setEndNewer(boolean endNewer) { this.endNewer = endNewer; }
+    public void setEndNewer(boolean endNewer) {
+        this.endNewer = endNewer;
+    }
 
     public String getMoreOfGenre() {
         return moreOfGenre;
@@ -112,20 +124,36 @@ public class TendencyPlain implements Serializable {
         this.moreOfGenre = moreOfGenre;
     }
 
-    public float getPreferredDynamics() { return preferredDynamics; }
+    public float getPreferredDynamics() {
+        return preferredDynamics;
+    }
 
-    public void setPreferredDynamics(float preferredDynamics) { this.preferredDynamics = preferredDynamics; }
+    public void setPreferredDynamics(float preferredDynamics) {
+        this.preferredDynamics = preferredDynamics;
+    }
 
-    public int getPreferredSpeed() { return preferredSpeed; }
+    public int getPreferredSpeed() {
+        return preferredSpeed;
+    }
 
-    public void setPreferredSpeed(int preferredSpeed) { this.preferredSpeed = preferredSpeed; }
+    public void setPreferredSpeed(int preferredSpeed) {
+        this.preferredSpeed = preferredSpeed;
+    }
 
-    public int getPreferredPeriodStart() { return preferredPeriodStart; }
+    public int getPreferredPeriodStart() {
+        return preferredPeriodStart;
+    }
 
-    public void setPreferredPeriodStart(int preferredPeriodStart) { this.preferredPeriodStart = preferredPeriodStart; }
+    public void setPreferredPeriodStart(int preferredPeriodStart) {
+        this.preferredPeriodStart = preferredPeriodStart;
+    }
 
-    public int getPreferredPeriodEnd() { return preferredPeriodEnd;  }
+    public int getPreferredPeriodEnd() {
+        return preferredPeriodEnd;
+    }
 
-    public void setPreferredPeriodEnd(int preferredPeriodEnd) { this.preferredPeriodEnd = preferredPeriodEnd; }
+    public void setPreferredPeriodEnd(int preferredPeriodEnd) {
+        this.preferredPeriodEnd = preferredPeriodEnd;
+    }
 }
 

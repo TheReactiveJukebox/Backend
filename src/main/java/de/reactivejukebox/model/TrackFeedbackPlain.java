@@ -1,4 +1,5 @@
 package de.reactivejukebox.model;
+
 /**
  * TrackFeedbackPlain is a model for a track feedback containing only ids for user and radio
  */
@@ -72,9 +73,13 @@ public class TrackFeedbackPlain {
         this.radioId = radioId;
     }
 
-    public int getTrackId() { return trackId; }
+    public int getTrackId() {
+        return trackId;
+    }
 
-    public void setTrackId(int trackId) { this.trackId = trackId; }
+    public void setTrackId(int trackId) {
+        this.trackId = trackId;
+    }
 
     public boolean isSongLiked() {
         return songLiked;
