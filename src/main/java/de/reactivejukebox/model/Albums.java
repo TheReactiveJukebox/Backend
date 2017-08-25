@@ -43,7 +43,6 @@ public class Albums implements Iterable<Album> {
         return albums.get(id);
     }
 
-    // TODO if need be: write changes back to database
     public Album put(int id, Album album) {
         return albums.put(id, album);
     }
