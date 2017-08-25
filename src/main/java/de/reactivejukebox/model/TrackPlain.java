@@ -14,9 +14,9 @@ public class TrackPlain implements MusicEntityPlain {
     String file;
     int playCount;
     List<String> genres;
-    Date date;
+    Date releaseDate;
 
-    public TrackPlain(int id, String title, int artist, int album, String cover, String file, int duration, int playCount, List<String> genres, Date date) {
+    public TrackPlain(int id, String title, int artist, int album, String cover, String file, int duration, int playCount, List<String> genres, Date releaseDate) {
         this.id = id;
         this.title = title;
         this.artist = artist;
@@ -26,7 +26,7 @@ public class TrackPlain implements MusicEntityPlain {
         this.file = file;
         this.playCount = playCount;
         this.genres = genres;
-        this.date = date;
+        this.releaseDate = releaseDate;
     }
 
     public TrackPlain() {
@@ -104,11 +104,11 @@ public class TrackPlain implements MusicEntityPlain {
         this.genres = genres;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getReleaseDate() {
+        return releaseDate;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setReleaseDate(Date releaseDate) {
+        this.releaseDate = releaseDate;
     }
 }

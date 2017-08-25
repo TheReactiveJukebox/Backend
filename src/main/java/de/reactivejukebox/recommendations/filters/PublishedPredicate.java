@@ -25,7 +25,7 @@ public class PublishedPredicate implements Predicate<Track> {
 
     @Override
     public boolean test(Track track) {
-        return track.getDate().after(startDate) && track.getDate().before(endDate);
+        return track.getReleaseDate().after(startDate) && track.getReleaseDate().before(endDate);
     }
 
 }

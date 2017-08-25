@@ -15,7 +15,7 @@ public class Track implements MusicEntity {
     String hash;
     int playCount;
     List<String> genres;
-    Date date;
+    Date releaseDate;
 
     public Track(int id, String title, Artist artist, Album album, String cover, String hash, int duration, int playCount, Date date) {
         this();
@@ -27,7 +27,7 @@ public class Track implements MusicEntity {
         this.duration = duration;
         this.hash = hash;
         this.playCount = playCount;
-        this.date = date;
+        this.releaseDate = date;
     }
 
     public Track() {
@@ -106,17 +106,17 @@ public class Track implements MusicEntity {
         this.genres = genres;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getReleaseDate() {
+        return releaseDate;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setReleaseDate(Date date) {
+        this.releaseDate = date;
     }
 
     @Override
     public MusicEntityPlain getPlainObject() {
         String file = hash.substring(0, 1) + "/" + hash.substring(1, 2) + "/" + hash.substring(2) + ".mp3";
-        return new TrackPlain(id, title, artist.getId(), album.getId(), cover, file, duration, playCount, genres, date);
+        return new TrackPlain(id, title, artist.getId(), album.getId(), cover, file, duration, playCount, genres, releaseDate);
     }
 }
