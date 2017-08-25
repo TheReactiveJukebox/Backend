@@ -53,7 +53,9 @@ public class Tracks implements Iterable<Track> {
                     rs.getString("hash"),
                     rs.getInt("duration"),
                     rs.getInt("playcount"),
-                    javaDate
+                    javaDate,
+                    rs.getFloat("speed"),
+                    rs.getFloat("dynamics")
             ));
         }
         for (Track t : this) {

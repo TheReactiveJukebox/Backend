@@ -16,8 +16,10 @@ public class Track implements MusicEntity {
     int playCount;
     List<String> genres;
     Date releaseDate;
+    float speed;
+    float dynamic;
 
-    public Track(int id, String title, Artist artist, Album album, String cover, String hash, int duration, int playCount, Date date) {
+    public Track(int id, String title, Artist artist, Album album, String cover, String hash, int duration, int playCount, Date date, float speed, float dynamic) {
         this();
         this.id = id;
         this.title = title;
@@ -28,6 +30,8 @@ public class Track implements MusicEntity {
         this.hash = hash;
         this.playCount = playCount;
         this.releaseDate = date;
+        this.speed = speed;
+        this.dynamic = dynamic;
     }
 
     public Track() {
@@ -114,9 +118,25 @@ public class Track implements MusicEntity {
         this.releaseDate = date;
     }
 
+    public float getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
+    }
+
+    public float getDynamic() {
+        return dynamic;
+    }
+
+    public void setDynamic(float dynamic) {
+        this.dynamic = dynamic;
+    }
+
     @Override
     public MusicEntityPlain getPlainObject() {
         String file = hash.substring(0, 1) + "/" + hash.substring(1, 2) + "/" + hash.substring(2) + ".mp3";
-        return new TrackPlain(id, title, artist.getId(), album.getId(), cover, file, duration, playCount, genres, releaseDate);
+        return new TrackPlain(id, title, artist.getId(), album.getId(), cover, file, duration, playCount, genres, releaseDate, speed, dynamic);
     }
 }
