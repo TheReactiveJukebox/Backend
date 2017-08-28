@@ -16,7 +16,7 @@ import java.util.stream.StreamSupport;
 public class Tracks implements Iterable<Track> {
 
     private static final String SQL_QUERY =
-            "SELECT song.id, song.title, song_artist.artistid, song.albumid, album.cover, song.hash, song.duration, song.playcount, song.published " +
+            "SELECT song.id, song.title, song_artist.artistid, song.albumid, album.cover, song.hash, song.duration, song.playcount, song.published, song.bpm, song.dynamics " +
                     "FROM song, song_artist, album " +
                     "WHERE song.albumid=album.id " +
                     "      AND song.id=song_artist.songid";
