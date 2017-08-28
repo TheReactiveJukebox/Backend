@@ -39,10 +39,9 @@ public class Tracks implements Iterable<Track> {
             int id = rs.getInt("id");
             java.sql.Date newDate = rs.getDate("published");
             java.util.Date javaDate = null;
+			// check, if the track has a published date and set it, if present. If we have no date available, we just set null.
             if (newDate != null) {
                 javaDate = new Date(rs.getDate("published").getTime());
-            }else {
-                javaDate = new Date();
             }
             tracks.put(id, new Track(
                     id,
