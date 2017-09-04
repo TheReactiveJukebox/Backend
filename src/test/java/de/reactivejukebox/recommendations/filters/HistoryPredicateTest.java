@@ -31,11 +31,11 @@ public class HistoryPredicateTest {
     @BeforeClass
     private void setUp() throws SQLException {
 
-        t1 = new Track(1, "Title1", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date());
-        t2 = new Track(2, "Title2", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date());
-        t3 = new Track(3, "Title3", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date());
-        t4 = new Track(4, "Title4", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date());
-        t5 = new Track(5, "Title5", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date());
+        t1 = new Track(1, "Title1", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f);
+        t2 = new Track(2, "Title2", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f);
+        t3 = new Track(3, "Title3", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f);
+        t4 = new Track(4, "Title4", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f);
+        t5 = new Track(5, "Title5", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f);
 
 
 

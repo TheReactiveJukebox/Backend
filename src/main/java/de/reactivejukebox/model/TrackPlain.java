@@ -14,9 +14,11 @@ public class TrackPlain implements MusicEntityPlain {
     String file;
     int playCount;
     List<String> genres;
-    Date date;
+    Date releaseDate;
+    float speed;
+    float dynamic;
 
-    public TrackPlain(int id, String title, int artist, int album, String cover, String file, int duration, int playCount, List<String> genres, Date date) {
+    public TrackPlain(int id, String title, int artist, int album, String cover, String file, int duration, int playCount, List<String> genres, Date releaseDate, float speed, float dynamic) {
         this.id = id;
         this.title = title;
         this.artist = artist;
@@ -26,7 +28,9 @@ public class TrackPlain implements MusicEntityPlain {
         this.file = file;
         this.playCount = playCount;
         this.genres = genres;
-        this.date = date;
+        this.releaseDate = releaseDate;
+        this.speed = speed;
+        this.dynamic = dynamic;
     }
 
     public TrackPlain() {
@@ -104,11 +108,27 @@ public class TrackPlain implements MusicEntityPlain {
         this.genres = genres;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getReleaseDate() {
+        return releaseDate;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setReleaseDate(Date releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
+    public float getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
+    }
+
+    public float getDynamic() {
+        return dynamic;
+    }
+
+    public void setDynamic(float dynamic) {
+        this.dynamic = dynamic;
     }
 }
