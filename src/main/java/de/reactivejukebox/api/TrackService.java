@@ -31,6 +31,7 @@ public class TrackService {
     public Response search(@QueryParam("id") List<Integer> id,
                            @QueryParam("titlesubstr") String titleSubstring,
                            @QueryParam("artist") int artist,
+                           @QueryParam("album") int album,
                            @QueryParam("count") int countResults) {
         List<MusicEntityPlain> result;
         Set<Integer> ids = new TreeSet<>(id);
@@ -45,6 +46,9 @@ public class TrackService {
         }
         if (artist != 0) {
             s = s.filter(track -> track.getArtist().getId() == artist);
+        }
+        if (album != 0) {
+            s = s.filter(track -> track.getAlbum().getId() == album);
         }
         result = s.map(Track::getPlainObject).collect(Collectors.toList());
         return Response.status(200)
