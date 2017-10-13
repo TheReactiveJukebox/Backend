@@ -1,0 +1,39 @@
+stages:
+- test
+- build
+- build_image
+
+variables:
+  IMAGE_NAME_DEV: $CI_REGISTRY/jukebox/backend/dev:$CI_COMMIT_REF_SLUG
+  IMAGE_NAME_PRO: $CI_REGISTRY/jukebox/backend/pro:$CI_COMMIT_REF_SLUG
+
+unit_test:
+  stage: test
+  image: dockette/mvn
+  script:
+    - mvn --batch-mode --quiet --fail-at-end test
+    - cat target/site/jacoco/index.html
+    - cp -r target/site/jacoco .
+  artifacts:
+    name: code_coverage_$CI_COMMIT_REF_SLUG
+    paths:
+    - jacoco/
+
+backend:
+  stage: build
+  dependencies: []
+  image: dockette/mvn
+  script:
+    - mvn --batch-mode --quiet --fail-at-end compiler:compile war:war
+  artifacts:
+    paths:
+    - target/*.war
+    expire_in: 1 week
+
+docker_images:
+  stage: build_image
+  dependencies:
+    - backend
+  script:
+    - docker build --pull -t $IMAGE_NAME_PRO .
+    - docker build --pull -t $IMAGE_NAME_DEV -f Dockerfile.dev .

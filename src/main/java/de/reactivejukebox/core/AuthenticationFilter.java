@@ -42,7 +42,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
             // Validate the token
             User user = Model.getInstance().getUsers().getByToken(token);
             requestContext.setProperty("User", user);
-            if (user == null){
+            if (user == null) {
                 System.out.printf("no User found");
             }
         } catch (Exception e) {

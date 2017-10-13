@@ -16,10 +16,14 @@ public class Model {
     private Artists artists;
     private Albums albums;
     private Radios radios;
+    private TrackFeedbacks trackFeedbacks;
+    private Genres genres;
+    private Tendencies tendencies;
 
     private Model() {
         users = new Users();
         try (Connection con = DatabaseProvider.getInstance().getDatabase().getConnection()) {
+            genres = new Genres(con);
             artists = new Artists(con);
             albums = new Albums(con, artists);
             tracks = new Tracks(con, artists, albums);
@@ -32,7 +36,10 @@ public class Model {
             tracks = new Tracks();
         }
         radios = new Radios(users);
-        historyEntries = new HistoryEntries(users,tracks,radios);
+        trackFeedbacks = new TrackFeedbacks(users, tracks, radios);
+        tendencies = new Tendencies(users, radios);
+        historyEntries = new HistoryEntries(users, tracks, radios);
+
     }
 
     public static synchronized Model getInstance() {
@@ -42,11 +49,13 @@ public class Model {
         return Model.instance;
     }
 
-    public Users getUsers(){
+    public Users getUsers() {
         return users;
     }
 
-    public HistoryEntries getHistoryEntries(){return historyEntries;}
+    public HistoryEntries getHistoryEntries() {
+        return historyEntries;
+    }
 
     public Tracks getTracks() {
         return tracks;
@@ -60,5 +69,19 @@ public class Model {
         return albums;
     }
 
-    public Radios getRadios() { return radios; }
+    public Radios getRadios() {
+        return radios;
+    }
+
+    public Genres getGenres() {
+        return genres;
+    }
+
+    public TrackFeedbacks getTrackFeedbacks() {
+        return trackFeedbacks;
+    }
+
+    public Tendencies getTendencies() {
+        return tendencies;
+    }
 }

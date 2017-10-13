@@ -12,6 +12,7 @@ import org.glassfish.jersey.server.ResourceConfig;
  */
 public class ReactiveJukebox extends ResourceConfig {
     private Model model;
+
     public ReactiveJukebox() {
         packages(true, "de.reactivejukebox.api");
         register(CORSResponseFilter.class);

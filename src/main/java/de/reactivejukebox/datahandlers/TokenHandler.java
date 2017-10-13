@@ -6,7 +6,7 @@ import de.reactivejukebox.model.UserPlain;
 import de.reactivejukebox.model.Users;
 
 import javax.security.auth.login.FailedLoginException;
-import java.sql.*;
+import java.sql.SQLException;
 
 
 /**
@@ -26,7 +26,6 @@ public class TokenHandler {
     public TokenHandler(Users users) {
         this.users = users;
     }
-
     /**
      * Checks the login credentials of a user and generates a valid token. In short: the login is performed.
      *

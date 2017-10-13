@@ -68,6 +68,12 @@ public class HistoryEntries implements Iterable<HistoryEntry> {
         return newEntry;
     }
 
+    public void delete(Integer historyId) throws SQLException {
+        deleteFromDB(historyId);
+        if (entryById.containsKey(historyId))
+            entryById.remove(historyId);
+    }
+
     public ArrayList<HistoryEntry> getListByUserId(int id) throws SQLException {
         return build(fromDB("UserId", id));
     }
@@ -75,6 +81,7 @@ public class HistoryEntries implements Iterable<HistoryEntry> {
     public ArrayList<HistoryEntry> getListByRadioId(int id) throws SQLException {
         return build(fromDB("RadioId", id));
     }
+
 
     @Override
     public Iterator<HistoryEntry> iterator() {
@@ -97,7 +104,6 @@ public class HistoryEntries implements Iterable<HistoryEntry> {
 
     /**
      * Build a HistoryEntry object from a HistoryEntryPlain object.
-     *
      */
     private HistoryEntry build(HistoryEntryPlain entry) throws SQLException {
         Track t = tracks.get(entry.getTrackId());
@@ -157,7 +163,6 @@ public class HistoryEntries implements Iterable<HistoryEntry> {
 
     /**
      * Insert HistoryEntryPlain in database table history and set historyId in history object.
-     *
      */
     private void toDB(HistoryEntryPlain entry) throws SQLException {
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
@@ -175,5 +180,12 @@ public class HistoryEntries implements Iterable<HistoryEntry> {
         con.close();
     }
 
+    private void deleteFromDB(Integer historyId) throws SQLException {
+        con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        PreparedStatement deleteEntry = con.prepareStatement("DELETE FROM history WHERE id = ?;");
+        deleteEntry.setInt(1, historyId);
+        deleteEntry.executeUpdate();
+        con.close();
+    }
 
 }

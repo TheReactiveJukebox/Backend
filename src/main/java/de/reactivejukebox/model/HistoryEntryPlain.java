@@ -10,13 +10,14 @@ public class HistoryEntryPlain {
     private int userId;
     private Timestamp time;
 
-    public HistoryEntryPlain(){}
+    public HistoryEntryPlain() {
+    }
 
-    public HistoryEntryPlain(int id, int trackId, int radioId, int userId, Timestamp time){
+    public HistoryEntryPlain(int id, int trackId, int radioId, int userId, Timestamp time) {
         this.id = id;
-        this.trackId =trackId;
-        this.userId =userId;
-        this.radioId=radioId;
+        this.trackId = trackId;
+        this.userId = userId;
+        this.radioId = radioId;
         this.time = time;
     }
 
@@ -66,7 +67,7 @@ public class HistoryEntryPlain {
                 ", userId=" + userId +
                 ", trackId=" + trackId +
                 ", radioId=" + radioId +
-                ", time="+ time +
+                ", time=" + time +
                 "]";
     }
 }

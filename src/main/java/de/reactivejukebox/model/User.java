@@ -19,6 +19,30 @@ public class User implements Serializable {
     protected String token;
     protected List<String> roles;
 
+    protected static String generateSHA256(String message) {
+        String hashedMessage = null;
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(message.getBytes(StandardCharsets.UTF_8));
+
+            hashedMessage = User.bytesToHexString(hash).toLowerCase();
+        } catch (NoSuchAlgorithmException e) {
+            //will never happen
+            System.err.println("SHA-256 is not available anymore");
+        }
+        return hashedMessage;
+    }
+
+    private static String bytesToHexString(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
+
     public String getUsername() {
         return username;
     }
@@ -69,20 +93,6 @@ public class User implements Serializable {
         this.pwHash = hashedPassword;
     }
 
-    protected static String generateSHA256(String message) {
-        String hashedMessage = null;
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(message.getBytes(StandardCharsets.UTF_8));
-
-            hashedMessage = User.bytesToHexString(hash).toLowerCase();
-        } catch (NoSuchAlgorithmException e) {
-            //will never happen
-            System.err.println("SHA-256 is not available anymore");
-        }
-        return hashedMessage;
-    }
-
     public int getId() {
         return userID;
     }
@@ -104,16 +114,7 @@ public class User implements Serializable {
         return "User [username=" + username + ", userID=" + userID + "]";
     }
 
-    private static String bytesToHexString(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        for (int j = 0; j < bytes.length; j++) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-        }
-        return new String(hexChars);
-    }
-    public UserPlain getPlainObject(){
-        return new UserPlain(userID,username,token);
+    public UserPlain getPlainObject() {
+        return new UserPlain(userID, username, token);
     }
 }

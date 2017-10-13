@@ -1,5 +1,9 @@
 package de.reactivejukebox.model;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 public class Track implements MusicEntity {
 
     int id; //global track id
@@ -9,8 +13,14 @@ public class Track implements MusicEntity {
     String cover;
     int duration; //song duration in seconds
     String hash;
+    int playCount;
+    List<String> genres;
+    Date releaseDate;
+    float speed;
+    float dynamic;
 
-    public Track(int id, String title, Artist artist, Album album, String cover, String hash, int duration) {
+    public Track(int id, String title, Artist artist, Album album, String cover, String hash, int duration, int playCount, Date date, float speed, float dynamic) {
+        this();
         this.id = id;
         this.title = title;
         this.artist = artist;
@@ -18,9 +28,23 @@ public class Track implements MusicEntity {
         this.cover = cover;
         this.duration = duration;
         this.hash = hash;
+        this.playCount = playCount;
+        this.releaseDate = date;
+        this.speed = speed;
+        this.dynamic = dynamic;
     }
 
-    public Track(){}
+    public Track() {
+        genres = new ArrayList<>();
+    }
+
+    public int getPlayCount() {
+        return playCount;
+    }
+
+    public void setPlayCount(int playCount) {
+        this.playCount = playCount;
+    }
 
     public int getId() {
         return id;
@@ -78,9 +102,41 @@ public class Track implements MusicEntity {
         this.hash = hash;
     }
 
+    public List getGenres() {
+        return genres;
+    }
+
+    public void setGenres(List<String> genres) {
+        this.genres = genres;
+    }
+
+    public Date getReleaseDate() {
+        return releaseDate;
+    }
+
+    public void setReleaseDate(Date date) {
+        this.releaseDate = date;
+    }
+
+    public float getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
+    }
+
+    public float getDynamic() {
+        return dynamic;
+    }
+
+    public void setDynamic(float dynamic) {
+        this.dynamic = dynamic;
+    }
+
     @Override
     public MusicEntityPlain getPlainObject() {
         String file = hash.substring(0, 1) + "/" + hash.substring(1, 2) + "/" + hash.substring(2) + ".mp3";
-        return new TrackPlain(id, title, artist.getId(), album.getId(), cover, file, duration);
+        return new TrackPlain(id, title, artist.getId(), album.getId(), cover, file, duration, playCount, genres, releaseDate, speed, dynamic);
     }
 }

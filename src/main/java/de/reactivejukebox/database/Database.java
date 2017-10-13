@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 public interface Database {
     Connection getConnection() throws SQLException;
+
     String normalize(String str);
 }
 

@@ -1,30 +1,51 @@
 package de.reactivejukebox.model;
 
+import de.reactivejukebox.recommendations.filters.GenrePredicate;
+import de.reactivejukebox.recommendations.filters.HistoryPredicate;
+import de.reactivejukebox.recommendations.filters.PublishedPredicate;
+import de.reactivejukebox.recommendations.strategies.StrategyType;
+
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Radio implements Serializable {
 
     private int id;
     private User user;
-    private boolean random;
     private String[] genres;
     private String mood;
     private int startYear;
     private int endYear;
+    private List<Track> startTracks;
+    private StrategyType algorithm;
 
 
-    public Radio(int id, User user, boolean random, String[] genres, String mood, int startYear, int endYear) {
+    public Radio(
+            int id,
+            User user,
+            String[] genres,
+            String mood,
+            int startYear,
+            int endYear,
+            List<Track> startTracks,
+            StrategyType algorithm) {
         this.id = id;
         this.user = user;
-        this.random = random;
         this.genres = genres;
         this.mood = mood;
         this.startYear = startYear;
         this.endYear = endYear;
+        this.startTracks = startTracks;
+        this.algorithm = algorithm;
     }
 
-    public Radio(){
-
+    public Radio() {
+        startTracks = new LinkedList<>();
     }
 
     public User getUser() {
@@ -41,14 +62,6 @@ public class Radio implements Serializable {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public boolean isRandom() {
-        return random;
-    }
-
-    public void setRandom(boolean random) {
-        this.random = random;
     }
 
     public String[] getGenres() {
@@ -83,8 +96,51 @@ public class Radio implements Serializable {
         this.endYear = endYear;
     }
 
-    public RadioPlain getPlainObject(){
-        return new RadioPlain(id, user.getId(),random,genres,mood,startYear,endYear);
+    public List<Track> getStartTracks() {
+        return startTracks;
     }
 
+    public void setStartTracks(List<Track> startTracks) {
+        this.startTracks = startTracks;
+    }
+
+    public StrategyType getAlgorithm() {
+        return algorithm;
+    }
+
+    public void setAlgorithm(StrategyType algorithm) {
+        this.algorithm = algorithm;
+    }
+
+    public Stream<Track> filter(Stream<Track> trackStream) {
+        if (getGenres() != null && getGenres().length > 0) {
+            trackStream = trackStream.filter(new GenrePredicate(this));
+        }
+        if (getStartYear() > 0 && getEndYear() > 0) {
+            trackStream = trackStream.filter(new PublishedPredicate(this));
+        }
+        return trackStream;
+    }
+
+    public Stream<Track> filterHistory(Stream<Track> trackStream, Collection<Track> upcoming, int resultCount) {
+        List<Track> allTracks = trackStream.collect(Collectors.toList());
+        Set<Track> trackSet = allTracks.stream().filter(new HistoryPredicate(this, upcoming)).collect(Collectors.toSet());  // filter History
+        if (trackSet.size() >= resultCount) {
+            return trackSet.stream();       //result filtered for History
+        } else {
+            return allTracks.stream();             //result with already used tracks
+        }
+    }
+
+    public RadioPlain getPlainObject() {
+        int[] ids = null;
+        if (startTracks != null) {
+            ids = new int[startTracks.size()];
+            for (int i = 0; i < startTracks.size(); i++) {
+                ids[i] = startTracks.get(i).getId();
+            }
+        }
+        String algorithmName = algorithm != null ? algorithm.name() : null; // workaround for misuse of plain object
+        return new RadioPlain(id, user.getId(), genres, mood, startYear, endYear, algorithmName, ids);
+    }
 }

@@ -16,8 +16,8 @@ public class Albums implements Iterable<Album> {
 
     private static final String SQL_QUERY =
             "SELECT id, title, artistid " +
-            "FROM album, album_artist " +
-            "WHERE album.id=album_artist.albumid";
+                    "FROM album, album_artist " +
+                    "WHERE album.id=album_artist.albumid";
 
     protected Map<Integer, Album> albums;
 
