@@ -16,9 +16,16 @@ public class TokenHandler {
     private Users users;
 
     public TokenHandler() {
-        users = Model.getInstance().getUsers();
+        this(Model.getInstance().getUsers());
     }
 
+    /**
+     * Alternative constructor for testing purposes allowing
+     * dependency injection of the Users class provided by the Model-Singleton
+     */
+    public TokenHandler(Users users) {
+        this.users = users;
+    }
     /**
      * Checks the login credentials of a user and generates a valid token. In short: the login is performed.
      *

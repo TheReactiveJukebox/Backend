@@ -16,6 +16,21 @@ public class UserPlain {
         this.token = token;
     }
 
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null) return false;
+        if (other.getClass() != getClass()) return false;
+        UserPlain o = (UserPlain) other;
+        return this.id.equals(o.id)
+                && this.username.equals(o.username);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("UserPlan(id=%d, username=%s)", id, username);
+    }
+
     public Integer getId() {
         return id;
     }
