@@ -7,21 +7,28 @@ import java.util.ArrayList;
 
 public class Playlists {
 
-    public boolean add(PlaylistPlain p) {
-        try {
-            Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
-            PreparedStatement ps = con.prepareStatement(
-                    "insert into playlist(title, createdAt, editedAt, userid, tracks) values(?, ?, ?, ?, ?)");
-            ps.setString(1, p.getTitle());
-            ps.setTimestamp(2, new Timestamp(p.getCreated().getTime()));
-            ps.setTimestamp(3, new Timestamp(p.getEdited().getTime()));
-            ps.setInt(4, p.getUserId());
-            ps.setObject(5, p.getTracks());
+    public PlaylistPlain add(PlaylistPlain p) throws SQLException {
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        PreparedStatement ps = con.prepareStatement(
+                "insert into playlist(title, createdAt, editedAt, userid, tracks, isPublic) values(?, ?, ?, ?, ?, ?)",
+                Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, p.getTitle());
+        ps.setTimestamp(2, new Timestamp(p.getCreated().getTime()));
+        ps.setTimestamp(3, new Timestamp(p.getEdited().getTime()));
+        ps.setInt(4, p.getUserId());
+        ps.setObject(5, p.getTracks());
+        ps.setBoolean(6, p.isPublic());
 
-            return ps.execute();
-        } catch (SQLException e) {
-            return false;
+        int affected = ps.executeUpdate();
+        if (affected == 0) {
+            throw new SQLException("Playlist could not be created, no rows affected");
         }
+        ResultSet rs = ps.getGeneratedKeys();
+        if (!rs.next()) {
+            throw new SQLException("Playlist was created, ID could not be fetched");
+        }
+        p.setId(rs.getInt("id"));
+        return p;
     }
 
     public boolean remove(int playlistId) {
