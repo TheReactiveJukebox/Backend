@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,5 +61,26 @@ public class PlaylistService {
             e.printStackTrace();
             return Response.serverError().build();
         }
+    }
+
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/")
+    @Secured
+    public Response updatePlaylist(PlaylistPlain playlist, @Context User user) {
+        PlaylistPlain oldPlaylist = Model.getInstance().getPlaylists().getById(playlist.getId());
+        // check if the user is authorized to change the playlist
+        if (playlist.getUserId() != user.getId()
+                || oldPlaylist == null
+                || playlist.getUserId() != oldPlaylist.getUserId()) {
+            return Response.status(403).entity("User not authorized to change this playlist.").build();
+        }
+        // execute Update
+        playlist.setEdited(new Date());
+        if (!Model.getInstance().getPlaylists().update(playlist)) {
+            return Response.serverError().entity("Could not update playlist due to internal error.").build();
+        }
+        return Response.ok(playlist).build();
     }
 }
