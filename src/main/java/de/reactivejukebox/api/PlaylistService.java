@@ -83,4 +83,18 @@ public class PlaylistService {
         }
         return Response.ok(playlist).build();
     }
+
+    @DELETE
+    @Path("/")
+    @Secured
+    public Response removePlaylist(@QueryParam("id") int id, @Context User user) {
+        PlaylistPlain playlist = Model.getInstance().getPlaylists().getById(id);
+        if (playlist.getUserId() != user.getId()) {
+            return Response.status(403).entity("User not authorized to remove this playlist.").build();
+        }
+        if (!Model.getInstance().getPlaylists().remove(id)) {
+            return Response.serverError().entity("Could not remove playlist due to internal error.").build();
+        }
+        return Response.ok().build();
+    }
 }
