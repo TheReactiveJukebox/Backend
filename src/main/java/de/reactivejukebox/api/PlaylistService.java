@@ -5,12 +5,11 @@ import de.reactivejukebox.model.Model;
 import de.reactivejukebox.model.PlaylistPlain;
 import de.reactivejukebox.model.User;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,6 +43,22 @@ public class PlaylistService {
             return Model.getInstance()
                     .getPlaylists()
                     .getByUser(userid);
+        }
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/")
+    @Secured
+    public Response createPlaylist(PlaylistPlain playlist, @Context User user) {
+        playlist.setUserId(user.getId());
+        try {
+            playlist = Model.getInstance().getPlaylists().add(playlist);
+            return Response.ok(playlist).build();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return Response.serverError().build();
         }
     }
 }
