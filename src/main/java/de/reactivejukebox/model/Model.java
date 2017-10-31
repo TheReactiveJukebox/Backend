@@ -19,6 +19,7 @@ public class Model {
     private TrackFeedbacks trackFeedbacks;
     private Genres genres;
     private Tendencies tendencies;
+    private Playlists playlists;
 
     private Model() {
         users = new Users();
@@ -39,6 +40,7 @@ public class Model {
         trackFeedbacks = new TrackFeedbacks(users, tracks, radios);
         tendencies = new Tendencies(users, radios);
         historyEntries = new HistoryEntries(users, tracks, radios);
+        playlists = new Playlists();
 
     }
 
@@ -83,5 +85,9 @@ public class Model {
 
     public Tendencies getTendencies() {
         return tendencies;
+    }
+
+    public Playlists getPlaylists() {
+        return playlists;
     }
 }
