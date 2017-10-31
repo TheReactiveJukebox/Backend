@@ -62,7 +62,7 @@ public class Playlists {
         }
     }
 
-    public ArrayList<PlaylistPlain> getPlaylistsByUser(int userId) {
+    public ArrayList<PlaylistPlain> getByUser(int userId) {
         ArrayList<PlaylistPlain> results = new ArrayList<>();
         try {
             Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
