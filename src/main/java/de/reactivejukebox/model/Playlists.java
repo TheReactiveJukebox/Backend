@@ -16,7 +16,15 @@ public class Playlists {
         ps.setTimestamp(2, new Timestamp(p.getCreated().getTime()));
         ps.setTimestamp(3, new Timestamp(p.getEdited().getTime()));
         ps.setInt(4, p.getUserId());
-        ps.setObject(5, p.getTracks());
+
+        int[] tracks = p.getTracks();
+        Object[] javaSucks = new Object[tracks.length];
+        for (int i = 0; i < tracks.length; ++i) {
+            javaSucks[i] = tracks[i];
+        }
+
+        // TODO can we not use createArrayOf? Always fails on me for some reason.
+        ps.setArray(5, con.createArrayOf("INTEGER", javaSucks));
         ps.setBoolean(6, p.isPublic());
 
         int affected = ps.executeUpdate();
