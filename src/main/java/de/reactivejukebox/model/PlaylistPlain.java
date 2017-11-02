@@ -11,6 +11,10 @@ public class PlaylistPlain {
     private int id;
     private boolean isPublic;
 
+    public PlaylistPlain() {
+        // empty constructor for deserialization
+    }
+
     public PlaylistPlain(int[] tracks, String title, Date created, Date edited, int userId, boolean isPublic) {
         this(0, tracks, title, created, edited, userId, isPublic);
     }

@@ -54,6 +54,8 @@ public class PlaylistService {
     @Secured
     public Response createPlaylist(PlaylistPlain playlist, @Context User user) {
         playlist.setUserId(user.getId());
+        playlist.setCreated(new Date());
+        playlist.setEdited(new Date());
         try {
             playlist = Model.getInstance().getPlaylists().add(playlist);
             return Response.ok(playlist).build();
