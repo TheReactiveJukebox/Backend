@@ -27,6 +27,7 @@ public class PlaylistService {
             @QueryParam("userid") int userid,
             @Context User user) {
         if (id != 0) {
+            // return playlist with specific ID
             ArrayList<PlaylistPlain> results = new ArrayList<>();
             results.add(Model.getInstance()
                     .getPlaylists()
@@ -34,6 +35,7 @@ public class PlaylistService {
             );
             return results;
         } else if (userid != 0) {
+            // return all public playlists of other user
             return Model.getInstance()
                     .getPlaylists()
                     .getByUser(userid)
@@ -41,9 +43,10 @@ public class PlaylistService {
                     .filter(PlaylistPlain::isPublic)
                     .collect(Collectors.toList());
         } else {
+            // return all playlists of current user
             return Model.getInstance()
                     .getPlaylists()
-                    .getByUser(userid);
+                    .getByUser(user.getId());
         }
     }
 
