@@ -273,17 +273,17 @@ public class Tendencies implements Iterable<Tendency> {
         }
 
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        PreparedStatement addFeedback = con.prepareStatement("INSERT INTO tendency (userid, radioid," +
-                "MoreDynamics, LessDynamics, Faster, Slower, PeriodStartOlder, PeriodStartNewer, MoreOfGenre,  PreferredDynamics, " +
-                "PreferredSpeed, PreferredPeriodStart, PreferredPeriodEnd, PeriodEndOlder, PeriodEndNewer) " +
-                "VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ");
+        PreparedStatement addFeedback = con.prepareStatement("INSERT INTO tendency (userid, radioid, " +
+                "PreferredDynamics, " +
+                "PreferredSpeed, PreferredPeriodStart, PreferredPeriodEnd) " +
+                "VALUES( ?, ?, ?, ?, ?, ?) ");
 
         addFeedback.setInt(1, tendency.getUserId());
         addFeedback.setInt(2, tendency.getRadioId());
-        addFeedback.setFloat(10, tendency.getPreferredDynamics());
-        addFeedback.setInt(11, tendency.getPreferredSpeed());
-        addFeedback.setInt(12, tendency.getPreferredPeriodStart());
-        addFeedback.setInt(13, tendency.getPreferredPeriodEnd());
+        addFeedback.setFloat(3, tendency.getPreferredDynamics());
+        addFeedback.setInt(4, tendency.getPreferredSpeed());
+        addFeedback.setInt(5, tendency.getPreferredPeriodStart());
+        addFeedback.setInt(6, tendency.getPreferredPeriodEnd());
 
         addFeedback.executeUpdate();
         con.close();
