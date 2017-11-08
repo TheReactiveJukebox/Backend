@@ -180,8 +180,6 @@ public class Tendency implements Serializable {
         plainTendency.setPreferredPeriodStart(this.getPreferredPeriodStart());
         plainTendency.setPreferredSpeed(this.getPreferredSpeed());
 
-        plainTendency.setMoreOfGenre(this.getMoreOfGenre());
-
         return plainTendency;
     }
 

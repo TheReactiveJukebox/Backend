@@ -142,7 +142,6 @@ public class Tendencies implements Iterable<Tendency> {
         newTendency.setEndOlder(tendency.isEndOlder());
         newTendency.setLessDynamics(tendency.isLessDynamics());
         newTendency.setMoreDynamics(tendency.isMoreDynamics());
-        newTendency.setMoreOfGenre(tendency.getMoreOfGenre());
 
         newTendency.setPreferredDynamics(tendency.getPreferredDynamics());
         newTendency.setPreferredPeriodEnd(tendency.getPreferredPeriodEnd());
@@ -214,7 +213,6 @@ public class Tendencies implements Iterable<Tendency> {
         tendency.setStartNewer(rs.getBoolean("periodstartnewer"));
         tendency.setEndOlder(rs.getBoolean("periodendolder"));
         tendency.setEndNewer(rs.getBoolean("periodendnewer"));
-        tendency.setMoreOfGenre(rs.getString("moreofgenre"));
 
         tendency.setPreferredSpeed(rs.getInt("preferredspeed"));
         tendency.setPreferredPeriodStart(rs.getInt("preferredperiodstart"));
@@ -281,7 +279,6 @@ public class Tendencies implements Iterable<Tendency> {
         addFeedback.setBoolean(6, tendency.isSlower());
         addFeedback.setBoolean(7, tendency.isStartOlder());
         addFeedback.setBoolean(8, tendency.isStartNewer());
-        addFeedback.setObject(9, tendency.getMoreOfGenre());
         addFeedback.setFloat(10, tendency.getPreferredDynamics());
         addFeedback.setInt(11, tendency.getPreferredSpeed());
         addFeedback.setInt(12, tendency.getPreferredPeriodStart());
