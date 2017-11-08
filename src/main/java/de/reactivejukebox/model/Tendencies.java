@@ -157,14 +157,6 @@ public class Tendencies implements Iterable<Tendency> {
         newTendency.setRadio(radios.get(tendency.getRadioId()));
         newTendency.setUser(users.get(tendency.getUserId()));
         newTendency.setId(tendency.getId());
-        newTendency.setFaster(tendency.isFaster());
-        newTendency.setSlower(tendency.isSlower());
-        newTendency.setStartNewer(tendency.isStartNewer());
-        newTendency.setStartOlder(tendency.isStartOlder());
-        newTendency.setEndNewer(tendency.isEndNewer());
-        newTendency.setEndOlder(tendency.isEndOlder());
-        newTendency.setLessDynamics(tendency.isLessDynamics());
-        newTendency.setMoreDynamics(tendency.isMoreDynamics());
 
         newTendency.setPreferredDynamics(tendency.getPreferredDynamics());
         newTendency.setPreferredPeriodEnd(tendency.getPreferredPeriodEnd());
@@ -228,14 +220,6 @@ public class Tendencies implements Iterable<Tendency> {
         tendency.setId(rs.getInt("id"));
         tendency.setUserId(rs.getInt("userid"));
         tendency.setRadioId(rs.getInt("radioid"));
-        tendency.setMoreDynamics(rs.getBoolean("moredynamics"));
-        tendency.setLessDynamics(rs.getBoolean("lessdynamics"));
-        tendency.setFaster(rs.getBoolean("faster"));
-        tendency.setSlower(rs.getBoolean("slower"));
-        tendency.setStartOlder(rs.getBoolean("periodstartolder"));
-        tendency.setStartNewer(rs.getBoolean("periodstartnewer"));
-        tendency.setEndOlder(rs.getBoolean("periodendolder"));
-        tendency.setEndNewer(rs.getBoolean("periodendnewer"));
 
         tendency.setPreferredSpeed(rs.getInt("preferredspeed"));
         tendency.setPreferredPeriodStart(rs.getInt("preferredperiodstart"));
@@ -296,18 +280,10 @@ public class Tendencies implements Iterable<Tendency> {
 
         addFeedback.setInt(1, tendency.getUserId());
         addFeedback.setInt(2, tendency.getRadioId());
-        addFeedback.setBoolean(3, tendency.isMoreDynamics());
-        addFeedback.setBoolean(4, tendency.isLessDynamics());
-        addFeedback.setBoolean(5, tendency.isFaster());
-        addFeedback.setBoolean(6, tendency.isSlower());
-        addFeedback.setBoolean(7, tendency.isStartOlder());
-        addFeedback.setBoolean(8, tendency.isStartNewer());
         addFeedback.setFloat(10, tendency.getPreferredDynamics());
         addFeedback.setInt(11, tendency.getPreferredSpeed());
         addFeedback.setInt(12, tendency.getPreferredPeriodStart());
         addFeedback.setInt(13, tendency.getPreferredPeriodEnd());
-        addFeedback.setBoolean(14, tendency.isEndOlder());
-        addFeedback.setBoolean(15, tendency.isEndNewer());
 
         addFeedback.executeUpdate();
         con.close();
