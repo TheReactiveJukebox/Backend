@@ -21,6 +21,8 @@ public class Radio implements Serializable {
     private String mood;
     private int startYear;
     private int endYear;
+    float speed;
+    float dynamic;
     private List<Track> startTracks;
     private StrategyType algorithm;
 
@@ -112,6 +114,16 @@ public class Radio implements Serializable {
         this.algorithm = algorithm;
     }
 
+    public float getSpeed() { return speed; }
+
+    public void setSpeed(float speed) { this.speed = speed; }
+
+    public float getDynamic() { return dynamic; }
+
+    public void setDynamic(float dynamic) {
+        this.dynamic = dynamic;
+    }
+
     public Stream<Track> filter(Stream<Track> trackStream) {
         if (getGenres() != null && getGenres().length > 0) {
             trackStream = trackStream.filter(new GenrePredicate(this));
@@ -141,6 +153,6 @@ public class Radio implements Serializable {
             }
         }
         String algorithmName = algorithm != null ? algorithm.name() : null; // workaround for misuse of plain object
-        return new RadioPlain(id, user.getId(), genres, mood, startYear, endYear, algorithmName, ids);
+        return new RadioPlain(id, user.getId(), genres, mood, startYear, endYear, algorithmName, ids, speed, dynamic);
     }
 }
