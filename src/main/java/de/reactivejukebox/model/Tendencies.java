@@ -5,6 +5,7 @@ import de.reactivejukebox.database.PreparedStatementBuilder;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.concurrent.ConcurrentHashMap;
@@ -106,6 +107,28 @@ public class Tendencies implements Iterable<Tendency> {
 
     public Tendency get(TendencyPlain tendency) throws SQLException {
         return get(tendency.getId());
+    }
+
+    public Tendency getByRadioId(int id) throws SQLException {
+        Tendency tmpTendency;
+        ArrayList<Tendency> tendencies;
+        ArrayList<TendencyPlain> tendenciesPlain;
+        if (tendenciesByRadioId.containsKey(id)) {
+            tendencies = tendenciesByRadioId.get(id);
+        } else {
+            tendenciesPlain = this.fromDbByRadioId(id);
+            tendencies = new ArrayList<>();
+            for (TendencyPlain t : tendenciesPlain) {
+                tmpTendency = this.build(t);
+                tendencies.add(tmpTendency);
+                tendencyById.putIfAbsent(tmpTendency.getId(), tmpTendency);
+                this.putIfAbsent(tendenciesByUserId, tmpTendency.getUser().getId(), tmpTendency);
+                this.putIfAbsent(tendenciesByRadioId, tmpTendency.getRadio().getId(), tmpTendency);
+            }
+        }
+        tendencies.sort(Comparator.comparingInt(Tendency::getId));
+        Tendency tendence = tendencies.get(tendencies.size()-1);
+        return tendence;
     }
 
 
