@@ -231,18 +231,26 @@ public class Radios implements Iterable<Radio> {
         PreparedStatement addRadio = con.prepareStatement(INSERT_RADIO, Statement.RETURN_GENERATED_KEYS);
         addRadio.setInt(1, radio.getUserId());
         addRadio.setString(2, radio.getAlgorithm());
-        if (radio.getStartYear() == 0) {
+        if (radio.getStartYear() == null) {
             addRadio.setNull(3, Types.INTEGER);
         } else {
             addRadio.setInt(3, radio.getStartYear());
         }
-        if (radio.getEndYear() == 0) {
+        if (radio.getEndYear() == null) {
             addRadio.setNull(4, Types.INTEGER);
         } else {
             addRadio.setInt(4, radio.getEndYear());
         }
-        addRadio.setFloat(5, radio.getSpeed());
-        addRadio.setFloat(6,radio.getDynamic());
+        if (radio.getSpeed() == null){
+            addRadio.setNull(5,Types.FLOAT);
+        }else{
+            addRadio.setFloat(5, radio.getSpeed());
+        }
+        if (radio.getDynamic() == null){
+            addRadio.setNull(6,Types.FLOAT);
+        }else{
+            addRadio.setFloat(6,radio.getDynamic());
+        }
         // TODO ad more radio attributes here
         addRadio.executeUpdate();
         // add new id from database to entry object

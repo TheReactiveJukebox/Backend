@@ -132,7 +132,7 @@ public class Radio implements Serializable {
         if (getGenres() != null && getGenres().length > 0) {
             trackStream = trackStream.filter(new GenrePredicate(this));
         }
-        if (getStartYear() > 0 && getEndYear() > 0) {
+        if (getStartYear() != null || getEndYear() != null) {
             trackStream = trackStream.filter(new PublishedPredicate(this));
         }
         return trackStream;
