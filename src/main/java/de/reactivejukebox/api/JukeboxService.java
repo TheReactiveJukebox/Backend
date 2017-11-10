@@ -1,7 +1,6 @@
 package de.reactivejukebox.api;
 
 import de.reactivejukebox.core.Secured;
-import de.reactivejukebox.datahandlers.TendencyHandler;
 import de.reactivejukebox.model.*;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
 import de.reactivejukebox.recommendations.RecommendationStrategyFactory;
@@ -93,43 +92,5 @@ public class JukeboxService {
         return Response.ok(algorithms).build();
     }
 
-    @POST
-    @Secured
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/tendency")
-    public Response pushTendency(TendencyPlain tendency, @Context User user) {
-
-        tendency.setUserId(user.getId());
-
-        try {
-            TendencyPlain tendencyReturn = new TendencyHandler().addTendency(tendency, user).getPlainObject();
-            return Response.ok().entity(tendencyReturn).build();
-        } catch (SQLDataException e) {
-            return Response.status(400).entity(e).build();
-
-        } catch (SQLException e) {
-            return Response.status(500).entity(e).build();
-        }
-
-    }
-
-    @GET
-    @Secured
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/tendency")
-    public Response getTendency(@Context User user){
-        try {
-            Radio radio = Model.getInstance().getRadios().getByUserId(user.getId());
-            TendencyPlain tendency = Model.getInstance().getTendencies().getByRadioId(radio.getId()).getPlainObject();
-            return Response.ok().entity(tendency).build();
-        } catch (SQLDataException e) {
-            return Response.status(400).entity(e).build();
-
-        } catch (SQLException e) {
-            return Response.status(500).entity(e).build();
-        }
-
-    }
 
 }
