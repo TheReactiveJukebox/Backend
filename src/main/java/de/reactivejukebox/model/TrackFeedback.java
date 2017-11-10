@@ -17,7 +17,6 @@ public class TrackFeedback implements Serializable {
     private int speedFeedback;
     private int genreFeedback;
     private int dynamicsFeedback;
-    private int periodFeedback;
     private int moodFeedback;
 
 
@@ -101,15 +100,6 @@ public class TrackFeedback implements Serializable {
     }
 
 
-    public int getPeriodFeedback() {
-        return periodFeedback;
-    }
-
-    public void setPeriodFeedback(int periodFeedback) {
-        this.periodFeedback = periodFeedback;
-    }
-
-
     public int getMoodFeedback() {
         return moodFeedback;
     }
@@ -125,32 +115,7 @@ public class TrackFeedback implements Serializable {
      * @return the matching TrackFeedbackPlain object with the same attributes as this TrackFeedback object
      */
     public TrackFeedbackPlain getPlainObject() {
-        TrackFeedbackPlain plainFeedback = new TrackFeedbackPlain();
-        plainFeedback.setUserId(this.getUser().getId());
-        plainFeedback.setRadioId(this.getRadio().getId());
-        plainFeedback.setId(this.getId());
-        plainFeedback.setTrackId(this.getTrack().getId());
-
-        plainFeedback.setSongDisliked(this.songFeedback < 0);
-        plainFeedback.setSongLiked(this.songFeedback > 0);
-
-        plainFeedback.setArtistDisliked(this.artistFeedback < 0);
-        plainFeedback.setArtistLiked(this.artistFeedback > 0);
-
-        plainFeedback.setSpeedDisliked(this.speedFeedback < 0);
-        plainFeedback.setSpeedLiked(this.speedFeedback > 0);
-
-        plainFeedback.setGenreDisliked(this.genreFeedback < 0);
-        plainFeedback.setGenreLiked(this.genreFeedback > 0);
-
-        plainFeedback.setPeriodDisliked(this.periodFeedback < 0);
-        plainFeedback.setPeriodLiked(this.periodFeedback > 0);
-
-        plainFeedback.setMoodDisliked(this.moodFeedback < 0);
-        plainFeedback.setMoodLiked(this.moodFeedback > 0);
-
-        plainFeedback.setDynamicsDisliked(this.dynamicsFeedback < 0);
-        plainFeedback.setDynamicsLiked(this.dynamicsFeedback > 0);
+        TrackFeedbackPlain plainFeedback = new TrackFeedbackPlain(this.getId(), this.getUser().getId(), this.getRadio().getId(), this.getTrack().getId(), songFeedback, artistFeedback, speedFeedback, genreFeedback, dynamicsFeedback, moodFeedback);
 
         return plainFeedback;
     }

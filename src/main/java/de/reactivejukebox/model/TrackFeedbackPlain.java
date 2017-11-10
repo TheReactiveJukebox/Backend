@@ -9,44 +9,28 @@ public class TrackFeedbackPlain {
     private int userId;
     private int radioId;
     private int trackId;
-    private boolean songLiked;
-    private boolean songDisliked;
-    private boolean artistLiked;
-    private boolean artistDisliked;
-    private boolean speedLiked;
-    private boolean speedDisliked;
-    private boolean genreLiked;
-    private boolean genreDisliked;
-    private boolean dynamicsLiked;
-    private boolean dynamicsDisliked;
-    private boolean periodLiked;
-    private boolean periodDisliked;
-    private boolean moodLiked;
-    private boolean moodDisliked;
+    private int songFeedback;
+    private int artistFeedback;
+    private int speedFeedback;
+    private int genreFeedback;
+    private int dynamicsFeedback;
+    private int moodFeedback;
 
 
     public TrackFeedbackPlain() {
     }
 
-    public TrackFeedbackPlain(int id, int userId, int radioId, int trackId, boolean songLiked, boolean songDisliked, boolean artistLiked, boolean artistDisliked, boolean speedLiked, boolean speedDisliked, boolean genreLiked, boolean genreDisliked, boolean dynamicsLiked, boolean dynamicsDisliked, boolean periodLiked, boolean periodDisliked, boolean moodLiked, boolean moodDisliked) {
+    public TrackFeedbackPlain(int id, int userId, int radioId, int trackId, int songFeedback, int artistFeedback, int speedFeedback, int genreFeedback, int dynamicsFeedback, int moodFeedback) {
         this.id = id;
         this.userId = userId;
         this.radioId = radioId;
         this.trackId = trackId;
-        this.songLiked = songLiked;
-        this.songDisliked = songDisliked;
-        this.artistLiked = artistLiked;
-        this.artistDisliked = artistDisliked;
-        this.speedLiked = speedLiked;
-        this.speedDisliked = speedDisliked;
-        this.genreLiked = genreLiked;
-        this.genreDisliked = genreDisliked;
-        this.dynamicsLiked = dynamicsLiked;
-        this.dynamicsDisliked = dynamicsDisliked;
-        this.periodLiked = periodLiked;
-        this.periodDisliked = periodDisliked;
-        this.moodLiked = moodLiked;
-        this.moodDisliked = moodDisliked;
+        this.songFeedback = songFeedback;
+        this.artistFeedback = artistFeedback;
+        this.speedFeedback = speedFeedback;
+        this.genreFeedback = genreFeedback;
+        this.dynamicsFeedback = dynamicsFeedback;
+        this.moodFeedback = moodFeedback;
     }
 
     public int getId() {
@@ -81,115 +65,56 @@ public class TrackFeedbackPlain {
         this.trackId = trackId;
     }
 
-    public boolean isSongLiked() {
-        return songLiked;
+    public int getSongFeedback() {
+        return songFeedback;
     }
 
-    public void setSongLiked(boolean songLiked) {
-        this.songLiked = songLiked;
+    public void setSongFeedback(int songFeedback) {
+        this.songFeedback = songFeedback;
     }
 
-    public boolean isSongDisliked() {
-        return songDisliked;
+
+    public int getArtistFeedback() {
+        return artistFeedback;
     }
 
-    public void setSongDisliked(boolean songDisliked) {
-        this.songDisliked = songDisliked;
+    public void setArtistFeedback(int artistFeedback) {
+        this.artistFeedback = artistFeedback;
     }
 
-    public boolean isArtistLiked() {
-        return artistLiked;
+
+    public int getSpeedFeedback() {
+        return speedFeedback;
     }
 
-    public void setArtistLiked(boolean artistLiked) {
-        this.artistLiked = artistLiked;
+    public void setSpeedFeedback(int speedFeedback) {
+        this.speedFeedback = speedFeedback;
     }
 
-    public boolean isArtistDisliked() {
-        return artistDisliked;
+
+    public int getGenreFeedback() {
+        return genreFeedback;
     }
 
-    public void setArtistDisliked(boolean artistDisliked) {
-        this.artistDisliked = artistDisliked;
+    public void setGenreFeedback(int genreFeedback) {
+        this.genreFeedback = genreFeedback;
     }
 
-    public boolean isSpeedLiked() {
-        return speedLiked;
+
+    public int getDynamicsFeedback() {
+        return dynamicsFeedback;
     }
 
-    public void setSpeedLiked(boolean speedLiked) {
-        this.speedLiked = speedLiked;
+    public void setDynamicsFeedback(int dynamicsFeedback) {
+        this.dynamicsFeedback = dynamicsFeedback;
     }
 
-    public boolean isSpeedDisliked() {
-        return speedDisliked;
+    public int getMoodFeedback() {
+        return moodFeedback;
     }
 
-    public void setSpeedDisliked(boolean speedDisliked) {
-        this.speedDisliked = speedDisliked;
+    public void setMoodFeedback(int moodFeedback) {
+        this.moodFeedback = moodFeedback;
     }
 
-    public boolean isGenreLiked() {
-        return genreLiked;
-    }
-
-    public void setGenreLiked(boolean genreLiked) {
-        this.genreLiked = genreLiked;
-    }
-
-    public boolean isGenreDisliked() {
-        return genreDisliked;
-    }
-
-    public void setGenreDisliked(boolean genreDisliked) {
-        this.genreDisliked = genreDisliked;
-    }
-
-    public boolean isDynamicsLiked() {
-        return dynamicsLiked;
-    }
-
-    public void setDynamicsLiked(boolean dynamicsLiked) {
-        this.dynamicsLiked = dynamicsLiked;
-    }
-
-    public boolean isDynamicsDisliked() {
-        return dynamicsDisliked;
-    }
-
-    public void setDynamicsDisliked(boolean dynamicsDisliked) {
-        this.dynamicsDisliked = dynamicsDisliked;
-    }
-
-    public boolean isPeriodLiked() {
-        return periodLiked;
-    }
-
-    public void setPeriodLiked(boolean periodLiked) {
-        this.periodLiked = periodLiked;
-    }
-
-    public boolean isPeriodDisliked() {
-        return periodDisliked;
-    }
-
-    public void setPeriodDisliked(boolean periodDisliked) {
-        this.periodDisliked = periodDisliked;
-    }
-
-    public boolean isMoodLiked() {
-        return moodLiked;
-    }
-
-    public void setMoodLiked(boolean moodLiked) {
-        this.moodLiked = moodLiked;
-    }
-
-    public boolean isMoodDisliked() {
-        return moodDisliked;
-    }
-
-    public void setMoodDisliked(boolean moodDisliked) {
-        this.moodDisliked = moodDisliked;
-    }
 }

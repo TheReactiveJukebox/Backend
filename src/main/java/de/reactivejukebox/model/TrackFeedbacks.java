@@ -143,13 +143,12 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
         newTrackFeedback.setId(feedback.getId());
         newTrackFeedback.setTrack(tracks.get(feedback.getTrackId()));
 
-        newTrackFeedback.setSongFeedback(convertToInt(feedback.isSongLiked(), feedback.isSongDisliked()));
-        newTrackFeedback.setArtistFeedback(convertToInt(feedback.isArtistLiked(), feedback.isArtistDisliked()));
-        newTrackFeedback.setSpeedFeedback(convertToInt(feedback.isSpeedLiked(), feedback.isSpeedDisliked()));
-        newTrackFeedback.setGenreFeedback(convertToInt(feedback.isGenreLiked(), feedback.isGenreDisliked()));
-        newTrackFeedback.setDynamicsFeedback(convertToInt(feedback.isDynamicsLiked(), feedback.isDynamicsDisliked()));
-        newTrackFeedback.setPeriodFeedback(convertToInt(feedback.isPeriodLiked(), feedback.isPeriodDisliked()));
-        newTrackFeedback.setMoodFeedback(convertToInt(feedback.isMoodLiked(), feedback.isMoodDisliked()));
+        newTrackFeedback.setSongFeedback(feedback.getSongFeedback());
+        newTrackFeedback.setArtistFeedback(feedback.getArtistFeedback());
+        newTrackFeedback.setSpeedFeedback(feedback.getSpeedFeedback());
+        newTrackFeedback.setGenreFeedback(feedback.getGenreFeedback());
+        newTrackFeedback.setDynamicsFeedback(feedback.getDynamicsFeedback());
+        newTrackFeedback.setMoodFeedback(feedback.getMoodFeedback());
 
         return newTrackFeedback;
     }
@@ -216,26 +215,14 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
         feedback.setRadioId(rs.getInt("radioid"));
         feedback.setTrackId(rs.getInt("songid"));
 
-        feedback.setSongLiked(rs.getInt("feedbacksong") > 0);
-        feedback.setSongDisliked(rs.getInt("feedbacksong") < 0);
+        feedback.setSongFeedback(rs.getInt("feedbacksong"));
+        feedback.setArtistFeedback(rs.getInt("feedbackartist"));
+        feedback.setSpeedFeedback(rs.getInt("feedbackspeed"));
+        feedback.setGenreFeedback(rs.getInt("feedbackgenre"));
+        feedback.setDynamicsFeedback(rs.getInt("feedbackdynamics"));
+        feedback.setMoodFeedback(rs.getInt("feedbackmood"));
 
-        feedback.setArtistLiked(rs.getInt("feedbackartist") > 0);
-        feedback.setArtistDisliked(rs.getInt("feedbackartist") < 0);
 
-        feedback.setSpeedLiked(rs.getInt("feedbackspeed") > 0);
-        feedback.setSpeedDisliked(rs.getInt("feedbackspeed") < 0);
-
-        feedback.setGenreLiked(rs.getInt("feedbackgenre") > 0);
-        feedback.setGenreDisliked(rs.getInt("feedbackgenre") < 0);
-
-        feedback.setDynamicsLiked(rs.getInt("feedbackdynamics") > 0);
-        feedback.setDynamicsDisliked(rs.getInt("feedbackdynamics") < 0);
-
-        feedback.setPeriodLiked(rs.getInt("feedbackperiod") > 0);
-        feedback.setPeriodDisliked(rs.getInt("feedbackperiod") < 0);
-
-        feedback.setMoodLiked(rs.getInt("feedbackmood") > 0);
-        feedback.setMoodDisliked(rs.getInt("feedbackmood") < 0);
 
         return feedback;
     }
@@ -273,46 +260,26 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
 
     }
 
-    private int[] convertReasonTypesToInts(TrackFeedbackPlain feedback) {
-        int[] list = new int[7];
-
-        list[0] = convertToInt(feedback.isSongLiked(), feedback.isSongDisliked());
-        list[1] = convertToInt(feedback.isArtistLiked(), feedback.isArtistDisliked());
-        list[2] = convertToInt(feedback.isSpeedLiked(), feedback.isSpeedDisliked());
-        list[3] = convertToInt(feedback.isGenreLiked(), feedback.isGenreDisliked());
-        list[4] = convertToInt(feedback.isDynamicsLiked(), feedback.isDynamicsDisliked());
-        list[5] = convertToInt(feedback.isPeriodLiked(), feedback.isPeriodDisliked());
-        list[6] = convertToInt(feedback.isMoodLiked(), feedback.isMoodDisliked());
-
-        return list;
-    }
-
-
     private void toDB(TrackFeedbackPlain feedback) throws SQLException {
 
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement addFeedback = con.prepareStatement("INSERT INTO feedback (userid, songid, radioid," +
-                " feedbacksong, feedbackartist, feedbackspeed, feedbackgenre, feedbackdynamics, feedbackperiod, feedbackmood) " +
-                "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
-                "ON Conflict (userid, songid, radioid) Do " +
+                " feedbacksong, feedbackartist, feedbackspeed, feedbackgenre, feedbackdynamics, feedbackmood) " +
+                "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+                "ON Conflict (userid, songid) Do " +
                 "UPDATE Set (feedbacksong, feedbackartist, feedbackspeed, feedbackgenre, " +
-                "feedbackdynamics, feedbackperiod, feedbackmood, time) = " +
-                "(?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP);");
+                "feedbackdynamics, feedbackmood, time) = " +
+                "(?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP);");
 
         addFeedback.setInt(1, feedback.getUserId());
         addFeedback.setInt(2, feedback.getTrackId());
         addFeedback.setInt(3, feedback.getRadioId());
-
-        int[] values = convertReasonTypesToInts(feedback);
-        int len = Math.min(values.length, 7);
-        for (int i = 0; i < len; i++) { // feedback values for INSERT
-            int index = i + 4;
-            addFeedback.setInt(index, values[i]);
-        }
-        for (int i = 0; i < len; i++) { // feedback values for UPDATE
-            int index = i + 4 + 7;
-            addFeedback.setInt(index, values[i]);
-        }
+        addFeedback.setInt(4, feedback.getSongFeedback());
+        addFeedback.setInt(5, feedback.getArtistFeedback());
+        addFeedback.setInt(6, feedback.getSpeedFeedback());
+        addFeedback.setInt(7, feedback.getGenreFeedback());
+        addFeedback.setInt(8, feedback.getDynamicsFeedback());
+        addFeedback.setInt(9, feedback.getMoodFeedback());
 
         addFeedback.executeUpdate();
         con.close();
