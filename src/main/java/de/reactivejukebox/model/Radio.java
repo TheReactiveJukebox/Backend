@@ -21,8 +21,8 @@ public class Radio implements Serializable {
     private String mood;
     private int startYear;
     private int endYear;
-    float speed;
-    float dynamic;
+    private Float speed;
+    private Float dynamic;
     private List<Track> startTracks;
     private StrategyType algorithm;
 
@@ -34,6 +34,8 @@ public class Radio implements Serializable {
             String mood,
             int startYear,
             int endYear,
+            Float speed,
+            Float dynamic,
             List<Track> startTracks,
             StrategyType algorithm) {
         this.id = id;
@@ -41,6 +43,8 @@ public class Radio implements Serializable {
         this.genres = genres;
         this.mood = mood;
         this.startYear = startYear;
+        this.speed = speed;
+        this.dynamic = dynamic;
         this.endYear = endYear;
         this.startTracks = startTracks;
         this.algorithm = algorithm;
@@ -114,11 +118,11 @@ public class Radio implements Serializable {
         this.algorithm = algorithm;
     }
 
-    public float getSpeed() { return speed; }
+    public Float getSpeed() { return speed; }
 
     public void setSpeed(float speed) { this.speed = speed; }
 
-    public float getDynamic() { return dynamic; }
+    public Float getDynamic() { return dynamic; }
 
     public void setDynamic(float dynamic) {
         this.dynamic = dynamic;
