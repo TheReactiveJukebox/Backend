@@ -15,12 +15,12 @@ import java.util.stream.Stream;
 
 public class Radio implements Serializable {
 
-    private int id;
+    private Integer id;
     private User user;
     private String[] genres;
     private String mood;
-    private int startYear;
-    private int endYear;
+    private Integer startYear;
+    private Integer endYear;
     private Float speed;
     private Float dynamic;
     private List<Track> startTracks;
@@ -28,12 +28,12 @@ public class Radio implements Serializable {
 
 
     public Radio(
-            int id,
+            Integer id,
             User user,
             String[] genres,
             String mood,
-            int startYear,
-            int endYear,
+            Integer startYear,
+            Integer endYear,
             Float speed,
             Float dynamic,
             List<Track> startTracks,
@@ -62,11 +62,11 @@ public class Radio implements Serializable {
         this.user = user;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -86,19 +86,19 @@ public class Radio implements Serializable {
         this.mood = mood;
     }
 
-    public int getStartYear() {
+    public Integer getStartYear() {
         return startYear;
     }
 
-    public void setStartYear(int startYear) {
+    public void setStartYear(Integer startYear) {
         this.startYear = startYear;
     }
 
-    public int getEndYear() {
+    public Integer getEndYear() {
         return endYear;
     }
 
-    public void setEndYear(int endYear) {
+    public void setEndYear(Integer endYear) {
         this.endYear = endYear;
     }
 

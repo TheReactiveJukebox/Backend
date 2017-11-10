@@ -1,24 +1,24 @@
 package de.reactivejukebox.model;
 
 public class RadioPlain {
-    private int id;
-    private int userId;
+    private Integer id;
+    private Integer userId;
     private String[] genres;
     private String mood;
-    private int startYear;
-    private int endYear;
+    private Integer startYear;
+    private Integer endYear;
     private String algorithm;
     Float speed;
     Float dynamic;
     private int[] startTracks;
 
     public RadioPlain(
-            int id,
-            int userId,
+            Integer id,
+            Integer userId,
             String[] genres,
             String mood,
-            int startYear,
-            int endYear,
+            Integer startYear,
+            Integer endYear,
             String algorithm,
             int[] startTracks,
             Float speed,
@@ -39,19 +39,19 @@ public class RadioPlain {
 
     }
 
-    public int getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -71,19 +71,19 @@ public class RadioPlain {
         this.mood = mood;
     }
 
-    public int getStartYear() {
+    public Integer getStartYear() {
         return startYear;
     }
 
-    public void setStartYear(int startYear) {
+    public void setStartYear(Integer startYear) {
         this.startYear = startYear;
     }
 
-    public int getEndYear() {
+    public Integer getEndYear() {
         return endYear;
     }
 
-    public void setEndYear(int endYear) {
+    public void setEndYear(Integer endYear) {
         this.endYear = endYear;
     }
 

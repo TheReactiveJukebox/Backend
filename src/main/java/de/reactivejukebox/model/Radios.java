@@ -28,6 +28,9 @@ public class Radios implements Iterable<Radio> {
     private static final String SELECT_GENRE =
             "SELECT genre.Name AS GenreName, genre.Id AS GenreId FROM radio JOIN radio_genre ON radio.Id = radio_genre.RadioId JOIN genre ON radio_genre.GenreId = genre.Id WHERE radio.Id = ?;";
 
+    private static final String UPDATE_RADIO =
+            "UPDATE radio SET (AlgorithmName, StartYear, EndYear, Speed, Dynamic) VALUES (?, ?, ?, ?, ?) WHERE Id = ?;";
+
     protected Users users;
     protected PreparedStatementBuilder stmnt;
     protected Connection con;
@@ -41,12 +44,22 @@ public class Radios implements Iterable<Radio> {
     }
 
     public Radio put(RadioPlain radio) throws SQLException {
-        toDB(radio);
-        Radio newRadio = build(radio);
-        radioById.putIfAbsent(newRadio.getId(), newRadio);
-        radioByUserId.remove(radio.getUserId());
-        radioByUserId.putIfAbsent(newRadio.getUser().getId(), newRadio);
-        return newRadio;
+        if (radio.getId() == null) {
+            toDB(radio);
+            Radio newRadio = build(radio);
+            radioById.putIfAbsent(newRadio.getId(), newRadio);
+            radioByUserId.remove(radio.getUserId());
+            radioByUserId.putIfAbsent(newRadio.getUser().getId(), newRadio);
+            return newRadio;
+        } else {
+            updateDB(radio);
+            Radio newRadio = build(radio);
+            radioById.remove(radio.getId());
+            radioByUserId.remove(radio.getUserId());
+            radioById.put(radio.getId(), newRadio);
+            radioByUserId.put(radio.getUserId(), newRadio);
+            return  newRadio;
+        }
     }
 
     public Radio get(int id) throws SQLException {
@@ -185,7 +198,7 @@ public class Radios implements Iterable<Radio> {
         return radio;
     }
 
-    private int[] fromDBReferenceSongs(int id, Connection con) throws SQLException {
+    private int[] fromDBReferenceSongs(Integer id, Connection con) throws SQLException {
         PreparedStatement getReferenceSongs = con.prepareStatement(SELECT_REFERENCE_SONG);
         getReferenceSongs.setInt(1, id);
         ResultSet rs = getReferenceSongs.executeQuery();
@@ -261,6 +274,38 @@ public class Radios implements Iterable<Radio> {
             }
             addGenre.executeBatch();
         }
+        // end transaction
+        con.commit();
+
+        // TODO check of needs to reset auto commit settings
+        con.setAutoCommit(true);
+        con.close();
+    }
+    private void updateDB(RadioPlain radio) throws SQLException{
+        con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        // use a transaction
+        con.setAutoCommit(false);
+        // insert new radio in database
+        PreparedStatement addRadio = con.prepareStatement(UPDATE_RADIO);
+        addRadio.setString(1, radio.getAlgorithm());
+        if (radio.getStartYear() == 0) {
+            addRadio.setNull(2, Types.INTEGER);
+        } else {
+            addRadio.setInt(2, radio.getStartYear());
+        }
+        if (radio.getEndYear() == 0) {
+            addRadio.setNull(3, Types.INTEGER);
+        } else {
+            addRadio.setInt(3, radio.getEndYear());
+        }
+        addRadio.setFloat(4, radio.getSpeed());
+        addRadio.setFloat(5,radio.getDynamic());
+        addRadio.setInt(6, radio.getId());
+        // TODO ad more radio attributes here
+        addRadio.executeUpdate();
+        // update Genres
+
+
         // end transaction
         con.commit();
 
