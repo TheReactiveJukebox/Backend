@@ -1,5 +1,10 @@
 package de.reactivejukebox.recommendations.strategies;
 
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.core.util.Base64;
+import de.reactivejukebox.JukeboxConfig;
 import de.reactivejukebox.model.Model;
 import de.reactivejukebox.model.Radio;
 import de.reactivejukebox.model.Track;
@@ -46,16 +51,29 @@ public class SpotifySongRecommender implements RecommendationStrategy {
     }
 
     private Stream<Track> spotifyApiCall(List<Track> seeds) {
-        String clientId = "xxx";
-        String clientSecret = "xxx";
 
-        //     TODO: Here are some problems importing required classes
-        /*
-        byte[] authorization = Base64.encode(clientId + ":" + clientSecret);
+        if (JukeboxConfig.spotifyAuthToken == null) {
+            JukeboxConfig.spotifyAuthToken = this.getSpotifyToken();
+        }
+
+        Client client = Client.create();
+
+        WebResource webResource = client.resource("https://api.spotify.com/v1/recommendations?seed_tracks=0c6xIDDpzE81m2q797ordA&limit=100");
+
+        ClientResponse response = webResource.header("Authorization", "Bearer " + JukeboxConfig.spotifyAuthToken).get(ClientResponse.class);
+
+        String ret = response.getEntity(String.class);
+
+        System.out.println(ret);
+
+
+        return this.tracks.stream();
+
+    }
+
+    private String getSpotifyToken() {
+        byte[] authorization = Base64.encode(JukeboxConfig.spotifyClientId + ":" + JukeboxConfig.spotifyClientSecret);
         String authString = new String(authorization);
-
-
-
         Client client = Client.create();
 
         WebResource webResource = client.resource("https://accounts.spotify.com/api/token");
@@ -71,25 +89,9 @@ public class SpotifySongRecommender implements RecommendationStrategy {
         }
 
         String token = response.getEntity(String.class).substring(17, 103);
-        System.out.println(token);
-
         client.destroy();
-
-        client = Client.create();
-
-        webResource = client.resource("https://api.spotify.com/v1/recommendations?seed_tracks=0c6xIDDpzE81m2q797ordA&limit=100");
-
-        response = webResource.header("Authorization", "Bearer " + token).get(ClientResponse.class);
-
-        String ret = response.getEntity(String.class);
-
-        System.out.println(ret);
-        */
-
-        return this.tracks.stream();
-
+        return token;
     }
-
 
     /* example from SAGH
     public List<Track> getRecommendations() {
