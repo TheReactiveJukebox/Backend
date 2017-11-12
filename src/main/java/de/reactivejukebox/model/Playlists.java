@@ -67,9 +67,12 @@ public class Playlists {
             if (!rs.next()) { // playlist with this id dose not exist
                 return null;
             }
+            final Integer[] tracksArray = (Integer[]) rs.getArray("tracks").getArray();
+            // convert Integer Array in a int Array
+            final int[] tracks = Arrays.stream(tracksArray).mapToInt(Integer::intValue).toArray();
             PlaylistPlain p = new PlaylistPlain(
                     playlistId,
-                    (int[]) rs.getArray("tracks").getArray(),
+                    tracks,
                     rs.getString("title"),
                     new java.util.Date(rs.getTimestamp("createdAt").getTime()),
                     new java.util.Date(rs.getTimestamp("editedAt").getTime()),
