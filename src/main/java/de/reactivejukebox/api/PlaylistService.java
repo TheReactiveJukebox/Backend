@@ -56,6 +56,12 @@ public class PlaylistService {
     @Path("/")
     @Secured
     public Response createPlaylist(PlaylistPlain playlist, @Context User user) {
+        if (playlist == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("No playlist given.").build();
+        }
+        if (playlist.getTitle() == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Playlist is not valid.").build();
+        }
         playlist.setUserId(user.getId());
         playlist.setCreated(new Date());
         playlist.setEdited(new Date());
@@ -74,6 +80,9 @@ public class PlaylistService {
     @Path("/")
     @Secured
     public Response updatePlaylist(PlaylistPlain playlist, @Context User user) {
+        if (playlist == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("No playlist given.").build();
+        }
         PlaylistPlain oldPlaylist = Model.getInstance().getPlaylists().getById(playlist.getId());
         // check if the user is authorized to change the playlist
         if (playlist.getUserId() != user.getId()
@@ -95,6 +104,9 @@ public class PlaylistService {
     @Secured
     public Response removePlaylist(@QueryParam("id") int id, @Context User user) {
         PlaylistPlain playlist = Model.getInstance().getPlaylists().getById(id);
+        if (playlist == null) {
+            return Response.status(404).entity("Playlist not found.").build();
+        }
         if (playlist.getUserId() != user.getId()) {
             return Response.status(403).entity("User not authorized to remove this playlist.").build();
         }
