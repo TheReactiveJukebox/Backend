@@ -4,6 +4,7 @@ import de.reactivejukebox.database.DatabaseProvider;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Playlists {
 
@@ -86,9 +87,12 @@ public class Playlists {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
+                Integer[] tracksArray = (Integer[]) rs.getArray("tracks").getArray();
+                // convert Integer Array in a int Array
+                int[] tracks = Arrays.stream(tracksArray).mapToInt(Integer::intValue).toArray();
                 PlaylistPlain p = new PlaylistPlain(
                         rs.getInt("id"),
-                        (int[]) rs.getArray("tracks").getArray(),
+                        tracks,
                         rs.getString("title"),
                         new java.util.Date(rs.getTimestamp("createdAt").getTime()),
                         new java.util.Date(rs.getTimestamp("editedAt").getTime()),
