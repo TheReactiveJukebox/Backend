@@ -62,7 +62,9 @@ public class Playlists {
             PreparedStatement ps = con.prepareStatement("select * from playlist where id=?");
             ps.setInt(1, playlistId);
             ResultSet rs = ps.executeQuery();
-            rs.next();
+            if (!rs.next()) { // playlist with this id dose not exist
+                return null;
+            }
             PlaylistPlain p = new PlaylistPlain(
                     playlistId,
                     (int[]) rs.getArray("tracks").getArray(),
