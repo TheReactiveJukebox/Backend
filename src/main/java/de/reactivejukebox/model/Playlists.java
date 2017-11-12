@@ -45,7 +45,8 @@ public class Playlists {
             Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
             PreparedStatement ps = con.prepareStatement("delete from playlist where id=?");
             ps.setInt(1, playlistId);
-            return ps.execute();
+            ps.execute();
+            return true;
         } catch (SQLException e) {
             return false;
         }
