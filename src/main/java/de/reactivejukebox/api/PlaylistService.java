@@ -90,6 +90,7 @@ public class PlaylistService {
     }
 
     @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
     @Path("/")
     @Secured
     public Response removePlaylist(@QueryParam("id") int id, @Context User user) {
