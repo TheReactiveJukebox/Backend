@@ -1,5 +1,6 @@
 package de.reactivejukebox.model;
 
+import de.reactivejukebox.database.DatabaseImpl;
 import de.reactivejukebox.database.DatabaseProvider;
 
 import java.sql.*;
@@ -18,14 +19,18 @@ public class Playlists {
         ps.setTimestamp(3, new Timestamp(p.getEdited().getTime()));
         ps.setInt(4, p.getUserId());
 
-        int[] tracks = p.getTracks();
-        Object[] javaSucks = new Object[tracks.length];
-        for (int i = 0; i < tracks.length; ++i) {
-            javaSucks[i] = tracks[i];
+        // We can not use createArrayOf from c3p0 in version 0.9.1.2. Workaround:
+        final Array tracksArray;
+        {
+            final int[] tracks = p.getTracks();
+            final Integer[] tracksInteger = Arrays.stream(tracks).boxed().toArray(Integer[]::new);
+            Connection dummyCon = DriverManager.getConnection(
+                    DatabaseImpl.DB_URL,
+                    DatabaseImpl.DB_USER,
+                    DatabaseImpl.DB_PASSWORD);
+            tracksArray = dummyCon.createArrayOf("INTEGER", tracksInteger);
         }
-
-        // TODO can we not use createArrayOf? Always fails on me for some reason.
-        ps.setArray(5, con.createArrayOf("INTEGER", javaSucks));
+        ps.setArray(5, tracksArray);
         ps.setBoolean(6, p.isPublic());
 
         int affected = ps.executeUpdate();
@@ -122,7 +127,18 @@ public class Playlists {
                     "where id=?"
             );
             ps.setString(1, p.getTitle());
-            ps.setObject(2, p.getTracks());
+            // We can not use createArrayOf from c3p0 in version 0.9.1.2. Workaround:
+            final Array tracksArray;
+            {
+                final int[] tracks = p.getTracks();
+                final Integer[] tracksInteger = Arrays.stream(p.getTracks()).boxed().toArray(Integer[]::new);
+                Connection dummyCon = DriverManager.getConnection(
+                        DatabaseImpl.DB_URL,
+                        DatabaseImpl.DB_USER,
+                        DatabaseImpl.DB_PASSWORD);
+                tracksArray = dummyCon.createArrayOf("INTEGER", tracksInteger);
+            }
+            ps.setArray(2, tracksArray);
             ps.setInt(3, p.getUserId());
             ps.setBoolean(4, p.isPublic());
             ps.setTimestamp(5, new Timestamp(p.getCreated().getTime()));
