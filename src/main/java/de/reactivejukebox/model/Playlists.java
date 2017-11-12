@@ -48,6 +48,7 @@ public class Playlists {
             ps.execute();
             return true;
         } catch (SQLException e) {
+            e.printStackTrace();
             return false;
         }
 
@@ -127,6 +128,7 @@ public class Playlists {
 
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
+            e.printStackTrace();
             return false;
         }
     }
