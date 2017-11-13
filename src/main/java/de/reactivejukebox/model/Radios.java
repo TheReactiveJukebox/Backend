@@ -29,7 +29,7 @@ public class Radios implements Iterable<Radio> {
             "SELECT genre.Name AS GenreName, genre.Id AS GenreId FROM radio JOIN radio_genre ON radio.Id = radio_genre.RadioId JOIN genre ON radio_genre.GenreId = genre.Id WHERE radio.Id = ?;";
 
     private static final String UPDATE_RADIO =
-            "UPDATE radio SET (AlgorithmName, StartYear, EndYear, Speed, Dynamic) VALUES (?, ?, ?, ?, ?) WHERE Id = ?;";
+            "UPDATE radio SET AlgorithmName = ?, StartYear = ?, EndYear = ?, Speed = ?, Dynamic = ? WHERE Id = ?;";
 
     protected Users users;
     protected PreparedStatementBuilder stmnt;
@@ -296,18 +296,26 @@ public class Radios implements Iterable<Radio> {
         // insert new radio in database
         PreparedStatement addRadio = con.prepareStatement(UPDATE_RADIO);
         addRadio.setString(1, radio.getAlgorithm());
-        if (radio.getStartYear() == 0) {
+        if (radio.getStartYear() == null) {
             addRadio.setNull(2, Types.INTEGER);
         } else {
             addRadio.setInt(2, radio.getStartYear());
         }
-        if (radio.getEndYear() == 0) {
+        if (radio.getEndYear() == null) {
             addRadio.setNull(3, Types.INTEGER);
         } else {
             addRadio.setInt(3, radio.getEndYear());
         }
-        addRadio.setFloat(4, radio.getSpeed());
-        addRadio.setFloat(5,radio.getDynamic());
+        if (radio.getSpeed() == null){
+            addRadio.setNull(4,Types.FLOAT);
+        }else{
+            addRadio.setFloat(4, radio.getSpeed());
+        }
+        if (radio.getDynamic() == null){
+            addRadio.setNull(5,Types.FLOAT);
+        }else{
+            addRadio.setFloat(5,radio.getDynamic());
+        }
         addRadio.setInt(6, radio.getId());
         // TODO ad more radio attributes here
         addRadio.executeUpdate();
