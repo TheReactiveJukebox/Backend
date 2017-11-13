@@ -56,11 +56,10 @@ public class PlaylistService {
     @Path("/")
     @Secured
     public Response createPlaylist(PlaylistPlain playlist, @Context User user) {
-        if (playlist == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("No playlist given.").build();
-        }
-        if (playlist.getTitle() == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Playlist is not valid.").build();
+        if (playlist == null || playlist.getTitle() == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Playlist is not valid.")
+                    .build();
         }
         playlist.setUserId(user.getId());
         playlist.setCreated(new Date());
