@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 
 public class SpotifySongRecommender implements RecommendationStrategy {
 
-    private Collection<Track> base;
+    private List<String> base;
     private int resultCount;
     private Tracks tracks;
     private Radio radio;
@@ -33,7 +33,10 @@ public class SpotifySongRecommender implements RecommendationStrategy {
         this.resultCount = resultCount;
         this.radio = radio;
         this.upcoming = upcoming;
-        this.base = radio.getStartTracks().stream().distinct().collect(Collectors.toList());
+        this.base = radio.getStartTracks().stream()
+                .distinct()
+                .map(Track::getSpotifyId)
+                .collect(Collectors.toList());
         this.tracks = tracks;
     }
 
@@ -46,13 +49,14 @@ public class SpotifySongRecommender implements RecommendationStrategy {
                 .collect(Collectors.toList());
     }
 
-    private Stream<Track> spotifyApiCall(Collection<Track> seeds) {
+    private Stream<Track> spotifyApiCall(List<String> seeds) {
 
         if (JukeboxConfig.spotifyAuthToken == null) {
             JukeboxConfig.spotifyAuthToken = this.getSpotifyToken();
         }
 
-        String seedTracks = "0c6xIDDpzE81m2q797ordA";
+        String seedTracks = seeds.stream()
+                .collect(Collectors.joining(","));
 
         Client client = Client.create();
         WebResource webResource = client.resource("https://api.spotify.com/v1/recommendations?seed_tracks=" + seedTracks + "&limit=100");
