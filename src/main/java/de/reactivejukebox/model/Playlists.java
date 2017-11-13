@@ -42,6 +42,7 @@ public class Playlists {
             throw new SQLException("Playlist was created, ID could not be fetched");
         }
         p.setId(rs.getInt("id"));
+        con.close();
         return p;
     }
 
@@ -51,6 +52,7 @@ public class Playlists {
             PreparedStatement ps = con.prepareStatement("delete from playlist where id=?");
             ps.setInt(1, playlistId);
             ps.execute();
+            con.close();
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -84,6 +86,7 @@ public class Playlists {
                     rs.getInt("userId"),
                     rs.getBoolean("isPublic")
             );
+            con.close();
             return p;
         } catch (SQLException e) {
             return null;
@@ -113,6 +116,7 @@ public class Playlists {
                 );
                 results.add(p);
             }
+            con.close();
         } catch (SQLException e) {
             // result will be empty
         }
