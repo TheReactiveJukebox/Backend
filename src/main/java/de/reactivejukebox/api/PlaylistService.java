@@ -80,19 +80,27 @@ public class PlaylistService {
     @Secured
     public Response updatePlaylist(PlaylistPlain playlist, @Context User user) {
         if (playlist == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("No playlist given.").build();
+            return Response.serverError()
+                    .entity("No playlist given.")
+                    .build();
         }
-        PlaylistPlain oldPlaylist = Model.getInstance().getPlaylists().getById(playlist.getId());
+        PlaylistPlain oldPlaylist = Model.getInstance()
+                .getPlaylists()
+                .getById(playlist.getId());
         // check if the user is authorized to change the playlist
         if (oldPlaylist == null
                 || oldPlaylist.getUserId() != user.getId()
                 || playlist.getUserId() != oldPlaylist.getUserId()) {
-            return Response.status(403).entity("User not authorized to change this playlist.").build();
+            return Response.status(403)
+                    .entity("User not authorized to change this playlist.")
+                    .build();
         }
         // execute Update
         playlist.setEdited(new Date());
         if (!Model.getInstance().getPlaylists().update(playlist)) {
-            return Response.serverError().entity("Could not update playlist due to internal error.").build();
+            return Response.serverError()
+                    .entity("Could not update playlist due to internal error.")
+                    .build();
         }
         return Response.ok(playlist).build();
     }
