@@ -117,13 +117,19 @@ public class PlaylistService {
     public Response removePlaylist(@QueryParam("id") int id, @Context User user) {
         PlaylistPlain playlist = Model.getInstance().getPlaylists().getById(id);
         if (playlist == null) {
-            return Response.status(404).entity("Playlist not found.").build();
+            return Response.status(404).
+                    entity("Playlist not found.")
+                    .build();
         }
         if (playlist.getUserId() != user.getId()) {
-            return Response.status(403).entity("User not authorized to remove this playlist.").build();
+            return Response.status(403)
+                    .entity("User not authorized to remove this playlist.")
+                    .build();
         }
         if (!Model.getInstance().getPlaylists().remove(id)) {
-            return Response.serverError().entity("Could not remove playlist due to internal error.").build();
+            return Response.serverError()
+                    .entity("Could not remove playlist due to internal error.")
+                    .build();
         }
         return Response.ok().build();
     }
