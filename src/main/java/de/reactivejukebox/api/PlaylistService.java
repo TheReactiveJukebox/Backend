@@ -84,8 +84,8 @@ public class PlaylistService {
         }
         PlaylistPlain oldPlaylist = Model.getInstance().getPlaylists().getById(playlist.getId());
         // check if the user is authorized to change the playlist
-        if (playlist.getUserId() != user.getId()
-                || oldPlaylist == null
+        if (oldPlaylist == null
+                || oldPlaylist.getUserId() != user.getId()
                 || playlist.getUserId() != oldPlaylist.getUserId()) {
             return Response.status(403).entity("User not authorized to change this playlist.").build();
         }
