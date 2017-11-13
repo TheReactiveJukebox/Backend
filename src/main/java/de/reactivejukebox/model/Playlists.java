@@ -12,7 +12,7 @@ public class Playlists {
     public PlaylistPlain add(PlaylistPlain p) throws SQLException {
         Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement ps = con.prepareStatement(
-                "insert into playlist(title, createdAt, editedAt, userid, tracks, isPublic) values(?, ?, ?, ?, ?, ?)",
+                "insert into playlist(title, createdAt, editedAt, userid, tracks, isPublic) values(?, ?, ?, ?, ?, ?) ON CONFLICT DO NOTHING",
                 Statement.RETURN_GENERATED_KEYS);
         ps.setString(1, p.getTitle());
         ps.setTimestamp(2, new Timestamp(p.getCreated().getTime()));
