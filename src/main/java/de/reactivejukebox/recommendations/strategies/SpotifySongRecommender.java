@@ -56,16 +56,15 @@ public class SpotifySongRecommender implements RecommendationStrategy {
             JukeboxConfig.spotifyAuthToken = this.getSpotifyToken();
         }
 
+        String seedTracks = "0c6xIDDpzE81m2q797ordA";
+
         Client client = Client.create();
-
-        WebResource webResource = client.resource("https://api.spotify.com/v1/recommendations?seed_tracks=0c6xIDDpzE81m2q797ordA&limit=100");
-
+        WebResource webResource = client.resource("https://api.spotify.com/v1/recommendations?seed_tracks=" + seedTracks + "&limit=100");
         ClientResponse response = webResource.header("Authorization", "Bearer " + JukeboxConfig.spotifyAuthToken).get(ClientResponse.class);
 
         String ret = response.getEntity(String.class);
-
+        client.destroy();
         System.out.println(ret);
-
 
         return this.tracks.stream();
 
@@ -84,8 +83,8 @@ public class SpotifySongRecommender implements RecommendationStrategy {
                 .post(ClientResponse.class);
 
         if (response.getStatus() != 200) {
-            System.out.println(response);
-            System.exit(1);
+            System.err.println(response);
+            return null;
         }
 
         String token = response.getEntity(String.class).substring(17, 103);
