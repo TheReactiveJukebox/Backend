@@ -81,7 +81,7 @@ public class PlaylistService {
     @Secured
     public Response updatePlaylist(PlaylistPlain playlist, @Context User user) {
         if (playlist == null) {
-            return Response.serverError()
+            return Response.status(Response.Status.BAD_REQUEST)
                     .entity("No playlist given.")
                     .build();
         }
