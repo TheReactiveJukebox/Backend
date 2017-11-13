@@ -33,24 +33,20 @@ public class SpotifySongRecommender implements RecommendationStrategy {
         this.resultCount = resultCount;
         this.radio = radio;
         this.upcoming = upcoming;
-        this.base = radio.getStartTracks();
+        this.base = radio.getStartTracks().stream().distinct().collect(Collectors.toList());
         this.tracks = tracks;
     }
 
     @Override
     public List<Track> getRecommendations() {
-        return getSpotifyRecommendation(base.stream().distinct().collect(Collectors.toList()));
-    }
-
-    private List<Track> getSpotifyRecommendation(List<Track> seeds) {
-        Stream<Track> possibleTracks = spotifyApiCall(seeds);
+        Stream<Track> possibleTracks = spotifyApiCall(base);
         possibleTracks = radio.filter(possibleTracks);  // Filter for radio properties
 
         return radio.filterHistory(possibleTracks, upcoming, resultCount) // Filter History
                 .collect(Collectors.toList());
     }
 
-    private Stream<Track> spotifyApiCall(List<Track> seeds) {
+    private Stream<Track> spotifyApiCall(Collection<Track> seeds) {
 
         if (JukeboxConfig.spotifyAuthToken == null) {
             JukeboxConfig.spotifyAuthToken = this.getSpotifyToken();
@@ -91,25 +87,4 @@ public class SpotifySongRecommender implements RecommendationStrategy {
         client.destroy();
         return token;
     }
-
-    /* example from SAGH
-    public List<Track> getRecommendations() {
-        return base.stream()
-                .map(Track::getArtist) // get artist for each track
-                .distinct() // eliminate duplicates
-                .flatMap(this::greatestHits) // get every artist's greatest hits in a single stream
-                .sorted(Comparator.comparingInt(Track::getPlayCount).reversed()) // sort by play count, descending
-                .limit(resultCount) // get first resultCount Tracks
-                .collect(Collectors.toList()); // collect into list
-    }
-    */
-    /* example from SAGH
-    private Stream<Track> greatestHits(Artist a) {
-        // historyFilter by History and Genre
-        Stream<Track> possibleTracks = tracks.stream().filter(new ArtistPredicate(a));  // Filter by Artists
-        possibleTracks = radio.filter(possibleTracks);  // Filter for radio properties
-        return radio.filterHistory(possibleTracks, upcoming, resultCount) //Filter History
-                .sorted(Comparator.comparingInt(Track::getPlayCount).reversed()); // sort
-    }
-    */
 }
