@@ -10,7 +10,10 @@ import de.reactivejukebox.model.Radio;
 import de.reactivejukebox.model.Track;
 import de.reactivejukebox.model.Tracks;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -64,10 +67,19 @@ public class SpotifySongRecommender implements RecommendationStrategy {
 
         String ret = response.getEntity(String.class);
         client.destroy();
-        System.out.println(ret);
 
-        return this.tracks.stream();
+        JSONObject jsonObject = new JSONObject(ret);
+        JSONArray jsonArray = jsonObject.getJSONArray("tracks");
 
+        List<String> spotifyIds = new ArrayList<>();
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject o = jsonArray.getJSONObject(i);
+            spotifyIds.add(o.getString("id"));
+        }
+
+        return Model.getInstance().getTracks().stream()
+                .filter(track -> spotifyIds.contains(track.getSpotifyId()));
     }
 
     private String getSpotifyToken() {
@@ -87,7 +99,9 @@ public class SpotifySongRecommender implements RecommendationStrategy {
             return null;
         }
 
-        String token = response.getEntity(String.class).substring(17, 103);
+        String tokenJson = response.getEntity(String.class);
+        String token = new JSONObject(tokenJson).getString("access_token");
+
         client.destroy();
         return token;
     }
