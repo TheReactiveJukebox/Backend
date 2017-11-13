@@ -10,8 +10,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,21 +22,20 @@ public class PlaylistService {
     @Produces(MediaType.APPLICATION_JSON)
     @Secured
     @Path("/")
-    public List<PlaylistPlain> getPlaylists(
+    public Response getPlaylists(
             @QueryParam("id") int id,
             @QueryParam("userid") int userid,
             @Context User user) {
+        List<PlaylistPlain> results;
         if (id != 0) {
-            // return playlist with specific ID
-            ArrayList<PlaylistPlain> results = new ArrayList<>();
+            results = new LinkedList<>();
             results.add(Model.getInstance()
                     .getPlaylists()
                     .getById(id)
             );
-            return results;
         } else if (userid != 0) {
             // return all public playlists of other user
-            return Model.getInstance()
+            results = Model.getInstance()
                     .getPlaylists()
                     .getByUser(userid)
                     .stream()
@@ -44,10 +43,11 @@ public class PlaylistService {
                     .collect(Collectors.toList());
         } else {
             // return all playlists of current user
-            return Model.getInstance()
+            results = Model.getInstance()
                     .getPlaylists()
                     .getByUser(user.getId());
         }
+        return Response.ok(results).build();
     }
 
     @POST
