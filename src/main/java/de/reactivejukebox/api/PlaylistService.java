@@ -97,7 +97,12 @@ public class PlaylistService {
         }
         // execute Update
         playlist.setEdited(new Date());
-        if (!Model.getInstance().getPlaylists().update(playlist)) {
+        final boolean state = Model.getInstance()
+                .getPlaylists()
+                .update(playlist,
+                        !playlist.getTitle().equals(oldPlaylist.getTitle())
+                );
+        if (!state) {
             return Response.serverError()
                     .entity("Could not update playlist due to internal error.")
                     .build();
