@@ -62,8 +62,9 @@ public class PlaylistService {
                     .build();
         }
         playlist.setUserId(user.getId());
-        playlist.setCreated(new Date());
-        playlist.setEdited(new Date());
+        Date now = new Date();
+        playlist.setCreated(now);
+        playlist.setEdited(now);
         try {
             playlist = Model.getInstance().getPlaylists().add(playlist);
             return Response.ok(playlist).build();
