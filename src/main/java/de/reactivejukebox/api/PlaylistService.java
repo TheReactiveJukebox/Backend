@@ -131,6 +131,6 @@ public class PlaylistService {
                     .entity("Could not remove playlist due to internal error.")
                     .build();
         }
-        return Response.ok().build();
+        return Response.ok("{}").build();
     }
 }
