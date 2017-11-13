@@ -120,35 +120,53 @@ public class Playlists {
     }
 
     public boolean update(PlaylistPlain p) {
+        PlaylistPlain oldPlaylist = getById(p.getId());
+        return update(p, !oldPlaylist.getTitle().equals(p.getTitle()));
+    }
+
+    public boolean update(PlaylistPlain p, boolean titelChanged) {
+        boolean result = false;
         try {
             Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
-            PreparedStatement ps = con.prepareStatement("update playlist " +
-                    "set title=?, tracks=?, userid=?, isPublic=?, createdAt=?, editedAt=? " +
-                    "where id=?"
-            );
-            ps.setString(1, p.getTitle());
+            String query;
+            if (titelChanged) {
+                query = "update playlist " +
+                        "set title=?, tracks=?, userid=?, isPublic=?, createdAt=?, editedAt=? " +
+                        "where id=?";
+            } else {
+                query = "update playlist " +
+                        "set tracks=?, userid=?, isPublic=?, createdAt=?, editedAt=? " +
+                        "where id=?";
+            }
+            PreparedStatement ps = con.prepareStatement(query);
+            int i = 1;
+            if (titelChanged) {
+                ps.setString(i++, p.getTitle());
+            }
             // We can not use createArrayOf from c3p0 in version 0.9.1.2. Workaround:
             final Array tracksArray;
             {
-                final int[] tracks = p.getTracks();
                 final Integer[] tracksInteger = Arrays.stream(p.getTracks()).boxed().toArray(Integer[]::new);
                 Connection dummyCon = DriverManager.getConnection(
                         DatabaseImpl.DB_URL,
                         DatabaseImpl.DB_USER,
                         DatabaseImpl.DB_PASSWORD);
                 tracksArray = dummyCon.createArrayOf("INTEGER", tracksInteger);
+                dummyCon.close();
             }
-            ps.setArray(2, tracksArray);
-            ps.setInt(3, p.getUserId());
-            ps.setBoolean(4, p.isPublic());
-            ps.setTimestamp(5, new Timestamp(p.getCreated().getTime()));
-            ps.setTimestamp(6, new Timestamp(p.getEdited().getTime()));
-            ps.setInt(7, p.getId());
+            ps.setArray(i++, tracksArray);
+            ps.setInt(i++, p.getUserId());
+            ps.setBoolean(i++, p.isPublic());
+            ps.setTimestamp(i++, new Timestamp(p.getCreated().getTime()));
+            ps.setTimestamp(i++, new Timestamp(p.getEdited().getTime()));
+            ps.setInt(i, p.getId());
 
-            return ps.executeUpdate() == 1;
+            final int affected = ps.executeUpdate();
+            result = affected == 1;
+            con.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
         }
+        return result;
     }
 }
