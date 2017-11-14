@@ -20,7 +20,7 @@ import java.util.stream.StreamSupport;
  * TrackFeedbacks is a class containing all the given track feedbacks. It handles all actions concerning adding,
  * receiving or removing track feedback.
  */
-public class TrackFeedbacks implements Iterable<TrackFeedback> {
+public class TrackFeedbacks {
     protected Users users;
     protected Tracks tracks;
     protected PreparedStatementBuilder stmnt;
@@ -83,38 +83,6 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
         return get(feedback.getId());
     }
 
-
-    @Override
-    public Iterator<TrackFeedback> iterator() {
-        //TODO implement
-        // check first if there is an usecase
-
-        return new Iterator<TrackFeedback>() {
-            @Override
-            public boolean hasNext() {
-                return false;
-            }
-
-            @Override
-            public TrackFeedback next() {
-                return null;
-            }
-        };
-    }
-
-    //@Override
-    //public void forEach(Consumer<? super TrackFeedback> consumer) {
-    //    feedbackById.values().forEach(consumer);
-    //}
-
-    //@Override
-    //public Spliterator<TrackFeedback> spliterator() {
-    //    return feedbackById.values().spliterator();
-    //}
-
-    //public Stream<TrackFeedback> stream() {
-    //    return StreamSupport.stream(spliterator(), false);
-    //}
 
     private TrackFeedback build(TrackFeedbackPlain feedback) throws SQLException {
         TrackFeedback newTrackFeedback = new TrackFeedback();
