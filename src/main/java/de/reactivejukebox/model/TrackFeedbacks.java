@@ -125,7 +125,10 @@ public class TrackFeedbacks {
             return result;
         } else {
             con.close();
-            throw new SQLException("TrackFeedback was not found");
+            TrackFeedbackPlain result = new TrackFeedbackPlain();
+            result.setUserId(userId);
+            result.setTrackId(trackId);
+            return result;
         }
 
     }
