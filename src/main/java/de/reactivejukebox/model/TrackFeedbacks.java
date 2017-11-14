@@ -169,6 +169,11 @@ public class TrackFeedbacks {
         addFeedback.setInt(5, feedback.getDynamicsFeedback());
         addFeedback.setInt(6, feedback.getMoodFeedback());
 
+        addFeedback.setInt(7, feedback.getSongFeedback());
+        addFeedback.setInt(8, feedback.getSpeedFeedback());
+        addFeedback.setInt(9, feedback.getDynamicsFeedback());
+        addFeedback.setInt(10, feedback.getMoodFeedback());
+
         addFeedback.executeUpdate();
         con.close();
 

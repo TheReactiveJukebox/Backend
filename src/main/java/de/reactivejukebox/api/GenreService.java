@@ -7,6 +7,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,10 +29,12 @@ public class GenreService {
     @Secured
     @Produces(MediaType.APPLICATION_JSON)
     public Response getFeedback(List<String> genres, @Context User user){
-        //TODO
-        List<GenreFeedback> gf = new ArrayList<>();
-        gf.add(new GenreFeedback());
-        return Response.status(200).entity(gf).build();
+        try {
+            return Response.status(200).entity(Model.getInstance().getSpecialFeedbacks().getGenreFeedback(genres,user.getId())).build();
+        }catch (Exception e){
+            return Response.status(400).entity(e).build();
+        }
+
     }
 
     @POST
@@ -39,11 +42,11 @@ public class GenreService {
     @Secured
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addFeedback(List<GenreFeedback> feedback, @Context User user){
-        //TODO
-        List<GenreFeedback> gf = new ArrayList<>();
-        gf.add(new GenreFeedback());
-        return Response.status(200).entity(gf).build();
+    public Response addFeedback(GenreFeedback feedback, @Context User user) {
+        try {
+            return Response.status(200).entity(Model.getInstance().getSpecialFeedbacks().putGenreFeedback(feedback,user.getId())).build();
+        }catch (Exception e){
+            return Response.status(400).entity(e).build();
+        }
     }
-
 }

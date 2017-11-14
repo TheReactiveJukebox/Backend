@@ -48,11 +48,12 @@ public class ArtistService {
     @Path("/feedback")
     @Secured
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getFeedback(List<ArtistPlain> artists, @Context User user){
-        //TODO
-        List<ArtistFeedback> af = new ArrayList<>();
-        af.add(new ArtistFeedback());
-        return Response.status(200).entity(af).build();
+    public Response getFeedback(List<Integer> artists, @Context User user){
+        try {
+            return Response.status(200).entity(Model.getInstance().getSpecialFeedbacks().getArtistFeedback(artists,user.getId())).build();
+        }catch (Exception e){
+            return Response.status(400).entity(e).build();
+        }
     }
 
     @POST
@@ -60,11 +61,12 @@ public class ArtistService {
     @Secured
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addFeedback(List<ArtistFeedback> feedback, @Context User user){
-        //TODO
-        List<ArtistFeedback> af = new ArrayList<>();
-        af.add(new ArtistFeedback());
-        return Response.status(200).entity(af).build();
+    public Response addFeedback(ArtistFeedback feedback, @Context User user){
+        try {
+            return Response.status(200).entity(Model.getInstance().getSpecialFeedbacks().putArtistFeedback(feedback,user.getId())).build();
+        }catch (Exception e){
+            return Response.status(400).entity(e).build();
+        }
     }
 
 
