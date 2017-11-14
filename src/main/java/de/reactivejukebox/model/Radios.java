@@ -153,16 +153,7 @@ public class Radios implements Iterable<Radio> {
         getRadio.setInt(1, radio.getUserId());
         ResultSet rs = getRadio.executeQuery();
         if (rs.next()) {
-            radio.setId(rs.getInt("id"));
-            radio.setUserId(rs.getInt("userid"));
-            radio.setAlgorithm(rs.getString("AlgorithmName"));
-            radio.setStartYear(rs.getInt("StartYear"));
-            radio.setEndYear(rs.getInt("EndYear"));
-            radio.setSpeed(rs.getFloat("Speed"));
-            radio.setDynamic(rs.getFloat("Dynamic"));
-            // TODO read more radio attributes
-            radio.setStartTracks(fromDBReferenceSongs(radio.getId(), con));
-            radio.setGenres(fromDBGenres(radio.getId(), con));
+            radio = buildPlain(rs);
             con.close();
             return radio;
         } else {
@@ -182,17 +173,7 @@ public class Radios implements Iterable<Radio> {
         PreparedStatement dbQuery = stmnt.prepare(con);
         ResultSet rs = dbQuery.executeQuery();
         if (rs.next()) {
-            radio = new RadioPlain();
-            radio.setId(rs.getInt("id"));
-            radio.setUserId(rs.getInt("userid"));
-            radio.setAlgorithm(rs.getString("AlgorithmName"));
-            radio.setStartYear(rs.getInt("StartYear"));
-            radio.setEndYear(rs.getInt("EndYear"));
-            radio.setSpeed(rs.getFloat("Speed"));
-            radio.setDynamic(rs.getFloat("Dynamic"));
-            // TODO read more radio attributes
-            radio.setStartTracks(fromDBReferenceSongs(id, con));
-            radio.setGenres(fromDBGenres(id, con));
+            radio = buildPlain(rs);
         }
         con.close();
         return radio;
@@ -328,5 +309,37 @@ public class Radios implements Iterable<Radio> {
         // TODO check of needs to reset auto commit settings
         con.setAutoCommit(true);
         con.close();
+    }
+    private RadioPlain buildPlain(ResultSet rs) throws SQLException {
+        RadioPlain radio = new RadioPlain();
+        radio.setId(rs.getInt("id"));
+        if(rs.wasNull()){
+            radio.setId(null);
+        }
+        radio.setUserId(rs.getInt("userid"));
+        if(rs.wasNull()){
+            radio.setUserId(null);
+        }
+        radio.setAlgorithm(rs.getString("AlgorithmName"));
+        radio.setStartYear(rs.getInt("StartYear"));
+        if(rs.wasNull()){
+            radio.setStartYear(null);
+        }
+        radio.setEndYear(rs.getInt("EndYear"));
+        if(rs.wasNull()){
+            radio.setEndYear(null);
+        }
+        radio.setSpeed(rs.getFloat("Speed"));
+        if(rs.wasNull()){
+            radio.setSpeed(null);
+        }
+        radio.setDynamic(rs.getFloat("Dynamic"));
+        if(rs.wasNull()){
+            radio.setDynamic(null);
+        }
+        // TODO read more radio attributes
+        radio.setStartTracks(fromDBReferenceSongs(radio.getId(), con));
+        radio.setGenres(fromDBGenres(radio.getId(), con));
+        return radio;
     }
 }
