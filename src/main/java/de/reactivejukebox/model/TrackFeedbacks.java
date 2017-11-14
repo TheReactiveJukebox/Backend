@@ -25,12 +25,9 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
     protected Tracks tracks;
     protected PreparedStatementBuilder stmnt;
     protected Connection con;
-    protected ConcurrentHashMap<Integer, TrackFeedback> feedbackById;
-    protected ConcurrentHashMap<Integer, ArrayList<TrackFeedback>> feedbacksByUserId;
+
 
     public TrackFeedbacks(Users users, Tracks tracks) {
-        feedbackById = new ConcurrentHashMap<>();
-        feedbacksByUserId = new ConcurrentHashMap<>();
         this.users = users;
         this.tracks = tracks;
     }
@@ -47,9 +44,6 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
         toDB(feedback);
         feedback = fromDbByFeedback(feedback);
         TrackFeedback newTrackFeedback = build(feedback);
-
-        feedbackById.putIfAbsent(newTrackFeedback.getId(), newTrackFeedback);
-        this.putIfAbsent(feedbacksByUserId, newTrackFeedback.getUser().getId(), newTrackFeedback);
         return newTrackFeedback;
     }
 
@@ -74,33 +68,14 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
     }
 
     public TrackFeedback get(int id) throws SQLException {
-        TrackFeedback trackFeedback;
-        if (feedbackById.containsKey(id)) {
-            trackFeedback = feedbackById.get(id);
-        } else {
-            trackFeedback = build(fromDB(id));
-            feedbackById.putIfAbsent(trackFeedback.getId(), trackFeedback);
-            this.putIfAbsent(feedbacksByUserId, trackFeedback.getUser().getId(), trackFeedback);
-        }
-        return trackFeedback;
+        return build(fromDB(id));
     }
 
     public ArrayList<TrackFeedback> getByUserId(int id) throws SQLException {
-        TrackFeedback tmpTrackFeedback;
         ArrayList<TrackFeedback> trackFeedbacks;
         ArrayList<TrackFeedbackPlain> feedbacksPlain;
-        if (feedbacksByUserId.containsKey(id)) {
-            trackFeedbacks = feedbacksByUserId.get(id);
-        } else {
             feedbacksPlain = this.fromDbByUserId(id);
-            trackFeedbacks = new ArrayList<>();
-            for (TrackFeedbackPlain f : feedbacksPlain) {
-                tmpTrackFeedback = this.build(f);
-                trackFeedbacks.add(tmpTrackFeedback);
-                feedbackById.putIfAbsent(tmpTrackFeedback.getId(), tmpTrackFeedback);
-                this.putIfAbsent(feedbacksByUserId, tmpTrackFeedback.getUser().getId(), tmpTrackFeedback);
-            }
-        }
+            trackFeedbacks = build(feedbacksPlain);
         return trackFeedbacks;
     }
 
@@ -111,22 +86,35 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
 
     @Override
     public Iterator<TrackFeedback> iterator() {
-        return feedbackById.values().iterator();
+        //TODO implement
+        // check first if there is an usecase
+
+        return new Iterator<TrackFeedback>() {
+            @Override
+            public boolean hasNext() {
+                return false;
+            }
+
+            @Override
+            public TrackFeedback next() {
+                return null;
+            }
+        };
     }
 
-    @Override
-    public void forEach(Consumer<? super TrackFeedback> consumer) {
-        feedbackById.values().forEach(consumer);
-    }
+    //@Override
+    //public void forEach(Consumer<? super TrackFeedback> consumer) {
+    //    feedbackById.values().forEach(consumer);
+    //}
 
-    @Override
-    public Spliterator<TrackFeedback> spliterator() {
-        return feedbackById.values().spliterator();
-    }
+    //@Override
+    //public Spliterator<TrackFeedback> spliterator() {
+    //    return feedbackById.values().spliterator();
+    //}
 
-    public Stream<TrackFeedback> stream() {
-        return StreamSupport.stream(spliterator(), false);
-    }
+    //public Stream<TrackFeedback> stream() {
+    //    return StreamSupport.stream(spliterator(), false);
+    //}
 
     private TrackFeedback build(TrackFeedbackPlain feedback) throws SQLException {
         TrackFeedback newTrackFeedback = new TrackFeedback();
@@ -141,12 +129,6 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
         newTrackFeedback.setMoodFeedback(feedback.getMoodFeedback());
 
         return newTrackFeedback;
-    }
-
-    private int convertToInt(boolean liked, boolean notLiked) {
-        if (liked) return 1;
-        if (notLiked) return -1;
-        return 0;
     }
 
     /**
