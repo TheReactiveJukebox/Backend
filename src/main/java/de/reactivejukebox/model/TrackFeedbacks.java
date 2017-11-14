@@ -42,29 +42,8 @@ public class TrackFeedbacks {
      */
     public TrackFeedback put(TrackFeedbackPlain feedback) throws SQLException {
         toDB(feedback);
-        feedback = fromDbByFeedback(feedback);
-        TrackFeedback newTrackFeedback = build(feedback);
+        TrackFeedback newTrackFeedback = get(feedback);
         return newTrackFeedback;
-    }
-
-    /**
-     * Puts a trackFeedback into a hashmap containing an id as keys and an ArrayList of trackFeedbacks as values. If the ArrayList
-     * for the given id does not exist, it will be created otherwise trackFeedback will be inserted in this list.
-     *
-     * @param hashMap       the hashmap to put trackFeedback into
-     * @param id            the key for the ArrayList to put trackFeedback into
-     * @param trackFeedback the track feedback to put into
-     */
-    private void putIfAbsent(ConcurrentHashMap<Integer, ArrayList<TrackFeedback>> hashMap, Integer id, TrackFeedback trackFeedback) {
-        ArrayList<TrackFeedback> tmpList;
-        if (hashMap.containsKey(id)) {
-            hashMap.get(id).add(trackFeedback);
-        } else {
-            tmpList = new ArrayList<>();
-            tmpList.add(trackFeedback);
-            hashMap.put(id, tmpList);
-        }
-
     }
 
     public TrackFeedback get(int id) throws SQLException {
@@ -80,7 +59,11 @@ public class TrackFeedbacks {
     }
 
     public TrackFeedback get(TrackFeedbackPlain feedback) throws SQLException {
-        return get(feedback.getId());
+        return get(feedback.getTrackId(),feedback.getUserId());
+    }
+
+    public TrackFeedback get(int trackId, int userId)throws SQLException{
+        return build(fromDbByTrack(trackId, userId));
     }
 
 
@@ -129,12 +112,12 @@ public class TrackFeedbacks {
         return feedbacks;
     }
 
-    private TrackFeedbackPlain fromDbByFeedback(TrackFeedbackPlain feedback) throws SQLException {
+    private TrackFeedbackPlain fromDbByTrack(int trackId, int userId) throws SQLException {
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM feedback WHERE userid = ? " +
                 " AND songid = ? ORDER BY id DESC;");
-        getFeedback.setInt(1, feedback.getUserId());
-        getFeedback.setInt(2, feedback.getTrackId());
+        getFeedback.setInt(1, userId);
+        getFeedback.setInt(2, trackId);
         ResultSet rs = getFeedback.executeQuery();
         if (rs.next()) {
             TrackFeedbackPlain result = this.buildPlain(rs);
@@ -146,22 +129,6 @@ public class TrackFeedbacks {
         }
 
     }
-
-    private TrackFeedbackPlain buildPlain(ResultSet rs) throws SQLException {
-        TrackFeedbackPlain feedback = new TrackFeedbackPlain();
-        feedback.setId(rs.getInt("id"));
-        feedback.setUserId(rs.getInt("userid"));
-        feedback.setTrackId(rs.getInt("songid"));
-
-        feedback.setSongFeedback(rs.getInt("feedbacksong"));
-        feedback.setSpeedFeedback(rs.getInt("feedbackspeed"));
-        feedback.setDynamicsFeedback(rs.getInt("feedbackdynamics"));
-        feedback.setMoodFeedback(rs.getInt("feedbackmood"));
-
-
-        return feedback;
-    }
-
 
     private TrackFeedbackPlain fromDB(int id) throws SQLException {
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
@@ -202,6 +169,21 @@ public class TrackFeedbacks {
         addFeedback.executeUpdate();
         con.close();
 
+    }
+
+    private TrackFeedbackPlain buildPlain(ResultSet rs) throws SQLException {
+        TrackFeedbackPlain feedback = new TrackFeedbackPlain();
+        feedback.setId(rs.getInt("id"));
+        feedback.setUserId(rs.getInt("userid"));
+        feedback.setTrackId(rs.getInt("songid"));
+
+        feedback.setSongFeedback(rs.getInt("feedbacksong"));
+        feedback.setSpeedFeedback(rs.getInt("feedbackspeed"));
+        feedback.setDynamicsFeedback(rs.getInt("feedbackdynamics"));
+        feedback.setMoodFeedback(rs.getInt("feedbackmood"));
+
+
+        return feedback;
     }
 
 }

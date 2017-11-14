@@ -60,6 +60,7 @@ public class JukeboxService {
     public Response getNextSongs(@Context User user,
                                  @QueryParam("count") int count,
                                  @QueryParam("upcoming") List<Integer> upcoming) {
+        TrackFeedbacks feedback = Model.getInstance().getTrackFeedbacks();
         try {
             // upcomingTracks contains tracks that are already in the listening queue
             List<Track> upcomingTracks = upcoming.stream()
@@ -71,9 +72,13 @@ public class JukeboxService {
             RecommendationStrategy algorithm = new RecommendationStrategyFactory(radio, upcomingTracks)
                     .createStrategy(count);
             // obtain results
-            List<MusicEntityPlain> results = algorithm.getRecommendations().stream()
+            List<TrackPlain> results = algorithm.getRecommendations().stream()
                     .map(Track::getPlainObject)
                     .collect(Collectors.toList());
+            for (TrackPlain r:results) {
+                r.setTrackFeedback(feedback.get(r.getId(),user.getId()).getPlainObject());
+            }
+
             return Response.ok(results).build();
         } catch (SQLException e) {
             e.printStackTrace();
