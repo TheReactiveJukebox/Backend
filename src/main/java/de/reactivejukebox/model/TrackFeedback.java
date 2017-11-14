@@ -1,6 +1,7 @@
 package de.reactivejukebox.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * The TrackFeedback class is a model for a single track feedback
@@ -13,9 +14,7 @@ public class TrackFeedback implements Serializable {
     private Track track;
 
     private int songFeedback;
-    private int artistFeedback;
     private int speedFeedback;
-    private int genreFeedback;
     private int dynamicsFeedback;
     private int moodFeedback;
 
@@ -63,16 +62,6 @@ public class TrackFeedback implements Serializable {
         this.songFeedback = songFeedback;
     }
 
-
-    public int getArtistFeedback() {
-        return artistFeedback;
-    }
-
-    public void setArtistFeedback(int artistFeedback) {
-        this.artistFeedback = artistFeedback;
-    }
-
-
     public int getSpeedFeedback() {
         return speedFeedback;
     }
@@ -80,16 +69,6 @@ public class TrackFeedback implements Serializable {
     public void setSpeedFeedback(int speedFeedback) {
         this.speedFeedback = speedFeedback;
     }
-
-
-    public int getGenreFeedback() {
-        return genreFeedback;
-    }
-
-    public void setGenreFeedback(int genreFeedback) {
-        this.genreFeedback = genreFeedback;
-    }
-
 
     public int getDynamicsFeedback() {
         return dynamicsFeedback;
@@ -115,7 +94,7 @@ public class TrackFeedback implements Serializable {
      * @return the matching TrackFeedbackPlain object with the same attributes as this TrackFeedback object
      */
     public TrackFeedbackPlain getPlainObject() {
-        TrackFeedbackPlain plainFeedback = new TrackFeedbackPlain(this.getId(), this.getUser().getId(), this.getRadio().getId(), this.getTrack().getId(), songFeedback, artistFeedback, speedFeedback, genreFeedback, dynamicsFeedback, moodFeedback);
+        TrackFeedbackPlain plainFeedback = new TrackFeedbackPlain(this.getId(), this.getUser().getId(), this.getRadio().getId(), this.getTrack().getId(), songFeedback, speedFeedback, dynamicsFeedback, moodFeedback);
 
         return plainFeedback;
     }

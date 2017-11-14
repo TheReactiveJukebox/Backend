@@ -1,5 +1,7 @@
 package de.reactivejukebox.model;
 
+import java.util.List;
+
 /**
  * TrackFeedbackPlain is a model for a track feedback containing only ids for user and radio
  */
@@ -10,25 +12,22 @@ public class TrackFeedbackPlain {
     private int radioId;
     private int trackId;
     private int songFeedback;
-    private int artistFeedback;
     private int speedFeedback;
-    private int genreFeedback;
     private int dynamicsFeedback;
     private int moodFeedback;
+
 
 
     public TrackFeedbackPlain() {
     }
 
-    public TrackFeedbackPlain(int id, int userId, int radioId, int trackId, int songFeedback, int artistFeedback, int speedFeedback, int genreFeedback, int dynamicsFeedback, int moodFeedback) {
+    public TrackFeedbackPlain(int id, int userId, int radioId, int trackId, int songFeedback, int speedFeedback, int dynamicsFeedback, int moodFeedback) {
         this.id = id;
         this.userId = userId;
         this.radioId = radioId;
         this.trackId = trackId;
         this.songFeedback = songFeedback;
-        this.artistFeedback = artistFeedback;
         this.speedFeedback = speedFeedback;
-        this.genreFeedback = genreFeedback;
         this.dynamicsFeedback = dynamicsFeedback;
         this.moodFeedback = moodFeedback;
     }
@@ -73,16 +72,6 @@ public class TrackFeedbackPlain {
         this.songFeedback = songFeedback;
     }
 
-
-    public int getArtistFeedback() {
-        return artistFeedback;
-    }
-
-    public void setArtistFeedback(int artistFeedback) {
-        this.artistFeedback = artistFeedback;
-    }
-
-
     public int getSpeedFeedback() {
         return speedFeedback;
     }
@@ -90,16 +79,6 @@ public class TrackFeedbackPlain {
     public void setSpeedFeedback(int speedFeedback) {
         this.speedFeedback = speedFeedback;
     }
-
-
-    public int getGenreFeedback() {
-        return genreFeedback;
-    }
-
-    public void setGenreFeedback(int genreFeedback) {
-        this.genreFeedback = genreFeedback;
-    }
-
 
     public int getDynamicsFeedback() {
         return dynamicsFeedback;

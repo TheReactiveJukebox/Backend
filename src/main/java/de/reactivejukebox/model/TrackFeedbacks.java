@@ -144,9 +144,7 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
         newTrackFeedback.setTrack(tracks.get(feedback.getTrackId()));
 
         newTrackFeedback.setSongFeedback(feedback.getSongFeedback());
-        newTrackFeedback.setArtistFeedback(feedback.getArtistFeedback());
         newTrackFeedback.setSpeedFeedback(feedback.getSpeedFeedback());
-        newTrackFeedback.setGenreFeedback(feedback.getGenreFeedback());
         newTrackFeedback.setDynamicsFeedback(feedback.getDynamicsFeedback());
         newTrackFeedback.setMoodFeedback(feedback.getMoodFeedback());
 
@@ -216,12 +214,9 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
         feedback.setTrackId(rs.getInt("songid"));
 
         feedback.setSongFeedback(rs.getInt("feedbacksong"));
-        feedback.setArtistFeedback(rs.getInt("feedbackartist"));
         feedback.setSpeedFeedback(rs.getInt("feedbackspeed"));
-        feedback.setGenreFeedback(rs.getInt("feedbackgenre"));
         feedback.setDynamicsFeedback(rs.getInt("feedbackdynamics"));
         feedback.setMoodFeedback(rs.getInt("feedbackmood"));
-
 
 
         return feedback;
@@ -264,25 +259,24 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
 
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement addFeedback = con.prepareStatement("INSERT INTO feedback (userid, songid, radioid," +
-                " feedbacksong, feedbackartist, feedbackspeed, feedbackgenre, feedbackdynamics, feedbackmood) " +
-                "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+                " feedbacksong, feedbackspeed, feedbackdynamics, feedbackmood) " +
+                "VALUES(?, ?, ?, ?, ?, ?, ?) " +
                 "ON Conflict (userid, songid) Do " +
-                "UPDATE Set (feedbacksong, feedbackartist, feedbackspeed, feedbackgenre, " +
+                "UPDATE Set (feedbacksong, feedbackspeed, " +
                 "feedbackdynamics, feedbackmood, time) = " +
-                "(?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP);");
+                "(?, ?, ?, ?, CURRENT_TIMESTAMP);");
 
         addFeedback.setInt(1, feedback.getUserId());
         addFeedback.setInt(2, feedback.getTrackId());
         addFeedback.setInt(3, feedback.getRadioId());
         addFeedback.setInt(4, feedback.getSongFeedback());
-        addFeedback.setInt(5, feedback.getArtistFeedback());
-        addFeedback.setInt(6, feedback.getSpeedFeedback());
-        addFeedback.setInt(7, feedback.getGenreFeedback());
-        addFeedback.setInt(8, feedback.getDynamicsFeedback());
-        addFeedback.setInt(9, feedback.getMoodFeedback());
+        addFeedback.setInt(5, feedback.getSpeedFeedback());
+        addFeedback.setInt(6, feedback.getDynamicsFeedback());
+        addFeedback.setInt(7, feedback.getMoodFeedback());
 
         addFeedback.executeUpdate();
         con.close();
 
     }
+
 }
