@@ -10,7 +10,6 @@ public class TrackFeedback implements Serializable {
 
     private int id; //global feedback id
     private User user;
-    private Radio radio;
     private Track track;
 
     private int songFeedback;
@@ -36,14 +35,6 @@ public class TrackFeedback implements Serializable {
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public Radio getRadio() {
-        return radio;
-    }
-
-    public void setRadio(Radio radio) {
-        this.radio = radio;
     }
 
     public Track getTrack() {
@@ -94,7 +85,7 @@ public class TrackFeedback implements Serializable {
      * @return the matching TrackFeedbackPlain object with the same attributes as this TrackFeedback object
      */
     public TrackFeedbackPlain getPlainObject() {
-        TrackFeedbackPlain plainFeedback = new TrackFeedbackPlain(this.getId(), this.getUser().getId(), this.getRadio().getId(), this.getTrack().getId(), songFeedback, speedFeedback, dynamicsFeedback, moodFeedback);
+        TrackFeedbackPlain plainFeedback = new TrackFeedbackPlain(this.getId(), this.getUser().getId(), this.getTrack().getId(), songFeedback, speedFeedback, dynamicsFeedback, moodFeedback);
 
         return plainFeedback;
     }
