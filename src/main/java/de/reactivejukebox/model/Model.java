@@ -35,7 +35,7 @@ public class Model {
             tracks = new Tracks();
         }
         radios = new Radios(users);
-        trackFeedbacks = new TrackFeedbacks(users, tracks, radios);
+        trackFeedbacks = new TrackFeedbacks(users, tracks);
         historyEntries = new HistoryEntries(users, tracks, radios);
 
     }
