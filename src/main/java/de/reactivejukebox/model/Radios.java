@@ -29,7 +29,10 @@ public class Radios implements Iterable<Radio> {
             "SELECT genre.Name AS GenreName, genre.Id AS GenreId FROM radio JOIN radio_genre ON radio.Id = radio_genre.RadioId JOIN genre ON radio_genre.GenreId = genre.Id WHERE radio.Id = ?;";
 
     private static final String UPDATE_RADIO =
-            "UPDATE radio SET AlgorithmName = ?, StartYear = ?, EndYear = ?, Speed = ?, Dynamic = ? WHERE Id = ?;";
+            "UPDATE radio SET AlgorithmName = ?, StartYear = ?, EndYear = ?, Speed = ?, Dynamic = ?, Arousal = ?, Valence = ? WHERE Id = ?;";
+    private static final String REMOVE_GENRE =
+            "DELETE FROM radio_genre WHERE radio.Id = ?;";
+
 
     protected Users users;
     protected PreparedStatementBuilder stmnt;
@@ -253,16 +256,7 @@ public class Radios implements Iterable<Radio> {
             addReferenceSong.executeBatch();
         }
         // insert genres
-        String[] genres = radio.getGenres();
-        if (genres != null && genres.length > 0) {
-            PreparedStatement addGenre = con.prepareStatement(INSERT_GENRE);
-            for (String genre : genres) {
-                addGenre.setInt(1, radio.getId());
-                addGenre.setString(2, genre);
-                addGenre.addBatch();
-            }
-            addGenre.executeBatch();
-        }
+        addGenres(radio,con);
         // end transaction
         con.commit();
 
@@ -301,7 +295,8 @@ public class Radios implements Iterable<Radio> {
         // TODO ad more radio attributes here
         addRadio.executeUpdate();
         // update Genres
-
+        removeGenres(radio,con);
+        addGenres(radio,con);
 
         // end transaction
         con.commit();
@@ -310,6 +305,25 @@ public class Radios implements Iterable<Radio> {
         con.setAutoCommit(true);
         con.close();
     }
+    private void removeGenres(RadioPlain radio, Connection con)throws SQLException{
+        PreparedStatement removeGenre = con.prepareStatement(REMOVE_GENRE);
+        removeGenre.setInt(1, radio.getId());
+        removeGenre.executeUpdate();
+    }
+
+    private void addGenres(RadioPlain radio, Connection con) throws SQLException{
+        String[] genres = radio.getGenres();
+        if (genres != null && genres.length > 0) {
+            PreparedStatement addGenre = con.prepareStatement(INSERT_GENRE);
+            for (String genre : genres) {
+                addGenre.setInt(1, radio.getId());
+                addGenre.setString(2, genre);
+                addGenre.addBatch();
+            }
+            addGenre.executeBatch();
+        }
+    }
+
     private RadioPlain buildPlain(ResultSet rs) throws SQLException {
         RadioPlain radio = new RadioPlain();
         radio.setId(rs.getInt("id"));
