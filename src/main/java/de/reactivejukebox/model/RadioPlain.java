@@ -8,8 +8,10 @@ public class RadioPlain {
     private Integer startYear;
     private Integer endYear;
     private String algorithm;
-    Float speed;
-    Float dynamic;
+    private Float speed;
+    private Float dynamic;
+    private Float arousal;
+    private Float valence;
     private int[] startTracks;
 
     public RadioPlain(
@@ -22,7 +24,9 @@ public class RadioPlain {
             String algorithm,
             int[] startTracks,
             Float speed,
-            Float dynamic) {
+            Float dynamic,
+            Float arousal,
+            Float valence) {
         this.id = id;
         this.userId = userId;
         this.genres = genres;
@@ -33,6 +37,8 @@ public class RadioPlain {
         this.startTracks = startTracks;
         this.speed = speed;
         this.dynamic = dynamic;
+        this.arousal = arousal;
+        this.valence = valence;
     }
 
     public RadioPlain() {
@@ -117,5 +123,21 @@ public class RadioPlain {
 
     public void setDynamic(Float dynamic) {
         this.dynamic = dynamic;
+    }
+
+    public Float getArousal() {
+        return arousal;
+    }
+
+    public void setArousal(Float arousal) {
+        this.arousal = arousal;
+    }
+
+    public Float getValence() {
+        return valence;
+    }
+
+    public void setValence(Float valence) {
+        this.valence = valence;
     }
 }

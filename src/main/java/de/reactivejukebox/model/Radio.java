@@ -23,6 +23,8 @@ public class Radio implements Serializable {
     private Integer endYear;
     private Float speed;
     private Float dynamic;
+    private Float arousal;
+    private Float valence;
     private List<Track> startTracks;
     private StrategyType algorithm;
 
@@ -36,6 +38,8 @@ public class Radio implements Serializable {
             Integer endYear,
             Float speed,
             Float dynamic,
+            Float arousal,
+            Float valence,
             List<Track> startTracks,
             StrategyType algorithm) {
         this.id = id;
@@ -48,6 +52,8 @@ public class Radio implements Serializable {
         this.endYear = endYear;
         this.startTracks = startTracks;
         this.algorithm = algorithm;
+        this.arousal = arousal;
+        this.valence = valence;
     }
 
     public Radio() {
@@ -118,14 +124,28 @@ public class Radio implements Serializable {
         this.algorithm = algorithm;
     }
 
-    public Float getSpeed() { return speed; }
+    public void setSpeed(Float speed) {
+        this.speed = speed;
+    }
 
-    public void setSpeed(float speed) { this.speed = speed; }
-
-    public Float getDynamic() { return dynamic; }
-
-    public void setDynamic(float dynamic) {
+    public void setDynamic(Float dynamic) {
         this.dynamic = dynamic;
+    }
+
+    public Float getArousal() {
+        return arousal;
+    }
+
+    public void setArousal(Float arousal) {
+        this.arousal = arousal;
+    }
+
+    public Float getValence() {
+        return valence;
+    }
+
+    public void setValence(Float valence) {
+        this.valence = valence;
     }
 
     public Stream<Track> filter(Stream<Track> trackStream) {
@@ -157,6 +177,6 @@ public class Radio implements Serializable {
             }
         }
         String algorithmName = algorithm != null ? algorithm.name() : null; // workaround for misuse of plain object
-        return new RadioPlain(id, user.getId(), genres, mood, startYear, endYear, algorithmName, ids, speed, dynamic);
+        return new RadioPlain(id, user.getId(), genres, mood, startYear, endYear, algorithmName, ids, speed, dynamic, arousal, valence);
     }
 }

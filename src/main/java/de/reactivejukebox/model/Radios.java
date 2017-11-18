@@ -16,7 +16,7 @@ import java.util.stream.StreamSupport;
 public class Radios implements Iterable<Radio> {
 
     private static final String INSERT_RADIO =
-            "INSERT INTO radio (userid, AlgorithmName, StartYear, EndYear, Speed, Dynamic) VALUES (?, ?, ?, ?, ?, ?);";
+            "INSERT INTO radio (userid, AlgorithmName, StartYear, EndYear, Speed, Dynamic, Arousal, Valence) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
     private static final String SELECT_RADIO =
             "SELECT * FROM radio WHERE userid = ? ORDER BY id DESC LIMIT 1;";
     private static final String INSERT_REFERENCE_SONG =
@@ -136,6 +136,8 @@ public class Radios implements Iterable<Radio> {
                 radio.getEndYear(),
                 radio.getSpeed(),
                 radio.getDynamic(),
+                radio.getArousal(),
+                radio.getValence(),
                 startTracks,
                 StrategyType.valueOf(radio.getAlgorithm())
         );
@@ -235,6 +237,16 @@ public class Radios implements Iterable<Radio> {
         }else{
             addRadio.setFloat(6,radio.getDynamic());
         }
+        if (radio.getArousal() == null){
+            addRadio.setNull(7,Types.FLOAT);
+        }else{
+            addRadio.setFloat(7,radio.getArousal());
+        }
+        if (radio.getValence() == null){
+            addRadio.setNull(8,Types.FLOAT);
+        }else{
+            addRadio.setFloat(8,radio.getValence());
+        }
         // TODO ad more radio attributes here
         addRadio.executeUpdate();
         // add new id from database to entry object
@@ -291,7 +303,17 @@ public class Radios implements Iterable<Radio> {
         }else{
             addRadio.setFloat(5,radio.getDynamic());
         }
-        addRadio.setInt(6, radio.getId());
+        if (radio.getArousal() == null){
+            addRadio.setNull(6,Types.FLOAT);
+        }else{
+            addRadio.setFloat(6,radio.getArousal());
+        }
+        if (radio.getValence() == null){
+            addRadio.setNull(7,Types.FLOAT);
+        }else{
+            addRadio.setFloat(7,radio.getValence());
+        }
+        addRadio.setInt(8, radio.getId());
         // TODO ad more radio attributes here
         addRadio.executeUpdate();
         // update Genres
@@ -350,6 +372,14 @@ public class Radios implements Iterable<Radio> {
         radio.setDynamic(rs.getFloat("Dynamic"));
         if(rs.wasNull()){
             radio.setDynamic(null);
+        }
+        radio.setArousal(rs.getFloat("Arousal"));
+        if(rs.wasNull()){
+            radio.setArousal(null);
+        }
+        radio.setValence(rs.getFloat("Valence"));
+        if(rs.wasNull()){
+            radio.setValence(null);
         }
         // TODO read more radio attributes
         radio.setStartTracks(fromDBReferenceSongs(radio.getId(), con));
