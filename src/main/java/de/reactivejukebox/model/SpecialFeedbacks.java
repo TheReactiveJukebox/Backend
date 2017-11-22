@@ -28,6 +28,11 @@ public class SpecialFeedbacks {
         return feedback;
     }
 
+    public AlbumFeedback putAlbumFeedback(AlbumFeedback feedback, int userId) throws  SQLException {
+        toDbAlbum(feedback, userId);
+        return feedback;
+    }
+
     public List<ArtistFeedback> getArtistFeedback(List<Integer> artistIds, int userId) throws SQLException {
         List<ArtistFeedback> result = new ArrayList<>();
         for (Integer a:artistIds) {
@@ -44,6 +49,14 @@ public class SpecialFeedbacks {
         return result;
     }
 
+    public List<AlbumFeedback> getAlbumFeedback(List<Integer> albumIds, int userId) throws SQLException {
+        List<AlbumFeedback> result = new ArrayList<>();
+        for (Integer a:albumIds){
+            result.add(fromDbByAlbum(a,userId));
+        }
+        return result;
+    }
+
     private ArtistFeedback fromDbByArtist(int artist, int userId) throws SQLException {
         con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM feedbackArtist WHERE userid = ? " +
@@ -55,6 +68,22 @@ public class SpecialFeedbacks {
         feedback.setArtist(artist);
         if (rs.next()) {
             feedback.setFeedback(rs.getInt("feedbackArtist"));
+        }
+        con.close();
+        return feedback;
+    }
+
+    private AlbumFeedback fromDbByAlbum(int album, int userId) throws SQLException {
+        con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM feedbackAlbum WHERE userid = ? " +
+                " AND albumid = ? ORDER BY id DESC;");
+        getFeedback.setInt(1, userId);
+        getFeedback.setInt(2, album);
+        ResultSet rs = getFeedback.executeQuery();
+        AlbumFeedback feedback = new AlbumFeedback();
+        feedback.setAlbum(album);
+        if (rs.next()) {
+            feedback.setFeedback(rs.getInt("feedbackAlbum"));
         }
         con.close();
         return feedback;
@@ -108,6 +137,26 @@ public class SpecialFeedbacks {
 
         addFeedback.setInt(1, userId);
         addFeedback.setInt(2, feedback.getArtist());
+        addFeedback.setInt(3, feedback.getFeedback());
+
+        addFeedback.setInt(4, feedback.getFeedback());
+
+        addFeedback.executeUpdate();
+        con.close();
+    }
+
+    private void toDbAlbum(AlbumFeedback feedback, int userId) throws SQLException {
+
+        con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        PreparedStatement addFeedback = con.prepareStatement("INSERT INTO feedbackAlbum (userid, " +
+                " AlbumId, feedbackAlbum) " +
+                "VALUES(?, ?, ?) " +
+                "ON Conflict (userid, AlbumId) Do " +
+                "UPDATE Set (feedbackAlbum);" +
+                "(?);");
+
+        addFeedback.setInt(1, userId);
+        addFeedback.setInt(2, feedback.getAlbum());
         addFeedback.setInt(3, feedback.getFeedback());
 
         addFeedback.setInt(4, feedback.getFeedback());
