@@ -16,7 +16,7 @@ import java.util.stream.StreamSupport;
 public class Radios implements Iterable<Radio> {
 
     private static final String INSERT_RADIO =
-            "INSERT INTO radio (userid, AlgorithmName, StartYear, EndYear, Speed, Dynamic, Arousal, Valence) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+            "INSERT INTO radio (userid, AlgorithmName, StartYear, EndYear, Dynamic, Arousal, Valence, minSpeed, maxSpeed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
     private static final String SELECT_RADIO =
             "SELECT * FROM radio WHERE userid = ? ORDER BY id DESC LIMIT 1;";
     private static final String INSERT_REFERENCE_SONG =
@@ -29,7 +29,7 @@ public class Radios implements Iterable<Radio> {
             "SELECT genre.Name AS GenreName, genre.Id AS GenreId FROM radio JOIN radio_genre ON radio.Id = radio_genre.RadioId JOIN genre ON radio_genre.GenreId = genre.Id WHERE radio.Id = ?;";
 
     private static final String UPDATE_RADIO =
-            "UPDATE radio SET AlgorithmName = ?, StartYear = ?, EndYear = ?, Speed = ?, Dynamic = ?, Arousal = ?, Valence = ? WHERE Id = ?;";
+            "UPDATE radio SET AlgorithmName = ?, StartYear = ?, EndYear = ?, Dynamic = ?, Arousal = ?, Valence = ?, minSpeed = ?, maxSpeed = ? WHERE Id = ?;";
     private static final String REMOVE_GENRE =
             "DELETE FROM radio_genre WHERE radio.Id = ?;";
 
@@ -131,13 +131,14 @@ public class Radios implements Iterable<Radio> {
                 radio.getId(),
                 users.get(radio.getUserId()),
                 radio.getGenres(),
-                radio.getMood(),
                 radio.getStartYear(),
                 radio.getEndYear(),
                 radio.getSpeed(),
                 radio.getDynamic(),
                 radio.getArousal(),
                 radio.getValence(),
+                radio.getMinSpeed(),
+                radio.getMaxSpeed(),
                 startTracks,
                 StrategyType.valueOf(radio.getAlgorithm())
         );
@@ -227,25 +228,30 @@ public class Radios implements Iterable<Radio> {
         } else {
             addRadio.setInt(4, radio.getEndYear());
         }
-        if (radio.getSpeed() == null){
+        if (radio.getDynamic() == null){
             addRadio.setNull(5,Types.FLOAT);
         }else{
-            addRadio.setFloat(5, radio.getSpeed());
-        }
-        if (radio.getDynamic() == null){
-            addRadio.setNull(6,Types.FLOAT);
-        }else{
-            addRadio.setFloat(6,radio.getDynamic());
+            addRadio.setFloat(5,radio.getDynamic());
         }
         if (radio.getArousal() == null){
-            addRadio.setNull(7,Types.FLOAT);
+            addRadio.setNull(6,Types.FLOAT);
         }else{
-            addRadio.setFloat(7,radio.getArousal());
+            addRadio.setFloat(6,radio.getArousal());
         }
         if (radio.getValence() == null){
+            addRadio.setNull(7,Types.FLOAT);
+        }else{
+            addRadio.setFloat(7,radio.getValence());
+        }
+        if (radio.getMinSpeed() == null){
             addRadio.setNull(8,Types.FLOAT);
         }else{
-            addRadio.setFloat(8,radio.getValence());
+            addRadio.setFloat(8, radio.getMinSpeed());
+        }
+        if (radio.getMaxSpeed() == null){
+            addRadio.setNull(9,Types.FLOAT);
+        }else{
+            addRadio.setFloat(9, radio.getMaxSpeed());
         }
         // TODO ad more radio attributes here
         addRadio.executeUpdate();
@@ -293,27 +299,32 @@ public class Radios implements Iterable<Radio> {
         } else {
             addRadio.setInt(3, radio.getEndYear());
         }
-        if (radio.getSpeed() == null){
+        if (radio.getDynamic() == null){
             addRadio.setNull(4,Types.FLOAT);
         }else{
-            addRadio.setFloat(4, radio.getSpeed());
-        }
-        if (radio.getDynamic() == null){
-            addRadio.setNull(5,Types.FLOAT);
-        }else{
-            addRadio.setFloat(5,radio.getDynamic());
+            addRadio.setFloat(4,radio.getDynamic());
         }
         if (radio.getArousal() == null){
-            addRadio.setNull(6,Types.FLOAT);
+            addRadio.setNull(5,Types.FLOAT);
         }else{
-            addRadio.setFloat(6,radio.getArousal());
+            addRadio.setFloat(5,radio.getArousal());
         }
         if (radio.getValence() == null){
+            addRadio.setNull(6,Types.FLOAT);
+        }else{
+            addRadio.setFloat(6,radio.getValence());
+        }
+        if (radio.getMinSpeed() == null){
             addRadio.setNull(7,Types.FLOAT);
         }else{
-            addRadio.setFloat(7,radio.getValence());
+            addRadio.setFloat(7, radio.getMinSpeed());
         }
-        addRadio.setInt(8, radio.getId());
+        if (radio.getMaxSpeed() == null){
+            addRadio.setNull(8,Types.FLOAT);
+        }else{
+            addRadio.setFloat(8, radio.getMaxSpeed());
+        }
+        addRadio.setInt(9, radio.getId());
         // TODO ad more radio attributes here
         addRadio.executeUpdate();
         // update Genres
@@ -365,10 +376,6 @@ public class Radios implements Iterable<Radio> {
         if(rs.wasNull()){
             radio.setEndYear(null);
         }
-        radio.setSpeed(rs.getFloat("Speed"));
-        if(rs.wasNull()){
-            radio.setSpeed(null);
-        }
         radio.setDynamic(rs.getFloat("Dynamic"));
         if(rs.wasNull()){
             radio.setDynamic(null);
@@ -380,6 +387,14 @@ public class Radios implements Iterable<Radio> {
         radio.setValence(rs.getFloat("Valence"));
         if(rs.wasNull()){
             radio.setValence(null);
+        }
+        radio.setMinSpeed(rs.getFloat("minSpeed"));
+        if(rs.wasNull()){
+            radio.setMinSpeed(null);
+        }
+        radio.setMaxSpeed(rs.getFloat("maxSpeed"));
+        if(rs.wasNull()){
+            radio.setMaxSpeed(null);
         }
         // TODO read more radio attributes
         radio.setStartTracks(fromDBReferenceSongs(radio.getId(), con));

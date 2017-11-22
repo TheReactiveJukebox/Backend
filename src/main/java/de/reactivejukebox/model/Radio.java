@@ -18,13 +18,14 @@ public class Radio implements Serializable {
     private Integer id;
     private User user;
     private String[] genres;
-    private String mood;
     private Integer startYear;
     private Integer endYear;
     private Float speed;
     private Float dynamic;
     private Float arousal;
     private Float valence;
+    private Float minSpeed;
+    private Float maxSpeed;
     private List<Track> startTracks;
     private StrategyType algorithm;
 
@@ -33,19 +34,19 @@ public class Radio implements Serializable {
             Integer id,
             User user,
             String[] genres,
-            String mood,
             Integer startYear,
             Integer endYear,
             Float speed,
             Float dynamic,
             Float arousal,
             Float valence,
+            Float minSpeed,
+            Float maxSpeed,
             List<Track> startTracks,
             StrategyType algorithm) {
         this.id = id;
         this.user = user;
         this.genres = genres;
-        this.mood = mood;
         this.startYear = startYear;
         this.speed = speed;
         this.dynamic = dynamic;
@@ -54,6 +55,8 @@ public class Radio implements Serializable {
         this.algorithm = algorithm;
         this.arousal = arousal;
         this.valence = valence;
+        this.maxSpeed = maxSpeed;
+        this.minSpeed = minSpeed;
     }
 
     public Radio() {
@@ -82,14 +85,6 @@ public class Radio implements Serializable {
 
     public void setGenres(String[] genres) {
         this.genres = genres;
-    }
-
-    public String getMood() {
-        return mood;
-    }
-
-    public void setMood(String mood) {
-        this.mood = mood;
     }
 
     public Integer getStartYear() {
@@ -148,6 +143,30 @@ public class Radio implements Serializable {
         this.valence = valence;
     }
 
+    public Float getSpeed() {
+        return speed;
+    }
+
+    public Float getDynamic() {
+        return dynamic;
+    }
+
+    public Float getMinSpeed() {
+        return minSpeed;
+    }
+
+    public void setMinSpeed(Float minSpeed) {
+        this.minSpeed = minSpeed;
+    }
+
+    public Float getMaxSpeed() {
+        return maxSpeed;
+    }
+
+    public void setMaxSpeed(Float maxSpeed) {
+        this.maxSpeed = maxSpeed;
+    }
+
     public Stream<Track> filter(Stream<Track> trackStream) {
         if (getGenres() != null && getGenres().length > 0) {
             trackStream = trackStream.filter(new GenrePredicate(this));
@@ -177,6 +196,6 @@ public class Radio implements Serializable {
             }
         }
         String algorithmName = algorithm != null ? algorithm.name() : null; // workaround for misuse of plain object
-        return new RadioPlain(id, user.getId(), genres, mood, startYear, endYear, algorithmName, ids, speed, dynamic, arousal, valence);
+        return new RadioPlain(id, user.getId(), genres, startYear, endYear, algorithmName, ids, speed, dynamic, arousal, valence, minSpeed, maxSpeed);
     }
 }

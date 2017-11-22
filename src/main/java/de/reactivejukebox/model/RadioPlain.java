@@ -4,7 +4,6 @@ public class RadioPlain {
     private Integer id;
     private Integer userId;
     private String[] genres;
-    private String mood;
     private Integer startYear;
     private Integer endYear;
     private String algorithm;
@@ -12,25 +11,27 @@ public class RadioPlain {
     private Float dynamic;
     private Float arousal;
     private Float valence;
+    private Float minSpeed;
+    private Float maxSpeed;
     private int[] startTracks;
 
     public RadioPlain(
             Integer id,
             Integer userId,
             String[] genres,
-            String mood,
-            Integer startYear,
+             Integer startYear,
             Integer endYear,
             String algorithm,
             int[] startTracks,
             Float speed,
             Float dynamic,
             Float arousal,
-            Float valence) {
+            Float valence,
+            Float minSpeed,
+            Float maxSpeed) {
         this.id = id;
         this.userId = userId;
         this.genres = genres;
-        this.mood = mood;
         this.startYear = startYear;
         this.endYear = endYear;
         this.algorithm = algorithm;
@@ -39,6 +40,8 @@ public class RadioPlain {
         this.dynamic = dynamic;
         this.arousal = arousal;
         this.valence = valence;
+        this.maxSpeed = maxSpeed;
+        this.minSpeed = minSpeed;
     }
 
     public RadioPlain() {
@@ -67,14 +70,6 @@ public class RadioPlain {
 
     public void setGenres(String[] genres) {
         this.genres = genres;
-    }
-
-    public String getMood() {
-        return mood;
-    }
-
-    public void setMood(String mood) {
-        this.mood = mood;
     }
 
     public Integer getStartYear() {
@@ -139,5 +134,21 @@ public class RadioPlain {
 
     public void setValence(Float valence) {
         this.valence = valence;
+    }
+
+    public Float getMinSpeed() {
+        return minSpeed;
+    }
+
+    public void setMinSpeed(Float minSpeed) {
+        this.minSpeed = minSpeed;
+    }
+
+    public Float getMaxSpeed() {
+        return maxSpeed;
+    }
+
+    public void setMaxSpeed(Float maxSpeed) {
+        this.maxSpeed = maxSpeed;
     }
 }
