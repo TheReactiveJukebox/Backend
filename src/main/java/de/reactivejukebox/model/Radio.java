@@ -20,7 +20,6 @@ public class Radio implements Serializable {
     private String[] genres;
     private Integer startYear;
     private Integer endYear;
-    private Float speed;
     private Float dynamic;
     private Float arousal;
     private Float valence;
@@ -36,7 +35,6 @@ public class Radio implements Serializable {
             String[] genres,
             Integer startYear,
             Integer endYear,
-            Float speed,
             Float dynamic,
             Float arousal,
             Float valence,
@@ -48,7 +46,6 @@ public class Radio implements Serializable {
         this.user = user;
         this.genres = genres;
         this.startYear = startYear;
-        this.speed = speed;
         this.dynamic = dynamic;
         this.endYear = endYear;
         this.startTracks = startTracks;
@@ -119,10 +116,6 @@ public class Radio implements Serializable {
         this.algorithm = algorithm;
     }
 
-    public void setSpeed(Float speed) {
-        this.speed = speed;
-    }
-
     public void setDynamic(Float dynamic) {
         this.dynamic = dynamic;
     }
@@ -141,10 +134,6 @@ public class Radio implements Serializable {
 
     public void setValence(Float valence) {
         this.valence = valence;
-    }
-
-    public Float getSpeed() {
-        return speed;
     }
 
     public Float getDynamic() {
@@ -196,6 +185,6 @@ public class Radio implements Serializable {
             }
         }
         String algorithmName = algorithm != null ? algorithm.name() : null; // workaround for misuse of plain object
-        return new RadioPlain(id, user.getId(), genres, startYear, endYear, algorithmName, ids, speed, dynamic, arousal, valence, minSpeed, maxSpeed);
+        return new RadioPlain(id, user.getId(), genres, startYear, endYear, algorithmName, ids, dynamic, arousal, valence, minSpeed, maxSpeed);
     }
 }

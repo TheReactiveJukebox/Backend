@@ -7,7 +7,6 @@ public class RadioPlain {
     private Integer startYear;
     private Integer endYear;
     private String algorithm;
-    private Float speed;
     private Float dynamic;
     private Float arousal;
     private Float valence;
@@ -23,7 +22,6 @@ public class RadioPlain {
             Integer endYear,
             String algorithm,
             int[] startTracks,
-            Float speed,
             Float dynamic,
             Float arousal,
             Float valence,
@@ -36,7 +34,6 @@ public class RadioPlain {
         this.endYear = endYear;
         this.algorithm = algorithm;
         this.startTracks = startTracks;
-        this.speed = speed;
         this.dynamic = dynamic;
         this.arousal = arousal;
         this.valence = valence;
@@ -102,14 +99,6 @@ public class RadioPlain {
 
     public void setStartTracks(int[] startTracks) {
         this.startTracks = startTracks;
-    }
-
-    public Float getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(Float speed) {
-        this.speed = speed;
     }
 
     public Float getDynamic() {

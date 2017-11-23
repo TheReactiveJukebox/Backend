@@ -133,7 +133,6 @@ public class Radios implements Iterable<Radio> {
                 radio.getGenres(),
                 radio.getStartYear(),
                 radio.getEndYear(),
-                radio.getSpeed(),
                 radio.getDynamic(),
                 radio.getArousal(),
                 radio.getValence(),
