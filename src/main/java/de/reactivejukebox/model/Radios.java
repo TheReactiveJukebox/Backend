@@ -31,7 +31,7 @@ public class Radios implements Iterable<Radio> {
     private static final String UPDATE_RADIO =
             "UPDATE radio SET AlgorithmName = ?, StartYear = ?, EndYear = ?, Dynamic = ?, Arousal = ?, Valence = ?, minSpeed = ?, maxSpeed = ? WHERE Id = ?;";
     private static final String REMOVE_GENRE =
-            "DELETE FROM radio_genre WHERE radio.Id = ?;";
+            "DELETE FROM radio_genre WHERE radioId = ?;";
 
 
     protected Users users;
