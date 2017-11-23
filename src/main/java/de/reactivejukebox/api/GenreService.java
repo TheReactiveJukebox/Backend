@@ -28,7 +28,7 @@ public class GenreService {
     @Path("/feedback")
     @Secured
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getFeedback(List<String> id, @Context User user){
+    public Response getFeedback(@QueryParam("id") List<String> id, @Context User user){
         try {
             return Response.status(200).entity(Model.getInstance().getSpecialFeedbacks().getGenreFeedback(id ,user.getId())).build();
         }catch (Exception e){

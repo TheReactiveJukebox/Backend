@@ -48,7 +48,7 @@ public class ArtistService {
     @Path("/feedback")
     @Secured
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getFeedback(List<Integer> id, @Context User user){
+    public Response getFeedback(@QueryParam("id") List<Integer> id, @Context User user){
         try {
             return Response.status(200).entity(Model.getInstance().getSpecialFeedbacks().getArtistFeedback(id,user.getId())).build();
         }catch (Exception e){
