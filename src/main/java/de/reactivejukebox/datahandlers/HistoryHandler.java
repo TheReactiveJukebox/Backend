@@ -24,8 +24,8 @@ public class HistoryHandler {
         return historyEntries.put(entry).getPlainObject();
     }
 
-    public void deleteHistoryEntry(Integer historyId) throws SQLException {
-        historyEntries.delete(historyId);
+    public void deleteHistoryEntry(Integer historyId, User user) throws SQLException {
+        historyEntries.delete(historyId, user);
     }
 
     //TODO Add methods to get and filter History

@@ -37,9 +37,9 @@ public class HistoryService {
     @DELETE
     @Secured
     @Path("/")
-    public Response deleteEntry(@QueryParam("id") Integer historyId) {
+    public Response deleteEntry(@QueryParam("id") Integer historyId, @Context User user) {
         try {
-            new HistoryHandler().deleteHistoryEntry(historyId);
+            new HistoryHandler().deleteHistoryEntry(historyId, user);
             return Response.ok().build();
         } catch (SQLException e) {
             e.printStackTrace();
