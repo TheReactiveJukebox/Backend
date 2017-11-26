@@ -12,7 +12,6 @@ import java.util.List;
 
 public class SpecialFeedbacks {
     Users users;
-    protected Connection con;
 
     public SpecialFeedbacks(Users users) {
         this.users = users;
@@ -58,7 +57,7 @@ public class SpecialFeedbacks {
     }
 
     private ArtistFeedback fromDbByArtist(int artist, int userId) throws SQLException {
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM feedbackArtist WHERE userid = ? " +
                 " AND artistid = ? ORDER BY id DESC;");
         getFeedback.setInt(1, userId);
@@ -74,7 +73,7 @@ public class SpecialFeedbacks {
     }
 
     private AlbumFeedback fromDbByAlbum(int album, int userId) throws SQLException {
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM feedbackAlbum WHERE userid = ? " +
                 " AND albumid = ? ORDER BY id DESC;");
         getFeedback.setInt(1, userId);
@@ -90,8 +89,8 @@ public class SpecialFeedbacks {
     }
 
     private GenreFeedback fromDbByGenre(String genre, int userId) throws SQLException {
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM feedbackArtist WHERE userid = ? " +
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM feedbackGenre WHERE userid = ? " +
                 " AND genre = ? ORDER BY id DESC;");
         getFeedback.setInt(1, userId);
         getFeedback.setString(2, genre);
@@ -107,7 +106,7 @@ public class SpecialFeedbacks {
 
     private void toDbGenre(GenreFeedback feedback, int userId) throws SQLException {
 
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement addFeedback = con.prepareStatement("INSERT INTO feedbackGenre (userid, " +
                 " genre, feedbackGenre) " +
                 "VALUES(?, ?, ?) " +
@@ -127,7 +126,7 @@ public class SpecialFeedbacks {
 
     private void toDbArtist(ArtistFeedback feedback, int userId) throws SQLException {
 
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement addFeedback = con.prepareStatement("INSERT INTO feedbackArtist (userid, " +
                 " ArtistId, feedbackArtist) " +
                 "VALUES(?, ?, ?) " +
@@ -147,7 +146,7 @@ public class SpecialFeedbacks {
 
     private void toDbAlbum(AlbumFeedback feedback, int userId) throws SQLException {
 
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement addFeedback = con.prepareStatement("INSERT INTO feedbackAlbum (userid, " +
                 " AlbumId, feedbackAlbum) " +
                 "VALUES(?, ?, ?) " +
