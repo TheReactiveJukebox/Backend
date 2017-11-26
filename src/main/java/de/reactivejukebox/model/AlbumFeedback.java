@@ -15,7 +15,7 @@ public class AlbumFeedback {
         return album;
     }
 
-    public void setAlbum(int artist) {
+    public void setAlbum(int album) {
         this.album = album;
     }
 
