@@ -27,6 +27,7 @@ public class Model {
             artists = new Artists(con);
             albums = new Albums(con, artists);
             tracks = new Tracks(con, artists, albums);
+            con.close();
         } catch (SQLException e) {
             System.err.println("Could not query music data. Exception:");
             e.printStackTrace(System.err);
