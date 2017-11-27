@@ -30,7 +30,7 @@ public class JukeboxService {
         } catch (SQLException e) {
             e.printStackTrace();
             return Response.status(503)
-                    .entity("Error no Radiostation available")
+                    .entity( "{\"message\": \"Error no Radiostation available\"}")
                     .build();
         }
     }
@@ -48,7 +48,7 @@ public class JukeboxService {
         } catch (SQLException e) {
             e.printStackTrace();
             return Response.status(503)
-                    .entity("Error while writing/reading database")
+                    .entity("{\"message\": \"Error while reading/writing database\"}")
                     .build();
         }
     }
@@ -83,7 +83,7 @@ public class JukeboxService {
         } catch (SQLException e) {
             e.printStackTrace();
             return Response.status(502)
-                    .entity("Error while communicating with database.")
+                    .entity("{\"message\": \"Error while commmunicating with database\"}")
                     .build();
         }
     }
