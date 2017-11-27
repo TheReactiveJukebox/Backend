@@ -35,8 +35,6 @@ public class Radios implements Iterable<Radio> {
 
 
     protected Users users;
-    protected PreparedStatementBuilder stmnt;
-    protected Connection con;
     protected ConcurrentHashMap<Integer, Radio> radioById;
     protected ConcurrentHashMap<Integer, Radio> radioByUserId;
 
@@ -153,12 +151,12 @@ public class Radios implements Iterable<Radio> {
     }
 
     private RadioPlain fromDB(RadioPlain radio) throws SQLException {
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement getRadio = con.prepareStatement(SELECT_RADIO);
         getRadio.setInt(1, radio.getUserId());
         ResultSet rs = getRadio.executeQuery();
         if (rs.next()) {
-            radio = buildPlain(rs);
+            radio = buildPlain(rs, con);
             con.close();
             return radio;
         } else {
@@ -170,15 +168,15 @@ public class Radios implements Iterable<Radio> {
 
     private RadioPlain fromDB(int id) throws SQLException {
         RadioPlain radio = null;
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        stmnt = new PreparedStatementBuilder()
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        PreparedStatementBuilder stmnt = new PreparedStatementBuilder()
                 .select("*")
                 .from("radio")
                 .addFilter("Id=?", (query, i) -> query.setInt(i, id));
         PreparedStatement dbQuery = stmnt.prepare(con);
         ResultSet rs = dbQuery.executeQuery();
         if (rs.next()) {
-            radio = buildPlain(rs);
+            radio = buildPlain(rs, con);
         }
         con.close();
         return radio;
@@ -210,7 +208,7 @@ public class Radios implements Iterable<Radio> {
     }
 
     private void toDB(RadioPlain radio) throws SQLException {
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         // use a transaction
         con.setAutoCommit(false);
         // insert new radio in database
@@ -282,7 +280,7 @@ public class Radios implements Iterable<Radio> {
         con.close();
     }
     private void updateDB(RadioPlain radio) throws SQLException{
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         // use a transaction
         con.setAutoCommit(false);
         // insert new radio in database
@@ -356,7 +354,7 @@ public class Radios implements Iterable<Radio> {
         }
     }
 
-    private RadioPlain buildPlain(ResultSet rs) throws SQLException {
+    private RadioPlain buildPlain(ResultSet rs, Connection con) throws SQLException {
         RadioPlain radio = new RadioPlain();
         radio.setId(rs.getInt("id"));
         if(rs.wasNull()){
