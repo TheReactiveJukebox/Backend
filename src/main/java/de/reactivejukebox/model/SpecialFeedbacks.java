@@ -111,8 +111,7 @@ public class SpecialFeedbacks {
                 " genre, feedbackGenre) " +
                 "VALUES(?, ?, ?) " +
                 "ON Conflict (userid, genre) Do " +
-                "UPDATE Set (feedbackGenre);" +
-                "(?);");
+                "UPDATE Set feedbackGenre = ?");
 
         addFeedback.setInt(1, userId);
         addFeedback.setString(2, feedback.getGenre());
@@ -131,8 +130,7 @@ public class SpecialFeedbacks {
                 " ArtistId, feedbackArtist) " +
                 "VALUES(?, ?, ?) " +
                 "ON Conflict (userid, ArtistId) Do " +
-                "UPDATE Set (feedbackArtist);" +
-                "(?);");
+                "UPDATE Set feedbackArtist = ?;");
 
         addFeedback.setInt(1, userId);
         addFeedback.setInt(2, feedback.getArtist());
@@ -151,8 +149,7 @@ public class SpecialFeedbacks {
                 " AlbumId, feedbackAlbum) " +
                 "VALUES(?, ?, ?) " +
                 "ON Conflict (userid, AlbumId) Do " +
-                "UPDATE Set (feedbackAlbum);" +
-                "(?);");
+                "UPDATE Set feedbackAlbum = ?;");
 
         addFeedback.setInt(1, userId);
         addFeedback.setInt(2, feedback.getAlbum());
