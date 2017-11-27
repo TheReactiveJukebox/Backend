@@ -18,7 +18,7 @@ public class PublishedTest {
     private void Published(){
         String[] radioGenres= new String[1];
         radioGenres[0] = "meta1";
-        Radio r = new Radio(1, new User(), radioGenres, "mood", 1990, 2000, 0f,0f, new LinkedList<Track>(), StrategyType.RANDOM);
+        Radio r = new Radio(1, new User(), radioGenres, 1990, 2000, 0f, 0f, 0f, 0f, 0f, new LinkedList<Track>(), StrategyType.RANDOM);
 
         Date d1 = new GregorianCalendar(1990,1,1).getTime();
         Date d2 = new GregorianCalendar(2000,1,1).getTime();

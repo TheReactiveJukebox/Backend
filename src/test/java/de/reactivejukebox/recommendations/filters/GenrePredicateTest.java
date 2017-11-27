@@ -23,7 +23,7 @@ public class GenrePredicateTest {
 
         String[] radioGenres= new String[1];
         radioGenres[0] = "meta1";
-        Radio r = new Radio(1, new User(), radioGenres, "mood", 1990, 2000, 0f,0f, new LinkedList<Track>(), StrategyType.RANDOM);
+        Radio r = new Radio(1, new User(), radioGenres, 1990, 2000, 0f, 0f, 0f, 0f, 0f,new LinkedList<Track>(), StrategyType.RANDOM);
 
         Track t1 = new Track(1, "Title1", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f);
         Track t2 = new Track(2, "Title2", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f);
@@ -47,7 +47,7 @@ public class GenrePredicateTest {
 
         String[] radioGenres= new String[1];
         radioGenres[0] = "meta1";
-        Radio r = new Radio(1, new User(), radioGenres, "mood", 1990, 2000, 0f,0f, new LinkedList<Track>(), StrategyType.RANDOM);
+        Radio r = new Radio(1, new User(), radioGenres, 1990, 2000, 0f, 0f, 0f, 0f, 0f, new LinkedList<Track>(), StrategyType.RANDOM);
 
         Track t1 = new Track(1, "Title1", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f);
         Track t2 = new Track(2, "Title2", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f);
