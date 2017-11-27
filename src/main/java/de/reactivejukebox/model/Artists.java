@@ -52,7 +52,6 @@ public final class Artists implements Iterable<Artist> {
         return artists.get(id);
     }
 
-    // TODO if need be: write changes back to database
     public Artist put(int id, Artist a) {
         return artists.put(id, a);
     }
