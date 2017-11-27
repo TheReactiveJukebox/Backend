@@ -21,10 +21,10 @@ public class SpeedPredicate implements Predicate<Track>
         public boolean test(Track track) {
         boolean result = true;
         if( minSpeed != null){
-            result = result & minSpeed < track.getSpeed();
+            result = result & minSpeed <= track.getSpeed();
         }
         if (maxSpeed != null){
-            result = result & maxSpeed > track.getSpeed();
+            result = result & maxSpeed >= track.getSpeed();
         }
         return  result;
     }
