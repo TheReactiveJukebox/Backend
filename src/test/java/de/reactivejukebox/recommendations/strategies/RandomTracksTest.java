@@ -15,7 +15,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
@@ -48,7 +47,7 @@ public class RandomTracksTest {
 
         for (int i = 1; i < TRACKSARTIST_A + 1; i++) {
             Model.getInstance().getTracks().put(i, new Track(
-                    i, "Track A" + i, artistA, albumA, "", "", 180, 4711 + i, new Date(), 120, 0.9f
+                    i, "Track A" + i, artistA, albumA, "", "", 180, 4711 + i, new Date(), 120, 0.9f,
             ));
         }
 
@@ -61,7 +60,7 @@ public class RandomTracksTest {
         int _startindex = Model.getInstance().getTracks().size();
         for (int i = _startindex + 1; i < TRACKSARTIST_B + _startindex + 1; i++) {
             Model.getInstance().getTracks().put(i, new Track(
-                    i, "Track B" + i, artistB, albumB, "", "", 191, 4211 - i, new Date(), 120, 0.9f
+                    i, "Track B" + i, artistB, albumB, "", "", 191, 4211 - i, new Date(), 120, 0.9f,
             ));
         }
 

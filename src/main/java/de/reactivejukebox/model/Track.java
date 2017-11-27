@@ -18,6 +18,8 @@ public class Track implements MusicEntity {
     Date releaseDate;
     float speed;
     float dynamic;
+    float valence;
+    float arousal;
 
     public Track(int id, String title, Artist artist, Album album, String cover, String hash, int duration, int playCount, Date date, float speed, float dynamic) {
         this();
@@ -32,6 +34,12 @@ public class Track implements MusicEntity {
         this.releaseDate = date;
         this.speed = speed;
         this.dynamic = dynamic;
+    }
+
+    public Track(int id, String title, Artist artist, Album album, String cover, String hash, int duration, int playCount, Date releaseDate, float speed, float dynamic, float valence, float arousal) {
+        this(id,title,artist,album,cover,hash,duration,playCount,releaseDate,speed,dynamic);
+        this.valence = valence;
+        this.arousal = arousal;
     }
 
     public Track() {
@@ -133,6 +141,14 @@ public class Track implements MusicEntity {
     public void setDynamic(float dynamic) {
         this.dynamic = dynamic;
     }
+
+    public float getValence() { return valence; }
+
+    public void setValence(float valence) { this.valence = valence; }
+
+    public float getArousal() { return arousal; }
+
+    public void setArousal(float arousal) { this.arousal = arousal; }
 
     @Override
     public TrackPlain getPlainObject() {

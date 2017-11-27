@@ -1,7 +1,6 @@
 package de.reactivejukebox.recommendations.filters;
 
 import de.reactivejukebox.model.*;
-import de.reactivejukebox.recommendations.filters.GenrePredicate;
 import de.reactivejukebox.recommendations.strategies.StrategyType;
 import org.testng.annotations.Test;
 
@@ -25,8 +24,8 @@ public class GenrePredicateTest {
         radioGenres[0] = "meta1";
         Radio r = new Radio(1, new User(), radioGenres, "mood", 1990, 2000, 0f,0f, new LinkedList<Track>(), StrategyType.RANDOM);
 
-        Track t1 = new Track(1, "Title1", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f);
-        Track t2 = new Track(2, "Title2", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f);
+        Track t1 = new Track(1, "Title1", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f, );
+        Track t2 = new Track(2, "Title2", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f, );
         t1.getGenres().add("genre1");
         t2.getGenres().add("genre2");
 
@@ -49,8 +48,8 @@ public class GenrePredicateTest {
         radioGenres[0] = "meta1";
         Radio r = new Radio(1, new User(), radioGenres, "mood", 1990, 2000, 0f,0f, new LinkedList<Track>(), StrategyType.RANDOM);
 
-        Track t1 = new Track(1, "Title1", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f);
-        Track t2 = new Track(2, "Title2", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f);
+        Track t1 = new Track(1, "Title1", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f, );
+        Track t2 = new Track(2, "Title2", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f, );
         t1.getGenres().add("genre4");
         t2.getGenres().add("genre5");
 
