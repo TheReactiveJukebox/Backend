@@ -56,7 +56,7 @@ public class Tracks implements Iterable<Track> {
                     rs.getFloat("bpm"),
                     rs.getFloat("dynamics"),
                     rs.getFloat("valence"),
-                    0f
+                    0f //TODO Add Arousal to SQL Query and Model when available.
             ));
         }
         for (Track t : this) {
