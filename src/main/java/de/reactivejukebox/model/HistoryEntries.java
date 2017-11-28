@@ -15,7 +15,6 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 
-//TODO don't keep the entire History in RAM
 public class HistoryEntries implements Iterable<HistoryEntry> {
     private ConcurrentHashMap<Integer, HistoryEntry> entryById;
     private Users users;
