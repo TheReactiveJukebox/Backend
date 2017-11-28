@@ -9,7 +9,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+    Special Feedbacks is a class that handles all non Track specific Feedback.
+ */
 public class SpecialFeedbacks {
     Users users;
 
@@ -17,21 +19,47 @@ public class SpecialFeedbacks {
         this.users = users;
     }
 
+    /**
+     *
+     * @param feedback Object for Artist
+     * @param userId
+     * @return the same feedvack Object
+     * @throws SQLException
+     */
     public ArtistFeedback putArtistFeedback(ArtistFeedback feedback, int userId) throws SQLException {
         toDbArtist(feedback,userId);
         return feedback;
     }
-
+    /**
+     *
+     * @param feedback Object for Genre
+     * @param userId
+     * @return the same feedvack Object
+     * @throws SQLException
+     */
     public GenreFeedback putGenreFeedback(GenreFeedback feedback, int userId) throws SQLException {
         toDbGenre(feedback,userId);
         return feedback;
     }
-
+    /**
+     *
+     * @param feedback Object for Album
+     * @param userId
+     * @return the same feedback Object
+     * @throws SQLException
+     */
     public AlbumFeedback putAlbumFeedback(AlbumFeedback feedback, int userId) throws  SQLException {
         toDbAlbum(feedback, userId);
         return feedback;
     }
 
+    /**
+     *
+     * @param artistIds list af artist Id's
+     * @param userId
+     * @return list: feedback Object for each Artist
+     * @throws SQLException
+     */
     public List<ArtistFeedback> getArtistFeedback(List<Integer> artistIds, int userId) throws SQLException {
         List<ArtistFeedback> result = new ArrayList<>();
         for (Integer a:artistIds) {
@@ -40,6 +68,13 @@ public class SpecialFeedbacks {
         return result;
     }
 
+    /**
+     *
+     * @param genres list of Genres
+     * @param userId
+     * @return list: feedback Object for each Genre
+     * @throws SQLException
+     */
     public List<GenreFeedback> getGenreFeedback(List<String> genres, int userId) throws SQLException {
         List<GenreFeedback> result = new ArrayList<>();
         for (String g:genres) {
@@ -48,6 +83,13 @@ public class SpecialFeedbacks {
         return result;
     }
 
+    /**
+     *
+     * @param albumIds list of Album Id's
+     * @param userId
+     * @return list: feedback Object for each Album
+     * @throws SQLException
+     */
     public List<AlbumFeedback> getAlbumFeedback(List<Integer> albumIds, int userId) throws SQLException {
         List<AlbumFeedback> result = new ArrayList<>();
         for (Integer a:albumIds){
