@@ -30,17 +30,17 @@ public class HistoryPredicateTest {
     @BeforeClass
     private void setUp() throws SQLException {
 
-        t1 = new Track(1, "Title1", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f, );
-        t2 = new Track(2, "Title2", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f, );
-        t3 = new Track(3, "Title3", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f, );
-        t4 = new Track(4, "Title4", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f, );
-        t5 = new Track(5, "Title5", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f, );
+        t1 = new Track(1, "Title1", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f );
+        t2 = new Track(2, "Title2", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f );
+        t3 = new Track(3, "Title3", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f );
+        t4 = new Track(4, "Title4", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f );
+        t5 = new Track(5, "Title5", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f );
 
 
 
         User user = new User();
         user.setId(1);
-        r = new Radio(1, user, new String[0], "mood", 1990, 2000, 0f,0f, new LinkedList<>(), StrategyType.RANDOM);
+        r = new Radio(1, user, new String[0], 1990, 2000, 0f,0f,0f,0f,0f, new LinkedList<>(), StrategyType.RANDOM);
         ArrayList<HistoryEntry> historyList = new ArrayList();
 
         HistoryEntry h1 = new HistoryEntry(1, t1, r, user, new Timestamp(10));
