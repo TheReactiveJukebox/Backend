@@ -20,6 +20,7 @@ public class Track implements MusicEntity {
     float dynamic;
     float valence;
     float arousal;
+    float recScore;
 
     public Track(int id, String title, Artist artist, Album album, String cover, String hash, int duration, int playCount, Date date, float speed, float dynamic) {
         this();
@@ -44,6 +45,7 @@ public class Track implements MusicEntity {
 
     public Track() {
         genres = new ArrayList<>();
+        recScore =-1f;
     }
 
     public int getPlayCount() {
@@ -149,6 +151,10 @@ public class Track implements MusicEntity {
     public float getArousal() { return arousal; }
 
     public void setArousal(float arousal) { this.arousal = arousal; }
+
+    public float getRecScore() { return recScore; }
+
+    public void setRecScore(float recScore) { this.recScore = recScore; }
 
     @Override
     public TrackPlain getPlainObject() {
