@@ -47,7 +47,7 @@ public class LoggerImp implements Logger {
 
         String msg = "";
 
-        msg += en.getTime() + DELIMITER;
+        msg += en.getTime().toString() + DELIMITER;
         msg += en.getEvent().name() + DELIMITER;
         {
             Integer userId = en.getUserId();
