@@ -161,4 +161,14 @@ public class Track implements MusicEntity {
         String file = hash.substring(0, 1) + "/" + hash.substring(1, 2) + "/" + hash.substring(2) + ".mp3";
         return new TrackPlain(id, title, artist.getId(), album.getId(), cover, file, duration, playCount, genres, releaseDate, speed, dynamic);
     }
+
+    @Override
+    public String toString() {
+        return "ID: " + this.getId() + ", " +
+                "Title: " +this.getTitle()+", "+
+                "Artist: " +this.getArtist().getName()+" "+this.getArtist().getId() +", "+
+                "Arousal: " +this.getArousal()+", "+
+                "Valence: " +this.getValence()+", "+
+                "RecScore: " +this.getRecScore()+", ";
+    }
 }

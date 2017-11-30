@@ -4,6 +4,7 @@ import de.reactivejukebox.model.Model;
 import de.reactivejukebox.model.Radio;
 import de.reactivejukebox.model.Track;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
+import de.reactivejukebox.recommendations.filters.ArtistPredicate;
 import de.reactivejukebox.recommendations.filters.MoodPredicate;
 
 import java.util.Collection;
@@ -19,25 +20,30 @@ public class MoodNN implements RecommendationStrategy{
 
     private Collection<Track> selectedTracks;
     int resultCount;
+    Radio radio;
+    Collection<Track> upcoming;
 
     public MoodNN(Radio radio, Collection<Track> upcoming, int resultCount){
         this.selectedTracks = radio.getStartTracks();
+        this.radio = radio;
+        this.upcoming = upcoming;
         this.resultCount = resultCount;
     }
     @Override
     public List<Track> getRecommendations() {
-        return selectedTracks.stream().distinct().flatMap(this::nearestNeighbours)
+        return selectedTracks.stream().distinct().flatMap(this::nearestNeighbours).distinct()
                 .sorted(Comparator.comparingDouble(Track::getRecScore))
                 .limit(resultCount)
                 .collect(Collectors.toList());
-
     }
 
     private Stream<Track> nearestNeighbours(Track t){
+        Stream<Track> possibleTracks = radio.filter(Model.getInstance().getTracks().stream());
         float v = t.getValence();
         float a = t.getArousal();
-        return Model.getInstance().getTracks().stream().filter(new MoodPredicate(a,v))
+        possibleTracks = possibleTracks.filter(new MoodPredicate(a,v))
                 .map(track -> calcDistance(track,a,v));
+        return  radio.filterHistory(possibleTracks,this.upcoming,this.resultCount);
     }
 
     private Track calcDistance(Track t, float a, float v){
@@ -45,13 +51,5 @@ public class MoodNN implements RecommendationStrategy{
                 Math.abs(t.getArousal()-a)+Math.abs(t.getValence()-v)
         );
         return t;
-    }
-
-    private class DistanceComperator implements Comparator<Track>{
-
-        @Override
-        public int compare(Track o1, Track o2) {
-            return 0;
-        }
     }
 }
