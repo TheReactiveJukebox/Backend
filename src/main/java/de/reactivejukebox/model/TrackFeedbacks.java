@@ -23,8 +23,6 @@ import java.util.stream.StreamSupport;
 public class TrackFeedbacks {
     protected Users users;
     protected Tracks tracks;
-    protected PreparedStatementBuilder stmnt;
-    protected Connection con;
 
 
     public TrackFeedbacks(Users users, Tracks tracks) {
@@ -101,7 +99,7 @@ public class TrackFeedbacks {
 
     private ArrayList<TrackFeedbackPlain> fromDbByUserId(int id) throws SQLException {
         ArrayList<TrackFeedbackPlain> feedbacks = new ArrayList<>();
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM feedback WHERE userid = ? ORDER BY id DESC;");
         getFeedback.setInt(1, id);
         ResultSet rs = getFeedback.executeQuery();
@@ -113,7 +111,7 @@ public class TrackFeedbacks {
     }
 
     private TrackFeedbackPlain fromDbByTrack(int trackId, int userId) throws SQLException {
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM feedback WHERE userid = ? " +
                 " AND songid = ? ORDER BY id DESC;");
         getFeedback.setInt(1, userId);
@@ -134,8 +132,8 @@ public class TrackFeedbacks {
     }
 
     private TrackFeedbackPlain fromDB(int id) throws SQLException {
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        stmnt = new PreparedStatementBuilder()
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        PreparedStatementBuilder stmnt = new PreparedStatementBuilder()
                 .select("*")
                 .from("feedback")
                 .addFilter("Id=?", (query, i) -> query.setInt(i, id));
@@ -153,7 +151,7 @@ public class TrackFeedbacks {
 
     private void toDB(TrackFeedbackPlain feedback) throws SQLException {
 
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement addFeedback = con.prepareStatement("INSERT INTO feedback (userid, songid," +
                 " feedbacksong, feedbackspeed, feedbackdynamics, feedbackmood) " +
                 "VALUES(?, ?, ?, ?, ?, ?) " +

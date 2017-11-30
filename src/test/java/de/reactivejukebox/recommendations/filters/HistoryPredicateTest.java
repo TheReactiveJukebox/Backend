@@ -40,7 +40,7 @@ public class HistoryPredicateTest {
 
         User user = new User();
         user.setId(1);
-        r = new Radio(1, user, new String[0], 1990, 2000, 0f,0f,0f,0f,0f, new LinkedList<>(), StrategyType.RANDOM);
+        r = new Radio(1, user, new String[0], 1990, 2000, 0f, 0f, 0f,0f,0f,new LinkedList<>(), StrategyType.RANDOM);
         ArrayList<HistoryEntry> historyList = new ArrayList();
 
         HistoryEntry h1 = new HistoryEntry(1, t1, r, user, new Timestamp(10));

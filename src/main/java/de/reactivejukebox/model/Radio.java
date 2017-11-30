@@ -4,6 +4,7 @@ import de.reactivejukebox.recommendations.filters.GenrePredicate;
 import de.reactivejukebox.recommendations.filters.HistoryPredicate;
 import de.reactivejukebox.recommendations.filters.MoodPredicate;
 import de.reactivejukebox.recommendations.filters.PublishedPredicate;
+import de.reactivejukebox.recommendations.filters.SpeedPredicate;
 import de.reactivejukebox.recommendations.strategies.StrategyType;
 
 import java.io.Serializable;
@@ -164,8 +165,13 @@ public class Radio implements Serializable {
         if (getStartYear() != null || getEndYear() != null) {
             trackStream = trackStream.filter(new PublishedPredicate(this));
         }
+
         if (getArousal()!=null || getValence() != null){
             trackStream = trackStream.filter(new MoodPredicate(getArousal(),getValence()));
+
+        if (getMinSpeed()!= null || getMaxSpeed()!= null ){
+            trackStream = trackStream.filter(new SpeedPredicate(this));
+
         }
         return trackStream;
     }

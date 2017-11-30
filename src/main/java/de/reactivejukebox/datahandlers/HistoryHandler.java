@@ -28,5 +28,4 @@ public class HistoryHandler {
         historyEntries.delete(historyId, user);
     }
 
-    //TODO Add methods to get and filter History
 }
