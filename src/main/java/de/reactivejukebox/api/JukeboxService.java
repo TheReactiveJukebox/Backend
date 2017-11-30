@@ -1,7 +1,6 @@
 package de.reactivejukebox.api;
 
 import de.reactivejukebox.core.Secured;
-import de.reactivejukebox.datahandlers.TendencyHandler;
 import de.reactivejukebox.model.*;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
 import de.reactivejukebox.recommendations.RecommendationStrategyFactory;
@@ -31,7 +30,7 @@ public class JukeboxService {
         } catch (SQLException e) {
             e.printStackTrace();
             return Response.status(503)
-                    .entity("Error no Radiostation available")
+                    .entity( "{\"message\": \"Error no Radiostation available\"}")
                     .build();
         }
     }
@@ -49,7 +48,7 @@ public class JukeboxService {
         } catch (SQLException e) {
             e.printStackTrace();
             return Response.status(503)
-                    .entity("Error while writing/reading database")
+                    .entity("{\"message\": \"Error while reading/writing database\"}")
                     .build();
         }
     }
@@ -61,6 +60,7 @@ public class JukeboxService {
     public Response getNextSongs(@Context User user,
                                  @QueryParam("count") int count,
                                  @QueryParam("upcoming") List<Integer> upcoming) {
+        TrackFeedbacks feedback = Model.getInstance().getTrackFeedbacks();
         try {
             // upcomingTracks contains tracks that are already in the listening queue
             List<Track> upcomingTracks = upcoming.stream()
@@ -72,14 +72,18 @@ public class JukeboxService {
             RecommendationStrategy algorithm = new RecommendationStrategyFactory(radio, upcomingTracks)
                     .createStrategy(count);
             // obtain results
-            List<MusicEntityPlain> results = algorithm.getRecommendations().stream()
+            List<TrackPlain> results = algorithm.getRecommendations().stream()
                     .map(Track::getPlainObject)
                     .collect(Collectors.toList());
+            for (TrackPlain r:results) {
+                r.setTrackFeedback(feedback.get(r.getId(),user.getId()).getPlainObject());
+            }
+
             return Response.ok(results).build();
         } catch (SQLException e) {
             e.printStackTrace();
             return Response.status(502)
-                    .entity("Error while communicating with database.")
+                    .entity("{\"message\": \"Error while commmunicating with database\"}")
                     .build();
         }
     }
@@ -93,24 +97,5 @@ public class JukeboxService {
         return Response.ok(algorithms).build();
     }
 
-    @POST
-    @Secured
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/tendency")
-    public Response pushTendency(TendencyPlain tendency, @Context User user) {
 
-        tendency.setUserId(user.getId());
-
-        try {
-            TendencyPlain tendencyReturn = new TendencyHandler().addTendency(tendency, user).getPlainObject();
-            return Response.ok().entity(tendencyReturn).build();
-        } catch (SQLDataException e) {
-            return Response.status(400).entity(e).build();
-
-        } catch (SQLException e) {
-            return Response.status(500).entity(e).build();
-        }
-
-    }
 }
