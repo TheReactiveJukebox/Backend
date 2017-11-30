@@ -18,8 +18,8 @@ public class Model {
     private Radios radios;
     private TrackFeedbacks trackFeedbacks;
     private Genres genres;
-    private Tendencies tendencies;
     private Playlists playlists;
+    private SpecialFeedbacks specialFeedbacks;
 
     private Model() {
         users = new Users();
@@ -28,6 +28,7 @@ public class Model {
             artists = new Artists(con);
             albums = new Albums(con, artists);
             tracks = new Tracks(con, artists, albums);
+            con.close();
         } catch (SQLException e) {
             System.err.println("Could not query music data. Exception:");
             e.printStackTrace(System.err);
@@ -37,8 +38,8 @@ public class Model {
             tracks = new Tracks();
         }
         radios = new Radios(users);
-        trackFeedbacks = new TrackFeedbacks(users, tracks, radios);
-        tendencies = new Tendencies(users, radios);
+        trackFeedbacks = new TrackFeedbacks(users, tracks);
+        specialFeedbacks = new SpecialFeedbacks(users);
         historyEntries = new HistoryEntries(users, tracks, radios);
         playlists = new Playlists();
 
@@ -83,8 +84,8 @@ public class Model {
         return trackFeedbacks;
     }
 
-    public Tendencies getTendencies() {
-        return tendencies;
+    public SpecialFeedbacks getSpecialFeedbacks() {
+        return specialFeedbacks;
     }
 
     public Playlists getPlaylists() {

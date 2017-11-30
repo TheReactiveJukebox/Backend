@@ -15,10 +15,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 
-//TODO don't keep the entire History in RAM
 public class HistoryEntries implements Iterable<HistoryEntry> {
-    protected Connection con;
-    protected PreparedStatementBuilder stmnt;
     private ConcurrentHashMap<Integer, HistoryEntry> entryById;
     private Users users;
     private Tracks tracks;
@@ -68,10 +65,15 @@ public class HistoryEntries implements Iterable<HistoryEntry> {
         return newEntry;
     }
 
-    public void delete(Integer historyId) throws SQLException {
-        deleteFromDB(historyId);
+    public void delete(Integer historyId, User user) throws SQLException {
+
+        deleteFromDB(historyId,user.getId());
+        HistoryEntry h = null;
         if (entryById.containsKey(historyId))
-            entryById.remove(historyId);
+            h = entryById.get(historyId);
+            if (h.getUser().getId() == user.getId()) {
+                entryById.remove(historyId);
+            }
     }
 
     public ArrayList<HistoryEntry> getListByUserId(int id) throws SQLException {
@@ -123,28 +125,28 @@ public class HistoryEntries implements Iterable<HistoryEntry> {
 
     private HistoryEntryPlain fromDB(HistoryEntryPlain entry) throws SQLException {
 
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        stmnt = new PreparedStatementBuilder()
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        PreparedStatementBuilder stmnt = new PreparedStatementBuilder()
                 .select("*")
                 .from("history")
                 .addFilter("SongId=?", (query, i) -> query.setInt(i, entry.getTrackId()))
                 .addFilter("RadioId=?", (query, i) -> query.setInt(i, entry.getRadioId()))
                 .addFilter("UserId=?", (query, i) -> query.setInt(i, entry.getUserId()))
                 .addFilter("Time=?", (query, i) -> query.setTimestamp(i, entry.getTime()));
-        return fromDB().get(0);
+        return fromDB(stmnt, con).get(0);
     }
 
     private ArrayList<HistoryEntryPlain> fromDB(String col, int id) throws SQLException {
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        stmnt = new PreparedStatementBuilder()
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        PreparedStatementBuilder stmnt = new PreparedStatementBuilder()
                 .select("*")
                 .from("history")
                 .addFilter(col + "=?", (query, i) -> query.setInt(i, id));
-        return fromDB();
+        return fromDB(stmnt, con);
     }
 
 
-    private ArrayList<HistoryEntryPlain> fromDB() throws SQLException {
+    private ArrayList<HistoryEntryPlain> fromDB(PreparedStatementBuilder stmnt, Connection con) throws SQLException {
         PreparedStatement dbQuery = stmnt.prepare(con);
         ArrayList<HistoryEntryPlain> results = new ArrayList<>();
         ResultSet rs = dbQuery.executeQuery();
@@ -165,7 +167,7 @@ public class HistoryEntries implements Iterable<HistoryEntry> {
      * Insert HistoryEntryPlain in database table history and set historyId in history object.
      */
     private void toDB(HistoryEntryPlain entry) throws SQLException {
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement addEntry = con.prepareStatement("INSERT INTO history (songId, userId, radioId, time) VALUES (?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
         addEntry.setInt(1, entry.getTrackId());
         addEntry.setInt(2, entry.getUserId());
@@ -180,10 +182,11 @@ public class HistoryEntries implements Iterable<HistoryEntry> {
         con.close();
     }
 
-    private void deleteFromDB(Integer historyId) throws SQLException {
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        PreparedStatement deleteEntry = con.prepareStatement("DELETE FROM history WHERE id = ?;");
+    private void deleteFromDB(Integer historyId, Integer userId) throws SQLException {
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        PreparedStatement deleteEntry = con.prepareStatement("DELETE FROM history WHERE id = ? AND UserId = ?;");
         deleteEntry.setInt(1, historyId);
+        deleteEntry.setInt(2,userId);
         deleteEntry.executeUpdate();
         con.close();
     }
