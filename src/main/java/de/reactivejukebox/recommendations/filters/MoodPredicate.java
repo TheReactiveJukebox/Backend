@@ -14,17 +14,13 @@ public class MoodPredicate implements Predicate<Track>{
 
     public MoodPredicate(Radio radio){
 
-        this.valence = this.arousal = 0f;
+        this(radio.getArousal(),radio.getValence());
 
-        if(radio.getArousal()!=null)
-            this.arousal = radio.getArousal();
-        if(radio.getValence()!=null)
-            this.valence = (radio.getValence()+1)/2; //Needed to map the -1..1 interval to the Spotify 0..1 interval
     }
 
     public MoodPredicate(float arousal,float valence){
         this.arousal = arousal;
-        this.valence = valence;
+        this.valence = (valence+1)/2;
     }
 
     @Override

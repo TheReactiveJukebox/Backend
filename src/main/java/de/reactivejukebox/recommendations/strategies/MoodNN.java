@@ -20,9 +20,9 @@ import java.util.stream.Stream;
 public class MoodNN implements RecommendationStrategy{
 
     private Collection<Track> selectedTracks;
-    int resultCount;
-    Radio radio;
-    Collection<Track> upcoming;
+    private int resultCount;
+    private Radio radio;
+    private Collection<Track> upcoming;
 
     public MoodNN(Radio radio, Collection<Track> upcoming, int resultCount){
         this.selectedTracks = radio.getStartTracks();
