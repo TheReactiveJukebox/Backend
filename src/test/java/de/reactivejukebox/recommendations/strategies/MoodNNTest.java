@@ -150,7 +150,7 @@ public class MoodNNTest {
         List<Track> result = strat.getRecommendations();
         for (Track e:result) {
             Reporter.log(e.toString(), true);
-            assertTrue(e.getId()>=80);
+            assertTrue(e.getId()>=80 && e.getId()<101);
         }
     }
 

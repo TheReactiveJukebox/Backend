@@ -5,6 +5,7 @@ import de.reactivejukebox.model.Radio;
 import de.reactivejukebox.model.Track;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
 import de.reactivejukebox.recommendations.filters.ArtistPredicate;
+import de.reactivejukebox.recommendations.filters.HistoryPredicate;
 import de.reactivejukebox.recommendations.filters.MoodPredicate;
 
 import java.util.Collection;
@@ -43,7 +44,7 @@ public class MoodNN implements RecommendationStrategy{
         float a = t.getArousal();
         possibleTracks = possibleTracks.filter(new MoodPredicate(a,v))
                 .map(track -> calcDistance(track,a,v));
-        return  radio.filterHistory(possibleTracks,this.upcoming,this.resultCount);
+        return  possibleTracks.filter(new HistoryPredicate(this.radio,this.upcoming));
     }
 
     private Track calcDistance(Track t, float a, float v){
