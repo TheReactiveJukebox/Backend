@@ -5,7 +5,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class LoggerImp implements Logger {
-    private final static boolean STATUS = true;
     private final static String FILE_PATH = "logger/event-log.csv";
     private final static Character DELIMITER = ';';
 
@@ -15,8 +14,6 @@ public class LoggerImp implements Logger {
     private BufferedWriter bw;
 
     private LoggerImp() {
-        if (!STATUS)
-            return;
 
         try {
             // open file in append mode
@@ -38,9 +35,6 @@ public class LoggerImp implements Logger {
     }
 
     public void writeEntry(final Entry en) throws EntryIsInvalid {
-        if (!STATUS)
-            return;
-
         if (!en.isValid()) {
             throw new EntryIsInvalid();
         }
