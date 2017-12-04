@@ -16,9 +16,6 @@ ENV JPDA_SUSPEND=y
 # mount webapp as volume
 VOLUME /usr/local/tomcat/webapps/ROOT.war
 
-# mount volume for event log
-VOLUME /usr/local/tomcat/logger/
-
 # expose remote debugging port
 EXPOSE 8000
 
