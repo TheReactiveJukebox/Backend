@@ -8,7 +8,7 @@ public class LoggerImp implements Logger {
     private final static String FILE_PATH = "logger/event-log.csv";
     private final static Character DELIMITER = ';';
 
-    private static LoggerImp instance;
+    private static Logger instance;
 
     private FileWriter fw;
     private BufferedWriter bw;
