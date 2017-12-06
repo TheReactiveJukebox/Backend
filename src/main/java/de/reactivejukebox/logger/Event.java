@@ -5,5 +5,6 @@ public enum Event {
     USER_LOGOUT,
     RADIO_START,
     RADIO_UPDATE,
+    HISTORY_DELETE,
     // TODO expand
 }
