@@ -11,7 +11,7 @@ public class NullLogger implements Logger {
     }
 
     @Override
-    public void writeEntry(Entry e) throws EntryIsInvalid {
+    public void writeEntry(Entry e) {
         // do nothing
     }
 }

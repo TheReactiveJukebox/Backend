@@ -45,9 +45,9 @@ public class Entry {
         return entry;
     }
 
-    public String getLogString(char delimiter) throws Entry.IsInvalid {
+    public String getLogString(char delimiter) {
         if (!isValid()) {
-            throw new Entry.IsInvalid();
+            // TODO throw new Entry.IsInvalid();
         }
 
         StringBuilder msg = new StringBuilder();
@@ -58,7 +58,7 @@ public class Entry {
 
         return msg.toString();
     }
-    public String getLogString() throws Entry.IsInvalid {
+    public String getLogString() {
         return getLogString(';');
     }
 
