@@ -5,6 +5,7 @@ import de.reactivejukebox.datahandlers.TokenHandler;
 import de.reactivejukebox.logger.LoggerProvider;
 import de.reactivejukebox.logger.UserLoggedInEntry;
 import de.reactivejukebox.model.UserPlain;
+import org.apache.logging.log4j.LogManager;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -26,9 +27,11 @@ public class UserService {
         System.out.printf("login" + auth);
         try {
             UserPlain token = new TokenHandler().checkUser(auth);
+            LogManager.getLogger("studie").error("log something that will be useful.");
             LoggerProvider.getLogger().writeEntry(new UserLoggedInEntry(token));
             return Response.ok(token).build();
         } catch (Exception e) {
+            e.printStackTrace();
             return Response.status(442).entity("invalid password or username").build();
         }
     }
