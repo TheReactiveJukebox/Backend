@@ -1,5 +1,5 @@
 package de.reactivejukebox.logger;
 
 public interface Logger {
-    void writeEntry(Entry e) throws EntryIsInvalid;
+    void writeEntry(Entry e) throws Entry.IsInvalid;
 }

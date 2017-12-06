@@ -34,6 +34,23 @@ public class Entry {
         return entry;
     }
 
+    public String getLogString(char delimiter) throws Entry.IsInvalid {
+        if (!isValid()) {
+            throw new Entry.IsInvalid();
+        }
+
+        StringBuilder msg = new StringBuilder();
+        for (String colValue: getEntry()) {
+            msg.append(colValue);
+            msg.append(delimiter);
+        }
+
+        return msg.toString();
+    }
+    public String getLogString() throws Entry.IsInvalid {
+        return getLogString(';');
+    }
+
     private boolean isColUnset(final EntryCol col) {
         // TODO implement
         // entry[col.ordinal()] != ""
@@ -68,4 +85,9 @@ public class Entry {
         }
         return allCollumesSet(cols);
     }
+
+
+    public class IsInvalid extends Exception {
+    }
+
 }

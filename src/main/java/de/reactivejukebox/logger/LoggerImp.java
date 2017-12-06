@@ -29,7 +29,7 @@ public class LoggerImp implements Logger {
 
     }
 
-    public void writeEntry(final Entry en) throws EntryIsInvalid {
+    public void writeEntry(final Entry en) throws Entry.IsInvalid {
         if (!en.isValid()) {
             throw new EntryIsInvalid();
         }
