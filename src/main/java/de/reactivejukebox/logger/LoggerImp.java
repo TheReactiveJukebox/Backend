@@ -12,7 +12,7 @@ public class LoggerImp implements Logger {
         writeEntry(msg);
     }
 
-    public void writeEntry(final Entry en) throws Entry.IsInvalid {
+    public void writeEntry(final Entry en) {
         writeEntry(en.getLogString());
     }
 
