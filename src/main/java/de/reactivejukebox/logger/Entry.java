@@ -1,12 +1,71 @@
 package de.reactivejukebox.logger;
 
-public interface Entry {
-    Long getTime();
+import de.reactivejukebox.model.UserPlain;
 
-    Event getEvent();
+public class Entry {
+    private Event ev;
+    private String[] entry = new String[EntryCol.values().length];
 
-    Integer getUserId();
+    static String[] getHead() {
+        String[] result = new String[EntryCol.values().length];
+        for (EntryCol col: EntryCol.values()) {
+            result[col.ordinal()] = col.toString();
+        }
+        return result;
+    }
 
-    //Integer getSongId();
-    boolean isValid();
+    public Entry(final Event ev, final UserPlain user) {
+        this.ev = ev;
+        setValue(EntryCol.EVENT, ev.toString());
+        setValue(EntryCol.USER, user.getId().toString());
+        long unixTime = System.currentTimeMillis() / 1000L;
+        setValue(EntryCol.TIMESTAMP, String.valueOf(unixTime));
+    }
+
+    private void setValue(final EntryCol col, final String value) {
+        entry[col.ordinal()] = value;
+    }
+
+    public Event getEvent() {
+        return ev;
+    }
+
+    public String[] getEntry() {
+        return entry;
+    }
+
+    private boolean isColUnset(final EntryCol col) {
+        // TODO implement
+        // entry[col.ordinal()] != ""
+        return false;
+    }
+
+    private boolean allCollumesSet(final EntryCol[] cols) {
+        // do check nothing
+        if (cols == null)
+            return true;
+
+        for (EntryCol col : cols) {
+            if (isColUnset(col))
+                return false;
+        }
+        return true;
+    }
+
+    public boolean isValid() {
+        // TODO tests
+        // entry.length == EntryCol.values().length
+        EntryCol[] cols = null;
+        switch (ev) {
+            case USER_LOGIN:
+                break;
+            case RADIO_START:
+                cols = new EntryCol[] {EntryCol.USER};
+                break;
+            // TODO implement
+            default:
+                throw new AssertionError("Unknown Event " + ev.toString());
+        }
+        return allCollumesSet(cols);
+    }
 }

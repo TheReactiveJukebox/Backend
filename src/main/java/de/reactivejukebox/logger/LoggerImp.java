@@ -13,7 +13,7 @@ public class LoggerImp implements Logger {
     private FileWriter fw;
     private BufferedWriter bw;
 
-    private LoggerImp() {
+    LoggerImp() {
 
         try {
             // open file in append mode
@@ -27,11 +27,6 @@ public class LoggerImp implements Logger {
 
     }
 
-    public synchronized static Logger getInstance() {
-        if (LoggerImp.instance == null) {
-            LoggerImp.instance = new LoggerImp();
-        }
-        return LoggerImp.instance;
     }
 
     public void writeEntry(final Entry en) throws EntryIsInvalid {
@@ -39,20 +34,13 @@ public class LoggerImp implements Logger {
             throw new EntryIsInvalid();
         }
 
-        String msg = "";
-
-        msg += en.getTime().toString() + DELIMITER;
-        msg += en.getEvent().name() + DELIMITER;
-        {
-            Integer userId = en.getUserId();
-            if (userId != null) {
-                msg += userId.toString();
-            }
-            msg += DELIMITER;
+        StringBuilder msg = new StringBuilder();
+        for (String colValue: en.getEntry()) {
+            msg.append(colValue);
+            msg.append(DELIMITER);
         }
-        // TODO so on
 
-        writeEntry(msg);
+        writeEntry(msg.toString());
     }
 
     private synchronized void writeEntry(final String msg) {
