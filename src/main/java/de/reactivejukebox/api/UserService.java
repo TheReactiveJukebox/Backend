@@ -26,7 +26,6 @@ public class UserService {
         System.out.printf("login" + auth);
         try {
             UserPlain token = new TokenHandler().checkUser(auth);
-            LoggerProvider.getLogger().writeEntry(new Entry(Event.USER_LOGIN, token));
             LoggerProvider.getLogger().writeEntry(new UserLoggedInEntry(token));
             return Response.ok(token).build();
         } catch (Exception e) {
