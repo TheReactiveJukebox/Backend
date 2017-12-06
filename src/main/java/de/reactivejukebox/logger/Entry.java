@@ -1,5 +1,6 @@
 package de.reactivejukebox.logger;
 
+import de.reactivejukebox.model.User;
 import de.reactivejukebox.model.UserPlain;
 
 public class Entry {
@@ -14,6 +15,14 @@ public class Entry {
             result[col.ordinal()] = col.toString();
         }
         return result;
+    }
+
+    public Entry(final Event ev, final User user) {
+        this.ev = ev;
+        setValue(EntryCol.EVENT, ev.toString());
+        setValue(EntryCol.USER, user.getPlainObject().getId().toString());
+        long unixTime = System.currentTimeMillis() / 1000L;
+        setValue(EntryCol.TIMESTAMP, String.valueOf(unixTime));
     }
 
     public Entry(final Event ev, final UserPlain user) {
