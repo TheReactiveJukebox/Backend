@@ -2,6 +2,9 @@ package de.reactivejukebox.api;
 
 import de.reactivejukebox.core.Secured;
 import de.reactivejukebox.datahandlers.HistoryHandler;
+import de.reactivejukebox.logger.HistoryDeletetEntry;
+import de.reactivejukebox.logger.HistoryPostEntry;
+import de.reactivejukebox.logger.LoggerProvider;
 import de.reactivejukebox.model.HistoryEntryPlain;
 import de.reactivejukebox.model.User;
 
@@ -27,6 +30,7 @@ public class HistoryService {
     public Response createHistoryEntry(@Context User user, HistoryEntryPlain history) {
         try {
             HistoryEntryPlain historyEntry = new HistoryHandler().addHistoryEntry(history, user);
+            LoggerProvider.getLogger().writeEntry(new HistoryPostEntry(user, historyEntry));
             return Response.ok().entity(historyEntry).build();
         } catch (SQLException e) {
             e.printStackTrace();
