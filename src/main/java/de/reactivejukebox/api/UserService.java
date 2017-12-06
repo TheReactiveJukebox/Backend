@@ -2,9 +2,8 @@ package de.reactivejukebox.api;
 
 import de.reactivejukebox.core.Secured;
 import de.reactivejukebox.datahandlers.TokenHandler;
-import de.reactivejukebox.logger.Entry;
-import de.reactivejukebox.logger.Event;
 import de.reactivejukebox.logger.LoggerProvider;
+import de.reactivejukebox.logger.UserLoggedInEntry;
 import de.reactivejukebox.model.UserPlain;
 
 import javax.ws.rs.*;
@@ -28,6 +27,7 @@ public class UserService {
         try {
             UserPlain token = new TokenHandler().checkUser(auth);
             LoggerProvider.getLogger().writeEntry(new Entry(Event.USER_LOGIN, token));
+            LoggerProvider.getLogger().writeEntry(new UserLoggedInEntry(token));
             return Response.ok(token).build();
         } catch (Exception e) {
             return Response.status(442).entity("invalid password or username").build();
