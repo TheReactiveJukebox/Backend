@@ -56,13 +56,14 @@ public class Entry {
         }
 
         StringBuilder msg = new StringBuilder();
-        for (String colValue: getEntry()) {
+        for (String colValue : getEntry()) {
             msg.append(colValue);
             msg.append(delimiter);
         }
 
         return msg.toString();
     }
+
     public String getLogString() {
         return getLogString(';');
     }
@@ -93,7 +94,7 @@ public class Entry {
             case USER_LOGIN:
                 break;
             case RADIO_START:
-                cols = new EntryCol[] {EntryCol.USER};
+                cols = new EntryCol[]{EntryCol.USER};
                 break;
             // TODO implement
             default:
