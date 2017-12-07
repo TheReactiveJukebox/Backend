@@ -16,7 +16,7 @@ import java.util.stream.StreamSupport;
 public class Radios implements Iterable<Radio> {
 
     private static final String INSERT_RADIO =
-            "INSERT INTO radio (userid, AlgorithmName, StartYear, EndYear) VALUES (?, ?, ?, ?);";
+            "INSERT INTO radio (userid, AlgorithmName, StartYear, EndYear, Dynamic, Arousal, Valence, minSpeed, maxSpeed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
     private static final String SELECT_RADIO =
             "SELECT * FROM radio WHERE userid = ? ORDER BY id DESC LIMIT 1;";
     private static final String INSERT_REFERENCE_SONG =
@@ -28,9 +28,13 @@ public class Radios implements Iterable<Radio> {
     private static final String SELECT_GENRE =
             "SELECT genre.Name AS GenreName, genre.Id AS GenreId FROM radio JOIN radio_genre ON radio.Id = radio_genre.RadioId JOIN genre ON radio_genre.GenreId = genre.Id WHERE radio.Id = ?;";
 
+    private static final String UPDATE_RADIO =
+            "UPDATE radio SET AlgorithmName = ?, StartYear = ?, EndYear = ?, Dynamic = ?, Arousal = ?, Valence = ?, minSpeed = ?, maxSpeed = ? WHERE Id = ?;";
+    private static final String REMOVE_GENRE =
+            "DELETE FROM radio_genre WHERE radioId = ?;";
+
+
     protected Users users;
-    protected PreparedStatementBuilder stmnt;
-    protected Connection con;
     protected ConcurrentHashMap<Integer, Radio> radioById;
     protected ConcurrentHashMap<Integer, Radio> radioByUserId;
 
@@ -41,12 +45,22 @@ public class Radios implements Iterable<Radio> {
     }
 
     public Radio put(RadioPlain radio) throws SQLException {
-        toDB(radio);
-        Radio newRadio = build(radio);
-        radioById.putIfAbsent(newRadio.getId(), newRadio);
-        radioByUserId.remove(radio.getUserId());
-        radioByUserId.putIfAbsent(newRadio.getUser().getId(), newRadio);
-        return newRadio;
+        if (radio.getId() == null) {
+            toDB(radio);
+            Radio newRadio = build(radio);
+            radioById.putIfAbsent(newRadio.getId(), newRadio);
+            radioByUserId.remove(radio.getUserId());
+            radioByUserId.putIfAbsent(newRadio.getUser().getId(), newRadio);
+            return newRadio;
+        } else {
+            updateDB(radio);
+            Radio newRadio = build(radio);
+            radioById.remove(radio.getId());
+            radioByUserId.remove(radio.getUserId());
+            radioById.put(radio.getId(), newRadio);
+            radioByUserId.put(radio.getUserId(), newRadio);
+            return  newRadio;
+        }
     }
 
     public Radio get(int id) throws SQLException {
@@ -115,9 +129,13 @@ public class Radios implements Iterable<Radio> {
                 radio.getId(),
                 users.get(radio.getUserId()),
                 radio.getGenres(),
-                radio.getMood(),
                 radio.getStartYear(),
                 radio.getEndYear(),
+                radio.getDynamic(),
+                radio.getArousal(),
+                radio.getValence(),
+                radio.getMinSpeed(),
+                radio.getMaxSpeed(),
                 startTracks,
                 StrategyType.valueOf(radio.getAlgorithm())
         );
@@ -133,19 +151,12 @@ public class Radios implements Iterable<Radio> {
     }
 
     private RadioPlain fromDB(RadioPlain radio) throws SQLException {
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement getRadio = con.prepareStatement(SELECT_RADIO);
         getRadio.setInt(1, radio.getUserId());
         ResultSet rs = getRadio.executeQuery();
         if (rs.next()) {
-            radio.setId(rs.getInt("id"));
-            radio.setUserId(rs.getInt("userid"));
-            radio.setAlgorithm(rs.getString("AlgorithmName"));
-            radio.setStartYear(rs.getInt("StartYear"));
-            radio.setEndYear(rs.getInt("EndYear"));
-            // TODO read more radio attributes
-            radio.setStartTracks(fromDBReferenceSongs(radio.getId(), con));
-            radio.setGenres(fromDBGenres(radio.getId(), con));
+            radio = buildPlain(rs, con);
             con.close();
             return radio;
         } else {
@@ -157,29 +168,21 @@ public class Radios implements Iterable<Radio> {
 
     private RadioPlain fromDB(int id) throws SQLException {
         RadioPlain radio = null;
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        stmnt = new PreparedStatementBuilder()
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        PreparedStatementBuilder stmnt = new PreparedStatementBuilder()
                 .select("*")
                 .from("radio")
                 .addFilter("Id=?", (query, i) -> query.setInt(i, id));
         PreparedStatement dbQuery = stmnt.prepare(con);
         ResultSet rs = dbQuery.executeQuery();
         if (rs.next()) {
-            radio = new RadioPlain();
-            radio.setId(rs.getInt("id"));
-            radio.setUserId(rs.getInt("userid"));
-            radio.setAlgorithm(rs.getString("AlgorithmName"));
-            radio.setStartYear(rs.getInt("StartYear"));
-            radio.setEndYear(rs.getInt("EndYear"));
-            // TODO read more radio attributes
-            radio.setStartTracks(fromDBReferenceSongs(id, con));
-            radio.setGenres(fromDBGenres(id, con));
+            radio = buildPlain(rs, con);
         }
         con.close();
         return radio;
     }
 
-    private int[] fromDBReferenceSongs(int id, Connection con) throws SQLException {
+    private int[] fromDBReferenceSongs(Integer id, Connection con) throws SQLException {
         PreparedStatement getReferenceSongs = con.prepareStatement(SELECT_REFERENCE_SONG);
         getReferenceSongs.setInt(1, id);
         ResultSet rs = getReferenceSongs.executeQuery();
@@ -205,22 +208,47 @@ public class Radios implements Iterable<Radio> {
     }
 
     private void toDB(RadioPlain radio) throws SQLException {
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         // use a transaction
         con.setAutoCommit(false);
         // insert new radio in database
         PreparedStatement addRadio = con.prepareStatement(INSERT_RADIO, Statement.RETURN_GENERATED_KEYS);
         addRadio.setInt(1, radio.getUserId());
         addRadio.setString(2, radio.getAlgorithm());
-        if (radio.getStartYear() == 0) {
+        if (radio.getStartYear() == null) {
             addRadio.setNull(3, Types.INTEGER);
         } else {
             addRadio.setInt(3, radio.getStartYear());
         }
-        if (radio.getEndYear() == 0) {
+        if (radio.getEndYear() == null) {
             addRadio.setNull(4, Types.INTEGER);
         } else {
             addRadio.setInt(4, radio.getEndYear());
+        }
+        if (radio.getDynamic() == null){
+            addRadio.setNull(5,Types.FLOAT);
+        }else{
+            addRadio.setFloat(5,radio.getDynamic());
+        }
+        if (radio.getArousal() == null){
+            addRadio.setNull(6,Types.FLOAT);
+        }else{
+            addRadio.setFloat(6,radio.getArousal());
+        }
+        if (radio.getValence() == null){
+            addRadio.setNull(7,Types.FLOAT);
+        }else{
+            addRadio.setFloat(7,radio.getValence());
+        }
+        if (radio.getMinSpeed() == null){
+            addRadio.setNull(8,Types.FLOAT);
+        }else{
+            addRadio.setFloat(8, radio.getMinSpeed());
+        }
+        if (radio.getMaxSpeed() == null){
+            addRadio.setNull(9,Types.FLOAT);
+        }else{
+            addRadio.setFloat(9, radio.getMaxSpeed());
         }
         // TODO ad more radio attributes here
         addRadio.executeUpdate();
@@ -243,6 +271,77 @@ public class Radios implements Iterable<Radio> {
             addReferenceSong.executeBatch();
         }
         // insert genres
+        addGenres(radio,con);
+        // end transaction
+        con.commit();
+
+        // TODO check of needs to reset auto commit settings
+        con.setAutoCommit(true);
+        con.close();
+    }
+    private void updateDB(RadioPlain radio) throws SQLException{
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        // use a transaction
+        con.setAutoCommit(false);
+        // insert new radio in database
+        PreparedStatement addRadio = con.prepareStatement(UPDATE_RADIO);
+        addRadio.setString(1, radio.getAlgorithm());
+        if (radio.getStartYear() == null) {
+            addRadio.setNull(2, Types.INTEGER);
+        } else {
+            addRadio.setInt(2, radio.getStartYear());
+        }
+        if (radio.getEndYear() == null) {
+            addRadio.setNull(3, Types.INTEGER);
+        } else {
+            addRadio.setInt(3, radio.getEndYear());
+        }
+        if (radio.getDynamic() == null){
+            addRadio.setNull(4,Types.FLOAT);
+        }else{
+            addRadio.setFloat(4,radio.getDynamic());
+        }
+        if (radio.getArousal() == null){
+            addRadio.setNull(5,Types.FLOAT);
+        }else{
+            addRadio.setFloat(5,radio.getArousal());
+        }
+        if (radio.getValence() == null){
+            addRadio.setNull(6,Types.FLOAT);
+        }else{
+            addRadio.setFloat(6,radio.getValence());
+        }
+        if (radio.getMinSpeed() == null){
+            addRadio.setNull(7,Types.FLOAT);
+        }else{
+            addRadio.setFloat(7, radio.getMinSpeed());
+        }
+        if (radio.getMaxSpeed() == null){
+            addRadio.setNull(8,Types.FLOAT);
+        }else{
+            addRadio.setFloat(8, radio.getMaxSpeed());
+        }
+        addRadio.setInt(9, radio.getId());
+        // TODO ad more radio attributes here
+        addRadio.executeUpdate();
+        // update Genres
+        removeGenres(radio,con);
+        addGenres(radio,con);
+
+        // end transaction
+        con.commit();
+
+        // TODO check of needs to reset auto commit settings
+        con.setAutoCommit(true);
+        con.close();
+    }
+    private void removeGenres(RadioPlain radio, Connection con)throws SQLException{
+        PreparedStatement removeGenre = con.prepareStatement(REMOVE_GENRE);
+        removeGenre.setInt(1, radio.getId());
+        removeGenre.executeUpdate();
+    }
+
+    private void addGenres(RadioPlain radio, Connection con) throws SQLException{
         String[] genres = radio.getGenres();
         if (genres != null && genres.length > 0) {
             PreparedStatement addGenre = con.prepareStatement(INSERT_GENRE);
@@ -253,11 +352,50 @@ public class Radios implements Iterable<Radio> {
             }
             addGenre.executeBatch();
         }
-        // end transaction
-        con.commit();
+    }
 
-        // TODO check of needs to reset auto commit settings
-        con.setAutoCommit(true);
-        con.close();
+    private RadioPlain buildPlain(ResultSet rs, Connection con) throws SQLException {
+        RadioPlain radio = new RadioPlain();
+        radio.setId(rs.getInt("id"));
+        if(rs.wasNull()){
+            radio.setId(null);
+        }
+        radio.setUserId(rs.getInt("userid"));
+        if(rs.wasNull()){
+            radio.setUserId(null);
+        }
+        radio.setAlgorithm(rs.getString("AlgorithmName"));
+        radio.setStartYear(rs.getInt("StartYear"));
+        if(rs.wasNull()){
+            radio.setStartYear(null);
+        }
+        radio.setEndYear(rs.getInt("EndYear"));
+        if(rs.wasNull()){
+            radio.setEndYear(null);
+        }
+        radio.setDynamic(rs.getFloat("Dynamic"));
+        if(rs.wasNull()){
+            radio.setDynamic(null);
+        }
+        radio.setArousal(rs.getFloat("Arousal"));
+        if(rs.wasNull()){
+            radio.setArousal(null);
+        }
+        radio.setValence(rs.getFloat("Valence"));
+        if(rs.wasNull()){
+            radio.setValence(null);
+        }
+        radio.setMinSpeed(rs.getFloat("minSpeed"));
+        if(rs.wasNull()){
+            radio.setMinSpeed(null);
+        }
+        radio.setMaxSpeed(rs.getFloat("maxSpeed"));
+        if(rs.wasNull()){
+            radio.setMaxSpeed(null);
+        }
+        // TODO read more radio attributes
+        radio.setStartTracks(fromDBReferenceSongs(radio.getId(), con));
+        radio.setGenres(fromDBGenres(radio.getId(), con));
+        return radio;
     }
 }
