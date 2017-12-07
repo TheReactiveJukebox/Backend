@@ -5,5 +5,7 @@ public enum EntryCol {
     TIMESTAMP,
     EVENT,
     USER,
+    RADIO,
+    SONG,
     // TODO extend
 }
