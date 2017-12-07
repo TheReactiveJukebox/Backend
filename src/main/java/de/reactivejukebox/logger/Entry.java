@@ -32,7 +32,6 @@ public class Entry {
         long unixTime = System.currentTimeMillis() / 1000L;
         setValue(EntryCol.TIMESTAMP, unixTime);
     }
-    }
 
     void setValue(final EntryCol col, final String value) {
         entry[col.ordinal()] = value;
