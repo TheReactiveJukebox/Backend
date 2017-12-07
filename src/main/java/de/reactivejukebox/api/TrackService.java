@@ -62,19 +62,19 @@ public class TrackService {
      *
      * @param feedback posted feedback
      * @param user     user who gave the feedback
-     * @return TrackFeedbackPlain Object of the feedback actually written to the DB
+     * @return TrackFeedback Object of the feedback actually written to the DB
      */
     @POST
     @Secured
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/feedback")
-    public Response pushTrackFeedback(TrackFeedbackPlain feedback, @Context User user) {
+    public Response pushTrackFeedback(TrackFeedback feedback, @Context User user) {
 
         feedback.setUserId(user.getId());
 
         try {
-            TrackFeedbackPlain feedbackReturn = new TrackFeedbackHandler().addTrackFeedback(feedback, user).getPlainObject();
+            TrackFeedback feedbackReturn = new TrackFeedbackHandler().addTrackFeedback(feedback, user).getPlainObject();
             return Response.ok().entity(feedbackReturn).build();
         } catch (SQLException e) {
             e.printStackTrace();

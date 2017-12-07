@@ -1,24 +1,31 @@
 package de.reactivejukebox.model;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
- * The TrackFeedback class is a model for a single track feedback
+ * TrackFeedback is a model for a track feedback containing only ids for user and radio
  */
-public class TrackFeedback implements Serializable {
+public class TrackFeedback {
 
     private int id; //global feedback id
-    private User user;
-    private Track track;
-
+    private int trackId;
     private int songFeedback;
     private int speedFeedback;
     private int dynamicsFeedback;
     private int moodFeedback;
 
 
+
     public TrackFeedback() {
+    }
+
+    public TrackFeedback(int id, int trackId, int songFeedback, int speedFeedback, int dynamicsFeedback, int moodFeedback) {
+        this.id = id;
+        this.trackId = trackId;
+        this.songFeedback = songFeedback;
+        this.speedFeedback = speedFeedback;
+        this.dynamicsFeedback = dynamicsFeedback;
+        this.moodFeedback = moodFeedback;
     }
 
     public int getId() {
@@ -29,20 +36,12 @@ public class TrackFeedback implements Serializable {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public int getTrackId() {
+        return trackId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Track getTrack() {
-        return track;
-    }
-
-    public void setTrack(Track track) {
-        this.track = track;
+    public void setTrackId(int trackId) {
+        this.trackId = trackId;
     }
 
     public int getSongFeedback() {
@@ -69,7 +68,6 @@ public class TrackFeedback implements Serializable {
         this.dynamicsFeedback = dynamicsFeedback;
     }
 
-
     public int getMoodFeedback() {
         return moodFeedback;
     }
@@ -78,18 +76,4 @@ public class TrackFeedback implements Serializable {
         this.moodFeedback = moodFeedback;
     }
 
-
-    /**
-     * Creates a matching TrackFeedbackPlain object.
-     *
-     * @return the matching TrackFeedbackPlain object with the same attributes as this TrackFeedback object
-     */
-    public TrackFeedbackPlain getPlainObject() {
-        TrackFeedbackPlain plainFeedback = new TrackFeedbackPlain(this.getId(), this.getUser().getId(), this.getTrack().getId(), songFeedback, speedFeedback, dynamicsFeedback, moodFeedback);
-
-        return plainFeedback;
-    }
-
-
 }
-

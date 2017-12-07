@@ -9,12 +9,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Spliterator;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 /**
  * TrackFeedbacks is a class containing all the given track feedbacks. It handles all actions concerning adding,
@@ -38,67 +35,32 @@ public class TrackFeedbacks {
      * @return
      * @throws SQLException
      */
-    public TrackFeedback put(TrackFeedbackPlain feedback) throws SQLException {
-        toDB(feedback);
-        TrackFeedback newTrackFeedback = get(feedback);
-        return newTrackFeedback;
+    public TrackFeedback put(TrackFeedback feedback, int userId) throws SQLException {
+        toDB(feedback, userId);
+        return fromDbByTrack(feedback.getTrackId(),userId);
     }
 
     public TrackFeedback get(int id) throws SQLException {
-        return build(fromDB(id));
+        return fromDB(id);
     }
 
-    public ArrayList<TrackFeedback> getByUserId(int id) throws SQLException {
-        ArrayList<TrackFeedback> trackFeedbacks;
-        ArrayList<TrackFeedbackPlain> feedbacksPlain;
+    public HashSet <TrackFeedback> getByUserId(int id) throws SQLException {
+        HashSet<TrackFeedback> trackFeedbacks = new HashSet<>();
+        ArrayList<TrackFeedback> feedbacksPlain;
             feedbacksPlain = this.fromDbByUserId(id);
-            trackFeedbacks = build(feedbacksPlain);
+        for (TrackFeedback f: feedbacksPlain) {
+            trackFeedbacks.add(f);
+        }
         return trackFeedbacks;
     }
 
-    public TrackFeedback get(TrackFeedbackPlain feedback) throws SQLException {
-        return get(feedback.getTrackId(),feedback.getUserId());
-    }
-
     public TrackFeedback get(int trackId, int userId)throws SQLException{
-        return build(fromDbByTrack(trackId, userId));
+        return fromDbByTrack(trackId, userId);
     }
 
 
-    private TrackFeedback build(TrackFeedbackPlain feedback) throws SQLException {
-        TrackFeedback newTrackFeedback = new TrackFeedback();
-
-        newTrackFeedback.setUser(users.get(feedback.getUserId()));
-        newTrackFeedback.setId(feedback.getId());
-        newTrackFeedback.setTrack(tracks.get(feedback.getTrackId()));
-
-        newTrackFeedback.setSongFeedback(feedback.getSongFeedback());
-        newTrackFeedback.setSpeedFeedback(feedback.getSpeedFeedback());
-        newTrackFeedback.setDynamicsFeedback(feedback.getDynamicsFeedback());
-        newTrackFeedback.setMoodFeedback(feedback.getMoodFeedback());
-
-        return newTrackFeedback;
-    }
-
-    /**
-     * Creates an Arraylist of TrackFeedbacks for a given List of TrackFeedbackPlains. Attributes in the returned list will be
-     * the same, as in the given list
-     *
-     * @param feedbackList the list of TrackFeedbackPlains which shall be converted to TrackFeedbacks
-     * @return the matching TrackFeedbacks for the feedbackList
-     * @throws SQLException
-     */
-    private ArrayList<TrackFeedback> build(ArrayList<TrackFeedbackPlain> feedbackList) throws SQLException {
-        ArrayList<TrackFeedback> newList = new ArrayList<>();
-        Iterator<TrackFeedbackPlain> iterator = feedbackList.listIterator();
-        while (iterator.hasNext()) {
-            newList.add(build(iterator.next()));
-        }
-        return newList;
-    }
-
-    private ArrayList<TrackFeedbackPlain> fromDbByUserId(int id) throws SQLException {
-        ArrayList<TrackFeedbackPlain> feedbacks = new ArrayList<>();
+      private ArrayList<TrackFeedback> fromDbByUserId(int id) throws SQLException {
+        ArrayList<TrackFeedback> feedbacks = new ArrayList<>();
         Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM feedback WHERE userid = ? ORDER BY id DESC;");
         getFeedback.setInt(1, id);
@@ -110,7 +72,7 @@ public class TrackFeedbacks {
         return feedbacks;
     }
 
-    private TrackFeedbackPlain fromDbByTrack(int trackId, int userId) throws SQLException {
+    private TrackFeedback fromDbByTrack(int trackId, int userId) throws SQLException {
         Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM feedback WHERE userid = ? " +
                 " AND songid = ? ORDER BY id DESC;");
@@ -118,20 +80,19 @@ public class TrackFeedbacks {
         getFeedback.setInt(2, trackId);
         ResultSet rs = getFeedback.executeQuery();
         if (rs.next()) {
-            TrackFeedbackPlain result = this.buildPlain(rs);
+            TrackFeedback result = this.buildPlain(rs);
             con.close();
             return result;
         } else {
             con.close();
-            TrackFeedbackPlain result = new TrackFeedbackPlain();
-            result.setUserId(userId);
+            TrackFeedback result = new TrackFeedback();
             result.setTrackId(trackId);
             return result;
         }
 
     }
 
-    private TrackFeedbackPlain fromDB(int id) throws SQLException {
+    private TrackFeedback fromDB(int id) throws SQLException {
         Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatementBuilder stmnt = new PreparedStatementBuilder()
                 .select("*")
@@ -149,7 +110,7 @@ public class TrackFeedbacks {
 
     }
 
-    private void toDB(TrackFeedbackPlain feedback) throws SQLException {
+    private void toDB(TrackFeedback feedback, int userId) throws SQLException {
 
         Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement addFeedback = con.prepareStatement("INSERT INTO feedback (userid, songid," +
@@ -160,7 +121,7 @@ public class TrackFeedbacks {
                 "feedbackdynamics, feedbackmood, time) = " +
                 "(?, ?, ?, ?, CURRENT_TIMESTAMP);");
 
-        addFeedback.setInt(1, feedback.getUserId());
+        addFeedback.setInt(1, userId);
         addFeedback.setInt(2, feedback.getTrackId());
         addFeedback.setInt(3, feedback.getSongFeedback());
         addFeedback.setInt(4, feedback.getSpeedFeedback());
@@ -177,10 +138,9 @@ public class TrackFeedbacks {
 
     }
 
-    private TrackFeedbackPlain buildPlain(ResultSet rs) throws SQLException {
-        TrackFeedbackPlain feedback = new TrackFeedbackPlain();
+    private TrackFeedback buildPlain(ResultSet rs) throws SQLException {
+        TrackFeedback feedback = new TrackFeedback();
         feedback.setId(rs.getInt("id"));
-        feedback.setUserId(rs.getInt("userid"));
         feedback.setTrackId(rs.getInt("songid"));
 
         feedback.setSongFeedback(rs.getInt("feedbacksong"));
