@@ -7,12 +7,16 @@ import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
 
 public class EntryTest {
-    @Test
-    public void testEntryLength() {
+    private User getUserObj() {
         User user = new User();
         user.setUserID(1337);
         user.setUsername("Foo");
+        return user;
+    }
 
+    @Test
+    public void testEntryLength() {
+        User user = getUserObj();
         Entry e = new Entry(Event.USER_LOGIN, user);
         String[] s = e.getEntry();
         // Assert
@@ -26,11 +30,7 @@ public class EntryTest {
 
     @Test
     public void testEntryFieldTime() {
-        User user = new User();
-        user.setUserID(1337);
-        user.setUsername("Foo");
-
-        Entry e = new Entry(Event.USER_LOGIN, user);
+        Entry e = new Entry(Event.USER_LOGIN, getUserObj());
         String[] s = e.getEntry();
         // Assert
         Integer t = new Integer(s[EntryCol.TIMESTAMP.ordinal()]);
@@ -40,12 +40,7 @@ public class EntryTest {
     @Test
     public void testEntryFieldEvent() {
         Event ev = Event.USER_LOGIN;
-
-        User user = new User();
-        user.setUserID(1337);
-        user.setUsername("Foo");
-
-        Entry e = new Entry(ev, user);
+        Entry e = new Entry(ev, getUserObj());
         // Assert
         assertEquals(e.getEvent(), ev);
 
@@ -56,15 +51,9 @@ public class EntryTest {
 
     @Test
     public void testEntryFieldUser() {
-        int userId = 1337;
-
-        User user = new User();
-        user.setUserID(userId);
-        user.setUsername("Foo");
-
-        Entry e = new Entry(Event.USER_LOGIN, user);
+        Entry e = new Entry(Event.USER_LOGIN, getUserObj());
         String[] s = e.getEntry();
         // Assert
-        assertEquals(s[EntryCol.USER.ordinal()], String.valueOf(userId));
+        assertEquals(s[EntryCol.USER.ordinal()], "1337");
     }
 }
