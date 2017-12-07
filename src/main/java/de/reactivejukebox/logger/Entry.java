@@ -50,10 +50,6 @@ public class Entry {
     }
 
     public String getLogString(char delimiter) {
-        if (!isValid()) {
-            // TODO throw new Entry.IsInvalid();
-        }
-
         StringBuilder msg = new StringBuilder();
         for (String colValue : getEntry()) {
             msg.append(colValue);
@@ -66,44 +62,4 @@ public class Entry {
     public String getLogString() {
         return getLogString(';');
     }
-
-    private boolean isColUnset(final EntryCol col) {
-        // TODO implement
-        // entry[col.ordinal()] != ""
-        return false;
-    }
-
-    private boolean allCollumesSet(final EntryCol[] cols) {
-        // do check nothing
-        if (cols == null)
-            return true;
-
-        for (EntryCol col : cols) {
-            if (isColUnset(col))
-                return false;
-        }
-        return true;
-    }
-
-    public boolean isValid() {
-        // TODO tests
-        // entry.length == EntryCol.values().length
-        EntryCol[] cols = null;
-        switch (ev) {
-            case USER_LOGIN:
-                break;
-            case RADIO_START:
-                cols = new EntryCol[]{EntryCol.USER};
-                break;
-            // TODO implement
-            default:
-                throw new AssertionError("Unknown Event " + ev.toString());
-        }
-        return allCollumesSet(cols);
-    }
-
-
-    public class IsInvalid extends Exception {
-    }
-
 }
