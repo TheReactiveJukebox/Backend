@@ -6,6 +6,7 @@ import de.reactivejukebox.model.User;
 public class HistoryPostEntry extends Entry {
     public HistoryPostEntry(User user, HistoryEntryPlain historyEntry) {
         super(Event.HISTORY_POST, user);
-        // TODO historyEntry
+        setValue(EntryCol.RADIO, historyEntry.getRadioId());
+        setValue(EntryCol.SONG, historyEntry.getTrackId());
     }
 }
