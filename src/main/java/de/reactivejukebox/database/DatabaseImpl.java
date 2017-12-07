@@ -7,9 +7,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class DatabaseImpl implements Database {
-    private static final String DB_URL = "jdbc:postgresql://database:5432/reactivejukebox";
-    private static final String DB_USER = "backend";
-    private static final String DB_PASSWORD = "xxx";
+    public static final String DB_URL = "jdbc:postgresql://database:5432/reactivejukebox";
+    public static final String DB_USER = "backend";
+    public static final String DB_PASSWORD = "xxx";
 
     private ComboPooledDataSource dataSource;
 
