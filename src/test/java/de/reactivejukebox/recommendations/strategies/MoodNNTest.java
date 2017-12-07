@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static org.mockito.Matchers.floatThat;
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.*;
 
@@ -40,7 +41,7 @@ public class MoodNNTest {
 
         setModelInstance(m);
 
-        Random rng = new Random(0);
+        Random rng = new Random(5);
         Album stub = new Album();
 
         Artist checker;
@@ -77,10 +78,14 @@ public class MoodNNTest {
         Reporter.log("Size: "+result.size(),true);
 
         assertTrue(result.size() == 20);
-
+        float dist= -1;
         for (Track e:result){
             Reporter.log(e.toString(),true);
             assertTrue(e.getArtist().getId()==1);
+            float current = Math.abs(e.getArousal()-0.4f)+Math.abs(e.getValence()+0.4f);
+            Reporter.log(Float.toString(current),true);
+            assertTrue(current>=dist);
+            dist = current;
         }
 
         radio.getStartTracks().clear();
