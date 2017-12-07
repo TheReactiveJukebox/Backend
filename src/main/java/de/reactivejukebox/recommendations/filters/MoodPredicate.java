@@ -10,22 +10,25 @@ import java.util.function.Predicate;
  */
 public class MoodPredicate implements Predicate<Track>{
 
-    private float arousal, valence;
+    private float arousal, valence, window;
 
     public MoodPredicate(Radio radio){
-
         this(radio.getArousal(),radio.getValence());
-
     }
 
-    public MoodPredicate(float arousal,float valence){
+    public MoodPredicate(float arousal, float valence){
+        this(arousal,valence, 0.1f);
+    }
+
+    public MoodPredicate(float arousal, float valence, float window){
         this.arousal = arousal;
-        this.valence = (valence+1)/2;
+        this.valence = valence;
+        this.window = window;
     }
 
     @Override
     public boolean test(Track track) {
-        return Math.abs(track.getArousal()-this.arousal)<=0.05 &&
-                Math.abs(track.getValence()-this.valence)<=0.05;
+        return Math.abs(track.getArousal()-this.arousal)<=this.window &&
+                Math.abs(track.getValence()-this.valence)<=this.window;
     }
 }

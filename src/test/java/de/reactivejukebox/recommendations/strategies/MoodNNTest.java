@@ -3,6 +3,7 @@ package de.reactivejukebox.recommendations.strategies;
 import com.sun.org.apache.regexp.internal.RE;
 import de.reactivejukebox.model.*;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
+import de.reactivejukebox.recommendations.filters.MoodPredicate;
 import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.Reporter;
@@ -54,6 +55,8 @@ public class MoodNNTest {
             }
         }
 
+        Model.getInstance().getTracks().put(500,new Track());
+
         ArrayList<HistoryEntry> history = new ArrayList<>();
         for(int i=0;i<80;i++)
         history.add(new HistoryEntry(i,Model.getInstance().getTracks().get(i),new Radio(),new User(),new Timestamp(1))); //Add track to history
@@ -72,13 +75,12 @@ public class MoodNNTest {
         RecommendationStrategy strat= new MoodNN(radio,new ArrayList<Track>(),20);
         List<Track> result = strat.getRecommendations();
         Reporter.log("Size: "+result.size(),true);
-        float prevScore=-1;
+
+        assertTrue(result.size() == 20);
+
         for (Track e:result){
             Reporter.log(e.toString(),true);
             assertTrue(e.getArtist().getId()==1);
-            Reporter.log("Prev: "+prevScore+", Current: "+ e.getRecScore(),true);
-            assertTrue(prevScore<=e.getRecScore());
-            prevScore = e.getRecScore();
         }
 
         radio.getStartTracks().clear();
@@ -87,13 +89,10 @@ public class MoodNNTest {
 
         result = strat.getRecommendations();
         Reporter.log("Size: "+result.size(),true);
-        prevScore=-1;
+        assertTrue(result.size() == 20);
         for (Track e:result){
             Reporter.log(e.toString(),true);
             assertTrue(e.getArtist().getId()==2);
-            Reporter.log("Prev: "+prevScore+", Current: "+ e.getRecScore(),true);
-            assertTrue(prevScore<=e.getRecScore());
-            prevScore = e.getRecScore();
         }
 
         radio.getStartTracks().clear();
@@ -102,13 +101,10 @@ public class MoodNNTest {
 
         result = strat.getRecommendations();
         Reporter.log("Size: "+result.size(),true);
-        prevScore=-1;
+        assertTrue(result.size() == 20);
         for (Track e:result){
             Reporter.log(e.toString(),true);
             assertTrue(e.getArtist().getId()==3);
-            Reporter.log("Prev: "+prevScore+", Current: "+ e.getRecScore(),true);
-            assertTrue(prevScore<=e.getRecScore());
-            prevScore = e.getRecScore();
         }
 
         radio.getStartTracks().clear();
@@ -117,24 +113,21 @@ public class MoodNNTest {
 
         result = strat.getRecommendations();
         Reporter.log("Size: "+result.size(),true);
-        prevScore=-1;
+        assertTrue(result.size() == 20);
         for (Track e:result){
             assertTrue(e.getArtist().getId()==4);
-            assertTrue(prevScore<=e.getRecScore());
-            prevScore = e.getRecScore();
         }
 
 
         radio.getStartTracks().add(new Track(888,"",null, null,"","",
                 0,0,null,0f,0f,-0.4f,0.4f));
-
+        assertTrue(result.size() == 20);
         result = strat.getRecommendations();
         Reporter.log("Size: "+result.size(),true);
-        prevScore=-1;
+
         for (Track e:result){
-            assertTrue(e.getArtist().getId()==1 || e.getArtist().getId() == 4);
-            assertTrue(prevScore<=e.getRecScore());
-            prevScore = e.getRecScore();
+            Reporter.log(e.toString(),true);
+            assertTrue(e.getArtist().getId()==1 || e.getArtist().getId() == 4); ;
         }
 
     }

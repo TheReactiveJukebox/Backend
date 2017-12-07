@@ -30,27 +30,27 @@ public class MoodNN implements RecommendationStrategy{
         this.upcoming = upcoming;
         this.resultCount = resultCount;
     }
+
     @Override
     public List<Track> getRecommendations() {
-        return selectedTracks.stream().distinct().flatMap(this::nearestNeighbours).distinct()
-                .sorted(Comparator.comparingDouble(Track::getRecScore))
+        return selectedTracks.stream().distinct().flatMap(this::nearestNeighbours).distinct()//Find near Mood
+                .sorted(((o1, o2) -> Float.compare(calcDistance(o1),calcDistance(o2))))//Sort with distance
                 .limit(resultCount)
                 .collect(Collectors.toList());
     }
 
     private Stream<Track> nearestNeighbours(Track t){
-        Stream<Track> possibleTracks = radio.filter(Model.getInstance().getTracks().stream());
-        float v = t.getValence();
-        float a = t.getArousal();
-        possibleTracks = possibleTracks.filter(new MoodPredicate(a,v))
-                .map(track -> calcDistance(track,a,v));
-        return  possibleTracks.filter(new HistoryPredicate(this.radio,this.upcoming));
+        return radio.filter(Model.getInstance().getTracks().stream())//Filter Radio presets
+                .filter(new MoodPredicate(t.getArousal(),t.getValence()))//Filter track mood
+                .filter(new HistoryPredicate(this.radio,this.upcoming));//Filter history
     }
 
-    private Track calcDistance(Track t, float a, float v){
-        t.setRecScore(
-                Math.abs(t.getArousal()-a)+Math.abs(t.getValence()-v)
-        );
-        return t;
+    private float calcDistance(Track t){
+        float result = Float.MAX_VALUE;
+        for (Track e:selectedTracks){//Get minimal Distance to the selected Tracks
+            float dist = Math.abs(t.getArousal()-e.getArousal())+Math.abs(t.getValence()-e.getValence());
+            result = dist < result ? dist : result;
+        }
+        return result;
     }
 }

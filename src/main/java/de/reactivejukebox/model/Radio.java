@@ -167,7 +167,7 @@ public class Radio implements Serializable {
         }
 
         if (getArousal() != null || getValence() != null) {
-            trackStream = trackStream.filter(new MoodPredicate(getArousal(), getValence()));
+            trackStream = trackStream.filter(new MoodPredicate(this));
 
         }
         if (getMinSpeed() != null || getMaxSpeed() != null) {
