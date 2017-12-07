@@ -34,11 +34,11 @@ public class Entry {
     }
     }
 
-    private void setValue(final EntryCol col, final String value) {
+    void setValue(final EntryCol col, final String value) {
         entry[col.ordinal()] = value;
     }
 
-    private void setValue(final EntryCol col, final long value) {
+    void setValue(final EntryCol col, final long value) {
         entry[col.ordinal()] = String.valueOf(value);
     }
 
