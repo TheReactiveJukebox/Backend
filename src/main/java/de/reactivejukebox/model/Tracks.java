@@ -27,6 +27,13 @@ public class Tracks implements Iterable<Track> {
     private static final String SQL_OLD =
             "select published from song where published >= '1000-01-01' order by published limit 1;";
 
+    private static final String SQL_MINSPEED =
+            "select bpm from song where bpm > 1 order by published limit 1;";
+
+    private static final String SQL_MAXSPEED =
+            "select bpm from song where bpm > 1 order by published DESC limit 1;";
+
+
     protected Map<Integer, Track> tracks;
 
     public Tracks() {
@@ -86,7 +93,8 @@ public class Tracks implements Iterable<Track> {
         return tracks.size();
     }
 
-    public int getOldestYear() throws SQLException {
+    public TrackParameter getTrackParameter() throws SQLException {
+        TrackParameter trackParameter = new TrackParameter();
         Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement stmnt = con.prepareStatement(SQL_OLD);
         ResultSet rs = stmnt.executeQuery();
@@ -98,7 +106,22 @@ public class Tracks implements Iterable<Track> {
                 newCalendar.setTimeInMillis(newDate.getTime());
             }
         }
-        return newCalendar.get(Calendar.YEAR);
+        trackParameter.setOldestTrack(newCalendar.get(Calendar.YEAR));
+
+        stmnt = con.prepareStatement(SQL_MINSPEED);
+        rs = stmnt.executeQuery();
+        if (rs.next()) {
+            trackParameter.setMinSpeed(rs.getFloat("bpm"));
+        }
+        stmnt = con.prepareStatement(SQL_MAXSPEED);
+        rs = stmnt.executeQuery();
+        if (rs.next()) {
+            trackParameter.setMaxSpeed(rs.getFloat("bpm"));
+        }
+
+        con.close();
+        return trackParameter;
+
     }
 
     @Override

@@ -110,10 +110,10 @@ public class TrackService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     //@Secured
-    @Path("/oldestYear")
+    @Path("/TrackParameter")
     public Response earliest() {
         try{
-            return Response.ok().entity(Model.getInstance().getTracks().getOldestYear()).build();
+            return Response.ok().entity(Model.getInstance().getTracks().getTrackParameter()).build();
         }catch (Exception e){
             e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
