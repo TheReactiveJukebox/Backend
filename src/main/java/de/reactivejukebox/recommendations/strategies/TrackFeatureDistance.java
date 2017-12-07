@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class TrackFeatureDistance implements RecommendationStrategy{
 
-        private static String SQL_QUERY = "SELECT  feature_distance.to AS id, distance FROM feature_distance WHERE from=? ORDER BY distance ASC ";
+        private static String SQL_QUERY = "SELECT  feature_distance.track_to AS id, distance FROM feature_distance WHERE track_from=? ORDER BY distance ASC ";
         private int requestedResults;
         private Tracks tracks;
         private Collection<Track> upcoming;
