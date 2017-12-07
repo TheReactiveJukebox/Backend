@@ -109,8 +109,8 @@ public class TrackService {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    //@Secured
-    @Path("/TrackParameter")
+    @Secured
+    @Path("/trackParameter")
     public Response earliest() {
         try{
             return Response.ok().entity(Model.getInstance().getTracks().getTrackParameter()).build();
