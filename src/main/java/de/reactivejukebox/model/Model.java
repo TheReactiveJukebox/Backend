@@ -18,6 +18,7 @@ public class Model {
     private Radios radios;
     private TrackFeedbacks trackFeedbacks;
     private Genres genres;
+    private Playlists playlists;
     private SpecialFeedbacks specialFeedbacks;
 
     private Model() {
@@ -40,6 +41,7 @@ public class Model {
         trackFeedbacks = new TrackFeedbacks(users, tracks);
         specialFeedbacks = new SpecialFeedbacks(users);
         historyEntries = new HistoryEntries(users, tracks, radios);
+        playlists = new Playlists();
 
     }
 
@@ -84,5 +86,9 @@ public class Model {
 
     public SpecialFeedbacks getSpecialFeedbacks() {
         return specialFeedbacks;
+    }
+
+    public Playlists getPlaylists() {
+        return playlists;
     }
 }
