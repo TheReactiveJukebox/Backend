@@ -20,21 +20,26 @@ public class Entry {
     public Entry(final Event ev, final User user) {
         this.ev = ev;
         setValue(EntryCol.EVENT, ev.toString());
-        setValue(EntryCol.USER, user.getPlainObject().getId().toString());
+        setValue(EntryCol.USER, user.getId());
         long unixTime = System.currentTimeMillis() / 1000L;
-        setValue(EntryCol.TIMESTAMP, String.valueOf(unixTime));
+        setValue(EntryCol.TIMESTAMP, unixTime);
     }
 
     public Entry(final Event ev, final UserPlain user) {
         this.ev = ev;
         setValue(EntryCol.EVENT, ev.toString());
-        setValue(EntryCol.USER, user.getId().toString());
+        setValue(EntryCol.USER, user.getId());
         long unixTime = System.currentTimeMillis() / 1000L;
-        setValue(EntryCol.TIMESTAMP, String.valueOf(unixTime));
+        setValue(EntryCol.TIMESTAMP, unixTime);
+    }
     }
 
     private void setValue(final EntryCol col, final String value) {
         entry[col.ordinal()] = value;
+    }
+
+    private void setValue(final EntryCol col, final long value) {
+        entry[col.ordinal()] = String.valueOf(value);
     }
 
     public Event getEvent() {
