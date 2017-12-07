@@ -98,13 +98,27 @@ public class TrackService {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
             // Process input
-            IndirectFeedbackEntries.put(feedbackPlain);
+            IndirectFeedbackPlain feedbackReturn = IndirectFeedbackEntries.put(feedbackPlain);
             // Build response
-            return Response.ok().build();
+            return Response.ok().entity(feedbackReturn).build();
         } catch (Exception e) {
             e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    //@Secured
+    @Path("/oldestYear")
+    public Response earliest() {
+        try{
+            return Response.ok().entity(Model.getInstance().getTracks().getOldestYear()).build();
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+
     }
 
 }

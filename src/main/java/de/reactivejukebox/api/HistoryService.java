@@ -30,20 +30,20 @@ public class HistoryService {
             return Response.ok().entity(historyEntry).build();
         } catch (SQLException e) {
             e.printStackTrace();
-            return Response.status(500).entity("An error occurred while communicating with the database.").build();
+            return Response.status(500).entity("{\"message\": \"Error while commmunicating with database\"}").build();
         }
     }
 
     @DELETE
     @Secured
     @Path("/")
-    public Response deleteEntry(@QueryParam("id") Integer historyId) {
+    public Response deleteEntry(@QueryParam("id") Integer historyId, @Context User user) {
         try {
-            new HistoryHandler().deleteHistoryEntry(historyId);
+            new HistoryHandler().deleteHistoryEntry(historyId, user);
             return Response.ok().build();
         } catch (SQLException e) {
             e.printStackTrace();
-            return Response.status(500).entity("An error occurred while communicating with the database.").build();
+            return Response.status(500).entity("{\"message\": \"Error while commmunicating with database\"}").build();
         }
     }
 }

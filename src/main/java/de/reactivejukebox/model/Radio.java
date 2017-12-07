@@ -3,6 +3,7 @@ package de.reactivejukebox.model;
 import de.reactivejukebox.recommendations.filters.GenrePredicate;
 import de.reactivejukebox.recommendations.filters.HistoryPredicate;
 import de.reactivejukebox.recommendations.filters.PublishedPredicate;
+import de.reactivejukebox.recommendations.filters.SpeedPredicate;
 import de.reactivejukebox.recommendations.strategies.StrategyType;
 
 import java.io.Serializable;
@@ -15,33 +16,45 @@ import java.util.stream.Stream;
 
 public class Radio implements Serializable {
 
-    private int id;
+    private Integer id;
     private User user;
     private String[] genres;
-    private String mood;
-    private int startYear;
-    private int endYear;
+    private Integer startYear;
+    private Integer endYear;
+    private Float dynamic;
+    private Float arousal;
+    private Float valence;
+    private Float minSpeed;
+    private Float maxSpeed;
     private List<Track> startTracks;
     private StrategyType algorithm;
 
 
     public Radio(
-            int id,
+            Integer id,
             User user,
             String[] genres,
-            String mood,
-            int startYear,
-            int endYear,
+            Integer startYear,
+            Integer endYear,
+            Float dynamic,
+            Float arousal,
+            Float valence,
+            Float minSpeed,
+            Float maxSpeed,
             List<Track> startTracks,
             StrategyType algorithm) {
         this.id = id;
         this.user = user;
         this.genres = genres;
-        this.mood = mood;
         this.startYear = startYear;
+        this.dynamic = dynamic;
         this.endYear = endYear;
         this.startTracks = startTracks;
         this.algorithm = algorithm;
+        this.arousal = arousal;
+        this.valence = valence;
+        this.maxSpeed = maxSpeed;
+        this.minSpeed = minSpeed;
     }
 
     public Radio() {
@@ -56,11 +69,11 @@ public class Radio implements Serializable {
         this.user = user;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -72,27 +85,19 @@ public class Radio implements Serializable {
         this.genres = genres;
     }
 
-    public String getMood() {
-        return mood;
-    }
-
-    public void setMood(String mood) {
-        this.mood = mood;
-    }
-
-    public int getStartYear() {
+    public Integer getStartYear() {
         return startYear;
     }
 
-    public void setStartYear(int startYear) {
+    public void setStartYear(Integer startYear) {
         this.startYear = startYear;
     }
 
-    public int getEndYear() {
+    public Integer getEndYear() {
         return endYear;
     }
 
-    public void setEndYear(int endYear) {
+    public void setEndYear(Integer endYear) {
         this.endYear = endYear;
     }
 
@@ -112,12 +117,55 @@ public class Radio implements Serializable {
         this.algorithm = algorithm;
     }
 
+    public void setDynamic(Float dynamic) {
+        this.dynamic = dynamic;
+    }
+
+    public Float getArousal() {
+        return arousal;
+    }
+
+    public void setArousal(Float arousal) {
+        this.arousal = arousal;
+    }
+
+    public Float getValence() {
+        return valence;
+    }
+
+    public void setValence(Float valence) {
+        this.valence = valence;
+    }
+
+    public Float getDynamic() {
+        return dynamic;
+    }
+
+    public Float getMinSpeed() {
+        return minSpeed;
+    }
+
+    public void setMinSpeed(Float minSpeed) {
+        this.minSpeed = minSpeed;
+    }
+
+    public Float getMaxSpeed() {
+        return maxSpeed;
+    }
+
+    public void setMaxSpeed(Float maxSpeed) {
+        this.maxSpeed = maxSpeed;
+    }
+
     public Stream<Track> filter(Stream<Track> trackStream) {
         if (getGenres() != null && getGenres().length > 0) {
             trackStream = trackStream.filter(new GenrePredicate(this));
         }
-        if (getStartYear() > 0 && getEndYear() > 0) {
+        if (getStartYear() != null || getEndYear() != null) {
             trackStream = trackStream.filter(new PublishedPredicate(this));
+        }
+        if (getMinSpeed()!= null || getMaxSpeed()!= null ){
+            trackStream = trackStream.filter(new SpeedPredicate(this));
         }
         return trackStream;
     }
@@ -141,6 +189,6 @@ public class Radio implements Serializable {
             }
         }
         String algorithmName = algorithm != null ? algorithm.name() : null; // workaround for misuse of plain object
-        return new RadioPlain(id, user.getId(), genres, mood, startYear, endYear, algorithmName, ids);
+        return new RadioPlain(id, user.getId(), genres, startYear, endYear, algorithmName, ids, dynamic, arousal, valence, minSpeed, maxSpeed);
     }
 }

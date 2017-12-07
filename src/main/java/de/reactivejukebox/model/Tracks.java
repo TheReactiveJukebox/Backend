@@ -1,13 +1,12 @@
 package de.reactivejukebox.model;
 
+import de.reactivejukebox.database.DatabaseProvider;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Spliterator;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -25,6 +24,9 @@ public class Tracks implements Iterable<Track> {
     private static final String SQL_GENRE =
             "SELECT genre.name FROM genre, song_genre WHERE song_genre.songid  = ? " +
                     "AND song_genre.genreid = genre.id";
+
+    private static final String SQL_OLD =
+            "select published from song where published >= '1000-01-01' order by published limit 1;";
 
     protected Map<Integer, Track> tracks;
 
@@ -75,8 +77,6 @@ public class Tracks implements Iterable<Track> {
         return tracks.get(id);
     }
 
-
-    // TODO if need be: write changes back to database
     public Track put(int id, Track track) {
         return tracks.put(id, track);
     }
@@ -87,6 +87,21 @@ public class Tracks implements Iterable<Track> {
 
     public int size() {
         return tracks.size();
+    }
+
+    public int getOldestYear() throws SQLException {
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        PreparedStatement stmnt = con.prepareStatement(SQL_OLD);
+        ResultSet rs = stmnt.executeQuery();
+        Calendar newCalendar = new GregorianCalendar();
+        if (rs.next()) {
+            java.sql.Date newDate = rs.getDate("published");
+            // check, if the track has a published date and set it, if present. If we have no date available, we just set null.
+            if (newDate != null) {
+                newCalendar.setTimeInMillis(newDate.getTime());
+            }
+        }
+        return newCalendar.get(Calendar.YEAR);
     }
 
     @Override

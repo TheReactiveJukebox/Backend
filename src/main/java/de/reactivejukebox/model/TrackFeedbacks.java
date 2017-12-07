@@ -20,22 +20,13 @@ import java.util.stream.StreamSupport;
  * TrackFeedbacks is a class containing all the given track feedbacks. It handles all actions concerning adding,
  * receiving or removing track feedback.
  */
-public class TrackFeedbacks implements Iterable<TrackFeedback> {
+public class TrackFeedbacks {
     protected Users users;
-    protected Radios radios;
     protected Tracks tracks;
-    protected PreparedStatementBuilder stmnt;
-    protected Connection con;
-    protected ConcurrentHashMap<Integer, TrackFeedback> feedbackById;
-    protected ConcurrentHashMap<Integer, ArrayList<TrackFeedback>> feedbacksByUserId;
-    protected ConcurrentHashMap<Integer, ArrayList<TrackFeedback>> feedbacksByRadioId;
 
-    public TrackFeedbacks(Users users, Tracks tracks, Radios radios) {
-        feedbackById = new ConcurrentHashMap<>();
-        feedbacksByUserId = new ConcurrentHashMap<>();
-        feedbacksByRadioId = new ConcurrentHashMap<>();
+
+    public TrackFeedbacks(Users users, Tracks tracks) {
         this.users = users;
-        this.radios = radios;
         this.tracks = tracks;
     }
 
@@ -49,115 +40,44 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
      */
     public TrackFeedback put(TrackFeedbackPlain feedback) throws SQLException {
         toDB(feedback);
-        feedback = fromDbByFeedback(feedback);
-        TrackFeedback newTrackFeedback = build(feedback);
-
-        feedbackById.putIfAbsent(newTrackFeedback.getId(), newTrackFeedback);
-        this.putIfAbsent(feedbacksByUserId, newTrackFeedback.getUser().getId(), newTrackFeedback);
-        this.putIfAbsent(feedbacksByRadioId, newTrackFeedback.getRadio().getId(), newTrackFeedback);
+        TrackFeedback newTrackFeedback = get(feedback);
         return newTrackFeedback;
     }
 
-    /**
-     * Puts a trackFeedback into a hashmap containing an id as keys and an ArrayList of trackFeedbacks as values. If the ArrayList
-     * for the given id does not exist, it will be created otherwise trackFeedback will be inserted in this list.
-     *
-     * @param hashMap       the hashmap to put trackFeedback into
-     * @param id            the key for the ArrayList to put trackFeedback into
-     * @param trackFeedback the track feedback to put into
-     */
-    private void putIfAbsent(ConcurrentHashMap<Integer, ArrayList<TrackFeedback>> hashMap, Integer id, TrackFeedback trackFeedback) {
-        ArrayList<TrackFeedback> tmpList;
-        if (hashMap.containsKey(id)) {
-            hashMap.get(id).add(trackFeedback);
-        } else {
-            tmpList = new ArrayList<>();
-            tmpList.add(trackFeedback);
-            hashMap.put(id, tmpList);
-        }
-
-    }
-
     public TrackFeedback get(int id) throws SQLException {
-        TrackFeedback trackFeedback;
-        if (feedbackById.containsKey(id)) {
-            trackFeedback = feedbackById.get(id);
-        } else {
-            trackFeedback = build(fromDB(id));
-            feedbackById.putIfAbsent(trackFeedback.getId(), trackFeedback);
-            this.putIfAbsent(feedbacksByUserId, trackFeedback.getUser().getId(), trackFeedback);
-            this.putIfAbsent(feedbacksByRadioId, trackFeedback.getRadio().getId(), trackFeedback);
-        }
-        return trackFeedback;
+        return build(fromDB(id));
     }
 
     public ArrayList<TrackFeedback> getByUserId(int id) throws SQLException {
-        TrackFeedback tmpTrackFeedback;
         ArrayList<TrackFeedback> trackFeedbacks;
         ArrayList<TrackFeedbackPlain> feedbacksPlain;
-        if (feedbacksByUserId.containsKey(id)) {
-            trackFeedbacks = feedbacksByUserId.get(id);
-        } else {
             feedbacksPlain = this.fromDbByUserId(id);
-            trackFeedbacks = new ArrayList<>();
-            for (TrackFeedbackPlain f : feedbacksPlain) {
-                tmpTrackFeedback = this.build(f);
-                trackFeedbacks.add(tmpTrackFeedback);
-                feedbackById.putIfAbsent(tmpTrackFeedback.getId(), tmpTrackFeedback);
-                this.putIfAbsent(feedbacksByUserId, tmpTrackFeedback.getUser().getId(), tmpTrackFeedback);
-                this.putIfAbsent(feedbacksByRadioId, tmpTrackFeedback.getRadio().getId(), tmpTrackFeedback);
-            }
-        }
+            trackFeedbacks = build(feedbacksPlain);
         return trackFeedbacks;
     }
 
     public TrackFeedback get(TrackFeedbackPlain feedback) throws SQLException {
-        return get(feedback.getId());
+        return get(feedback.getTrackId(),feedback.getUserId());
     }
 
-
-    @Override
-    public Iterator<TrackFeedback> iterator() {
-        return feedbackById.values().iterator();
+    public TrackFeedback get(int trackId, int userId)throws SQLException{
+        return build(fromDbByTrack(trackId, userId));
     }
 
-    @Override
-    public void forEach(Consumer<? super TrackFeedback> consumer) {
-        feedbackById.values().forEach(consumer);
-    }
-
-    @Override
-    public Spliterator<TrackFeedback> spliterator() {
-        return feedbackById.values().spliterator();
-    }
-
-    public Stream<TrackFeedback> stream() {
-        return StreamSupport.stream(spliterator(), false);
-    }
 
     private TrackFeedback build(TrackFeedbackPlain feedback) throws SQLException {
         TrackFeedback newTrackFeedback = new TrackFeedback();
 
-        newTrackFeedback.setRadio(radios.get(feedback.getRadioId()));
         newTrackFeedback.setUser(users.get(feedback.getUserId()));
         newTrackFeedback.setId(feedback.getId());
         newTrackFeedback.setTrack(tracks.get(feedback.getTrackId()));
 
-        newTrackFeedback.setSongFeedback(convertToInt(feedback.isSongLiked(), feedback.isSongDisliked()));
-        newTrackFeedback.setArtistFeedback(convertToInt(feedback.isArtistLiked(), feedback.isArtistDisliked()));
-        newTrackFeedback.setSpeedFeedback(convertToInt(feedback.isSpeedLiked(), feedback.isSpeedDisliked()));
-        newTrackFeedback.setGenreFeedback(convertToInt(feedback.isGenreLiked(), feedback.isGenreDisliked()));
-        newTrackFeedback.setDynamicsFeedback(convertToInt(feedback.isDynamicsLiked(), feedback.isDynamicsDisliked()));
-        newTrackFeedback.setPeriodFeedback(convertToInt(feedback.isPeriodLiked(), feedback.isPeriodDisliked()));
-        newTrackFeedback.setMoodFeedback(convertToInt(feedback.isMoodLiked(), feedback.isMoodDisliked()));
+        newTrackFeedback.setSongFeedback(feedback.getSongFeedback());
+        newTrackFeedback.setSpeedFeedback(feedback.getSpeedFeedback());
+        newTrackFeedback.setDynamicsFeedback(feedback.getDynamicsFeedback());
+        newTrackFeedback.setMoodFeedback(feedback.getMoodFeedback());
 
         return newTrackFeedback;
-    }
-
-    private int convertToInt(boolean liked, boolean notLiked) {
-        if (liked) return 1;
-        if (notLiked) return -1;
-        return 0;
     }
 
     /**
@@ -179,7 +99,7 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
 
     private ArrayList<TrackFeedbackPlain> fromDbByUserId(int id) throws SQLException {
         ArrayList<TrackFeedbackPlain> feedbacks = new ArrayList<>();
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM feedback WHERE userid = ? ORDER BY id DESC;");
         getFeedback.setInt(1, id);
         ResultSet rs = getFeedback.executeQuery();
@@ -190,13 +110,12 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
         return feedbacks;
     }
 
-    private TrackFeedbackPlain fromDbByFeedback(TrackFeedbackPlain feedback) throws SQLException {
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
+    private TrackFeedbackPlain fromDbByTrack(int trackId, int userId) throws SQLException {
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM feedback WHERE userid = ? " +
-                "AND radioid = ?  AND songid = ? ORDER BY id DESC;");
-        getFeedback.setInt(1, feedback.getUserId());
-        getFeedback.setInt(2, feedback.getRadioId());
-        getFeedback.setInt(3, feedback.getTrackId());
+                " AND songid = ? ORDER BY id DESC;");
+        getFeedback.setInt(1, userId);
+        getFeedback.setInt(2, trackId);
         ResultSet rs = getFeedback.executeQuery();
         if (rs.next()) {
             TrackFeedbackPlain result = this.buildPlain(rs);
@@ -204,60 +123,17 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
             return result;
         } else {
             con.close();
-            throw new SQLException("TrackFeedback was not found");
+            TrackFeedbackPlain result = new TrackFeedbackPlain();
+            result.setUserId(userId);
+            result.setTrackId(trackId);
+            return result;
         }
 
     }
-
-    private TrackFeedbackPlain buildPlain(ResultSet rs) throws SQLException {
-        TrackFeedbackPlain feedback = new TrackFeedbackPlain();
-        feedback.setId(rs.getInt("id"));
-        feedback.setUserId(rs.getInt("userid"));
-        feedback.setRadioId(rs.getInt("radioid"));
-        feedback.setTrackId(rs.getInt("songid"));
-
-        feedback.setSongLiked(rs.getInt("feedbacksong") > 0);
-        feedback.setSongDisliked(rs.getInt("feedbacksong") < 0);
-
-        feedback.setArtistLiked(rs.getInt("feedbackartist") > 0);
-        feedback.setArtistDisliked(rs.getInt("feedbackartist") < 0);
-
-        feedback.setSpeedLiked(rs.getInt("feedbackspeed") > 0);
-        feedback.setSpeedDisliked(rs.getInt("feedbackspeed") < 0);
-
-        feedback.setGenreLiked(rs.getInt("feedbackgenre") > 0);
-        feedback.setGenreDisliked(rs.getInt("feedbackgenre") < 0);
-
-        feedback.setDynamicsLiked(rs.getInt("feedbackdynamics") > 0);
-        feedback.setDynamicsDisliked(rs.getInt("feedbackdynamics") < 0);
-
-        feedback.setPeriodLiked(rs.getInt("feedbackperiod") > 0);
-        feedback.setPeriodDisliked(rs.getInt("feedbackperiod") < 0);
-
-        feedback.setMoodLiked(rs.getInt("feedbackmood") > 0);
-        feedback.setMoodDisliked(rs.getInt("feedbackmood") < 0);
-
-        return feedback;
-    }
-
-
-    private ArrayList<TrackFeedbackPlain> fromDbByRadioId(int id) throws SQLException {
-        ArrayList<TrackFeedbackPlain> feedbacks = new ArrayList<>();
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM feedback WHERE radioid = ? ORDER BY id DESC;");
-        getFeedback.setInt(1, id);
-        ResultSet rs = getFeedback.executeQuery();
-        while (rs.next()) {
-            feedbacks.add(this.buildPlain(rs));
-        }
-        con.close();
-        return feedbacks;
-    }
-
 
     private TrackFeedbackPlain fromDB(int id) throws SQLException {
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        stmnt = new PreparedStatementBuilder()
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        PreparedStatementBuilder stmnt = new PreparedStatementBuilder()
                 .select("*")
                 .from("feedback")
                 .addFilter("Id=?", (query, i) -> query.setInt(i, id));
@@ -273,49 +149,47 @@ public class TrackFeedbacks implements Iterable<TrackFeedback> {
 
     }
 
-    private int[] convertReasonTypesToInts(TrackFeedbackPlain feedback) {
-        int[] list = new int[7];
-
-        list[0] = convertToInt(feedback.isSongLiked(), feedback.isSongDisliked());
-        list[1] = convertToInt(feedback.isArtistLiked(), feedback.isArtistDisliked());
-        list[2] = convertToInt(feedback.isSpeedLiked(), feedback.isSpeedDisliked());
-        list[3] = convertToInt(feedback.isGenreLiked(), feedback.isGenreDisliked());
-        list[4] = convertToInt(feedback.isDynamicsLiked(), feedback.isDynamicsDisliked());
-        list[5] = convertToInt(feedback.isPeriodLiked(), feedback.isPeriodDisliked());
-        list[6] = convertToInt(feedback.isMoodLiked(), feedback.isMoodDisliked());
-
-        return list;
-    }
-
-
     private void toDB(TrackFeedbackPlain feedback) throws SQLException {
 
-        con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        PreparedStatement addFeedback = con.prepareStatement("INSERT INTO feedback (userid, songid, radioid," +
-                " feedbacksong, feedbackartist, feedbackspeed, feedbackgenre, feedbackdynamics, feedbackperiod, feedbackmood) " +
-                "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
-                "ON Conflict (userid, songid, radioid) Do " +
-                "UPDATE Set (feedbacksong, feedbackartist, feedbackspeed, feedbackgenre, " +
-                "feedbackdynamics, feedbackperiod, feedbackmood, time) = " +
-                "(?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP);");
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        PreparedStatement addFeedback = con.prepareStatement("INSERT INTO feedback (userid, songid," +
+                " feedbacksong, feedbackspeed, feedbackdynamics, feedbackmood) " +
+                "VALUES(?, ?, ?, ?, ?, ?) " +
+                "ON Conflict (userid, songid) Do " +
+                "UPDATE Set (feedbacksong, feedbackspeed, " +
+                "feedbackdynamics, feedbackmood, time) = " +
+                "(?, ?, ?, ?, CURRENT_TIMESTAMP);");
 
         addFeedback.setInt(1, feedback.getUserId());
         addFeedback.setInt(2, feedback.getTrackId());
-        addFeedback.setInt(3, feedback.getRadioId());
+        addFeedback.setInt(3, feedback.getSongFeedback());
+        addFeedback.setInt(4, feedback.getSpeedFeedback());
+        addFeedback.setInt(5, feedback.getDynamicsFeedback());
+        addFeedback.setInt(6, feedback.getMoodFeedback());
 
-        int[] values = convertReasonTypesToInts(feedback);
-        int len = Math.min(values.length, 7);
-        for (int i = 0; i < len; i++) { // feedback values for INSERT
-            int index = i + 4;
-            addFeedback.setInt(index, values[i]);
-        }
-        for (int i = 0; i < len; i++) { // feedback values for UPDATE
-            int index = i + 4 + 7;
-            addFeedback.setInt(index, values[i]);
-        }
+        addFeedback.setInt(7, feedback.getSongFeedback());
+        addFeedback.setInt(8, feedback.getSpeedFeedback());
+        addFeedback.setInt(9, feedback.getDynamicsFeedback());
+        addFeedback.setInt(10, feedback.getMoodFeedback());
 
         addFeedback.executeUpdate();
         con.close();
 
     }
+
+    private TrackFeedbackPlain buildPlain(ResultSet rs) throws SQLException {
+        TrackFeedbackPlain feedback = new TrackFeedbackPlain();
+        feedback.setId(rs.getInt("id"));
+        feedback.setUserId(rs.getInt("userid"));
+        feedback.setTrackId(rs.getInt("songid"));
+
+        feedback.setSongFeedback(rs.getInt("feedbacksong"));
+        feedback.setSpeedFeedback(rs.getInt("feedbackspeed"));
+        feedback.setDynamicsFeedback(rs.getInt("feedbackdynamics"));
+        feedback.setMoodFeedback(rs.getInt("feedbackmood"));
+
+
+        return feedback;
+    }
+
 }

@@ -17,6 +17,7 @@ public class TrackPlain implements MusicEntityPlain {
     Date releaseDate;
     float speed;
     float dynamic;
+    TrackFeedbackPlain trackFeedback;
 
     public TrackPlain(int id, String title, int artist, int album, String cover, String file, int duration, int playCount, List<String> genres, Date releaseDate, float speed, float dynamic) {
         this.id = id;
@@ -130,5 +131,13 @@ public class TrackPlain implements MusicEntityPlain {
 
     public void setDynamic(float dynamic) {
         this.dynamic = dynamic;
+    }
+
+    public TrackFeedbackPlain getTrackFeedback() {
+        return trackFeedback;
+    }
+
+    public void setTrackFeedback(TrackFeedbackPlain trackFeedback) {
+        this.trackFeedback = trackFeedback;
     }
 }

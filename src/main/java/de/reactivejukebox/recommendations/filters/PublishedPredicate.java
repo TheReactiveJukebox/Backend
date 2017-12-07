@@ -3,6 +3,7 @@ package de.reactivejukebox.recommendations.filters;
 import de.reactivejukebox.model.Radio;
 import de.reactivejukebox.model.Track;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.function.Predicate;
@@ -17,9 +18,18 @@ public class PublishedPredicate implements Predicate<Track> {
     private Date endDate;
 
     public PublishedPredicate(Radio radio) {
-        startYear = radio.getStartYear();
+        if (radio.getStartYear() == null){
+            startYear = 0;
+        }else{
+            startYear = radio.getStartYear();
+        }
+        if (radio.getEndYear() == null){
+            Calendar now = Calendar.getInstance();   // Gets the current date and time
+            endYear = now.get(Calendar.YEAR);       // The current year
+        }else{
+            endYear = radio.getEndYear();
+        }
         startDate = new GregorianCalendar(startYear,0,1).getTime();
-        endYear = radio.getEndYear();
         endDate = new GregorianCalendar(endYear,11,31).getTime();
     }
 
