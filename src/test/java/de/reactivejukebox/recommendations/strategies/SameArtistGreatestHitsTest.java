@@ -3,18 +3,21 @@ package de.reactivejukebox.recommendations.strategies;
 import de.reactivejukebox.model.*;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
 import org.mockito.Mockito;
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 
+import static de.reactivejukebox.TestTools.setModelInstance;
 import static org.mockito.Mockito.mock;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 public class SameArtistGreatestHitsTest {
     public static int TRACKSARTIST_A = 8;
@@ -42,7 +45,7 @@ public class SameArtistGreatestHitsTest {
         m.getArtists().put(artistA.getId(), artistA);
         m.getAlbums().put(albumA.getId(), albumA);
 
-        for (int i = 0; i < TRACKSARTIST_A ; i++) {
+        for (int i = 0; i < TRACKSARTIST_A; i++) {
             Model.getInstance().getTracks().put(i, new Track(
                     i, "Track A" + i, artistA, albumA, "", "", 180, 4711 + i, new Date(), 120, 0.9f
             ));
@@ -55,7 +58,7 @@ public class SameArtistGreatestHitsTest {
         Model.getInstance().getAlbums().put(albumB.getId(), albumB);
 
         int _startindex = Model.getInstance().getTracks().size();
-        for (int i = _startindex ; i < TRACKSARTIST_B + _startindex; i++) {
+        for (int i = _startindex; i < TRACKSARTIST_B + _startindex; i++) {
             Model.getInstance().getTracks().put(i, new Track(
                     i, "Track B" + i, artistB, albumB, "", "", 191, 4211 - i, new Date(), 120, 0.9f
             ));
@@ -65,10 +68,9 @@ public class SameArtistGreatestHitsTest {
         Radio radio = new Radio();
 
         ArrayList<HistoryEntry> history = new ArrayList<>();
-        history.add(new HistoryEntry(1,Model.getInstance().getTracks().get(1),radio,new User(),new Timestamp(1))); //Add track to history
-        history.add(new HistoryEntry(2,Model.getInstance().getTracks().get(2),radio,new User(),new Timestamp(2))); //Add track to history
-        history.add(new HistoryEntry(3,Model.getInstance().getTracks().get(9),radio,new User(),new Timestamp(3))); //Add track to history
-
+        history.add(new HistoryEntry(1, Model.getInstance().getTracks().get(1), radio, new User(), new Timestamp(1))); //Add track to history
+        history.add(new HistoryEntry(2, Model.getInstance().getTracks().get(2), radio, new User(), new Timestamp(2))); //Add track to history
+        history.add(new HistoryEntry(3, Model.getInstance().getTracks().get(9), radio, new User(), new Timestamp(3))); //Add track to history
 
 
         Mockito.when(h.getListByRadioId(1)).thenReturn(new ArrayList<>());
@@ -86,7 +88,7 @@ public class SameArtistGreatestHitsTest {
         radio.getStartTracks().add(Model.getInstance().getTracks().get(1));
 
         RecommendationStrategy algorithm = new SameArtistGreatestHits(radio, new HashSet<>(), 5);
-        list = algorithm.getRecommendations();
+        list = algorithm.getRecommendations().getTracks();
 
         assertTrue(list.contains(Model.getInstance().getTracks().get(7)));
         assertFalse(list.contains(Model.getInstance().getTracks().get(8)));
@@ -102,7 +104,7 @@ public class SameArtistGreatestHitsTest {
         radio.getStartTracks().add(Model.getInstance().getTracks().get(1));
 
         RecommendationStrategy algorithm = new SameArtistGreatestHits(radio, new HashSet<>(), Integer.MAX_VALUE);
-        list = algorithm.getRecommendations();
+        list = algorithm.getRecommendations().getTracks();
 
         assertTrue(list.contains(Model.getInstance().getTracks().get(7)));
         assertFalse(list.contains(Model.getInstance().getTracks().get(8)));
@@ -112,16 +114,5 @@ public class SameArtistGreatestHitsTest {
     @AfterClass
     public void tearDown() {
         setModelInstance(null);
-    }
-
-    private void setModelInstance(Model m) {
-        try {
-            Field instance = Model.class.getDeclaredField("instance");
-            instance.setAccessible(true);
-            instance.set(null, m);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            System.err.println("Could not set instance field of model class using reflection!");
-            Assert.fail();
-        }
     }
 }
