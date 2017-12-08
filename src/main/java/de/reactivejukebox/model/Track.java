@@ -18,6 +18,9 @@ public class Track implements MusicEntity {
     Date releaseDate;
     float speed;
     float dynamic;
+    float valence;
+    float arousal;
+
 
     public Track(int id, String title, Artist artist, Album album, String cover, String hash, int duration, int playCount, Date date, float speed, float dynamic) {
         this();
@@ -32,6 +35,12 @@ public class Track implements MusicEntity {
         this.releaseDate = date;
         this.speed = speed;
         this.dynamic = dynamic;
+    }
+
+    public Track(int id, String title, Artist artist, Album album, String cover, String hash, int duration, int playCount, Date releaseDate, float speed, float dynamic, float valence, float arousal) {
+        this(id,title,artist,album,cover,hash,duration,playCount,releaseDate,speed,dynamic);
+        this.valence = valence;
+        this.arousal = arousal;
     }
 
     public Track() {
@@ -134,9 +143,26 @@ public class Track implements MusicEntity {
         this.dynamic = dynamic;
     }
 
+    public float getValence() { return valence; }
+
+    public void setValence(float valence) { this.valence = valence; }
+
+    public float getArousal() { return arousal; }
+
+    public void setArousal(float arousal) { this.arousal = arousal; }
+
     @Override
     public TrackPlain getPlainObject() {
         String file = hash.substring(0, 1) + "/" + hash.substring(1, 2) + "/" + hash.substring(2) + ".mp3";
-        return new TrackPlain(id, title, artist.getId(), album.getId(), cover, file, duration, playCount, genres, releaseDate, speed, dynamic);
+        return new TrackPlain(id, title, artist.getId(), album.getId(), cover, file, duration, playCount, genres, releaseDate, speed, dynamic,arousal,valence);
+    }
+
+    @Override
+    public String toString() {
+        return "ID: " + this.getId() + ", " +
+                "Title: " +this.getTitle()+", "+
+                "Artist: " +this.getArtist().getName()+" "+this.getArtist().getId() +", "+
+                "Arousal: " +this.getArousal()+", "+
+                "Valence: " +this.getValence()+", ";
     }
 }
