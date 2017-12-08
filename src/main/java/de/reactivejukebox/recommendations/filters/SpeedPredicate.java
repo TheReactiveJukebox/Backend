@@ -17,6 +17,11 @@ public class SpeedPredicate implements Predicate<Track>
         maxSpeed = radio.getMaxSpeed();
     }
 
+    public SpeedPredicate(float center, float window){
+        this.minSpeed = center - window;
+        this.maxSpeed = center + window;
+    }
+
         @Override
         public boolean test(Track track) {
         boolean result = true;
