@@ -22,8 +22,7 @@ public class TrackFeedbackHandler {
      * @throws SQLException if something goes wrong
      */
     public TrackFeedback addTrackFeedback(TrackFeedback feedback, User user) throws SQLException {
-        feedback.setUserId(user.getId());
-        return trackFeedbacks.put(feedback);
+        return trackFeedbacks.put(feedback, user.getId());
     }
 
 

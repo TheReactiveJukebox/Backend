@@ -71,10 +71,8 @@ public class TrackService {
     @Path("/feedback")
     public Response pushTrackFeedback(TrackFeedback feedback, @Context User user) {
 
-        feedback.setUserId(user.getId());
-
         try {
-            TrackFeedback feedbackReturn = new TrackFeedbackHandler().addTrackFeedback(feedback, user).getPlainObject();
+            TrackFeedback feedbackReturn = new TrackFeedbackHandler().addTrackFeedback(feedback, user);
             return Response.ok().entity(feedbackReturn).build();
         } catch (SQLException e) {
             e.printStackTrace();

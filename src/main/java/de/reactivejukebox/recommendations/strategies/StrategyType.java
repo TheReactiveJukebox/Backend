@@ -4,4 +4,5 @@ public enum StrategyType {
     SAGH,
     RANDOM,
     HYBRID,
+    MOOD,
 }

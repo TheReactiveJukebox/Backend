@@ -2,6 +2,7 @@ package de.reactivejukebox.model;
 
 import de.reactivejukebox.recommendations.filters.GenrePredicate;
 import de.reactivejukebox.recommendations.filters.HistoryPredicate;
+import de.reactivejukebox.recommendations.filters.MoodPredicate;
 import de.reactivejukebox.recommendations.filters.PublishedPredicate;
 import de.reactivejukebox.recommendations.filters.SpeedPredicate;
 import de.reactivejukebox.recommendations.strategies.StrategyType;
@@ -172,6 +173,9 @@ public class Radio implements Serializable {
         }
         if (getMinSpeed()!= null || getMaxSpeed()!= null ){
             predicates.add(new SpeedPredicate(this));
+        }
+        if (getArousal() != null || getValence() != null) {
+            predicates.add(new MoodPredicate(this));
         }
         return predicates;
     }

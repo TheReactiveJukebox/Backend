@@ -18,8 +18,10 @@ public class TrackPlain implements MusicEntityPlain {
     float speed;
     float dynamic;
     TrackFeedback trackFeedback;
+    float arousal;
+    float valence;
 
-    public TrackPlain(int id, String title, int artist, int album, String cover, String file, int duration, int playCount, List<String> genres, Date releaseDate, float speed, float dynamic) {
+    public TrackPlain(int id, String title, int artist, int album, String cover, String file, int duration, int playCount, List<String> genres, Date releaseDate, float speed, float dynamic, float arousal, float valence) {
         this.id = id;
         this.title = title;
         this.artist = artist;
@@ -32,6 +34,8 @@ public class TrackPlain implements MusicEntityPlain {
         this.releaseDate = releaseDate;
         this.speed = speed;
         this.dynamic = dynamic;
+        this.arousal = arousal;
+        this.valence = valence;
     }
 
     public TrackPlain() {
@@ -132,6 +136,14 @@ public class TrackPlain implements MusicEntityPlain {
     public void setDynamic(float dynamic) {
         this.dynamic = dynamic;
     }
+
+    public float getArousal() { return arousal; }
+
+    public void setArousal(float arousal) { this.arousal = arousal; }
+
+    public float getValence() { return valence; }
+
+    public void setValence(float valence) { this.valence = valence; }
 
     public TrackFeedback getTrackFeedback() {
         return trackFeedback;
