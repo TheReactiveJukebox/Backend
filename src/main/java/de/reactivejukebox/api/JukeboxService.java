@@ -10,7 +10,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.sql.SQLDataException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
@@ -30,7 +29,7 @@ public class JukeboxService {
         } catch (SQLException e) {
             e.printStackTrace();
             return Response.status(503)
-                    .entity( "{\"message\": \"Error no Radiostation available\"}")
+                    .entity("{\"message\": \"Error no Radiostation available\"}")
                     .build();
         }
     }
@@ -72,11 +71,11 @@ public class JukeboxService {
             RecommendationStrategy algorithm = new RecommendationStrategyFactory(radio, upcomingTracks)
                     .createStrategy(count);
             // obtain results
-            List<TrackPlain> results = algorithm.getRecommendations().stream()
+            List<TrackPlain> results = algorithm.getRecommendations().getTracks().stream()
                     .map(Track::getPlainObject)
                     .collect(Collectors.toList());
-            for (TrackPlain r:results) {
-                r.setTrackFeedback(feedback.get(r.getId(),user.getId()).getPlainObject());
+            for (TrackPlain r : results) {
+                r.setTrackFeedback(feedback.get(r.getId(), user.getId()).getPlainObject());
             }
 
             return Response.ok(results).build();
@@ -96,6 +95,4 @@ public class JukeboxService {
         List<String> algorithms = Arrays.stream(StrategyType.values()).map(Enum::name).collect(Collectors.toList());
         return Response.ok(algorithms).build();
     }
-
-
 }

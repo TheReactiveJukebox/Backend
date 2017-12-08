@@ -1,25 +1,25 @@
 package de.reactivejukebox.recommendations;
 
 import de.reactivejukebox.model.Track;
-import java.util.ArrayList;
+import java.util.List;
 
 public class Recommendations {
 
-    private final ArrayList<Float> scores;
-    private final ArrayList<Track> tracks;
+    private final List<Float> scores;
+    private final List<Track> tracks;
 
-    public Recommendations(ArrayList<Track> tracks, ArrayList<Float> scores) {
+    public Recommendations(List<Track> tracks, List<Float> scores) {
         this.tracks = tracks;
         this.scores = scores;
     }
 
 
-    public ArrayList<Track> getTracks() {
+    public List<Track> getTracks() {
         return tracks;
     }
 
 
-    public ArrayList<Float> getScores() {
+    public List<Float> getScores() {
         return scores;
     }
 
