@@ -2,6 +2,7 @@ package de.reactivejukebox.recommendations;
 
 import de.reactivejukebox.model.Radio;
 import de.reactivejukebox.model.Track;
+import de.reactivejukebox.recommendations.strategies.HybridStrategy;
 import de.reactivejukebox.recommendations.strategies.RandomTracks;
 import de.reactivejukebox.recommendations.strategies.SameArtistGreatestHits;
 import de.reactivejukebox.recommendations.strategies.StrategyType;
@@ -28,6 +29,8 @@ public class RecommendationStrategyFactory {
             return new SameArtistGreatestHits(radio, upcoming, resultCount);
         } else if (s == StrategyType.RANDOM) {
             return new RandomTracks(radio, upcoming, resultCount);
+        } else if (s == StrategyType.HYBRID) {
+            return new HybridStrategy(this, radio);
         } else throw new NoSuchStrategyException();
     }
 
