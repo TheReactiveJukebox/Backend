@@ -2,6 +2,7 @@ package de.reactivejukebox.recommendations.strategies;
 
 import de.reactivejukebox.model.*;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
+import de.reactivejukebox.recommendations.Recommendations;
 import org.mockito.Mockito;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -9,13 +10,11 @@ import org.testng.annotations.Test;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import static de.reactivejukebox.TestTools.setModelInstance;
 import static org.mockito.Mockito.mock;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
@@ -47,7 +46,7 @@ public class SameArtistGreatestHitsTest {
 
         for (int i = 0; i < TRACKSARTIST_A; i++) {
             Model.getInstance().getTracks().put(i, new Track(
-                    i, "Track A" + i, artistA, albumA, "", "", 180, 4711 + i, new Date(), 120, 0.9f
+                    i, "Track A" + i, artistA, albumA, "", "", 180, 4711 + i*100, new Date(), 120, 0.9f
             ));
         }
 
@@ -81,30 +80,38 @@ public class SameArtistGreatestHitsTest {
 
     @Test
     public void testGetRecommendations() throws Exception {
-        List<Track> list = new ArrayList<>();
-
         Radio radio = new Radio();
         radio.setId(2);
         radio.getStartTracks().add(Model.getInstance().getTracks().get(1));
 
         RecommendationStrategy algorithm = new SameArtistGreatestHits(radio, new HashSet<>(), 5);
-        list = algorithm.getRecommendations().getTracks();
+        Recommendations r = algorithm.getRecommendations();
 
-        assertTrue(list.contains(Model.getInstance().getTracks().get(7)));
-        assertFalse(list.contains(Model.getInstance().getTracks().get(8)));
-        assertFalse(list.contains(Model.getInstance().getTracks().get(2)));
+        assertTrue(r.getTracks().contains(Model.getInstance().getTracks().get(7)));
+        assertFalse(r.getTracks().contains(Model.getInstance().getTracks().get(8)));
+        assertFalse(r.getTracks().contains(Model.getInstance().getTracks().get(2)));
+
+        // test weights: should be sorted by score, first score should be 1
+        Iterator<Float> iter = r.getScores().iterator();
+        float a = iter.next();
+        assertEquals(a, 1f, 0.0001);
+
+        while (iter.hasNext()) {
+            float b = iter.next();
+            assertTrue(b <= a);
+            a = b;
+        }
+
     }
 
     @Test
     public void testGetRecommendationsMoreTracks() throws Exception {
-        List<Track> list = new ArrayList<>();
-
         Radio radio = new Radio();
         radio.setId(2);
         radio.getStartTracks().add(Model.getInstance().getTracks().get(1));
 
         RecommendationStrategy algorithm = new SameArtistGreatestHits(radio, new HashSet<>(), Integer.MAX_VALUE);
-        list = algorithm.getRecommendations().getTracks();
+        List<Track> list = algorithm.getRecommendations().getTracks();
 
         assertTrue(list.contains(Model.getInstance().getTracks().get(7)));
         assertFalse(list.contains(Model.getInstance().getTracks().get(8)));
