@@ -97,15 +97,15 @@ public class SpecialFeedbacks {
         return result;
     }
 
-    public HashSet<ArtistFeedback> getArtistFeedback(int userId) throws SQLException {
+    public HashMap<Integer, Integer> getArtistFeedback(int userId) throws SQLException {
         return fromArtistByUser(userId);
     }
 
-    public HashSet<AlbumFeedback> getAlbumFeedback(int userId) throws SQLException {
+    public HashMap<Integer, Integer> getAlbumFeedback(int userId) throws SQLException {
         return fromAlbumByUser(userId);
     }
 
-    public HashSet<GenreFeedback> getGenreFeedback(int userId) throws SQLException {
+    public HashMap<String, Integer> getGenreFeedback(int userId) throws SQLException {
         return fromGenreByUser(userId);
     }
 
@@ -124,18 +124,15 @@ public class SpecialFeedbacks {
         con.close();
         return feedback;
     }
-    private HashSet<ArtistFeedback> fromArtistByUser(int userId) throws SQLException {
+    private HashMap<Integer, Integer> fromArtistByUser(int userId) throws SQLException {
         Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM feedbackArtist WHERE userid = ?;");
         getFeedback.setInt(1, userId);
         ResultSet rs = getFeedback.executeQuery();
-        HashSet<ArtistFeedback> result = new HashSet<>();
+        HashMap<Integer, Integer> result = new HashMap<>();
 
         while (rs.next()) {
-            ArtistFeedback feedback = new ArtistFeedback();
-            feedback.setFeedback(rs.getInt("feedbackArtist"));
-            feedback.setArtist(rs.getInt("artistId"));
-            result.add(feedback);
+            result.put(rs.getInt("artistId"), rs.getInt("feedbackArtist"));
         }
         con.close();
         return result;
@@ -157,18 +154,15 @@ public class SpecialFeedbacks {
         return feedback;
     }
 
-    private HashSet<AlbumFeedback> fromAlbumByUser(int userId) throws SQLException {
+    private HashMap<Integer, Integer> fromAlbumByUser(int userId) throws SQLException {
         Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM feedbackAlbum WHERE userid = ?;");
         getFeedback.setInt(1, userId);
         ResultSet rs = getFeedback.executeQuery();
-        HashSet<AlbumFeedback> result = new HashSet<>();
+        HashMap<Integer, Integer> result = new HashMap<>();
 
         while (rs.next()) {
-            AlbumFeedback feedback = new AlbumFeedback();
-            feedback.setFeedback(rs.getInt("feedbackAlbum"));
-            feedback.setAlbum(rs.getInt("albumId"));
-            result.add(feedback);
+            result.put(rs.getInt("albumId"), rs.getInt("feedbackAlbum"));
         }
         con.close();
         return result;
@@ -190,18 +184,15 @@ public class SpecialFeedbacks {
         return feedback;
     }
 
-    private HashSet<GenreFeedback> fromGenreByUser(int userId) throws SQLException {
+    private HashMap<String, Integer> fromGenreByUser(int userId) throws SQLException {
         Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM feedbackGenre WHERE userid = ?;");
         getFeedback.setInt(1, userId);
         ResultSet rs = getFeedback.executeQuery();
-        HashSet<GenreFeedback> result = new HashSet<>();
+        HashMap<String, Integer> result = new HashMap<>();
 
         while (rs.next()) {
-            GenreFeedback feedback = new GenreFeedback();
-            feedback.setFeedback(rs.getInt("feedbackAlbum"));
-            feedback.setGenre(rs.getString("genre"));
-            result.add(feedback);
+            result.put(rs.getString("genre"), rs.getInt("feedbackAlbum"));
         }
         con.close();
         return result;
