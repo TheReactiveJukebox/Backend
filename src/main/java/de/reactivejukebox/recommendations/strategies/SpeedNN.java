@@ -80,8 +80,7 @@ public class SpeedNN implements RecommendationStrategy{
     }
 
     private List<Float> getScores(List<Track> recommendations){
-        List<Float> distances = recommendations.stream().map(Track::getSpeed).map(this::calcDistance).collect(Collectors.toList());
-        return null;
+        return recommendations.stream().map(Track::getSpeed).map(this::calcDistance).map(this::score).collect(Collectors.toList());
     }
 
     private float score(float distance){
