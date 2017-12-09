@@ -37,8 +37,88 @@ public class UserProfile {
         build();
     }
 
+    public int getTrackFeedback(int trackId){
+        if (trackFeedback.containsKey(trackId)) {
+            return trackFeedback.get(trackId);
+        } else {
+            return 0;
+        }
+    }
 
-    
+    public int getArtistFeedback(int artistId){
+        if (artistFeedback.containsKey(artistId)) {
+            return artistFeedback.get(artistId);
+        } else {
+            return 0;
+        }
+    }
+
+    public int getAlbumFeedback(int id){
+        if (albumFeedback.containsKey(id)) {
+            return albumFeedback.get(id);
+        } else {
+            return 0;
+        }
+    }
+
+    public int getGenreFeedback(String id){
+        if (genreFeedback.containsKey(id)) {
+            return genreFeedback.get(id);
+        } else {
+            return 0;
+        }
+    }
+
+    public int getSpeedFeedback(float speed){
+        int speedInt = Math.round(speed/5); //TODO change with new Feedback
+        if (speedFeedback.containsKey(speedInt)) {
+            return speedFeedback.get(speedInt);
+        } else {
+            return 0;
+        }
+    }
+
+    public int getMoodFeedback(float arousal, float valence){
+        MoodKey key = new MoodKey(arousal,valence);
+        if (moodFeedback.containsKey(key)) {
+            return moodFeedback.get(key);
+        } else {
+            return 0;
+        }
+    }
+
+    public int isTrackLiked(int id){
+        return trackFeedback.get(id) > 0 ? 1 : 0;
+    }
+
+    public int isTrackDisLiked(int id){
+        return trackFeedback.get(id) < 0 ? 1 : 0;
+    }
+
+    public int isArtistLiked(int id){
+        return artistFeedback.get(id) > 0 ? 1 : 0;
+    }
+
+    public int isArtistDisLiked(int id){
+        return artistFeedback.get(id) < 0 ? 1 : 0;
+    }
+
+    public int isAlbumLiked(int id){
+        return albumFeedback.get(id) > 0 ? 1 : 0;
+    }
+
+    public int isAlbumDisLiked(int id){
+        return albumFeedback.get(id) < 0 ? 1 : 0;
+    }
+
+    public int isGenreLiked(String id){
+        return genreFeedback.get(id) > 0 ? 1 : 0;
+    }
+
+    public int isGenreDisLiked(String id){
+        return genreFeedback.get(id) < 0 ? 1 : 0;
+    }
+
     //TODO change with new Feedback
     private void build(){
         for (TrackFeedback f: rawTrackFeedback) {
@@ -56,12 +136,12 @@ public class UserProfile {
                 speedFeedback.put(Math.round(speed),-1);
             }
             if (f.getMoodFeedback() > 0) {
-                //TODO wait for arousal and valence
+                moodFeedback.put(new MoodKey(t.getArousal(), t.getValence()),1);
             } else if (f.getMoodFeedback() < 0) {
-
+                moodFeedback.put(new MoodKey(t.getArousal(), t.getValence()),-1);
             }
-
         }
+
 
     }
 }
