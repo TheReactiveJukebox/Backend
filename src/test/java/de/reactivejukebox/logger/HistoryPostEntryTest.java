@@ -21,6 +21,14 @@ public class HistoryPostEntryTest {
     }
 
     @Test
+    public void testHistoryField() {
+        Entry e = new HistoryDeleteEntry(getUserObj(), getHistoryEntryPlainObj().getId());
+        String[] s = e.getEntry();
+        // Assert
+        assertEquals(s[EntryCol.HISTORY.ordinal()], "1");
+    }
+
+    @Test
     public void testSongField() {
         Entry e = new HistoryPostEntry(getUserObj(), getHistoryEntryPlainObj());
         String[] s = e.getEntry();
