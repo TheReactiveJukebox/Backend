@@ -38,6 +38,33 @@ public class EntryTest {
     }
 
     @Test
+    public void testLogEntry() {
+        User user = getUserObj();
+        final Character delimiter = ';';
+        Entry e = new Entry(Event.USER_LOGIN, user);
+        String logEntry = e.getLogString(delimiter);
+
+        StringBuilder expectedEntry = new StringBuilder();
+        for (EntryCol col : EntryCol.values()) {
+            switch (col) {
+                case USER:
+                    expectedEntry.append(String.valueOf(user.getId())).append(delimiter);
+                    break;
+                case TIMESTAMP:
+                    expectedEntry.append(e.getEntry()[EntryCol.TIMESTAMP.ordinal()]).append(delimiter);
+                    break;
+                case EVENT:
+                    expectedEntry.append(e.getEvent().toString()).append(delimiter);
+                    break;
+                default:
+                    expectedEntry.append(delimiter);
+            }
+        }
+        // Assert
+        assertEquals(logEntry, expectedEntry.toString());
+    }
+
+    @Test
     public void testEntryFieldEvent() {
         Event ev = Event.USER_LOGIN;
         Entry e = new Entry(ev, getUserObj());
