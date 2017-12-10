@@ -54,10 +54,10 @@ public class AlbumService {
     @Path("/feedback")
     @Secured
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getFeedback(@QueryParam("id") List<Integer> id, @Context User user){
+    public Response getFeedback(@QueryParam("id") List<Integer> id, @Context User user) {
         try {
-            return Response.status(200).entity(Model.getInstance().getSpecialFeedbacks().getAlbumFeedback(id,user.getId())).build();
-        }catch (Exception e){
+            return Response.status(200).entity(Model.getInstance().getSpecialFeedbacks().getAlbumFeedback(id, user.getId())).build();
+        } catch (Exception e) {
             return Response.status(400).entity(e).build();
         }
     }
@@ -67,14 +67,14 @@ public class AlbumService {
     @Secured
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addFeedback(AlbumFeedback feedback, @Context User user){
+    public Response addFeedback(AlbumFeedback feedback, @Context User user) {
         try {
             AlbumFeedback feedbackReturn = Model.getInstance()
                     .getSpecialFeedbacks()
                     .putAlbumFeedback(feedback, user.getId());
             LoggerProvider.getLogger().writeEntry(new AlbumFeedbackEntry(user, feedbackReturn));
             return Response.status(200).entity(feedbackReturn).build();
-        }catch (Exception e){
+        } catch (Exception e) {
             return Response.status(400).entity(e).build();
         }
     }

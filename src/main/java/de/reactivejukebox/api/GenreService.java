@@ -11,8 +11,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Path("/genre")
@@ -32,10 +30,10 @@ public class GenreService {
     @Path("/feedback")
     @Secured
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getFeedback(@QueryParam("id") List<String> id, @Context User user){
+    public Response getFeedback(@QueryParam("id") List<String> id, @Context User user) {
         try {
-            return Response.status(200).entity(Model.getInstance().getSpecialFeedbacks().getGenreFeedback(id ,user.getId())).build();
-        }catch (Exception e){
+            return Response.status(200).entity(Model.getInstance().getSpecialFeedbacks().getGenreFeedback(id, user.getId())).build();
+        } catch (Exception e) {
             return Response.status(400).entity(e).build();
         }
 
@@ -53,7 +51,7 @@ public class GenreService {
                     .putGenreFeedback(feedback, user.getId());
             LoggerProvider.getLogger().writeEntry(new GenreFeedbackEntry(user, feedbackReturn));
             return Response.status(200).entity(feedbackReturn).build();
-        }catch (Exception e){
+        } catch (Exception e) {
             return Response.status(400).entity(e).build();
         }
     }
