@@ -3,13 +3,7 @@ package de.reactivejukebox.logger;
 public class LoggerImp implements Logger {
 
     LoggerImp() {
-        printHead();
-    }
-
-    void printHead() {
-        String msg = "";
-        // TODO implement
-        writeEntry(msg);
+        writeEntry(Entry.getHeadEntry());
     }
 
     public void writeEntry(final Entry en) {

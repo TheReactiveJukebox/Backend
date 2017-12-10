@@ -9,12 +9,15 @@ public class Entry {
 
 
     // baue Kopf eintrag zusammen
-    static String[] getHead() {
-        String[] result = new String[EntryCol.values().length];
+    static Entry getHeadEntry() {
+        Entry e = new Entry();
         for (EntryCol col: EntryCol.values()) {
-            result[col.ordinal()] = col.toString();
+            e.setValue(col, col.toString());
         }
-        return result;
+        return e;
+    }
+
+    private Entry() {
     }
 
     public Entry(final Event ev, final User user) {
