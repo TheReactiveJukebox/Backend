@@ -25,13 +25,13 @@ public class Tracks implements Iterable<Track> {
                     "AND song_genre.genreid = genre.id";
 
     private static final String SQL_OLD =
-            "select published from song where published >= '1000-01-01' order by published limit 1;";
+            "SELECT MIN(published) AS published FROM song WHERE published >= '1000-01-01';";
 
     private static final String SQL_MINSPEED =
-            "select bpm from song where bpm > 1 order by bpm limit 1;";
+            "SELECT MIN(bpm) AS bpm FROM song WHERE bpm > 1;";
 
     private static final String SQL_MAXSPEED =
-            "select bpm from song where bpm > 1 order by bpm DESC limit 1;";
+            "SELECT MAX(bpm) AS bpm FROM song WHERE bpm > 1;";
 
 
     protected Map<Integer, Track> tracks;
