@@ -3,6 +3,8 @@ package de.reactivejukebox.api;
 import de.reactivejukebox.core.Secured;
 import de.reactivejukebox.database.Database;
 import de.reactivejukebox.database.DatabaseProvider;
+import de.reactivejukebox.logger.AlbumFeedbackEntry;
+import de.reactivejukebox.logger.LoggerProvider;
 import de.reactivejukebox.model.*;
 
 import javax.ws.rs.*;
@@ -67,7 +69,11 @@ public class AlbumService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response addFeedback(AlbumFeedback feedback, @Context User user){
         try {
-            return Response.status(200).entity(Model.getInstance().getSpecialFeedbacks().putAlbumFeedback(feedback,user.getId())).build();
+            AlbumFeedback feedbackReturn = Model.getInstance()
+                    .getSpecialFeedbacks()
+                    .putAlbumFeedback(feedback, user.getId());
+            LoggerProvider.getLogger().writeEntry(new AlbumFeedbackEntry(user, feedbackReturn));
+            return Response.status(200).entity(feedbackReturn).build();
         }catch (Exception e){
             return Response.status(400).entity(e).build();
         }

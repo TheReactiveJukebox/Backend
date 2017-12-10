@@ -4,6 +4,8 @@ import de.reactivejukebox.core.Secured;
 import de.reactivejukebox.datahandlers.TokenHandler;
 import de.reactivejukebox.logger.LoggerProvider;
 import de.reactivejukebox.logger.UserLoggedInEntry;
+import de.reactivejukebox.logger.UserLoggedOutEntry;
+import de.reactivejukebox.logger.UserRegisterEntry;
 import de.reactivejukebox.model.UserPlain;
 import org.apache.logging.log4j.LogManager;
 
@@ -67,6 +69,7 @@ public class UserService {
     public Response logout(UserPlain auth) {
         try {
             new TokenHandler().logout(auth);
+            LoggerProvider.getLogger().writeEntry(new UserLoggedOutEntry(auth));
             return Response.status(200).entity("{\"message\": \"logged out\"}").build();
         } catch (Exception e) {
             return Response.status(409).entity("{\"message\": \"no valid token\"}").build();
@@ -95,6 +98,7 @@ public class UserService {
                 return Response.status(441).entity("{\"message\": \"invalid invite key\"}").build();
             }
             UserPlain token = new TokenHandler().register(auth);
+            LoggerProvider.getLogger().writeEntry(new UserRegisterEntry(auth));
             return Response.ok(token).build();
         } catch (Exception e) {
             return Response.status(440).entity("{\"message\": \"username already in use\"}").build();

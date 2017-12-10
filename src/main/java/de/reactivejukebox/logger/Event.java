@@ -3,9 +3,14 @@ package de.reactivejukebox.logger;
 public enum Event {
     USER_LOGIN,
     USER_LOGOUT,
+    USER_REGISTER,
     RADIO_START,
     RADIO_UPDATE,
+    SONG_FEEDBACK,
+    ACTION_FEEDBACK,
+    ALBUM_FEEDBACK,
+    ARTIST_FEEDBACK,
+    GENRE_FEEDBACK,
     HISTORY_POST,
     HISTORY_DELETE,
-    // TODO expand
 }

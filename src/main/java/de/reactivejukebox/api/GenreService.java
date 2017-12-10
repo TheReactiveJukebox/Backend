@@ -1,7 +1,11 @@
 package de.reactivejukebox.api;
 
 import de.reactivejukebox.core.Secured;
-import de.reactivejukebox.model.*;
+import de.reactivejukebox.logger.GenreFeedbackEntry;
+import de.reactivejukebox.logger.LoggerProvider;
+import de.reactivejukebox.model.GenreFeedback;
+import de.reactivejukebox.model.Model;
+import de.reactivejukebox.model.User;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -44,7 +48,11 @@ public class GenreService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response addFeedback(GenreFeedback feedback, @Context User user) {
         try {
-            return Response.status(200).entity(Model.getInstance().getSpecialFeedbacks().putGenreFeedback(feedback,user.getId())).build();
+            GenreFeedback feedbackReturn = Model.getInstance()
+                    .getSpecialFeedbacks()
+                    .putGenreFeedback(feedback, user.getId());
+            LoggerProvider.getLogger().writeEntry(new GenreFeedbackEntry(user, feedbackReturn));
+            return Response.status(200).entity(feedbackReturn).build();
         }catch (Exception e){
             return Response.status(400).entity(e).build();
         }
