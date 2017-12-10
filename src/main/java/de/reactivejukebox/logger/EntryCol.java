@@ -6,6 +6,7 @@ public enum EntryCol {
     EVENT,
     USER,
     RADIO,
+    HISTORY,
     SONG,
     // TODO extend
 }

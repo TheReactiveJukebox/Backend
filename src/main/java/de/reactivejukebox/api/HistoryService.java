@@ -2,7 +2,7 @@ package de.reactivejukebox.api;
 
 import de.reactivejukebox.core.Secured;
 import de.reactivejukebox.datahandlers.HistoryHandler;
-import de.reactivejukebox.logger.HistoryDeletetEntry;
+import de.reactivejukebox.logger.HistoryDeleteEntry;
 import de.reactivejukebox.logger.HistoryPostEntry;
 import de.reactivejukebox.logger.LoggerProvider;
 import de.reactivejukebox.model.HistoryEntryPlain;
@@ -44,7 +44,7 @@ public class HistoryService {
     public Response deleteEntry(@Context User user, @QueryParam("id") Integer historyId) {
         try {
             new HistoryHandler().deleteHistoryEntry(historyId, user);
-            LoggerProvider.getLogger().writeEntry(new HistoryDeletetEntry(user, historyId));
+            LoggerProvider.getLogger().writeEntry(new HistoryDeleteEntry(user, historyId));
             return Response.ok().build();
         } catch (SQLException e) {
             e.printStackTrace();
