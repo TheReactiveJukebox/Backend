@@ -55,7 +55,8 @@ public class Entry {
     public String getLogString(char delimiter) {
         StringBuilder msg = new StringBuilder();
         for (String colValue : getEntry()) {
-            msg.append(colValue);
+            if (colValue != null)
+                msg.append(colValue);
             msg.append(delimiter);
         }
 
