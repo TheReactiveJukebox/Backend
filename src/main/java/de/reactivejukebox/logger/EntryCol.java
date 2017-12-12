@@ -9,5 +9,5 @@ public enum EntryCol {
     HISTORY,
     SONG,
     USER_ACTION,
-    SONG_FORWARD, SONG_RUNTIME,
+    SONG_FORWARD, SONG_RUNTIME, ALBUM, RATING,
 }
