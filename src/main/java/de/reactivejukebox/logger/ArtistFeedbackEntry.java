@@ -6,6 +6,7 @@ import de.reactivejukebox.model.User;
 public class ArtistFeedbackEntry extends Entry {
     public ArtistFeedbackEntry(User user, ArtistFeedback feedback) {
         super(Event.ARTIST_FEEDBACK, user);
-        // TODO set feedback values
+        setValue(EntryCol.ARTIST, feedback.getArtist());
+        setValue(EntryCol.RATING, feedback.getFeedback());
     }
 }
