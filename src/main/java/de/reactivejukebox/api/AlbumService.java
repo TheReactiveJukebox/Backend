@@ -58,7 +58,7 @@ public class AlbumService {
         try {
             return Response.status(200).entity(Model.getInstance().getSpecialFeedbacks().getAlbumFeedback(id, user.getId())).build();
         } catch (Exception e) {
-            return Response.status(400).entity(e).build();
+            return Response.status(400).build();
         }
     }
 
@@ -75,7 +75,7 @@ public class AlbumService {
             LoggerProvider.getLogger().writeEntry(new AlbumFeedbackEntry(user, feedbackReturn));
             return Response.status(200).entity(feedbackReturn).build();
         } catch (Exception e) {
-            return Response.status(400).entity(e).build();
+            return Response.status(400).build();
         }
     }
 }
