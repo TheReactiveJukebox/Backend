@@ -8,5 +8,6 @@ public enum EntryCol {
     RADIO,
     HISTORY,
     SONG,
-    // TODO extend
+    USER_ACTION,
+    SONG_FORWARD, SONG_RUNTIME,
 }
