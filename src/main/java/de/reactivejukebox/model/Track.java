@@ -38,7 +38,7 @@ public class Track implements MusicEntity {
     }
 
     public Track(int id, String title, Artist artist, Album album, String cover, String hash, int duration, int playCount, Date releaseDate, float speed, float dynamic, float valence, float arousal) {
-        this(id,title,artist,album,cover,hash,duration,playCount,releaseDate,speed,dynamic);
+        this(id, title, artist, album, cover, hash, duration, playCount, releaseDate, speed, dynamic);
         this.valence = valence;
         this.arousal = arousal;
     }
@@ -143,26 +143,49 @@ public class Track implements MusicEntity {
         this.dynamic = dynamic;
     }
 
-    public float getValence() { return valence; }
+    public float getValence() {
+        return valence;
+    }
 
-    public void setValence(float valence) { this.valence = valence; }
+    public void setValence(float valence) {
+        this.valence = valence;
+    }
 
-    public float getArousal() { return arousal; }
+    public float getArousal() {
+        return arousal;
+    }
 
-    public void setArousal(float arousal) { this.arousal = arousal; }
+    public void setArousal(float arousal) {
+        this.arousal = arousal;
+    }
 
     @Override
     public TrackPlain getPlainObject() {
         String file = hash.substring(0, 1) + "/" + hash.substring(1, 2) + "/" + hash.substring(2) + ".mp3";
-        return new TrackPlain(id, title, artist.getId(), album.getId(), cover, file, duration, playCount, genres, releaseDate, speed, dynamic,arousal,valence);
+        return new TrackPlain(id, title, artist.getId(), album.getId(), cover, file, duration, playCount, genres, releaseDate, speed, dynamic, arousal, valence);
     }
 
     @Override
     public String toString() {
         return "ID: " + this.getId() + ", " +
-                "Title: " +this.getTitle()+", "+
-                "Artist: " +this.getArtist().getName()+" "+this.getArtist().getId() +", "+
-                "Arousal: " +this.getArousal()+", "+
-                "Valence: " +this.getValence()+", ";
+                "Title: " + this.getTitle() + ", " +
+                "Artist: " + this.getArtist().getName() + " " + this.getArtist().getId() + ", " +
+                "Arousal: " + this.getArousal() + ", " +
+                "Valence: " + this.getValence() + ", ";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Track track = (Track) o;
+
+        return id == track.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
     }
 }
