@@ -5,14 +5,10 @@ import org.testng.annotations.Test;
 
 import static org.testng.AssertJUnit.assertEquals;
 
-public class UserLoggedInEntryTest {
+public class UserLoggedInEntryTest extends EntryTest {
     @Test
     public void testUserLoggedInEntry() {
-        User user = new User();
-        user.setUserID(1337);
-        user.setUsername("Foo");
-
-        Entry e = new UserLoggedInEntry(user.getPlainObject());
+        Entry e = new UserLoggedInEntry(getUserObj().getPlainObject());
         String[] s = e.getEntry();
 
         // Assert

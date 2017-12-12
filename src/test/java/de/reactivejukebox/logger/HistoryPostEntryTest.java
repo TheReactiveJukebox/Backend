@@ -8,18 +8,7 @@ import java.sql.Timestamp;
 
 import static org.testng.AssertJUnit.assertEquals;
 
-public class HistoryPostEntryTest {
-    private User getUserObj() {
-        User user = new User();
-        user.setUserID(1337);
-        user.setUsername("Foo");
-        return user;
-    }
-
-    private HistoryEntryPlain getHistoryEntryPlainObj() {
-        return new HistoryEntryPlain(1, 2, 3, 4, new Timestamp(0));
-    }
-
+public class HistoryPostEntryTest extends EntryTest {
     @Test
     public void testHistoryField() {
         Entry e = new HistoryDeleteEntry(getUserObj(), getHistoryEntryPlainObj().getId());

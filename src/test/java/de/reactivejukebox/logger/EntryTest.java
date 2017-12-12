@@ -1,19 +1,32 @@
 package de.reactivejukebox.logger;
 
+import de.reactivejukebox.model.HistoryEntryPlain;
 import de.reactivejukebox.model.User;
 import org.testng.annotations.Test;
+
+import java.sql.Timestamp;
 
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
 
 public class EntryTest {
-    private User getUserObj() {
+    final static int USER_ID = 1337;
+    final static String USERNAME = "Foo";
+
+    User getUserObj() {
         User user = new User();
-        user.setUserID(1337);
-        user.setUsername("Foo");
+        user.setUserID(USER_ID);
+        user.setUsername(USERNAME);
         return user;
     }
 
+    HistoryEntryPlain getHistoryEntryPlainObj() {
+        return new HistoryEntryPlain(1, 2, 3, USER_ID, new Timestamp(0));
+    }
+
+    /**
+     * check the filed count of a entry
+     */
     @Test
     public void testEntryLength() {
         User user = getUserObj();
@@ -28,8 +41,11 @@ public class EntryTest {
         assertEquals(s.length, EntryCol.values().length);
     }
 
+    /**
+     * Check timestamp
+     */
     @Test
-    public void testEntryFieldTime() {
+    public void testFieldTime() {
         Entry e = new Entry(Event.USER_LOGIN, getUserObj());
         String[] s = e.getEntry();
         // Assert
@@ -37,36 +53,37 @@ public class EntryTest {
         assertTrue(t > 0);
     }
 
+    /**
+     * Check string of a entry
+     */
     @Test
     public void testLogEntry() {
-        User user = getUserObj();
         final Character delimiter = ';';
-        Entry e = new Entry(Event.USER_LOGIN, user);
+        Entry e = new Entry(Event.USER_LOGIN, getUserObj());
         String logEntry = e.getLogString(delimiter);
 
         StringBuilder expectedEntry = new StringBuilder();
         for (EntryCol col : EntryCol.values()) {
             switch (col) {
                 case USER:
-                    expectedEntry.append(String.valueOf(user.getId())).append(delimiter);
+                    expectedEntry.append(String.valueOf(USER_ID));
                     break;
                 case TIMESTAMP:
-                    expectedEntry.append(e.getEntry()[EntryCol.TIMESTAMP.ordinal()]).append(delimiter);
+                    expectedEntry.append(e.getEntry()[EntryCol.TIMESTAMP.ordinal()]);
                     break;
                 case EVENT:
-                    expectedEntry.append(e.getEvent().toString()).append(delimiter);
+                    expectedEntry.append(e.getEvent().toString());
                     break;
-                default:
-                    expectedEntry.append(delimiter);
             }
+            expectedEntry.append(delimiter);
         }
         // Assert
         assertEquals(logEntry, expectedEntry.toString());
     }
 
     @Test
-    public void testEntryFieldEvent() {
-        Event ev = Event.USER_LOGIN;
+    public void testFieldEvent() {
+        final Event ev = Event.USER_LOGIN;
         Entry e = new Entry(ev, getUserObj());
         // Assert
         assertEquals(e.getEvent(), ev);
@@ -77,10 +94,10 @@ public class EntryTest {
     }
 
     @Test
-    public void testEntryFieldUser() {
+    public void testFieldUser() {
         Entry e = new Entry(Event.USER_LOGIN, getUserObj());
         String[] s = e.getEntry();
         // Assert
-        assertEquals(s[EntryCol.USER.ordinal()], "1337");
+        assertEquals(s[EntryCol.USER.ordinal()], String.valueOf(USER_ID));
     }
 }
