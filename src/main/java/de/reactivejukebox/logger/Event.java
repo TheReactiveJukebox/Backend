@@ -13,4 +13,5 @@ public enum Event {
     GENRE_FEEDBACK,
     HISTORY_POST,
     HISTORY_DELETE,
+    QUESTIONNAIRE,
 }
