@@ -19,7 +19,9 @@ VOLUME /usr/local/tomcat/webapps/ROOT.war
 # expose remote debugging port
 EXPOSE 8000
 
-COPY log4j2.xml /usr/local/tomcat/webapps/ROOT/WEB-INF/classes/log4j2.xml
+# log4j configfile
+COPY log4j2.xml /usr/local/tomcat/log4j2.xml
+ENV LOG4J_CONFIGURATION_FILE=/usr/local/tomcat/log4j2.xml
 
 # startup script to run tomcat with debugging enabled
 COPY startdebug.sh /

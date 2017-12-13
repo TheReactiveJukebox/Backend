@@ -6,4 +6,6 @@ RUN rm -rf /usr/local/tomcat/webapps/ROOT && \
 
 COPY target/server.war /usr/local/tomcat/webapps/ROOT.war
 
-COPY log4j2.xml /usr/local/tomcat/webapps/ROOT/WEB-INF/classes/log4j2.xml
+# log4j configfile
+COPY log4j2.xml /usr/local/tomcat/log4j2.xml
+ENV LOG4J_CONFIGURATION_FILE=/usr/local/tomcat/log4j2.xml
