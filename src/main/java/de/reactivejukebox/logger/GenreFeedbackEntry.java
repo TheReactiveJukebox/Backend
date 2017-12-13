@@ -7,6 +7,6 @@ public class GenreFeedbackEntry extends Entry {
     public GenreFeedbackEntry(User user, GenreFeedback feedback) {
         super(Event.GENRE_FEEDBACK, user);
         setValue(EntryCol.GENRE, feedback.getGenre());
-        setValue(EntryCol.RATING, feedback.getFeedback());
+        setValue(EntryCol.RATING_SONG, feedback.getFeedback());
     }
 }

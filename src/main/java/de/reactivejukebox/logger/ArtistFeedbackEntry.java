@@ -7,6 +7,6 @@ public class ArtistFeedbackEntry extends Entry {
     public ArtistFeedbackEntry(User user, ArtistFeedback feedback) {
         super(Event.ARTIST_FEEDBACK, user);
         setValue(EntryCol.ARTIST, feedback.getArtist());
-        setValue(EntryCol.RATING, feedback.getFeedback());
+        setValue(EntryCol.RATING_SONG, feedback.getFeedback());
     }
 }

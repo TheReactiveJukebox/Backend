@@ -25,7 +25,7 @@ public class GenreFeedbackEntryTest extends EntryTest {
         Entry e = new GenreFeedbackEntry(getUserObj(), feedback);
         String[] s = e.getEntry();
         // Assert
-        assertEquals("1", s[EntryCol.RATING.ordinal()]);
+        assertEquals("1", s[EntryCol.RATING_SONG.ordinal()]);
     }
 
     @Test
@@ -35,7 +35,7 @@ public class GenreFeedbackEntryTest extends EntryTest {
         Entry e = new GenreFeedbackEntry(getUserObj(), feedback);
         String[] s = e.getEntry();
         // Assert
-        assertEquals("0", s[EntryCol.RATING.ordinal()]);
+        assertEquals("0", s[EntryCol.RATING_SONG.ordinal()]);
     }
 
     @Test
@@ -45,7 +45,7 @@ public class GenreFeedbackEntryTest extends EntryTest {
         Entry e = new GenreFeedbackEntry(getUserObj(), feedback);
         String[] s = e.getEntry();
         // Assert
-        assertEquals("-1", s[EntryCol.RATING.ordinal()]);
+        assertEquals("-1", s[EntryCol.RATING_SONG.ordinal()]);
     }
 }
 
