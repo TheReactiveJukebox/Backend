@@ -11,6 +11,5 @@ public class SongFeedbackEntry extends Entry {
         setValue(EntryCol.RATING_MOOD, feedback.getMoodFeedback());
         setValue(EntryCol.RATING_SPEED, feedback.getSpeedFeedback());
         setValue(EntryCol.RATING_SONG, feedback.getSongFeedback());
-        // TODO set feedback values
     }
 }
