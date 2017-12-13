@@ -2,6 +2,7 @@ package de.reactivejukebox.recommendations.strategies;
 
 import de.reactivejukebox.model.Radio;
 import de.reactivejukebox.model.Track;
+import de.reactivejukebox.model.UserProfile;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
 import de.reactivejukebox.recommendations.RecommendationStrategyFactory;
 import de.reactivejukebox.recommendations.Recommendations;
@@ -10,12 +11,20 @@ import java.util.*;
 import java.util.function.Predicate;
 
 public class HybridStrategy implements RecommendationStrategy {
+    private static float likeMod = 1.5f;
+    private static float disLikeMod = -0.5f;
+    private static float artistMod = 1.25f;
+    private static float disArtistMod = -0.75f;
+    private static float albumMod = 1.25f;
+    private static float disAlbumMod = -0.75f;
 
+    private UserProfile userProfile;
     private RecommendationStrategyFactory factory;
     List<Predicate<Track>> radioPredicates;
 
-    public HybridStrategy(RecommendationStrategyFactory factory, Radio radio) {
+    public HybridStrategy(RecommendationStrategyFactory factory, Radio radio, UserProfile userProfile) {
         this.factory = factory;
+        this.userProfile = userProfile;
         this.radioPredicates = radio.getPredicates();
     }
 
@@ -81,5 +90,30 @@ public class HybridStrategy implements RecommendationStrategy {
         */
 
         return new Recommendations(recommendations, null);
+    }
+
+    private Recommendations modifyRanking (Map<Track,Float> input){
+        ArrayList<Track> tracks = new ArrayList<>();
+        ArrayList<Float> scores = new ArrayList<>();
+        ArrayList<Float> mods = new ArrayList<>();
+
+        tracks.addAll(input.keySet());
+        for (Track t: tracks) {
+            Integer tId = t.getId();
+
+            Float tMod = likeMod * userProfile.getTrackFeedback(tId) + disLikeMod * userProfile.getTrackFeedback(tId);
+            if (tMod > 0) mods.add(tMod);
+            Float arMod = artistMod * userProfile.getArtistFeedback(tId) + disArtistMod * userProfile.getArtistFeedback(tId);
+            if (arMod > 0) mods.add(arMod);
+            Float alMod = albumMod * userProfile.getAlbumFeedback(tId) + disAlbumMod * userProfile.getAlbumFeedback(tId);
+            if (alMod > 0) mods.add(alMod);
+
+            Float value = input.get(t);
+            for (Float f : mods){
+                value *= f;
+            }
+            scores.add(value);
+        }
+        return new Recommendations(tracks, scores);
     }
 }
