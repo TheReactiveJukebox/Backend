@@ -13,8 +13,6 @@ public class LoggerImp implements Logger {
     }
 
     private void writeEntry(final String msg) {
-        // TODO log4j call
-        // TODO handle errors
         LogManager.getLogger("studie").info(msg);
     }
 }
