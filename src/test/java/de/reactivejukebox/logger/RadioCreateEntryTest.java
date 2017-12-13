@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNotNull;
 
 public class RadioCreateEntryTest extends EntryTest {
     Radio getRadioObj() {
@@ -118,5 +119,12 @@ public class RadioCreateEntryTest extends EntryTest {
         String[] s = e.getEntry();
         // Assert
         assertEquals("72,55", s[EntryCol.SONG.ordinal()]);
+    }
+
+    @Test
+    public void testJsonField() {
+        Entry e = new RadioCreateEntry(getUserObj(), getRadioObj());
+        String[] s = e.getEntry();
+        assertNotNull(s[EntryCol.JSON.ordinal()]);
     }
 }

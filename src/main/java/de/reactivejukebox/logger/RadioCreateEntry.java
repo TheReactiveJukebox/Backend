@@ -30,5 +30,7 @@ public class RadioCreateEntry extends Entry {
             String genreValue = String.join(",", genre);
             setValue(EntryCol.GENRE, genreValue);
         }
+
+        setValue(EntryCol.JSON, radio.getPlainObject());
     }
 }

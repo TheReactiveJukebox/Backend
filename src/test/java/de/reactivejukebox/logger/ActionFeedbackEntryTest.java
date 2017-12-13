@@ -5,6 +5,7 @@ import de.reactivejukebox.model.User;
 import org.testng.annotations.Test;
 
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertTrue;
 
 public class ActionFeedbackEntryTest extends EntryTest {
@@ -76,5 +77,12 @@ public class ActionFeedbackEntryTest extends EntryTest {
         // Assert
         assertTrue(feedback.isValid());
         assertEquals("DELETE", s[EntryCol.USER_ACTION.ordinal()]);
+    }
+
+    @Test
+    public void testJsonField() {
+        Entry e = new ActionFeedbackEntry(getUserObj(), getIndirectFeedbackObj());
+        String[] s = e.getEntry();
+        assertNotNull(s[EntryCol.JSON.ordinal()]);
     }
 }

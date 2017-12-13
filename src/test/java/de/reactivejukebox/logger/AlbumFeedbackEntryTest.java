@@ -4,6 +4,7 @@ import de.reactivejukebox.model.AlbumFeedback;
 import org.testng.annotations.Test;
 
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNotNull;
 
 public class AlbumFeedbackEntryTest extends EntryTest {
 
@@ -48,5 +49,12 @@ public class AlbumFeedbackEntryTest extends EntryTest {
         String[] s = e.getEntry();
         // Assert
         assertEquals("-1", s[EntryCol.RATING_SONG.ordinal()]);
+    }
+
+    @Test
+    public void testJsonField() {
+        Entry e = new AlbumFeedbackEntry(getUserObj(), getAlbumFeedbackObj());
+        String[] s = e.getEntry();
+        assertNotNull(s[EntryCol.JSON.ordinal()]);
     }
 }

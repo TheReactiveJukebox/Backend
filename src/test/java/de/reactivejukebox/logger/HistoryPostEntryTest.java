@@ -7,6 +7,7 @@ import org.testng.annotations.Test;
 import java.sql.Timestamp;
 
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNotNull;
 
 public class HistoryPostEntryTest extends EntryTest {
     @Test
@@ -31,5 +32,12 @@ public class HistoryPostEntryTest extends EntryTest {
         String[] s = e.getEntry();
         // Assert
         assertEquals("3", s[EntryCol.RADIO.ordinal()]);
+    }
+
+    @Test
+    public void testJsonField() {
+        Entry e = new HistoryPostEntry(getUserObj(), getHistoryEntryPlainObj());
+        String[] s = e.getEntry();
+        assertNotNull(s[EntryCol.JSON.ordinal()]);
     }
 }

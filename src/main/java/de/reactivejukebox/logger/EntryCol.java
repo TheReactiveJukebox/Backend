@@ -21,4 +21,5 @@ public enum EntryCol {
     VALENCE,
     SPEED_MIN,
     SPEED_MAX,
+    JSON,
 }

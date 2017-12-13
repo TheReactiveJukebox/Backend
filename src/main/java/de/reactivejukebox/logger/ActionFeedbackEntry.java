@@ -21,5 +21,6 @@ public class ActionFeedbackEntry extends Entry {
                 setValue(EntryCol.SONG_RUNTIME, feedback.getPosition());
             }
         }
+        setValue(EntryCol.JSON, feedback);
     }
 }

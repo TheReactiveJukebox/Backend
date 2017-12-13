@@ -5,6 +5,7 @@ import de.reactivejukebox.model.TrackFeedback;
 import org.testng.annotations.Test;
 
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNotNull;
 
 public class SongFeedbackEntryTest extends EntryTest {
     Track getTrackObj() {
@@ -16,6 +17,7 @@ public class SongFeedbackEntryTest extends EntryTest {
     TrackFeedback getTrackFeedbackObj() {
         TrackFeedback feedback = new TrackFeedback();
         feedback.setTrack(getTrackObj());
+        feedback.setUser(getUserObj());
         return feedback;
     }
 
@@ -67,4 +69,10 @@ public class SongFeedbackEntryTest extends EntryTest {
         assertEquals("1", s[EntryCol.RATING_DYNAMIC.ordinal()]);
     }
 
+    @Test
+    public void testJsonField() {
+        Entry e = new SongFeedbackEntry(getUserObj(), getTrackFeedbackObj());
+        String[] s = e.getEntry();
+        assertNotNull(s[EntryCol.JSON.ordinal()]);
+    }
 }

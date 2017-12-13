@@ -9,5 +9,6 @@ public class HistoryPostEntry extends Entry {
         setValue(EntryCol.RADIO, historyEntry.getRadioId());
         setValue(EntryCol.SONG, historyEntry.getTrackId());
         setValue(EntryCol.HISTORY, historyEntry.getId());
+        setValue(EntryCol.JSON, historyEntry);
     }
 }

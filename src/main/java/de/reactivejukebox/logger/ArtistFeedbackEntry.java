@@ -8,5 +8,6 @@ public class ArtistFeedbackEntry extends Entry {
         super(Event.ARTIST_FEEDBACK, user);
         setValue(EntryCol.ARTIST, feedback.getArtist());
         setValue(EntryCol.RATING_SONG, feedback.getFeedback());
+        setValue(EntryCol.JSON, feedback);
     }
 }
