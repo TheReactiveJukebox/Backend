@@ -19,7 +19,7 @@ public class GenreFeedbackEntryTest extends EntryTest {
     }
 
     @Test
-    public void testRatingFieldPositiv() {
+    public void testRatingFieldPositive() {
         GenreFeedback feedback = getGenreFeedbackObj();
         feedback.setFeedback(1);
         Entry e = new GenreFeedbackEntry(getUserObj(), feedback);
@@ -39,7 +39,7 @@ public class GenreFeedbackEntryTest extends EntryTest {
     }
 
     @Test
-    public void testRatingFieldNegativ() {
+    public void testRatingFieldNegative() {
         GenreFeedback feedback = getGenreFeedbackObj();
         feedback.setFeedback(-1);
         Entry e = new GenreFeedbackEntry(getUserObj(), feedback);

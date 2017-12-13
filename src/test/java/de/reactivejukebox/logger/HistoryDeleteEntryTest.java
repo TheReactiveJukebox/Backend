@@ -14,6 +14,6 @@ public class HistoryDeleteEntryTest extends EntryTest {
         Entry e = new HistoryDeleteEntry(getUserObj(), getHistoryEntryPlainObj().getId());
         String[] s = e.getEntry();
         // Assert
-        assertEquals(s[EntryCol.HISTORY.ordinal()], "1");
+        assertEquals("1", s[EntryCol.HISTORY.ordinal()]);
     }
 }

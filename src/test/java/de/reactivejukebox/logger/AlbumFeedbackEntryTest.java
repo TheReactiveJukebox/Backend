@@ -21,7 +21,7 @@ public class AlbumFeedbackEntryTest extends EntryTest {
     }
 
     @Test
-    public void testRatingFieldPositiv() {
+    public void testRatingFieldPositive() {
         AlbumFeedback feedback = getAlbumFeedbackObj();
         feedback.setFeedback(1);
         Entry e = new AlbumFeedbackEntry(getUserObj(), feedback);
@@ -41,7 +41,7 @@ public class AlbumFeedbackEntryTest extends EntryTest {
     }
 
     @Test
-    public void testRatingFieldNegativ() {
+    public void testRatingFieldNegative() {
         AlbumFeedback feedback = getAlbumFeedbackObj();
         feedback.setFeedback(-1);
         Entry e = new AlbumFeedbackEntry(getUserObj(), feedback);

@@ -19,7 +19,7 @@ public class ArtistFeedbackEntryTest extends EntryTest {
     }
 
     @Test
-    public void testRatingFieldPositiv() {
+    public void testRatingFieldPositive() {
         ArtistFeedback feedback = getArtistFeedbackObj();
         feedback.setFeedback(1);
         Entry e = new ArtistFeedbackEntry(getUserObj(), feedback);
@@ -39,7 +39,7 @@ public class ArtistFeedbackEntryTest extends EntryTest {
     }
 
     @Test
-    public void testRatingFieldNegativ() {
+    public void testRatingFieldNegative() {
         ArtistFeedback feedback = getArtistFeedbackObj();
         feedback.setFeedback(-1);
         Entry e = new ArtistFeedbackEntry(getUserObj(), feedback);

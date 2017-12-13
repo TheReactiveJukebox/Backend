@@ -11,6 +11,6 @@ public class UserLoggedOutEntryTest extends EntryTest {
         String[] s = e.getEntry();
 
         // Assert
-        assertEquals(s.length, EntryCol.values().length);
+        assertEquals(EntryCol.values().length, s.length);
     }
 }

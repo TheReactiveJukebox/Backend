@@ -14,7 +14,7 @@ public class HistoryPostEntryTest extends EntryTest {
         Entry e = new HistoryDeleteEntry(getUserObj(), getHistoryEntryPlainObj().getId());
         String[] s = e.getEntry();
         // Assert
-        assertEquals(s[EntryCol.HISTORY.ordinal()], "1");
+        assertEquals("1", s[EntryCol.HISTORY.ordinal()]);
     }
 
     @Test
@@ -22,7 +22,7 @@ public class HistoryPostEntryTest extends EntryTest {
         Entry e = new HistoryPostEntry(getUserObj(), getHistoryEntryPlainObj());
         String[] s = e.getEntry();
         // Assert
-        assertEquals(s[EntryCol.SONG.ordinal()], "2");
+        assertEquals("2", s[EntryCol.SONG.ordinal()]);
     }
 
     @Test
@@ -30,6 +30,6 @@ public class HistoryPostEntryTest extends EntryTest {
         Entry e = new HistoryPostEntry(getUserObj(), getHistoryEntryPlainObj());
         String[] s = e.getEntry();
         // Assert
-        assertEquals(s[EntryCol.RADIO.ordinal()], "3");
+        assertEquals("3", s[EntryCol.RADIO.ordinal()]);
     }
 }

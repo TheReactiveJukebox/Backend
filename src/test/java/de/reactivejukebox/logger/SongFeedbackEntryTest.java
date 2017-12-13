@@ -24,11 +24,11 @@ public class SongFeedbackEntryTest extends EntryTest {
         Entry e = new SongFeedbackEntry(getUserObj(), getTrackFeedbackObj());
         String[] s = e.getEntry();
         // Assert
-        assertEquals(s[EntryCol.SONG.ordinal()], "123");
+        assertEquals("123", s[EntryCol.SONG.ordinal()]);
     }
 
     @Test
-    public void testRatingSongFieldPositiv() {
+    public void testRatingSongFieldPositive() {
         TrackFeedback feedback = getTrackFeedbackObj();
         feedback.setSongFeedback(1);
         Entry e = new SongFeedbackEntry(getUserObj(), feedback);
@@ -38,7 +38,7 @@ public class SongFeedbackEntryTest extends EntryTest {
     }
 
     @Test
-    public void testRatingMoodgFieldPositiv() {
+    public void testRatingMoodFieldPositive() {
         TrackFeedback feedback = getTrackFeedbackObj();
         feedback.setMoodFeedback(1);
         Entry e = new SongFeedbackEntry(getUserObj(), feedback);
@@ -48,7 +48,7 @@ public class SongFeedbackEntryTest extends EntryTest {
     }
 
     @Test
-    public void testRatingSpeedgFieldPositiv() {
+    public void testRatingSpeedFieldPositive() {
         TrackFeedback feedback = getTrackFeedbackObj();
         feedback.setSpeedFeedback(1);
         Entry e = new SongFeedbackEntry(getUserObj(), feedback);
@@ -58,7 +58,7 @@ public class SongFeedbackEntryTest extends EntryTest {
     }
 
     @Test
-    public void testRatingDynamicgFieldPositiv() {
+    public void testRatingDynamicFieldPositive() {
         TrackFeedback feedback = getTrackFeedbackObj();
         feedback.setDynamicsFeedback(1);
         Entry e = new SongFeedbackEntry(getUserObj(), feedback);

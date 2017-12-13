@@ -33,12 +33,12 @@ public class EntryTest {
         Entry e = new Entry(Event.USER_LOGIN, user);
         String[] s = e.getEntry();
         // Assert
-        assertEquals(s.length, EntryCol.values().length);
+        assertEquals(EntryCol.values().length, s.length);
 
         e = new Entry(Event.USER_LOGIN, user.getPlainObject());
         s = e.getEntry();
         // Assert
-        assertEquals(s.length, EntryCol.values().length);
+        assertEquals(EntryCol.values().length, s.length);
     }
 
     /**
@@ -78,7 +78,7 @@ public class EntryTest {
             expectedEntry.append(delimiter);
         }
         // Assert
-        assertEquals(logEntry, expectedEntry.toString());
+        assertEquals(expectedEntry.toString(), logEntry);
     }
 
     @Test
@@ -90,7 +90,7 @@ public class EntryTest {
 
         String[] s = e.getEntry();
         // Assert
-        assertEquals(s[EntryCol.EVENT.ordinal()], ev.toString());
+        assertEquals(ev.toString(), s[EntryCol.EVENT.ordinal()]);
     }
 
     @Test
@@ -98,6 +98,6 @@ public class EntryTest {
         Entry e = new Entry(Event.USER_LOGIN, getUserObj());
         String[] s = e.getEntry();
         // Assert
-        assertEquals(s[EntryCol.USER.ordinal()], String.valueOf(USER_ID));
+        assertEquals(String.valueOf(USER_ID), s[EntryCol.USER.ordinal()]);
     }
 }
