@@ -44,9 +44,9 @@ public class HybridStrategy implements RecommendationStrategy {
     public HybridStrategy(RecommendationStrategyFactory factory, Radio radio) {
         this.factory = factory;
         this.radioPredicates = radio.getPredicates();
-        try{
+        try {
             this.userProfile = new UserProfile(radio);
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -55,47 +55,23 @@ public class HybridStrategy implements RecommendationStrategy {
     public Recommendations getRecommendations() {
         Map<Track, Float> results = new HashMap<>();
 
+        // get recommendations from all algorithms
         for (StrategyType strategy : StrategyType.values()) {
             // if algorihtm's weight is essentially 0, don't execute it
-            float weight = strategy.getWeight();
-            if (Math.abs(0 - weight) < 0.001) {
+            if (Math.abs(0 - strategy.getWeight()) < 0.001) {
                 continue;
             }
 
-            // otherwise, instantiate and call algorithm
-            RecommendationStrategy algorithm = factory.createStrategy(strategy, 0); // TODO decide where to set resultCount
-            Recommendations algorithmResults = algorithm.getRecommendations();
-
-            // iterate over tracks and scores simultaneously
-            Iterator<Track> trackIterator = algorithmResults.getTracks().iterator();
-            Iterator<Float> scoreIterator = algorithmResults.getScores().iterator();
-
-            recommendedTrackLoop:
-            while (trackIterator.hasNext() && scoreIterator.hasNext()) {
-                Track track = trackIterator.next();
-                float score = scoreIterator.next();
-
-                // if song does not fit filter criteria, leave it out
-                for (Predicate<Track> p : radioPredicates) {
-                    if (!p.test(track)) {
-                        continue recommendedTrackLoop;
-                    }
-                }
-
-                // otherwise, compute final track score considering algorithm weight and add track to results
-                score *= strategy.getWeight();
-                if (results.containsKey(track)) {
-                    results.put(track, results.get(track) + score);
-                } else {
-                    results.put(track, score);
-                }
-            }
+            // otherwise, instantiate and call algorithm, gather results
+            gatherAlgorithmResults(results, strategy);
         }
+
         // modify Ranking
-        if(userProfile != null) {
+        if (userProfile != null) {
             applyUserFeedback(results, userProfile);
             applyHistory(results, userProfile);
         }
+
         // finally, collect tracks and sort them by score
         ArrayList<Track> recommendations = new ArrayList<>();
         recommendations.addAll(results.keySet());
@@ -120,16 +96,53 @@ public class HybridStrategy implements RecommendationStrategy {
         return new Recommendations(recommendations, null);
     }
 
+
+    /**
+     * Instantiates and calls an algorithm to get its recommendations.
+     *
+     * @param results  the intermediate data structure used to keep track of scores in getRecommendations()
+     * @param strategy the algorithm to execute
+     */
+    private void gatherAlgorithmResults(Map<Track, Float> results, StrategyType strategy) {
+        RecommendationStrategy algorithm = factory.createStrategy(strategy, 0); // TODO decide where to set resultCount
+        Recommendations algorithmResults = algorithm.getRecommendations();
+
+        // iterate over tracks and scores simultaneously
+        Iterator<Track> trackIterator = algorithmResults.getTracks().iterator();
+        Iterator<Float> scoreIterator = algorithmResults.getScores().iterator();
+
+        recommendedTrackLoop:
+        while (trackIterator.hasNext() && scoreIterator.hasNext()) {
+            Track track = trackIterator.next();
+            float score = scoreIterator.next();
+
+            // if song does not fit filter criteria, leave it out
+            for (Predicate<Track> p : radioPredicates) {
+                if (!p.test(track)) {
+                    continue recommendedTrackLoop;
+                }
+            }
+
+            // otherwise, compute final track score considering algorithm weight and add track to results
+            score *= strategy.getWeight();
+            if (results.containsKey(track)) {
+                results.put(track, results.get(track) + score);
+            } else {
+                results.put(track, score);
+            }
+        }
+    }
+
     /**
      * Inverse linear function to map an amount of, say, skip actions to a score multiplier.
      * The more skip actions the user performed on the track, the smaller the value.
      * The importance of skip actions can be tuned by adjusting the corresponding modifier
      * instead of adjusting this function directly.
-     *
+     * <p>
      * To be used for negative actions like skips, multiskips, deletes.
      *
      * @param modifier the action the user executed n times
-     * @param n how often the action was executed
+     * @param n        how often the action was executed
      * @return the final modifier, considering how often the action was executed on that specific feature
      */
     private float calculateLinearModifier(FeedbackModifier modifier, int n) {
@@ -138,6 +151,7 @@ public class HybridStrategy implements RecommendationStrategy {
 
     /**
      * Applies all user feedback to modify the ranking
+     *
      * @param ranking the intermediate data structure used to keep track of scores in getRecommendations()
      * @param profile the profile containing all of the user's feedback
      */
@@ -153,7 +167,7 @@ public class HybridStrategy implements RecommendationStrategy {
             } else if (profile.getTrackFeedback(trackId) == -1) {
                 score *= FeedbackModifier.DISLIKE_TRACK.value;
             }
-            
+
             if (profile.getArtistFeedback(trackId) == 1) {
                 score *= FeedbackModifier.LIKE_ARTIST.value;
             } else if (profile.getTrackFeedback(trackId) == -1) {
@@ -165,13 +179,13 @@ public class HybridStrategy implements RecommendationStrategy {
             } else if (profile.getAlbumFeedback(trackId) == -1) {
                 score *= FeedbackModifier.DISLIKE_ALBUM.value;
             }
-            
+
             if (profile.getSpeedFeedback(entry.getKey().getSpeed()) == 1) {
                 score *= FeedbackModifier.LIKE_TEMPO.value;
             } else if (profile.getSpeedFeedback(entry.getKey().getSpeed()) == -1) {
                 score *= FeedbackModifier.DISLIKE_TEMPO.value;
             }
-            
+
             if (profile.getMoodFeedback(t.getArousal(), t.getValence()) == 1) {
                 score *= FeedbackModifier.LIKE_MOOD.value;
             } else if (profile.getMoodFeedback(t.getArousal(), t.getValence()) == -1) {
