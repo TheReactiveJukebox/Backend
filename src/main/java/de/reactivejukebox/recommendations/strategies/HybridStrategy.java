@@ -1,6 +1,5 @@
 package de.reactivejukebox.recommendations.strategies;
 
-import com.fasterxml.jackson.databind.ser.std.StdArraySerializers;
 import de.reactivejukebox.model.Radio;
 import de.reactivejukebox.model.Track;
 import de.reactivejukebox.model.UserProfile;
@@ -13,21 +12,30 @@ import java.util.*;
 import java.util.function.Predicate;
 
 public class HybridStrategy implements RecommendationStrategy {
-    private static float likeMod = 1.5f;
-    private static float disLikeMod = -0.5f;
-    private static float artistMod = 1.25f;
-    private static float disArtistMod = -0.75f;
-    private static float albumMod = 1.25f;
-    private static float disAlbumMod = -0.75f;
-    private static float speedMod = 1.25f;
-    private static float disSpeedMod = -0.75f;
-    private static float moodMod = 1.25f;
-    private static float disMoodMod = -0.75f;
-    private static float genreMod = 1.25f;
-    private static float disGenreMod = -0.75f;
-    private static float disSkipMod = -0.1f;
-    private static float disDeleteMod = -0.1f;
-    private static float disMultiSkipMod = -0.3f;
+
+    private enum FeedbackModifier {
+        LIKE_TRACK(1.5f),
+        DISLIKE_TRACK(0.5f),
+        LIKE_ARTIST(1.25f),
+        DISLIKE_ARTIST(0.75f),
+        LIKE_ALBUM(1.25f),
+        DISLIKE_ALBUM(0.75f),
+        LIKE_TEMPO(1.25f),
+        DISLIKE_TEMPO(0.75f),
+        LIKE_MOOD(1.25f),
+        DISLIKE_MOOD(0.75f),
+        LIKE_GENRE(1.25f),
+        DISLIKE_GENRE(0.75f),
+        SKIP(1.8f),
+        DELETE(1f),
+        MULTISKIP(0.7f);
+
+        public float value;
+
+        FeedbackModifier(float value) {
+            this.value = value;
+        }
+    }
 
     private UserProfile userProfile;
     private RecommendationStrategyFactory factory;
@@ -85,7 +93,7 @@ public class HybridStrategy implements RecommendationStrategy {
         }
         // modify Ranking
         if(userProfile != null) {
-            modifyRanking(results);
+            applyUserFeedback(results, userProfile);
         }
         // finally, collect tracks and sort them by score
         ArrayList<Track> recommendations = new ArrayList<>();
@@ -111,39 +119,72 @@ public class HybridStrategy implements RecommendationStrategy {
         return new Recommendations(recommendations, null);
     }
 
-    private void modifyRanking (Map<Track,Float> input){
-        ArrayList<Track> tracks = new ArrayList<>();
-        ArrayList<Float> scores = new ArrayList<>();
-        ArrayList<Float> mods = new ArrayList<>();
+    /**
+     * Inverse linear function to map an amount of, say, skip actions to a score multiplier.
+     * The more skip actions the user performed on the track, the smaller the value.
+     * The importance of skip actions can be tuned by adjusting the corresponding modifier
+     * instead of adjusting this function directly.
+     *
+     * To be used for negative actions like skips, multiskips, deletes.
+     *
+     * @param modifier the action the user executed n times
+     * @param n how often the action was executed
+     * @return the final modifier, considering how often the action was executed on that specific feature
+     */
+    private float calculateLinearModifier(FeedbackModifier modifier, int n) {
+        return 1 / (modifier.value * n + 1);
+    }
 
-        tracks.addAll(input.keySet());
-        for (Track t: tracks) {
-            int tId = t.getId();
+    /**
+     * Applies all user feedback to modify the ranking
+     * @param ranking the intermediate data structure used to keep track of scores in getRecommendations()
+     * @param profile the profile containing all of the user's feedback
+     */
+    private void applyUserFeedback(Map<Track, Float> ranking, UserProfile profile) {
+        for (Map.Entry<Track, Float> entry : ranking.entrySet()) {
+            Track t = entry.getKey();
+            int trackId = t.getId();
+            float score = entry.getValue();
 
-            //Add direct feedback modifier
-            Float tMod = Math.max(likeMod * userProfile.getTrackFeedback(tId), disLikeMod * userProfile.getTrackFeedback(tId));
-            if (tMod > 0) mods.add(tMod);
-            Float arMod = Math.max(artistMod * userProfile.getArtistFeedback(tId), disArtistMod * userProfile.getArtistFeedback(tId));
-            if (arMod > 0) mods.add(arMod);
-            Float alMod = Math.max(albumMod * userProfile.getAlbumFeedback(tId), disAlbumMod * userProfile.getAlbumFeedback(tId));
-            if (alMod > 0) mods.add(alMod);
-            Float spMod = Math.max(speedMod*userProfile.getSpeedFeedback(t.getSpeed()),disSpeedMod * userProfile.getSpeedFeedback(t.getSpeed()));
-            if (spMod > 0) mods.add(spMod);
-            Float moMod = Math.max(moodMod * userProfile.getMoodFeedback(t.getArousal(),t.getValence()),disMoodMod*userProfile.getMoodFeedback(t.getArousal(),t.getValence()));
-            if (moMod > 0) mods.add(moMod);
-            //TODO which genres to use for score
-
-            //Add indirect feedback modifier
-            if (userProfile.getSkipFeedback(t.getId()) < 0) mods.add(disSkipMod / userProfile.getSkipFeedback(t.getId()));
-            if (userProfile.getDeleteFeedback(t.getId()) < 0) mods.add(disDeleteMod / userProfile.getDeleteFeedback(t.getId()));
-            if (userProfile.getMultiSkipFeedback(t.getId()) < 0) mods.add(disMultiSkipMod / userProfile.getMultiSkipFeedback(t.getId()));
-
-            //modify track scores
-            Float value = input.get(t);
-            for (Float f : mods){
-                value *= f;
+            // apply direct feedback modifiers: track, artist, album, tempo, mood
+            if (profile.getTrackFeedback(trackId) == 1) {
+                score *= FeedbackModifier.LIKE_TRACK.value;
+            } else if (profile.getTrackFeedback(trackId) == -1) {
+                score *= FeedbackModifier.DISLIKE_TRACK.value;
             }
-            scores.add(value);
+            
+            if (profile.getArtistFeedback(trackId) == 1) {
+                score *= FeedbackModifier.LIKE_ARTIST.value;
+            } else if (profile.getTrackFeedback(trackId) == -1) {
+                score *= FeedbackModifier.DISLIKE_ARTIST.value;
+            }
+
+            if (profile.getAlbumFeedback(trackId) == 1) {
+                score *= FeedbackModifier.LIKE_ALBUM.value;
+            } else if (profile.getAlbumFeedback(trackId) == -1) {
+                score *= FeedbackModifier.DISLIKE_ALBUM.value;
+            }
+            
+            if (profile.getSpeedFeedback(entry.getKey().getSpeed()) == 1) {
+                score *= FeedbackModifier.LIKE_TEMPO.value;
+            } else if (profile.getSpeedFeedback(entry.getKey().getSpeed()) == -1) {
+                score *= FeedbackModifier.DISLIKE_TEMPO.value;
+            }
+            
+            if (profile.getMoodFeedback(t.getArousal(), t.getValence()) == 1) {
+                score *= FeedbackModifier.LIKE_MOOD.value;
+            } else if (profile.getMoodFeedback(t.getArousal(), t.getValence()) == -1) {
+                score *= FeedbackModifier.DISLIKE_MOOD.value;
+            }
+
+            // TODO incorporate genre feedback
+
+            // apply indirect feedback modifiers: how often was the track skipped, deleted, skipped over
+            score *= calculateLinearModifier(FeedbackModifier.SKIP, profile.getSkipFeedback(trackId));
+            score *= calculateLinearModifier(FeedbackModifier.DELETE, profile.getDeleteFeedback(trackId));
+            score *= calculateLinearModifier(FeedbackModifier.MULTISKIP, profile.getMultiSkipFeedback(trackId));
+
+            entry.setValue(score);
         }
     }
 }
