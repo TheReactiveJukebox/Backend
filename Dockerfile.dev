@@ -13,6 +13,10 @@ ENV JPDA_TRANSPORT=dt_socket
 # wait for debugger to attach
 ENV JPDA_SUSPEND=y
 
+# set Spotify credentials
+ENV SPOTIFY_CLIENT_ID=06b4a989398d48728a998eb0450d2e5a
+ENV SPOTIFY_CLIENT_SECRET=22b61a1301634a72aae6e6b8064c3ecd
+
 # mount webapp as volume
 VOLUME /usr/local/tomcat/webapps/ROOT.war
 
