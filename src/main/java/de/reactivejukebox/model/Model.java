@@ -20,6 +20,7 @@ public class Model {
     private Genres genres;
     private Playlists playlists;
     private SpecialFeedbacks specialFeedbacks;
+    private IndirectFeedbackEntries indirectFeedbackEntries;
 
     private Model() {
         users = new Users();
@@ -42,6 +43,7 @@ public class Model {
         specialFeedbacks = new SpecialFeedbacks(users);
         historyEntries = new HistoryEntries(users, tracks, radios);
         playlists = new Playlists();
+        indirectFeedbackEntries = new IndirectFeedbackEntries();
 
     }
 
@@ -91,4 +93,6 @@ public class Model {
     public Playlists getPlaylists() {
         return playlists;
     }
+
+    public IndirectFeedbackEntries getIndirectFeedbackEntries() { return indirectFeedbackEntries; }
 }

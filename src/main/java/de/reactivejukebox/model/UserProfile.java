@@ -34,9 +34,9 @@ public class UserProfile {
         genreFeedback = sf.getGenreFeedback(userId);
 
 
-        skipFeedback = IndirectFeedbackEntries.getSkipFeedback(radio.getId(),userId);
-        deleteFeedback = IndirectFeedbackEntries.getDeleteFeedback(radio.getId(),userId);
-        multiSkipFeedback = IndirectFeedbackEntries.getMultiSkipFeedback(radio.getId(),userId);
+        skipFeedback = Model.getInstance().getIndirectFeedbackEntries().getSkipFeedback(radio.getId(),userId);
+        deleteFeedback = Model.getInstance().getIndirectFeedbackEntries().getDeleteFeedback(radio.getId(),userId);
+        multiSkipFeedback = Model.getInstance().getIndirectFeedbackEntries().getMultiSkipFeedback(radio.getId(),userId);
 
 
         speedFeedback = new HashMap<>();

@@ -8,14 +8,14 @@ import java.util.HashMap;
 
 //TODO why are the methods of this class static?
 public class IndirectFeedbackEntries {
-    static private final String INSERT_INDIRECT_FEEDBACK = "INSERT INTO indirectFeedback (SongId, UserId, RadioId, Type, Position, ToSongId) VALUES (?, ?, ?, ?, ?, ?);";
+    private final String INSERT_INDIRECT_FEEDBACK = "INSERT INTO indirectFeedback (SongId, UserId, RadioId, Type, Position, ToSongId) VALUES (?, ?, ?, ?, ?, ?);";
 
-    public static IndirectFeedbackPlain put(IndirectFeedbackPlain entry) throws SQLException {
+    public IndirectFeedbackPlain put(IndirectFeedbackPlain entry) throws SQLException {
         toDB(entry);
         return entry;
     }
 
-    public static HashMap<Integer, Integer> getSkipFeedback(int radioId, int userId) throws SQLException {
+    public HashMap<Integer, Integer> getSkipFeedback(int radioId, int userId) throws SQLException {
         Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM indirectFeedback WHERE userid = ? " +
                 "radioId = ? Type = SKIP");
@@ -33,7 +33,7 @@ public class IndirectFeedbackEntries {
         return result;
     }
 
-    public static HashMap<Integer, Integer> getDeleteFeedback(int radioId, int userId) throws SQLException {
+    public HashMap<Integer, Integer> getDeleteFeedback(int radioId, int userId) throws SQLException {
         Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM indirectFeedback WHERE userid = ? " +
                 "radioId = ? Type = DELETE");
@@ -51,7 +51,7 @@ public class IndirectFeedbackEntries {
         return result;
     }
 
-    public static HashMap<Integer, Integer> getMultiSkipFeedback(int radioId, int userId) throws SQLException {
+    public HashMap<Integer, Integer> getMultiSkipFeedback(int radioId, int userId) throws SQLException {
         Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM indirectFeedback WHERE userid = ? " +
                 "radioId = ? Type = MULTI_SKIP");
@@ -72,7 +72,7 @@ public class IndirectFeedbackEntries {
 
 
 
-    private static void toDB(IndirectFeedbackPlain entry) throws SQLException {
+    private void toDB(IndirectFeedbackPlain entry) throws SQLException {
         Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement addEntry = con.prepareStatement(INSERT_INDIRECT_FEEDBACK, Statement.RETURN_GENERATED_KEYS);
         addEntry.setInt(1, entry.getTrackId());

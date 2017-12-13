@@ -96,7 +96,7 @@ public class TrackService {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
             // Process input
-            IndirectFeedbackPlain feedbackReturn = IndirectFeedbackEntries.put(feedbackPlain);
+            IndirectFeedbackPlain feedbackReturn = Model.getInstance().getIndirectFeedbackEntries().put(feedbackPlain);
             // Build response
             return Response.ok().entity(feedbackReturn).build();
         } catch (Exception e) {
