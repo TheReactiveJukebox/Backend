@@ -20,6 +20,6 @@ public class StudyService {
     @Secured
     public Response createQuestionnaire(@Context User user) {
         LoggerProvider.getLogger().writeEntry(new QuestionnaireEntry(user));
-        return Response.ok().build();
+        return Response.ok("{}").build();
     }
 }
