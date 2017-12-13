@@ -36,12 +36,33 @@ public class Entry {
         setValue(EntryCol.TIMESTAMP, unixTime);
     }
 
+
     void setValue(final EntryCol col, final String value) {
-        entry[col.ordinal()] = value;
+        String s = "";
+        if (value != null)
+            s = value;
+        entry[col.ordinal()] = s;
     }
 
-    void setValue(final EntryCol col, final long value) {
-        entry[col.ordinal()] = String.valueOf(value);
+    void setValue(final EntryCol col, final Long value) {
+        String s = "";
+        if (value != null)
+            s = value.toString();
+        entry[col.ordinal()] = s;
+    }
+
+    void setValue(final EntryCol col, final Integer value) {
+        String s = "";
+        if (value != null)
+            s = value.toString();
+        entry[col.ordinal()] = s;
+    }
+
+    void setValue(final EntryCol col, final Float value) {
+        String s = "";
+        if (value != null)
+            s = value.toString();
+        entry[col.ordinal()] = s;
     }
 
     public Event getEvent() {
