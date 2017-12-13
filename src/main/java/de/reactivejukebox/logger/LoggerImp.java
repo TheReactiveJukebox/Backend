@@ -1,5 +1,7 @@
 package de.reactivejukebox.logger;
 
+import org.apache.logging.log4j.LogManager;
+
 public class LoggerImp implements Logger {
 
     LoggerImp() {
@@ -13,6 +15,6 @@ public class LoggerImp implements Logger {
     private void writeEntry(final String msg) {
         // TODO log4j call
         // TODO handle errors
-        System.out.println(msg);
+        LogManager.getLogger("studie").info(msg);
     }
 }

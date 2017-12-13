@@ -7,7 +7,6 @@ import de.reactivejukebox.logger.UserLoggedInEntry;
 import de.reactivejukebox.logger.UserLoggedOutEntry;
 import de.reactivejukebox.logger.UserRegisterEntry;
 import de.reactivejukebox.model.UserPlain;
-import org.apache.logging.log4j.LogManager;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -29,7 +28,6 @@ public class UserService {
         System.out.printf("login" + auth);
         try {
             UserPlain token = new TokenHandler().checkUser(auth);
-            LogManager.getLogger("studie").error("log something that will be useful.");
             LoggerProvider.getLogger().writeEntry(new UserLoggedInEntry(token));
             return Response.ok(token).build();
         } catch (Exception e) {
