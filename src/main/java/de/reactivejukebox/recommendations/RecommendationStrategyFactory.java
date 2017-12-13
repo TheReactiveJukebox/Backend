@@ -2,6 +2,7 @@ package de.reactivejukebox.recommendations;
 
 import de.reactivejukebox.model.Radio;
 import de.reactivejukebox.model.Track;
+import de.reactivejukebox.recommendations.strategies.MoodNN;
 import de.reactivejukebox.recommendations.strategies.RandomTracks;
 import de.reactivejukebox.recommendations.strategies.SameArtistGreatestHits;
 import de.reactivejukebox.recommendations.strategies.SpotifySongRecommender;
@@ -31,6 +32,8 @@ public class RecommendationStrategyFactory {
             return new RandomTracks(radio, upcoming, resultCount);
         } else if (s == StrategyType.SPOTIFY) {
             return new SpotifySongRecommender(radio, upcoming, resultCount);
+        } else if (s == StrategyType.MOOD){
+            return new MoodNN(radio, upcoming, resultCount);
         } else throw new NoSuchStrategyException();
     }
 

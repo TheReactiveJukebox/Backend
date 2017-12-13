@@ -32,7 +32,7 @@ public class GenreService {
         try {
             return Response.status(200).entity(Model.getInstance().getSpecialFeedbacks().getGenreFeedback(id ,user.getId())).build();
         }catch (Exception e){
-            return Response.status(400).entity(e).build();
+            return Response.status(400).build();
         }
 
     }
@@ -46,7 +46,7 @@ public class GenreService {
         try {
             return Response.status(200).entity(Model.getInstance().getSpecialFeedbacks().putGenreFeedback(feedback,user.getId())).build();
         }catch (Exception e){
-            return Response.status(400).entity(e).build();
+            return Response.status(400).build();
         }
     }
 }
