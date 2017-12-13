@@ -1,5 +1,7 @@
 package de.reactivejukebox.logger;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.reactivejukebox.model.User;
 import de.reactivejukebox.model.UserPlain;
 
@@ -62,6 +64,18 @@ public class Entry {
         String s = "";
         if (value != null)
             s = value.toString();
+        entry[col.ordinal()] = s;
+    }
+
+    void setValue(final EntryCol col, final Object obj) {
+        String s = "";
+        if (obj != null) {
+            try {
+                s = new ObjectMapper().writeValueAsString(obj);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
         entry[col.ordinal()] = s;
     }
 
