@@ -6,6 +6,7 @@ import java.util.HashSet;
 
 public class UserProfile {
     private Tracks tracks;
+    private Radio radio;
 
     private HashSet<TrackFeedback> rawTrackFeedback;
     private HashMap<Integer, Integer> trackFeedback;
@@ -16,20 +17,27 @@ public class UserProfile {
     private HashMap<Integer, Integer> speedFeedback;
     private HashMap<MoodKey, Integer> moodFeedback;
 
-
-    private Float arousal;
-    private Float valence;
-    private Float speed;
-
+    private HashMap<Integer, Integer> skipFeedback;
+    private HashMap<Integer, Integer> deleteFeedback;
+    private HashMap<Integer, Integer> multiSkipFeedback;
 
 
-    public UserProfile(int userId) throws SQLException {
+
+    public UserProfile(Radio radio) throws SQLException {
+        this.radio = radio;
+        int userId = radio.getUser().getId();
         tracks = Model.getInstance().getTracks();
         rawTrackFeedback = Model.getInstance().getTrackFeedbacks().getByUserId(userId);
         SpecialFeedbacks sf = Model.getInstance().getSpecialFeedbacks();
         artistFeedback = sf.getArtistFeedback(userId);
         albumFeedback = sf.getAlbumFeedback(userId);
         genreFeedback = sf.getGenreFeedback(userId);
+
+
+        skipFeedback = IndirectFeedbackEntries.getSkipFeedback(radio.getId(),userId);
+        deleteFeedback = IndirectFeedbackEntries.getDeleteFeedback(radio.getId(),userId);
+        multiSkipFeedback = IndirectFeedbackEntries.getMultiSkipFeedback(radio.getId(),userId);
+
 
         speedFeedback = new HashMap<>();
         trackFeedback = new HashMap<>();
@@ -38,86 +46,44 @@ public class UserProfile {
     }
 
     public int getTrackFeedback(int trackId){
-        if (trackFeedback.containsKey(trackId)) {
-            return trackFeedback.get(trackId);
-        } else {
-            return 0;
-        }
+        return trackFeedback.getOrDefault(trackId, 0);
     }
 
     public int getArtistFeedback(int artistId){
-        if (artistFeedback.containsKey(artistId)) {
-            return artistFeedback.get(artistId);
-        } else {
-            return 0;
-        }
+        return artistFeedback.getOrDefault(artistId, 0);
     }
 
     public int getAlbumFeedback(int id){
-        if (albumFeedback.containsKey(id)) {
-            return albumFeedback.get(id);
-        } else {
-            return 0;
-        }
+        return albumFeedback.getOrDefault(id, 0);
     }
 
     public int getGenreFeedback(String id){
-        if (genreFeedback.containsKey(id)) {
-            return genreFeedback.get(id);
-        } else {
-            return 0;
-        }
+        return genreFeedback.getOrDefault(id, 0);
+    }
+
+    public int getSkipFeedback(int id){
+        return skipFeedback.getOrDefault(id, 0);
+    }
+
+    public int getDeleteFeedback(int id){
+        return deleteFeedback.getOrDefault(id, 0);
+    }
+
+    public int getMultiSkipFeedback(int id){
+        return multiSkipFeedback.getOrDefault(id, 0);
     }
 
     public int getSpeedFeedback(float speed){
         int speedInt = Math.round(speed/5); //TODO change with new Feedback
-        if (speedFeedback.containsKey(speedInt)) {
-            return speedFeedback.get(speedInt);
-        } else {
-            return 0;
-        }
+        return speedFeedback.getOrDefault(speedInt, 0);
     }
 
     public int getMoodFeedback(float arousal, float valence){
         MoodKey key = new MoodKey(arousal,valence);
-        if (moodFeedback.containsKey(key)) {
-            return moodFeedback.get(key);
-        } else {
-            return 0;
-        }
+        return moodFeedback.getOrDefault(key, 0);
     }
 
-    public int isTrackLiked(int id){
-        return trackFeedback.get(id) > 0 ? 1 : 0;
-    }
 
-    public int isTrackDisLiked(int id){
-        return trackFeedback.get(id) < 0 ? 1 : 0;
-    }
-
-    public int isArtistLiked(int id){
-        return artistFeedback.get(id) > 0 ? 1 : 0;
-    }
-
-    public int isArtistDisLiked(int id){
-        return artistFeedback.get(id) < 0 ? 1 : 0;
-    }
-
-    public int isAlbumLiked(int id){
-        return albumFeedback.get(id) > 0 ? 1 : 0;
-    }
-
-    public int isAlbumDisLiked(int id){
-        return albumFeedback.get(id) < 0 ? 1 : 0;
-    }
-
-    public int isGenreLiked(String id){
-        return genreFeedback.get(id) > 0 ? 1 : 0;
-    }
-
-    public int isGenreDisLiked(String id){
-        return genreFeedback.get(id) < 0 ? 1 : 0;
-    }
 
     //TODO change with new Feedback
     private void build(){
