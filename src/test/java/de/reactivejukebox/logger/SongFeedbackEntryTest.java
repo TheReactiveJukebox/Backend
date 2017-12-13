@@ -1,0 +1,70 @@
+package de.reactivejukebox.logger;
+
+import de.reactivejukebox.model.Track;
+import de.reactivejukebox.model.TrackFeedback;
+import org.testng.annotations.Test;
+
+import static org.testng.AssertJUnit.assertEquals;
+
+public class SongFeedbackEntryTest extends EntryTest {
+    Track getTrackObj() {
+        Track track = new Track();
+        track.setId(123);
+        return track;
+    }
+
+    TrackFeedback getTrackFeedbackObj() {
+        TrackFeedback feedback = new TrackFeedback();
+        feedback.setTrack(getTrackObj());
+        return feedback;
+    }
+
+    @Test
+    public void testSongField() {
+        Entry e = new SongFeedbackEntry(getUserObj(), getTrackFeedbackObj());
+        String[] s = e.getEntry();
+        // Assert
+        assertEquals(s[EntryCol.SONG.ordinal()], "123");
+    }
+
+    @Test
+    public void testRatingSongFieldPositiv() {
+        TrackFeedback feedback = getTrackFeedbackObj();
+        feedback.setSongFeedback(1);
+        Entry e = new SongFeedbackEntry(getUserObj(), feedback);
+        String[] s = e.getEntry();
+        // Assert
+        assertEquals("1", s[EntryCol.RATING_SONG.ordinal()]);
+    }
+
+    @Test
+    public void testRatingMoodgFieldPositiv() {
+        TrackFeedback feedback = getTrackFeedbackObj();
+        feedback.setMoodFeedback(1);
+        Entry e = new SongFeedbackEntry(getUserObj(), feedback);
+        String[] s = e.getEntry();
+        // Assert
+        assertEquals("1", s[EntryCol.RATING_MOOD.ordinal()]);
+    }
+
+    @Test
+    public void testRatingSpeedgFieldPositiv() {
+        TrackFeedback feedback = getTrackFeedbackObj();
+        feedback.setSpeedFeedback(1);
+        Entry e = new SongFeedbackEntry(getUserObj(), feedback);
+        String[] s = e.getEntry();
+        // Assert
+        assertEquals("1", s[EntryCol.RATING_SPEED.ordinal()]);
+    }
+
+    @Test
+    public void testRatingDynamicgFieldPositiv() {
+        TrackFeedback feedback = getTrackFeedbackObj();
+        feedback.setDynamicsFeedback(1);
+        Entry e = new SongFeedbackEntry(getUserObj(), feedback);
+        String[] s = e.getEntry();
+        // Assert
+        assertEquals("1", s[EntryCol.RATING_DYNAMIC.ordinal()]);
+    }
+
+}
