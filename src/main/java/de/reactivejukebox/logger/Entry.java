@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.reactivejukebox.model.User;
 import de.reactivejukebox.model.UserPlain;
 
+import java.util.StringJoiner;
+
 public class Entry {
     private Event ev;
     private String[] entry = new String[EntryCol.values().length];
@@ -88,11 +90,13 @@ public class Entry {
     }
 
     public String getLogString(char delimiter) {
-        StringBuilder msg = new StringBuilder();
+        StringJoiner msg = new StringJoiner(String.valueOf(delimiter));
         for (String colValue : getEntry()) {
-            if (colValue != null)
-                msg.append(colValue);
-            msg.append(delimiter);
+            if (colValue == null) {
+                msg.add("");
+                continue;
+            }
+            msg.add(colValue);
         }
 
         return msg.toString();

@@ -5,6 +5,7 @@ import de.reactivejukebox.model.User;
 import org.testng.annotations.Test;
 
 import java.sql.Timestamp;
+import java.util.StringJoiner;
 
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
@@ -62,20 +63,21 @@ public class EntryTest {
         Entry e = new Entry(Event.USER_LOGIN, getUserObj());
         String logEntry = e.getLogString(delimiter);
 
-        StringBuilder expectedEntry = new StringBuilder();
+        StringJoiner expectedEntry = new StringJoiner(String.valueOf(delimiter));
         for (EntryCol col : EntryCol.values()) {
             switch (col) {
                 case USER:
-                    expectedEntry.append(String.valueOf(USER_ID));
+                    expectedEntry.add(String.valueOf(USER_ID));
                     break;
                 case TIMESTAMP:
-                    expectedEntry.append(e.getEntry()[EntryCol.TIMESTAMP.ordinal()]);
+                    expectedEntry.add(e.getEntry()[EntryCol.TIMESTAMP.ordinal()]);
                     break;
                 case EVENT:
-                    expectedEntry.append(e.getEvent().toString());
+                    expectedEntry.add(e.getEvent().toString());
                     break;
+                default:
+                    expectedEntry.add("");
             }
-            expectedEntry.append(delimiter);
         }
         // Assert
         assertEquals(expectedEntry.toString(), logEntry);
