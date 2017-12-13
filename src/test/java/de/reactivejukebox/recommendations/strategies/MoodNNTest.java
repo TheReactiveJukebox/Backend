@@ -52,7 +52,7 @@ public class MoodNNTest {
                 a = AROUSALS[i]-0.05f+(rng.nextFloat()*0.1f);
                 v = VALENCES[i]-0.05f+(rng.nextFloat()*0.1f);
                 Model.getInstance().getTracks().put(i*100+j,new Track(i*100+j,"",checker,stub,"","",
-                        0,0,null,0f,0f,v,a));
+                        0,0,null,0f,0f,"","",v,a));
             }
         }
 
@@ -71,7 +71,7 @@ public class MoodNNTest {
         Radio radio = new Radio();
         radio.setId(1);
         radio.getStartTracks().add(new Track(888,"",null, null,"","",
-                0,0,null,0f,0f,-0.4f,0.4f));
+                0,0,null,0f,0f,"","",-0.4f,0.4f));
 
         RecommendationStrategy strat= new MoodNN(radio,new ArrayList<Track>(),20);
         List<Track> result = strat.getRecommendations();
@@ -90,7 +90,7 @@ public class MoodNNTest {
 
         radio.getStartTracks().clear();
         radio.getStartTracks().add(new Track(888,"",null, null,"","",
-                0,0,null,0f,0f,0.4f,0.4f));
+                0,0,null,0f,0f,"","",0.4f,0.4f));
 
         result = strat.getRecommendations();
         Reporter.log("Size: "+result.size(),true);
@@ -102,7 +102,7 @@ public class MoodNNTest {
 
         radio.getStartTracks().clear();
         radio.getStartTracks().add(new Track(888,"",null, null,"","",
-                0,0,null,0f,0f,0.4f,-0.4f));
+                0,0,null,0f,0f,"","",0.4f,-0.4f));
 
         result = strat.getRecommendations();
         Reporter.log("Size: "+result.size(),true);
@@ -114,7 +114,7 @@ public class MoodNNTest {
 
         radio.getStartTracks().clear();
         radio.getStartTracks().add(new Track(888,"",null, null,"","",
-                0,0,null,0f,0f,-0.4f,-0.4f));
+                0,0,null,0f,0f,"","",-0.4f,-0.4f));
 
         result = strat.getRecommendations();
         Reporter.log("Size: "+result.size(),true);
@@ -125,7 +125,7 @@ public class MoodNNTest {
 
 
         radio.getStartTracks().add(new Track(888,"",null, null,"","",
-                0,0,null,0f,0f,-0.4f,0.4f));
+                0,0,null,0f,0f,"","",-0.4f,0.4f));
         assertTrue(result.size() == 20);
         result = strat.getRecommendations();
         Reporter.log("Size: "+result.size(),true);
@@ -142,7 +142,7 @@ public class MoodNNTest {
         Radio radio = new Radio();
         radio.setId(2);
         radio.getStartTracks().add(new Track(888,"",null, null,"","",
-                0,0,null,0f,0f,-0.4f,0.4f));
+                0,0,null,0f,0f,"","",-0.4f,0.4f));
 
         RecommendationStrategy strat= new MoodNN(radio,new ArrayList<Track>(),20);
         List<Track> result = strat.getRecommendations();
