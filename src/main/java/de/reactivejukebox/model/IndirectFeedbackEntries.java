@@ -26,7 +26,7 @@ public class IndirectFeedbackEntries {
 
         while (rs.next()) {
             int count = result.getOrDefault(rs.getInt("songId"),0);
-            count += -1;
+            count += 1;
             result.put(rs.getInt("songId"), count);
         }
         con.close();
@@ -44,7 +44,7 @@ public class IndirectFeedbackEntries {
 
         while (rs.next()) {
             int count = result.getOrDefault(rs.getInt("songId"),0);
-            count += -1;
+            count += 1;
             result.put(rs.getInt("songId"), count);
         }
         con.close();
@@ -62,7 +62,7 @@ public class IndirectFeedbackEntries {
 
         while (rs.next()) {
             int count = result.getOrDefault(rs.getInt("songId"),0);
-            count += -1;
+            count += 1;
             result.put(rs.getInt("songId"), count);
         }
         con.close();
