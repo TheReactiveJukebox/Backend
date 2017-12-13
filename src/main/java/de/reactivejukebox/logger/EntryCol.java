@@ -13,4 +13,12 @@ public enum EntryCol {
     RATING_SPEED,
     RATING_DYNAMIC,
     RATING_MOOD,
+    ALGORITHM,
+    YEAR_START,
+    YEAR_END,
+    DYNAMIC,
+    AROUSAL,
+    VALENCE,
+    SPEED_MIN,
+    SPEED_MAX,
 }
