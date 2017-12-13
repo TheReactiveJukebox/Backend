@@ -10,13 +10,16 @@ public class ActionFeedbackEntry extends Entry {
     public ActionFeedbackEntry(User user, IndirectFeedbackPlain feedback) {
         super(Event.ACTION_FEEDBACK, user);
         setValue(EntryCol.RADIO, feedback.getRadioId());
-        setValue(EntryCol.USER_ACTION, feedback.getFeedbackName());
         setValue(EntryCol.SONG, feedback.getTrackId());
-        if (feedback.getFeedbackName().equals(IndirectFeedbackName.MULTI_SKIP.toString())) {
-            setValue(EntryCol.SONG_FORWARD, feedback.getToTrackId());
-        }
-        if (!feedback.getFeedbackName().equals(IndirectFeedbackName.DELETE.toString())) {
-            setValue(EntryCol.SONG_RUNTIME, feedback.getPosition());
+        String name = feedback.getFeedbackName();
+        setValue(EntryCol.USER_ACTION, name);
+        if (name != null) {
+            if (name.equals(IndirectFeedbackName.MULTI_SKIP.toString())) {
+                setValue(EntryCol.SONG_FORWARD, feedback.getToTrackId());
+            }
+            if (!name.equals(IndirectFeedbackName.DELETE.toString())) {
+                setValue(EntryCol.SONG_RUNTIME, feedback.getPosition());
+            }
         }
     }
 }
