@@ -16,13 +16,11 @@ import java.util.Collection;
 public class RecommendationStrategyFactory {
 
     private Radio radio;
-    private UserProfile userProfile;
     private Collection<Track> upcoming;
 
-    public RecommendationStrategyFactory(Radio radio, Collection<Track> upcoming) throws SQLException {
+    public RecommendationStrategyFactory(Radio radio, Collection<Track> upcoming) {
         this.radio = radio;
         this.upcoming = upcoming;
-        this.userProfile = new UserProfile(radio);
     }
 
     public RecommendationStrategy createStrategy(int resultCount) {
@@ -35,7 +33,7 @@ public class RecommendationStrategyFactory {
         } else if (s == StrategyType.RANDOM) {
             return new RandomTracks(radio, upcoming, resultCount);
         } else if (s == StrategyType.HYBRID) {
-            return new HybridStrategy(this, radio, userProfile);
+            return new HybridStrategy(this, radio);
         } else if (s == StrategyType.MOOD){
             return new MoodNN(radio, upcoming, resultCount);
         } else throw new NoSuchStrategyException();

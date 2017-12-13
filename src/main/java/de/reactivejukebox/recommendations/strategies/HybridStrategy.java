@@ -8,6 +8,7 @@ import de.reactivejukebox.recommendations.RecommendationStrategy;
 import de.reactivejukebox.recommendations.RecommendationStrategyFactory;
 import de.reactivejukebox.recommendations.Recommendations;
 
+import java.sql.SQLException;
 import java.util.*;
 import java.util.function.Predicate;
 
@@ -32,10 +33,14 @@ public class HybridStrategy implements RecommendationStrategy {
     private RecommendationStrategyFactory factory;
     List<Predicate<Track>> radioPredicates;
 
-    public HybridStrategy(RecommendationStrategyFactory factory, Radio radio, UserProfile userProfile) {
+    public HybridStrategy(RecommendationStrategyFactory factory, Radio radio) {
         this.factory = factory;
-        this.userProfile = userProfile;
         this.radioPredicates = radio.getPredicates();
+        try{
+            this.userProfile = new UserProfile(radio);
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -79,7 +84,9 @@ public class HybridStrategy implements RecommendationStrategy {
             }
         }
         // modify Ranking
-        modifyRanking(results);
+        if(userProfile != null) {
+            modifyRanking(results);
+        }
         // finally, collect tracks and sort them by score
         ArrayList<Track> recommendations = new ArrayList<>();
         recommendations.addAll(results.keySet());
