@@ -5,6 +5,7 @@ import de.reactivejukebox.model.Track;
 import de.reactivejukebox.recommendations.strategies.RandomTracks;
 import de.reactivejukebox.recommendations.strategies.SameArtistGreatestHits;
 import de.reactivejukebox.recommendations.strategies.StrategyType;
+import de.reactivejukebox.recommendations.strategies.TrackFeatureDistance;
 
 import java.util.Collection;
 
@@ -28,6 +29,8 @@ public class RecommendationStrategyFactory {
             return new SameArtistGreatestHits(radio, upcoming, resultCount);
         } else if (s == StrategyType.RANDOM) {
             return new RandomTracks(radio, upcoming, resultCount);
+        } else if (s ==StrategyType.MOST_SIMILAR) {
+            return new TrackFeatureDistance(upcoming, resultCount);
         } else throw new NoSuchStrategyException();
     }
 

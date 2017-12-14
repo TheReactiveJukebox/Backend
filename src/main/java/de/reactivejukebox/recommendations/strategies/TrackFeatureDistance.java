@@ -15,11 +15,16 @@ import java.util.stream.Collectors;
 
 public class TrackFeatureDistance implements RecommendationStrategy{
 
-        private static String SQL_QUERY = "SELECT  feature_distance.track_to AS id, distance FROM feature_distance WHERE track_from=? ORDER BY distance ASC ";
+        private static String SQL_QUERY_RECOMMEND = "SELECT  feature_distance.track_to AS id, distance FROM feature_distance WHERE track_from=? ORDER BY distance ASC ";
         private int requestedResults;
         private Tracks tracks;
         private Collection<Track> upcoming;
         Comparator<Map.Entry<String, Double>> byDistance = (Map.Entry<String, Double> o1, Map.Entry<String, Double> o2)->o1.getValue().compareTo(o2.getValue());
+
+    public TrackFeatureDistance(float speed, float dynamic, int requestedResults) {
+        this(Model.getInstance().getTracks().stream().sorted((Track o1, Track o2)->Float.valueOf(Math.abs(o1.getDynamic() - dynamic) + Math.abs(o1.getSpeed() - speed)).compareTo(Float.valueOf(Math.abs(o2.getDynamic() - dynamic) + Math.abs(o2.getSpeed() - speed)))).limit(3).collect(Collectors.toList()), requestedResults);
+    }
+
 
     /**
      * Creates a recommendations based on the similarity of two songs by theirs features.
@@ -33,7 +38,7 @@ public class TrackFeatureDistance implements RecommendationStrategy{
         }
 
         @Override
-        public Map<Track, Double> getRecommendations() {
+        public List<Track> getRecommendations() {
             List<Map<String, Double>> potRecomendations = new ArrayList<>(upcoming.size());
             for (Track track: upcoming) {
                 potRecomendations.add(fetchScoredSongs(track));
@@ -53,12 +58,13 @@ public class TrackFeatureDistance implements RecommendationStrategy{
             List<Track> recommendations = resultMap.entrySet().stream().sorted(byDistance).map((Map.Entry<String, Double> id) -> tracks.get(Integer.valueOf(id.getKey()))).collect(Collectors.toList());
             // only use the first and apply ranking = weighting
             recommendations = recommendations.subList(0, requestedResults - 1);
-            Map<Track, Double> finalRecommendation = new HashMap<>();
+            //create list with weights
+            List<Double> recommendationsWeights = new ArrayList<>(recommendations.size());
             double stepSize = 1/requestedResults;
             for (int i = 0; i < recommendations.size(); i++) {
-                finalRecommendation.put(recommendations.get(i), 1 - i*stepSize);
+                recommendationsWeights.add(i, 1 - i*stepSize);
             }
-            return finalRecommendation;
+            return recommendations;
         }
 
         private Map<String, Double> fetchScoredSongs(Track track) {
@@ -68,7 +74,7 @@ public class TrackFeatureDistance implements RecommendationStrategy{
             int counter = 1;
             try {
                 Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
-                PreparedStatement stmnt = con.prepareStatement(SQL_QUERY);
+                PreparedStatement stmnt = con.prepareStatement(SQL_QUERY_RECOMMEND);
                 stmnt.setInt(1, track.getId());
                 ResultSet rs = stmnt.executeQuery();
                 while (rs.next() && result.size() <= requestedResults) {
@@ -84,6 +90,4 @@ public class TrackFeatureDistance implements RecommendationStrategy{
             }
             return result;
         }
-
-
-}
+    }
