@@ -94,6 +94,7 @@ public class HybridStrategy implements RecommendationStrategy {
         // modify Ranking
         if(userProfile != null) {
             applyUserFeedback(results, userProfile);
+            applyHistory(results, userProfile);
         }
         // finally, collect tracks and sort them by score
         ArrayList<Track> recommendations = new ArrayList<>();
@@ -184,6 +185,22 @@ public class HybridStrategy implements RecommendationStrategy {
             score *= calculateLinearModifier(FeedbackModifier.DELETE, profile.getDeleteFeedback(trackId));
             score *= calculateLinearModifier(FeedbackModifier.MULTISKIP, profile.getMultiSkipFeedback(trackId));
 
+            entry.setValue(score);
+        }
+    }
+
+    private float calculateHistoryModifier(int historyRank){
+        return (float) Math.min(Math.pow(((historyRank-20f)/150),3),1);
+    }
+
+    private void applyHistory(Map<Track, Float> ranking, UserProfile profile){
+        for (Map.Entry<Track, Float> entry : ranking.entrySet()) {
+            Track t = entry.getKey();
+            float score = entry.getValue();
+            int historyRank = profile.getHistory(t.getId());
+            if (historyRank > 0){
+                score *= calculateHistoryModifier(historyRank);
+            }
             entry.setValue(score);
         }
     }

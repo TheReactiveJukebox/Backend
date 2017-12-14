@@ -1,13 +1,13 @@
 package de.reactivejukebox.model;
 
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 public class UserProfile {
     private Tracks tracks;
     private Radio radio;
 
+    private ArrayList<HistoryEntry> historyList;
     private HashSet<TrackFeedback> rawTrackFeedback;
     private HashMap<Integer, Integer> trackFeedback;
     private HashMap<Integer, Integer> artistFeedback;
@@ -20,6 +20,8 @@ public class UserProfile {
     private HashMap<Integer, Integer> skipFeedback;
     private HashMap<Integer, Integer> deleteFeedback;
     private HashMap<Integer, Integer> multiSkipFeedback;
+
+    private HashMap<Integer, Integer> history;
 
 
 
@@ -37,6 +39,8 @@ public class UserProfile {
         skipFeedback = Model.getInstance().getIndirectFeedbackEntries().getSkipFeedback(radio.getId(),userId);
         deleteFeedback = Model.getInstance().getIndirectFeedbackEntries().getDeleteFeedback(radio.getId(),userId);
         multiSkipFeedback = Model.getInstance().getIndirectFeedbackEntries().getMultiSkipFeedback(radio.getId(),userId);
+
+        historyList = Model.getInstance().getHistoryEntries().getListByRadioId(radio.getId());
 
 
         speedFeedback = new HashMap<>();
@@ -83,6 +87,7 @@ public class UserProfile {
         return moodFeedback.getOrDefault(key, 0);
     }
 
+    public int getHistory(int trackId){ return history.getOrDefault(trackId,0); }
 
 
     //TODO change with new Feedback
@@ -107,7 +112,13 @@ public class UserProfile {
                 moodFeedback.put(new MoodKey(t.getArousal(), t.getValence()),-1);
             }
         }
-
-
+        historyList.sort(Comparator.comparing(HistoryEntry::getTime));
+        ListIterator<HistoryEntry> li = historyList.listIterator(historyList.size());
+        int i = 1;
+        while (li.hasPrevious()){
+            HistoryEntry entry = li.previous();
+            history.put(entry.getTrack().getId(), i);
+            i++;
+        }
     }
 }
