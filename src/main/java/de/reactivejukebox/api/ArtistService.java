@@ -52,7 +52,7 @@ public class ArtistService {
         try {
             return Response.status(200).entity(Model.getInstance().getSpecialFeedbacks().getArtistFeedback(id,user.getId())).build();
         }catch (Exception e){
-            return Response.status(400).entity(e).build();
+            return Response.status(400).build();
         }
     }
 
@@ -65,7 +65,7 @@ public class ArtistService {
         try {
             return Response.status(200).entity(Model.getInstance().getSpecialFeedbacks().putArtistFeedback(feedback,user.getId())).build();
         }catch (Exception e){
-            return Response.status(400).entity(e).build();
+            return Response.status(400).build();
         }
     }
 
