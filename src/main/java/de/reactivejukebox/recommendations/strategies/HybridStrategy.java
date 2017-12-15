@@ -209,10 +209,25 @@ public class HybridStrategy implements RecommendationStrategy {
         }
     }
 
+    /**
+     * the history modifier is:
+     * 0 for the last 50 Songs played
+     * ca. 0.15 for Song #100
+     * ca. 0.66 for Song #150
+     * 1 for Songs played >= 170 Songs ago
+     * @param historyRank # of songs since the song was last played
+     * @return historyModifier
+     */
     float calculateHistoryModifier(int historyRank) {
         return (float) Math.min(Math.pow(((historyRank - 20f) / 150), 3), 1);
     }
 
+    /**
+     * Calculates the wight based on the time since the song was last played.
+     *
+     * @param ranking the intermediate data structure used to keep track of scores in getRecommendations()
+     * @param profile the profile containing all of the user's feedback and the history of the current Radiostation
+     */
     void applyHistory(Map<Track, Float> ranking, UserProfile profile) {
         for (Map.Entry<Track, Float> entry : ranking.entrySet()) {
             Track t = entry.getKey();
