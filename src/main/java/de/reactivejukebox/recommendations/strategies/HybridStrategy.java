@@ -90,10 +90,9 @@ public class HybridStrategy implements RecommendationStrategy {
         // finally, collect tracks and sort them by score
         ArrayList<Track> recommendations = new ArrayList<>();
         recommendations.addAll(results.keySet());
-        recommendations.sort((trackR, trackL) -> Float.compare(results.get(trackL), results.get(trackR)));
+        recommendations.sort(Comparator.comparing(results::get).reversed());
 
         // If need be, we could also assemble a list of scores like this:
-
         ArrayList<Float> scores = new ArrayList<>();
         for (Track t : recommendations) {
             scores.add(results.get(t));
