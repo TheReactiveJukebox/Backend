@@ -111,7 +111,7 @@ public class Track implements MusicEntity {
         this.hash = hash;
     }
 
-    public List getGenres() {
+    public List<String> getGenres() {
         return genres;
     }
 

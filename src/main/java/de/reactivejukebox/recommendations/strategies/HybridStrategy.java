@@ -1,13 +1,11 @@
 package de.reactivejukebox.recommendations.strategies;
 
-import de.reactivejukebox.model.Radio;
 import de.reactivejukebox.model.Track;
 import de.reactivejukebox.model.UserProfile;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
 import de.reactivejukebox.recommendations.RecommendationStrategyFactory;
 import de.reactivejukebox.recommendations.Recommendations;
 
-import java.sql.SQLException;
 import java.util.*;
 import java.util.function.Predicate;
 
@@ -37,17 +35,25 @@ public class HybridStrategy implements RecommendationStrategy {
         }
     }
 
-    private UserProfile userProfile;
     private RecommendationStrategyFactory factory;
-    List<Predicate<Track>> radioPredicates;
+    private UserProfile userProfile;
+    private boolean respectUserProfile = false;
+    private List<Predicate<Track>> radioTrackFilters;
 
-    public HybridStrategy(RecommendationStrategyFactory factory, Radio radio) {
+    public HybridStrategy(RecommendationStrategyFactory factory, List<Predicate<Track>> radioTrackFilters, UserProfile userProfile) {
         this.factory = factory;
-        this.radioPredicates = radio.getPredicates();
-        try {
-            this.userProfile = new UserProfile(radio);
-        } catch (SQLException e) {
-            e.printStackTrace();
+
+        // predicates should be there, just in case
+        if (radioTrackFilters != null) {
+            this.radioTrackFilters = radioTrackFilters;
+        } else {
+            this.radioTrackFilters = Collections.emptyList();
+        }
+
+        // userProfile might be null during testing
+        if (userProfile != null) {
+            this.userProfile = userProfile;
+            respectUserProfile = true;
         }
     }
 
@@ -67,7 +73,7 @@ public class HybridStrategy implements RecommendationStrategy {
         }
 
         // modify Ranking
-        if (userProfile != null) {
+        if (respectUserProfile) {
             applyUserFeedback(results, userProfile);
             applyHistory(results, userProfile);
         }
@@ -103,7 +109,7 @@ public class HybridStrategy implements RecommendationStrategy {
      * @param results  the intermediate data structure used to keep track of scores in getRecommendations()
      * @param strategy the algorithm to execute
      */
-    private void gatherAlgorithmResults(Map<Track, Float> results, StrategyType strategy) {
+    void gatherAlgorithmResults(Map<Track, Float> results, StrategyType strategy) {
         RecommendationStrategy algorithm = factory.createStrategy(strategy, 0); // TODO decide where to set resultCount
         Recommendations algorithmResults = algorithm.getRecommendations();
 
@@ -117,7 +123,7 @@ public class HybridStrategy implements RecommendationStrategy {
             float score = scoreIterator.next();
 
             // if song does not fit filter criteria, leave it out
-            for (Predicate<Track> p : radioPredicates) {
+            for (Predicate<Track> p : radioTrackFilters) {
                 if (!p.test(track)) {
                     continue recommendedTrackLoop;
                 }
@@ -145,7 +151,7 @@ public class HybridStrategy implements RecommendationStrategy {
      * @param n        how often the action was executed
      * @return the final modifier, considering how often the action was executed on that specific feature
      */
-    private float calculateLinearModifier(FeedbackModifier modifier, int n) {
+    float calculateLinearModifier(FeedbackModifier modifier, int n) {
         return 1 / (modifier.value * n + 1);
     }
 
@@ -155,7 +161,7 @@ public class HybridStrategy implements RecommendationStrategy {
      * @param ranking the intermediate data structure used to keep track of scores in getRecommendations()
      * @param profile the profile containing all of the user's feedback
      */
-    private void applyUserFeedback(Map<Track, Float> ranking, UserProfile profile) {
+    void applyUserFeedback(Map<Track, Float> ranking, UserProfile profile) {
         for (Map.Entry<Track, Float> entry : ranking.entrySet()) {
             Track t = entry.getKey();
             int trackId = t.getId();
@@ -203,16 +209,16 @@ public class HybridStrategy implements RecommendationStrategy {
         }
     }
 
-    private float calculateHistoryModifier(int historyRank){
-        return (float) Math.min(Math.pow(((historyRank-20f)/150),3),1);
+    float calculateHistoryModifier(int historyRank) {
+        return (float) Math.min(Math.pow(((historyRank - 20f) / 150), 3), 1);
     }
 
-    private void applyHistory(Map<Track, Float> ranking, UserProfile profile){
+    void applyHistory(Map<Track, Float> ranking, UserProfile profile) {
         for (Map.Entry<Track, Float> entry : ranking.entrySet()) {
             Track t = entry.getKey();
             float score = entry.getValue();
             int historyRank = profile.getHistory(t.getId());
-            if (historyRank > 0){
+            if (historyRank > 0) {
                 score *= calculateHistoryModifier(historyRank);
             }
             entry.setValue(score);
