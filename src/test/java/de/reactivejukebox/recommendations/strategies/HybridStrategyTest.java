@@ -117,12 +117,47 @@ public class HybridStrategyTest {
 
     @Test
     public void testCalculateHistoryModifier() throws Exception {
-        // TODO andiwg
+        assertTrue(anyHybrid.calculateHistoryModifier(1) <= 0.01);
+        for (int i = 1; i <= 180;i++){
+            assertTrue(anyHybrid.calculateHistoryModifier(i) <= anyHybrid.calculateHistoryModifier(i+1));
+            assertTrue(anyHybrid.calculateHistoryModifier(i) <= 1);
+        }
     }
 
     @Test
     public void testApplyHistory() throws Exception {
-        // TODO andiwg
+        UserProfile mockProfile = Mockito.mock(UserProfile.class);
+
+        //fake History Track with Track Id 1 ist the first played song Track with id 100 is the last played Song
+        for(int i = 1; i< 100; i++){
+            Mockito.when(mockProfile.getHistory(i)).thenReturn(100-i);
+        }
+
+        //Tracks 4 already played 1 new
+        Track t0 = new Track();
+        t0.setId(150);  //not yet played song
+        Track t1 = new Track();
+        t1.setId(25);   //about 75 songs played after
+        Track t2 = new Track();
+        t2.setId(30);   //about 70 songs played after
+        Track t3 = new Track();
+        t3.setId(98);   //second to last song played
+        Track t4 = new Track();
+        t4.setId(99);   //last song played
+
+
+        HashMap<Track, Float> results = new HashMap<>();
+        results.put(t1,2f);
+        results.put(t2,5f);
+        results.put(t3,1f);
+        results.put(t4,1f);
+        results.put(t0,1f);
+        anyHybrid.applyHistory(results, mockProfile);
+        assertTrue(results.get(t0) > results.get(t2));
+        assertTrue(results.get(t2) > results.get(t1));
+        assertTrue(results.get(t2) > results.get(t3));
+        assertTrue(results.get(t3) > results.get(t4));
+
     }
 
     @Test
