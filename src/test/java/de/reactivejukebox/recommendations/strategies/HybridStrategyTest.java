@@ -53,7 +53,7 @@ public class HybridStrategyTest {
 
         Radio r = new Radio(1, new User(), null, null, null, null, null, null, null, null, null, StrategyType.HYBRID);
         anyFactory = new RecommendationStrategyFactory(r, Collections.emptyList());
-        anyHybrid = new HybridStrategy(anyFactory, null, null);
+        anyHybrid = new HybridStrategy(anyFactory, null, null, 100);
     }
 
     @Test
@@ -167,7 +167,7 @@ public class HybridStrategyTest {
         Radio r = new Radio(1, u, new String[0], 1800, 2080, 0f, 0f, 0f, 0f, 300f, new ArrayList<>(), StrategyType.HYBRID);
 
         RecommendationStrategyFactory factory = new RecommendationStrategyFactory(r, Collections.emptyList());
-        RecommendationStrategy algorithm = factory.createStrategy(StrategyType.HYBRID, 0);
+        RecommendationStrategy algorithm = factory.createStrategy(StrategyType.HYBRID, 100);
 
         Recommendations recs = algorithm.getRecommendations();
         List<Track> recommendedTracks = recs.getTracks();

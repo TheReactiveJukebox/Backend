@@ -47,10 +47,11 @@ public class HybridStrategy implements RecommendationStrategy {
     private UserProfile userProfile;
     private boolean respectUserProfile = false;
     private List<Predicate<Track>> radioTrackFilters;
+    private int resultCount;
 
-    public HybridStrategy(RecommendationStrategyFactory factory, List<Predicate<Track>> radioTrackFilters, UserProfile userProfile) {
+    public HybridStrategy(RecommendationStrategyFactory factory, List<Predicate<Track>> radioTrackFilters, UserProfile userProfile, int resultCount) {
         this.factory = factory;
-
+        this.resultCount = resultCount;
         // predicates should be there, just in case
         if (radioTrackFilters != null) {
             this.radioTrackFilters = radioTrackFilters;
@@ -89,16 +90,16 @@ public class HybridStrategy implements RecommendationStrategy {
         // finally, collect tracks and sort them by score
         ArrayList<Track> recommendations = new ArrayList<>();
         recommendations.addAll(results.keySet());
-        recommendations.sort((trackL, trackR) -> Float.compare(results.get(trackL), results.get(trackR)));
+        recommendations.sort((trackR, trackL) -> Float.compare(results.get(trackL), results.get(trackR)));
 
-        /* If need be, we could also assemble a list of scores like this:
+        // If need be, we could also assemble a list of scores like this:
 
         ArrayList<Float> scores = new ArrayList<>();
         for (Track t : recommendations) {
             scores.add(results.get(t));
         }
 
-        * and then...
+        /* and then...
 
         return new Recommendations(recommendations, scores);
 
@@ -107,7 +108,7 @@ public class HybridStrategy implements RecommendationStrategy {
         * Recommendations.getScores(), you know what to do.
         */
 
-        return new Recommendations(recommendations, null);
+        return new Recommendations(recommendations.subList(0, Math.min(resultCount, recommendations.size())), scores);
     }
 
 

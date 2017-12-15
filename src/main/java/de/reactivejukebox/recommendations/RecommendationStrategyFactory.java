@@ -30,7 +30,7 @@ public class RecommendationStrategyFactory {
             return new RandomTracks(radio, upcoming, resultCount);
         } else if (s == StrategyType.HYBRID) {
             try {
-                return new HybridStrategy(this, radio.getPredicates(), new UserProfile(radio));
+                return new HybridStrategy(this, radio.getPredicates(), new UserProfile(radio), resultCount);
             } catch (Exception e) {
                 if (radio.getUser() != null) {
                     System.err.println("Could not obtain user profile for user "
@@ -40,7 +40,7 @@ public class RecommendationStrategyFactory {
                     System.err.println("Could not obtain user from radio. Exception: ");
                 }
                 e.printStackTrace();
-                return new HybridStrategy(this, radio.getPredicates(), null);
+                return new HybridStrategy(this, radio.getPredicates(), null, resultCount);
             }
         } else if (s == StrategyType.MOOD) {
             return new MoodNN(radio, upcoming, resultCount);
