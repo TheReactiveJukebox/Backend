@@ -42,7 +42,7 @@ public class UserProfile {
 
         historyList = Model.getInstance().getHistoryEntries().getListByRadioId(radio.getId());
 
-
+        history = new HashMap<>();
         speedFeedback = new HashMap<>();
         trackFeedback = new HashMap<>();
         moodFeedback = new HashMap<>();
