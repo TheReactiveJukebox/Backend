@@ -83,6 +83,7 @@ public class HybridStrategy implements RecommendationStrategy {
         recommendations.addAll(results.keySet());
         recommendations.sort((trackL, trackR) -> Float.compare(results.get(trackL), results.get(trackR)));
 
+        //TODO Filter Tracks for published date, genres and tempo of Radio station Settings
         /* If need be, we could also assemble a list of scores like this:
 
         ArrayList<Float> scores = new ArrayList<>();
@@ -210,6 +211,7 @@ public class HybridStrategy implements RecommendationStrategy {
     }
 
     /**
+     * Function: ((historyRank - 20)/150)^3
      * the history modifier is:
      * 0 for the last 50 Songs played
      * ca. 0.15 for Song #100
@@ -233,7 +235,9 @@ public class HybridStrategy implements RecommendationStrategy {
             Track t = entry.getKey();
             float score = entry.getValue();
             int historyRank = profile.getHistory(t.getId());
+            //Check if Track is in History
             if (historyRank > 0) {
+                //Reduce score according to history modifier function
                 score *= calculateHistoryModifier(historyRank);
             }
             entry.setValue(score);
