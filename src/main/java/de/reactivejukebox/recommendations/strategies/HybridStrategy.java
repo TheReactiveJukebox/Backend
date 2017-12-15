@@ -11,6 +11,9 @@ import java.util.function.Predicate;
 
 public class HybridStrategy implements RecommendationStrategy {
 
+    /**
+     * Values roughly proportional to how much each of these actions influence recommendation score
+     */
     enum FeedbackModifier {
         LIKE_TRACK(1.5f),
         DISLIKE_TRACK(0.5f),
@@ -34,6 +37,11 @@ public class HybridStrategy implements RecommendationStrategy {
             this.value = value;
         }
     }
+
+    /**
+     * How many recommendations every algorithm should generate
+     */
+    public static final int N_BEST_SONGS = 200;
 
     private RecommendationStrategyFactory factory;
     private UserProfile userProfile;
@@ -83,7 +91,6 @@ public class HybridStrategy implements RecommendationStrategy {
         recommendations.addAll(results.keySet());
         recommendations.sort((trackL, trackR) -> Float.compare(results.get(trackL), results.get(trackR)));
 
-        //TODO Filter Tracks for published date, genres and tempo of Radio station Settings
         /* If need be, we could also assemble a list of scores like this:
 
         ArrayList<Float> scores = new ArrayList<>();
@@ -111,7 +118,7 @@ public class HybridStrategy implements RecommendationStrategy {
      * @param strategy the algorithm to execute
      */
     void gatherAlgorithmResults(Map<Track, Float> results, StrategyType strategy) {
-        RecommendationStrategy algorithm = factory.createStrategy(strategy, 1); // TODO decide where to set resultCount
+        RecommendationStrategy algorithm = factory.createStrategy(strategy, N_BEST_SONGS);
         Recommendations algorithmResults = algorithm.getRecommendations();
 
         // iterate over tracks and scores simultaneously
@@ -187,9 +194,9 @@ public class HybridStrategy implements RecommendationStrategy {
                 score *= FeedbackModifier.DISLIKE_ALBUM.value;
             }
 
-            if (profile.getSpeedFeedback(entry.getKey().getSpeed()) == 1) {
+            if (profile.getSpeedFeedback(t.getSpeed()) == 1) {
                 score *= FeedbackModifier.LIKE_TEMPO.value;
-            } else if (profile.getSpeedFeedback(entry.getKey().getSpeed()) == -1) {
+            } else if (profile.getSpeedFeedback(t.getSpeed()) == -1) {
                 score *= FeedbackModifier.DISLIKE_TEMPO.value;
             }
 
@@ -217,15 +224,16 @@ public class HybridStrategy implements RecommendationStrategy {
      * ca. 0.15 for Song #100
      * ca. 0.66 for Song #150
      * 1 for Songs played >= 170 Songs ago
+     *
      * @param historyRank # of songs since the song was last played
-     * @return historyModifier
+     * @return the history modifier value
      */
     float calculateHistoryModifier(int historyRank) {
         return (float) Math.min(Math.pow(((historyRank - 20f) / 150), 3), 1);
     }
 
     /**
-     * Calculates the wight based on the time since the song was last played.
+     * Calculates the weight based on the time since the song was last played.
      *
      * @param ranking the intermediate data structure used to keep track of scores in getRecommendations()
      * @param profile the profile containing all of the user's feedback and the history of the current Radiostation
