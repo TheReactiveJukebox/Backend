@@ -25,11 +25,11 @@ public class HybridStrategy implements RecommendationStrategy {
         DISLIKE_TEMPO(0.75f),
         LIKE_MOOD(1.25f),
         DISLIKE_MOOD(0.75f),
-        LIKE_GENRE(1.25f),
-        DISLIKE_GENRE(0.75f),
-        SKIP(1.8f),
-        DELETE(1f),
-        MULTISKIP(0.7f);
+        GENRE(0.25f),          // see calculateGenreModifier for tweaking
+        GENRE_MAGNITUDE(3f),   // see calculateGenreModifier for tweaking
+        SKIP(1.8f),            // see calculateLinearModifier for tweaking
+        DELETE(1f),            // see calculateLinearModifier for tweaking
+        MULTISKIP(0.7f);       // see calculateLinearModifier for tweaking
 
         public float value;
 
@@ -41,7 +41,7 @@ public class HybridStrategy implements RecommendationStrategy {
     /**
      * How many recommendations every algorithm should generate
      */
-    public static final int N_BEST_SONGS = 200;
+    static final int N_BEST_SONGS = 200;
 
     private RecommendationStrategyFactory factory;
     private UserProfile userProfile;
@@ -164,6 +164,22 @@ public class HybridStrategy implements RecommendationStrategy {
     }
 
     /**
+     * "Sigmoid-esque" function to map negative genre scores to modifier values between 1 and (1 - g)
+     * and positive scores to values between 1 and (1 + g) where g = FeedbackModifier.GENRE.value.
+     * <p>
+     * FeedbackModifier.GENRE_MAGNITUDE.value (m) is used to tune the gradient of the function, i.e. how
+     * fast it approaches 1 +/- g. For m == 3, the maximum (resp. minimum) modifier is approximately reached
+     * when genre score >= 6 (resp. <= -6). This translates to the worst possible track score when the
+     * balance of liked vs disliked genres is >= 6 (6 more disliked genres than liked ones).
+     *
+     * @param genreScore balance of liked vs disliked genres
+     * @return the final modifier to apply to the track score
+     */
+    float calculateGenreModifier(int genreScore) {
+        return (float) Math.tanh((float) genreScore / FeedbackModifier.GENRE_MAGNITUDE.value) / (1f / FeedbackModifier.GENRE.value) + 1f;
+    }
+
+    /**
      * Applies all user feedback to modify the ranking
      *
      * @param ranking the intermediate data structure used to keep track of scores in getRecommendations()
@@ -206,7 +222,11 @@ public class HybridStrategy implements RecommendationStrategy {
                 score *= FeedbackModifier.DISLIKE_MOOD.value;
             }
 
-            // TODO incorporate genre feedback
+            // count liked vs. disliked genres, map to modifier
+            score *= calculateGenreModifier(t.getGenres()
+                    .stream()
+                    .mapToInt(profile::getGenreFeedback)
+                    .sum());
 
             // apply indirect feedback modifiers: how often was the track skipped, deleted, skipped over
             score *= calculateLinearModifier(FeedbackModifier.SKIP, profile.getSkipFeedback(trackId));
