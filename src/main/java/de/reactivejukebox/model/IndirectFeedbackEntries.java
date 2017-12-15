@@ -17,8 +17,8 @@ public class IndirectFeedbackEntries {
 
     public HashMap<Integer, Integer> getSkipFeedback(int radioId, int userId) throws SQLException {
         Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM indirectFeedback WHERE userid = ? " +
-                "radioId = ? Type = SKIP");
+        PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM indirectFeedback WHERE userid = ? and " +
+                "radioId = ? and Type = 'SKIP'");
         getFeedback.setInt(1, userId);
         getFeedback.setInt(2, radioId);
         ResultSet rs = getFeedback.executeQuery();
@@ -35,8 +35,8 @@ public class IndirectFeedbackEntries {
 
     public HashMap<Integer, Integer> getDeleteFeedback(int radioId, int userId) throws SQLException {
         Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM indirectFeedback WHERE userid = ? " +
-                "radioId = ? Type = DELETE");
+        PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM indirectFeedback WHERE userid = ? and " +
+                "radioId = ? and Type = 'DELETE'");
         getFeedback.setInt(1, userId);
         getFeedback.setInt(2, radioId);
         ResultSet rs = getFeedback.executeQuery();
@@ -53,8 +53,8 @@ public class IndirectFeedbackEntries {
 
     public HashMap<Integer, Integer> getMultiSkipFeedback(int radioId, int userId) throws SQLException {
         Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
-        PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM indirectFeedback WHERE userid = ? " +
-                "radioId = ? Type = MULTI_SKIP");
+        PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM indirectFeedback WHERE userid = ? and " +
+                "radioId = ? and Type = 'MULTI_SKIP'");
         getFeedback.setInt(1, userId);
         getFeedback.setInt(2, radioId);
         ResultSet rs = getFeedback.executeQuery();
