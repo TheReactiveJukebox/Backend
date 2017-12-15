@@ -31,7 +31,7 @@ public class RecommendationStrategyFactory {
         } else if (s == StrategyType.HYBRID) {
             try {
                 return new HybridStrategy(this, radio.getPredicates(), new UserProfile(radio));
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 if (radio.getUser() != null) {
                     System.err.println("Could not obtain user profile for user "
                             + radio.getUser().getId()

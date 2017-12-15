@@ -15,7 +15,7 @@ public class User implements Serializable {
     protected String password;
     protected String pwHash;
     protected String inviteKey;
-    protected Integer userID;
+    protected int userID = -1;
     protected String token;
     protected List<String> roles;
 

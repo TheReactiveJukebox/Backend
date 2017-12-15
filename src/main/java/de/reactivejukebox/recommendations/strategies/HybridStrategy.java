@@ -11,7 +11,7 @@ import java.util.function.Predicate;
 
 public class HybridStrategy implements RecommendationStrategy {
 
-    private enum FeedbackModifier {
+    enum FeedbackModifier {
         LIKE_TRACK(1.5f),
         DISLIKE_TRACK(0.5f),
         LIKE_ARTIST(1.25f),
@@ -110,7 +110,7 @@ public class HybridStrategy implements RecommendationStrategy {
      * @param strategy the algorithm to execute
      */
     void gatherAlgorithmResults(Map<Track, Float> results, StrategyType strategy) {
-        RecommendationStrategy algorithm = factory.createStrategy(strategy, 0); // TODO decide where to set resultCount
+        RecommendationStrategy algorithm = factory.createStrategy(strategy, 1); // TODO decide where to set resultCount
         Recommendations algorithmResults = algorithm.getRecommendations();
 
         // iterate over tracks and scores simultaneously
