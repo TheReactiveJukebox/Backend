@@ -11,8 +11,9 @@ public class Entry {
     private Event ev;
     private String[] entry = new String[EntryCol.values().length];
 
-
-    // baue Kopf eintrag zusammen
+    /**
+     * Build a head entry
+     */
     static Entry getHeadEntry() {
         Entry e = new Entry();
         for (EntryCol col: EntryCol.values()) {
