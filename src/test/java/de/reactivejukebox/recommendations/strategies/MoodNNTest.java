@@ -3,7 +3,7 @@ package de.reactivejukebox.recommendations.strategies;
 import de.reactivejukebox.model.*;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
 import org.mockito.Mockito;
-import org.testng.Reporter;
+
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -69,15 +69,13 @@ public class MoodNNTest {
 
         RecommendationStrategy strat = new MoodNN(radio, new ArrayList<Track>(), 20);
         List<Track> result = strat.getRecommendations().getTracks();
-        Reporter.log("Size: " + result.size(), true);
+
 
         assertTrue(result.size() == 20);
         float dist = -1;
         for (Track e : result) {
-            Reporter.log(e.toString(), true);
             assertTrue(e.getArtist().getId() == 1);
             float current = Math.abs(e.getArousal() - 0.4f) + Math.abs(e.getValence() + 0.4f);
-            Reporter.log(Float.toString(current), true);
             assertTrue(current >= dist);
             dist = current;
         }
@@ -87,10 +85,9 @@ public class MoodNNTest {
                 0, 0, null, 0f, 0f, 0.4f, 0.4f));
 
         result = strat.getRecommendations().getTracks();
-        Reporter.log("Size: " + result.size(), true);
+
         assertTrue(result.size() == 20);
         for (Track e : result) {
-            Reporter.log(e.toString(), true);
             assertTrue(e.getArtist().getId() == 2);
         }
 
@@ -99,10 +96,9 @@ public class MoodNNTest {
                 0, 0, null, 0f, 0f, 0.4f, -0.4f));
 
         result = strat.getRecommendations().getTracks();
-        Reporter.log("Size: " + result.size(), true);
+
         assertTrue(result.size() == 20);
         for (Track e : result) {
-            Reporter.log(e.toString(), true);
             assertTrue(e.getArtist().getId() == 3);
         }
 
@@ -111,7 +107,7 @@ public class MoodNNTest {
                 0, 0, null, 0f, 0f, -0.4f, -0.4f));
 
         result = strat.getRecommendations().getTracks();
-        Reporter.log("Size: " + result.size(), true);
+
         assertTrue(result.size() == 20);
         for (Track e : result) {
             assertTrue(e.getArtist().getId() == 4);
@@ -122,10 +118,9 @@ public class MoodNNTest {
                 0, 0, null, 0f, 0f, -0.4f, 0.4f));
         assertTrue(result.size() == 20);
         result = strat.getRecommendations().getTracks();
-        Reporter.log("Size: " + result.size(), true);
+
 
         for (Track e : result) {
-            Reporter.log(e.toString(), true);
             assertTrue(e.getArtist().getId() == 1 || e.getArtist().getId() == 4);
         }
 
@@ -141,7 +136,6 @@ public class MoodNNTest {
         RecommendationStrategy strat = new MoodNN(radio, new ArrayList<Track>(), 20);
         List<Track> result = strat.getRecommendations().getTracks();
         for (Track e : result) {
-            Reporter.log(e.toString(), true);
             assertTrue(e.getId() >= 80 && e.getId() < 101);
         }
     }
