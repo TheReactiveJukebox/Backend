@@ -49,10 +49,7 @@ public class MoodNN implements RecommendationStrategy{
             tracks =  defafaultRecs();
         else
             tracks = hybridRecs();
-        List<Float> score = new ArrayList<>();
-        for (int i = 0; i < tracks.size();i++ ){
-            score.add(1f);
-        }
+        List<Float> score = this.getScores(tracks);
         Recommendations rec = new Recommendations(tracks,score);
         return rec;
 
@@ -72,6 +69,14 @@ public class MoodNN implements RecommendationStrategy{
                 .sorted(((o1, o2) -> Float.compare(calcDistance(o1),calcDistance(o2))))
                 .limit(this.resultCount)
                 .collect(Collectors.toList());
+    }
+
+    private List<Float> getScores(List<Track> recommendations){
+        return recommendations.stream().map(this::calcDistance).map(this::score).collect(Collectors.toList());
+    }
+
+    private float score(float distance){//1 when exact speed match, 0 when 5% away from selected mood, quadratic decay
+        return (float)Math.pow((Math.max(0.1f - distance,0))/0.1f,2);
     }
 
     private Stream<Track> nearestNeighbours(Track t){
