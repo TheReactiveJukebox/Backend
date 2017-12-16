@@ -16,14 +16,16 @@ import java.util.stream.Collectors;
 public class TrackFeatureDistance implements RecommendationStrategy {
 
     private static int IGNORE_COUNTER = 3;
-    private static String SQL_QUERY_RECOMMEND = "SELECT  feature_distance.track_to AS id, distance FROM feature_distance WHERE track_from=? ORDER BY distance ASC ";
-    Comparator<Map.Entry<String, Double>> byDistance = (Map.Entry<String, Double> o1, Map.Entry<String, Double> o2) -> o1.getValue().compareTo(o2.getValue());
+    private static String SQL_QUERY_RECOMMEND = "SELECT  feature_distance.track_to AS id, distance" +
+            "FROM feature_distance WHERE track_from=? ORDER BY distance ASC ";
     private int requestedResults;
     private Tracks tracks;
     private Collection<Track> upcoming;
 
     public TrackFeatureDistance(float speed, float dynamic, int requestedResults) {
-        this(Model.getInstance().getTracks().stream().sorted((Track o1, Track o2) -> Float.valueOf(Math.abs(o1.getDynamic() - dynamic) + Math.abs(o1.getSpeed() - speed)).compareTo(Float.valueOf(Math.abs(o2.getDynamic() - dynamic) + Math.abs(o2.getSpeed() - speed)))).limit(3).collect(Collectors.toList()), requestedResults);
+        this(Model.getInstance().getTracks().stream().sorted(Comparator.comparing((Track o1) ->
+                Math.abs(o1.getDynamic() - dynamic) + Math.abs(o1.getSpeed() - speed)))
+                .limit(3).collect(Collectors.toList()), requestedResults);
     }
 
 
@@ -41,14 +43,14 @@ public class TrackFeatureDistance implements RecommendationStrategy {
 
     @Override
     public List<Track> getRecommendations() {
-        List<Map<String, Double>> potRecomendations = new ArrayList<>(upcoming.size());
+        List<Map<String, Double>> potRecommendations = new ArrayList<>(upcoming.size());
         for (Track track : upcoming) {
-            potRecomendations.add(fetchScoredSongs(track));
+            potRecommendations.add(fetchScoredSongs(track));
         }
         //reduce maps to only one map
-        Map<String, Double> resultMap = potRecomendations.get(0);
-        for (int i = 1; i < potRecomendations.size(); i++) {
-            Map<String, Double> toAdd = potRecomendations.get(i);
+        Map<String, Double> resultMap = potRecommendations.get(0);
+        for (int i = 1; i < potRecommendations.size(); i++) {
+            Map<String, Double> toAdd = potRecommendations.get(i);
             for (Map.Entry<String, Double> entry : toAdd.entrySet()) {
                 Double currentValue = resultMap.putIfAbsent(entry.getKey(), entry.getValue());
                 if (currentValue != null && currentValue < entry.getValue()) {
@@ -57,14 +59,18 @@ public class TrackFeatureDistance implements RecommendationStrategy {
             }
         }
         //transform to sorted tracks
-        List<Track> recommendations = resultMap.entrySet().stream().sorted(byDistance).map((Map.Entry<String, Double> id) -> tracks.get(Integer.valueOf(id.getKey()))).collect(Collectors.toList());
+        List<Track> recommendations = resultMap.entrySet().stream().sorted(Comparator.comparing((Map.Entry<String, Double> o1) -> o1.getValue()))
+                .map((Map.Entry<String, Double> id) -> tracks.get(Integer.valueOf(id.getKey())))
+                .collect(Collectors.toList());
         // only use the first and apply ranking = weighting
         recommendations = recommendations.subList(0, requestedResults - 1);
         //create list with weights by range normalizing distances and save them as weights
-        List<Double> recommendationsWeights = recommendations.stream().map((Track track)  -> resultMap.get(track.getId() + "")).collect(Collectors.toList());
+        List<Double> recommendationsWeights = recommendations.stream()
+                .map((Track track)  -> resultMap.get(track.getId() + "")).collect(Collectors.toList());
         Double max = Collections.max(recommendationsWeights);
         Double min = Collections.min(recommendationsWeights);
-        recommendationsWeights = recommendationsWeights.stream().map((Double in) -> (in - min) * (1/max)).collect(Collectors.toList());
+        recommendationsWeights = recommendationsWeights.stream()
+                .map((Double in) -> (in - min) * (1/max)).collect(Collectors.toList());
         return recommendations;
     }
 
