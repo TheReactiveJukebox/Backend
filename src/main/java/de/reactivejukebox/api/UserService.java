@@ -2,10 +2,7 @@ package de.reactivejukebox.api;
 
 import de.reactivejukebox.core.Secured;
 import de.reactivejukebox.datahandlers.TokenHandler;
-import de.reactivejukebox.logger.LoggerProvider;
-import de.reactivejukebox.logger.UserLoggedInEntry;
-import de.reactivejukebox.logger.UserLoggedOutEntry;
-import de.reactivejukebox.logger.UserRegisterEntry;
+import de.reactivejukebox.logger.*;
 import de.reactivejukebox.model.UserPlain;
 
 import javax.ws.rs.*;
@@ -49,6 +46,7 @@ public class UserService {
         System.out.printf("autologin " + auth);
         try {
             UserPlain token = new TokenHandler().checkToken(auth);
+            LoggerProvider.getLogger().writeEntry(new UserAutoLoggedInEntry(token));
             return Response.ok(token).build();
         } catch (Exception e) {
             return Response.status(409).entity("no valid token").build();

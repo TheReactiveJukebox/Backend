@@ -2,6 +2,7 @@ package de.reactivejukebox.logger;
 
 public enum Event {
     USER_LOGIN,
+    USER_AUTOLOGIN,
     USER_LOGOUT,
     USER_REGISTER,
     RADIO_START,
