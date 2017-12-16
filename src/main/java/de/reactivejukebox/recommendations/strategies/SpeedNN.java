@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 public class SpeedNN implements RecommendationStrategy{
 
     private static final float DefaultWindow = 5f;
+    private static final float MaxWindow = 10f;
     private HashSet<Float> speeds;
     private Radio radio;
     private Collection<Track> upcoming;
@@ -60,6 +61,20 @@ public class SpeedNN implements RecommendationStrategy{
         this.upcoming = upcoming;
         this.resultCount = resultCount;
         this.window = window;
+        //If a speed filter is set in addition to selected Songs
+        if(radio.getMinSpeed()!=null || radio.getMaxSpeed()!=null){
+            if(radio.getMinSpeed()!=null && radio.getMaxSpeed()!=null){
+                this.window = Math.min(Math.max((radio.getMaxSpeed()-radio.getMinSpeed())/2, 1),MaxWindow);
+                this.speeds.add((radio.getMinSpeed()+radio.getMaxSpeed())/2);
+            }
+            //Remove speeds outside the filter range
+            for (Float f:this.speeds){
+                if (radio.getMinSpeed()!=null && f<radio.getMinSpeed())
+                    this.speeds.remove(f);
+                if (radio.getMaxSpeed()!=null && f>radio.getMaxSpeed())
+                    this.speeds.remove(f);
+            }
+        }
     }
 
     public void addSpeed(float speed){
@@ -84,7 +99,7 @@ public class SpeedNN implements RecommendationStrategy{
         return recommendations.stream().map(Track::getSpeed).map(this::calcDistance).map(this::score).collect(Collectors.toList());
     }
 
-    private float score(float distance){
+    private float score(float distance){//1 when exact speed match, 0 when at the edge of the filter window, quadratic decay
         return (float)Math.pow((window - distance)/window,2);
     }
 
@@ -92,12 +107,10 @@ public class SpeedNN implements RecommendationStrategy{
     public Recommendations getRecommendations() {
         List<Track> tracks = speeds.stream().map(caster).flatMap(this::nearestNeighbors).distinct()
                 .sorted(((o1, o2) -> Float.compare(calcDistance(o1.getSpeed()),calcDistance(o2.getSpeed()))))
+                .skip(this.speeds.size())//Remove if Algorithm needs to return the selected start tracks as recommendations
                 .limit(resultCount)
                 .collect(Collectors.toList());
-        List<Float> score = new ArrayList<>();
-        for (int i = 0; i < tracks.size();i++ ){
-            score.add(1f);
-        }
+        List<Float> score = this.getScores(tracks);
         return new Recommendations(tracks,score);
     }
 }
