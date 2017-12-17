@@ -4,7 +4,6 @@ import de.reactivejukebox.model.*;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
 import org.mockito.Mockito;
 
-import org.testng.Reporter;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
