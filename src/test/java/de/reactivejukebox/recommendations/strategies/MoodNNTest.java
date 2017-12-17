@@ -4,6 +4,7 @@ import de.reactivejukebox.model.*;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
 import org.mockito.Mockito;
 
+import org.testng.Reporter;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -17,7 +18,6 @@ import static de.reactivejukebox.TestTools.setModelInstance;
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertTrue;
 
-// TODO also test track scores in this test class
 public class MoodNNTest {
 
     private final float[] AROUSALS = {0.4f, 0.4f, -0.4f, -0.4f};
@@ -69,8 +69,9 @@ public class MoodNNTest {
 
         RecommendationStrategy strat = new MoodNN(radio, new ArrayList<Track>(), 20);
         List<Track> result = strat.getRecommendations().getTracks();
+        List<Float> scores = strat.getRecommendations().getScores();
 
-
+        assertTrue(scores.size() == result.size());
         assertTrue(result.size() == 20);
         float dist = -1;
         for (Track e : result) {
@@ -80,15 +81,31 @@ public class MoodNNTest {
             dist = current;
         }
 
+        float prevScore = 1;
+        for (Float score : scores) {
+            assertTrue(score <= 1 && score >= 0);
+            assertTrue(score <= prevScore);
+            prevScore = score;
+        }
+
         radio.getStartTracks().clear();
         radio.getStartTracks().add(new Track(888, "", null, null, "", "",
                 0, 0, null, 0f, 0f, 0.4f, 0.4f));
 
         result = strat.getRecommendations().getTracks();
+        scores = strat.getRecommendations().getScores();
 
+        assertTrue(scores.size() == result.size());
         assertTrue(result.size() == 20);
         for (Track e : result) {
             assertTrue(e.getArtist().getId() == 2);
+        }
+
+        prevScore = 1;
+        for (Float score : scores) {
+            assertTrue(score <= 1 && score >= 0);
+            assertTrue(score <= prevScore);
+            prevScore = score;
         }
 
         radio.getStartTracks().clear();
@@ -96,10 +113,19 @@ public class MoodNNTest {
                 0, 0, null, 0f, 0f, 0.4f, -0.4f));
 
         result = strat.getRecommendations().getTracks();
+        scores = strat.getRecommendations().getScores();
 
+        assertTrue(scores.size() == result.size());
         assertTrue(result.size() == 20);
         for (Track e : result) {
             assertTrue(e.getArtist().getId() == 3);
+        }
+
+        prevScore = 1;
+        for (Float score : scores) {
+            assertTrue(score <= 1 && score >= 0);
+            assertTrue(score <= prevScore);
+            prevScore = score;
         }
 
         radio.getStartTracks().clear();
@@ -107,10 +133,19 @@ public class MoodNNTest {
                 0, 0, null, 0f, 0f, -0.4f, -0.4f));
 
         result = strat.getRecommendations().getTracks();
+        scores = strat.getRecommendations().getScores();
 
+        assertTrue(scores.size() == result.size());
         assertTrue(result.size() == 20);
         for (Track e : result) {
             assertTrue(e.getArtist().getId() == 4);
+        }
+
+        prevScore = 1;
+        for (Float score : scores) {
+            assertTrue(score <= 1 && score >= 0);
+            assertTrue(score <= prevScore);
+            prevScore = score;
         }
 
 
@@ -118,10 +153,18 @@ public class MoodNNTest {
                 0, 0, null, 0f, 0f, -0.4f, 0.4f));
         assertTrue(result.size() == 20);
         result = strat.getRecommendations().getTracks();
+        scores = strat.getRecommendations().getScores();
 
-
+        assertTrue(scores.size() == result.size());
         for (Track e : result) {
             assertTrue(e.getArtist().getId() == 1 || e.getArtist().getId() == 4);
+        }
+
+        prevScore = 1;
+        for (Float score : scores) {
+            assertTrue(score <= 1 && score >= 0);
+            assertTrue(score <= prevScore);
+            prevScore = score;
         }
 
     }
