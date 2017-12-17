@@ -31,6 +31,13 @@ public class RadioCreateEntryTest extends EntryTest {
     }
 
     @Test
+    public void testStartTracksNull() {
+        Radio r = getRadioObj();
+        r.setStartTracks(null);
+        Entry e = new RadioCreateEntry(getUserObj(), r);
+    }
+
+    @Test
     public void testRadioField() {
         Entry e = new RadioCreateEntry(getUserObj(), getRadioObj());
         String[] s = e.getEntries();

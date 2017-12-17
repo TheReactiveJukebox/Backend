@@ -4,6 +4,7 @@ import de.reactivejukebox.model.Radio;
 import de.reactivejukebox.model.Track;
 import de.reactivejukebox.model.User;
 
+import java.util.List;
 import java.util.StringJoiner;
 
 public class RadioCreateEntry extends Entry {
@@ -20,8 +21,11 @@ public class RadioCreateEntry extends Entry {
         setValue(EntryCol.SPEED_MAX, radio.getMaxSpeed());
 
         StringJoiner songValue = new StringJoiner(",");
-        for (Track song : radio.getStartTracks()) {
-            songValue.add(String.valueOf(song.getId()));
+        List<Track> startTracks = radio.getStartTracks();
+        if (startTracks != null) {
+            for (Track song : startTracks) {
+                songValue.add(String.valueOf(song.getId()));
+            }
         }
         setValue(EntryCol.SONG, songValue.toString());
 
