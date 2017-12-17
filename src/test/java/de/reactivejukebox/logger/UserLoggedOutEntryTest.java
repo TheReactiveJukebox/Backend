@@ -8,7 +8,7 @@ public class UserLoggedOutEntryTest extends EntryTest {
     @Test
     public void testUserLoggedInEntry() {
         Entry e = new UserLoggedOutEntry(getUserObj().getPlainObject());
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
 
         // Assert
         assertEquals(EntryCol.values().length, s.length);

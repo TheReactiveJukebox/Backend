@@ -1,7 +1,6 @@
 package de.reactivejukebox.logger;
 
 import de.reactivejukebox.model.IndirectFeedbackPlain;
-import de.reactivejukebox.model.User;
 import org.testng.annotations.Test;
 
 import static org.testng.AssertJUnit.assertEquals;
@@ -22,7 +21,7 @@ public class ActionFeedbackEntryTest extends EntryTest {
         IndirectFeedbackPlain feedback = getIndirectFeedbackObj();
         feedback.setFeedbackName("SKIP");
         Entry e = new ActionFeedbackEntry(getUserObj(), feedback);
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         // Assert
         assertTrue(feedback.isValid());
         assertEquals("1", s[EntryCol.RADIO.ordinal()]);
@@ -33,7 +32,7 @@ public class ActionFeedbackEntryTest extends EntryTest {
         IndirectFeedbackPlain feedback = getIndirectFeedbackObj();
         feedback.setFeedbackName("SKIP");
         Entry e = new ActionFeedbackEntry(getUserObj(), feedback);
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         // Assert
         assertTrue(feedback.isValid());
         assertEquals("3", s[EntryCol.SONG.ordinal()]);
@@ -48,7 +47,7 @@ public class ActionFeedbackEntryTest extends EntryTest {
         feedback.setFeedbackName("SKIP");
         feedback.setPosition(23);
         Entry e = new ActionFeedbackEntry(getUserObj(), feedback);
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         // Assert
         assertTrue(feedback.isValid());
         assertEquals("SKIP", s[EntryCol.USER_ACTION.ordinal()]);
@@ -61,7 +60,7 @@ public class ActionFeedbackEntryTest extends EntryTest {
         feedback.setFeedbackName("MULTI_SKIP");
         feedback.setToTrackId(5);
         Entry e = new ActionFeedbackEntry(getUserObj(), feedback);
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         // Assert
         assertTrue(feedback.isValid());
         assertEquals("MULTI_SKIP", s[EntryCol.USER_ACTION.ordinal()]);
@@ -73,7 +72,7 @@ public class ActionFeedbackEntryTest extends EntryTest {
         IndirectFeedbackPlain feedback = getIndirectFeedbackObj();
         feedback.setFeedbackName("DELETE");
         Entry e = new ActionFeedbackEntry(getUserObj(), feedback);
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         // Assert
         assertTrue(feedback.isValid());
         assertEquals("DELETE", s[EntryCol.USER_ACTION.ordinal()]);
@@ -82,7 +81,7 @@ public class ActionFeedbackEntryTest extends EntryTest {
     @Test
     public void testJsonField() {
         Entry e = new ActionFeedbackEntry(getUserObj(), getIndirectFeedbackObj());
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         assertNotNull(s[EntryCol.JSON.ordinal()]);
     }
 }

@@ -8,7 +8,7 @@ public class UserRegisterEntryTest extends EntryTest {
     @Test
     public void testUserLoggedInEntry() {
         Entry e = new UserRegisterEntry(getUserObj().getPlainObject());
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
 
         // Assert
         assertEquals(EntryCol.values().length, s.length);

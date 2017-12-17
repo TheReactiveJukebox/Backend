@@ -24,7 +24,7 @@ public class SongFeedbackEntryTest extends EntryTest {
     @Test
     public void testSongField() {
         Entry e = new SongFeedbackEntry(getUserObj(), getTrackFeedbackObj());
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         // Assert
         assertEquals("123", s[EntryCol.SONG.ordinal()]);
     }
@@ -34,7 +34,7 @@ public class SongFeedbackEntryTest extends EntryTest {
         TrackFeedback feedback = getTrackFeedbackObj();
         feedback.setSongFeedback(1);
         Entry e = new SongFeedbackEntry(getUserObj(), feedback);
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         // Assert
         assertEquals("1", s[EntryCol.RATING_SONG.ordinal()]);
     }
@@ -44,7 +44,7 @@ public class SongFeedbackEntryTest extends EntryTest {
         TrackFeedback feedback = getTrackFeedbackObj();
         feedback.setMoodFeedback(1);
         Entry e = new SongFeedbackEntry(getUserObj(), feedback);
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         // Assert
         assertEquals("1", s[EntryCol.RATING_MOOD.ordinal()]);
     }
@@ -54,7 +54,7 @@ public class SongFeedbackEntryTest extends EntryTest {
         TrackFeedback feedback = getTrackFeedbackObj();
         feedback.setSpeedFeedback(1);
         Entry e = new SongFeedbackEntry(getUserObj(), feedback);
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         // Assert
         assertEquals("1", s[EntryCol.RATING_SPEED.ordinal()]);
     }
@@ -64,7 +64,7 @@ public class SongFeedbackEntryTest extends EntryTest {
         TrackFeedback feedback = getTrackFeedbackObj();
         feedback.setDynamicsFeedback(1);
         Entry e = new SongFeedbackEntry(getUserObj(), feedback);
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         // Assert
         assertEquals("1", s[EntryCol.RATING_DYNAMIC.ordinal()]);
     }
@@ -72,7 +72,7 @@ public class SongFeedbackEntryTest extends EntryTest {
     @Test
     public void testJsonField() {
         Entry e = new SongFeedbackEntry(getUserObj(), getTrackFeedbackObj());
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         assertNotNull(s[EntryCol.JSON.ordinal()]);
     }
 }

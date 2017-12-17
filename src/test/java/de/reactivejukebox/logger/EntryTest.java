@@ -32,12 +32,12 @@ public class EntryTest {
     public void testEntryLength() {
         User user = getUserObj();
         Entry e = new Entry(Event.USER_LOGIN, user);
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         // Assert
         assertEquals(EntryCol.values().length, s.length);
 
         e = new Entry(Event.USER_LOGIN, user.getPlainObject());
-        s = e.getEntry();
+        s = e.getEntries();
         // Assert
         assertEquals(EntryCol.values().length, s.length);
     }
@@ -48,7 +48,7 @@ public class EntryTest {
     @Test
     public void testFieldTime() {
         Entry e = new Entry(Event.USER_LOGIN, getUserObj());
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         // Assert
         Integer t = new Integer(s[EntryCol.TIMESTAMP.ordinal()]);
         assertTrue(t > 0);
@@ -70,7 +70,7 @@ public class EntryTest {
                     expectedEntry.add(String.valueOf(USER_ID));
                     break;
                 case TIMESTAMP:
-                    expectedEntry.add(e.getEntry()[EntryCol.TIMESTAMP.ordinal()]);
+                    expectedEntry.add(e.getEntries()[EntryCol.TIMESTAMP.ordinal()]);
                     break;
                 case EVENT:
                     expectedEntry.add(e.getEvent().toString());
@@ -90,7 +90,7 @@ public class EntryTest {
         // Assert
         assertEquals(e.getEvent(), ev);
 
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         // Assert
         assertEquals(ev.toString(), s[EntryCol.EVENT.ordinal()]);
     }
@@ -98,7 +98,7 @@ public class EntryTest {
     @Test
     public void testFieldUser() {
         Entry e = new Entry(Event.USER_LOGIN, getUserObj());
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         // Assert
         assertEquals(String.valueOf(USER_ID), s[EntryCol.USER.ordinal()]);
     }

@@ -33,7 +33,7 @@ public class RadioCreateEntryTest extends EntryTest {
     @Test
     public void testRadioField() {
         Entry e = new RadioCreateEntry(getUserObj(), getRadioObj());
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         // Assert
         assertEquals("4", s[EntryCol.RADIO.ordinal()]);
     }
@@ -41,7 +41,7 @@ public class RadioCreateEntryTest extends EntryTest {
     @Test
     public void testAlgorithmField() {
         Entry e = new RadioCreateEntry(getUserObj(), getRadioObj());
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         // Assert
         assertEquals(StrategyType.RANDOM.toString(), s[EntryCol.ALGORITHM.ordinal()]);
     }
@@ -52,7 +52,7 @@ public class RadioCreateEntryTest extends EntryTest {
         String[] genres = {"Metal", "Black Metal"};
         radio.setGenres(genres);
         Entry e = new RadioCreateEntry(getUserObj(), radio);
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         // Assert
         assertEquals("Metal,Black Metal", s[EntryCol.GENRE.ordinal()]);
     }
@@ -63,7 +63,7 @@ public class RadioCreateEntryTest extends EntryTest {
         radio.setStartYear(1980);
         radio.setEndYear(1990);
         Entry e = new RadioCreateEntry(getUserObj(), radio);
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         // Assert
         assertEquals("1980", s[EntryCol.YEAR_START.ordinal()]);
         assertEquals("1990", s[EntryCol.YEAR_END.ordinal()]);
@@ -74,7 +74,7 @@ public class RadioCreateEntryTest extends EntryTest {
         Radio radio = getRadioObj();
         radio.setDynamic((float) 0.25);
         Entry e = new RadioCreateEntry(getUserObj(), radio);
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         // Assert
         assertEquals("0.25", s[EntryCol.DYNAMIC.ordinal()]);
     }
@@ -85,7 +85,7 @@ public class RadioCreateEntryTest extends EntryTest {
         radio.setArousal((float) 0.79);
         radio.setValence((float) -0.11);
         Entry e = new RadioCreateEntry(getUserObj(), radio);
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         // Assert
         assertEquals("0.79", s[EntryCol.AROUSAL.ordinal()]);
         assertEquals("-0.11", s[EntryCol.VALENCE.ordinal()]);
@@ -97,7 +97,7 @@ public class RadioCreateEntryTest extends EntryTest {
         radio.setMinSpeed((float) 200);
         radio.setMaxSpeed((float) 279);
         Entry e = new RadioCreateEntry(getUserObj(), radio);
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         // Assert
         assertEquals("200.0", s[EntryCol.SPEED_MIN.ordinal()]);
         assertEquals("279.0", s[EntryCol.SPEED_MAX.ordinal()]);
@@ -116,7 +116,7 @@ public class RadioCreateEntryTest extends EntryTest {
         }
         radio.setStartTracks(songs);
         Entry e = new RadioCreateEntry(getUserObj(), radio);
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         // Assert
         assertEquals("72,55", s[EntryCol.SONG.ordinal()]);
     }
@@ -124,7 +124,7 @@ public class RadioCreateEntryTest extends EntryTest {
     @Test
     public void testJsonField() {
         Entry e = new RadioCreateEntry(getUserObj(), getRadioObj());
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         assertNotNull(s[EntryCol.JSON.ordinal()]);
     }
 }

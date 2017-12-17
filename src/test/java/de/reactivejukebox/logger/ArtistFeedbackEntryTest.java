@@ -14,7 +14,7 @@ public class ArtistFeedbackEntryTest extends EntryTest {
     @Test
     public void testArtistField() {
         Entry e = new ArtistFeedbackEntry(getUserObj(), getArtistFeedbackObj());
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         // Assert
         assertEquals("33", s[EntryCol.ARTIST.ordinal()]);
     }
@@ -24,7 +24,7 @@ public class ArtistFeedbackEntryTest extends EntryTest {
         ArtistFeedback feedback = getArtistFeedbackObj();
         feedback.setFeedback(1);
         Entry e = new ArtistFeedbackEntry(getUserObj(), feedback);
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         // Assert
         assertEquals("1", s[EntryCol.RATING_SONG.ordinal()]);
     }
@@ -34,7 +34,7 @@ public class ArtistFeedbackEntryTest extends EntryTest {
         ArtistFeedback feedback = getArtistFeedbackObj();
         feedback.setFeedback(0);
         Entry e = new ArtistFeedbackEntry(getUserObj(), feedback);
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         // Assert
         assertEquals("0", s[EntryCol.RATING_SONG.ordinal()]);
     }
@@ -44,7 +44,7 @@ public class ArtistFeedbackEntryTest extends EntryTest {
         ArtistFeedback feedback = getArtistFeedbackObj();
         feedback.setFeedback(-1);
         Entry e = new ArtistFeedbackEntry(getUserObj(), feedback);
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         // Assert
         assertEquals("-1", s[EntryCol.RATING_SONG.ordinal()]);
     }
@@ -52,7 +52,7 @@ public class ArtistFeedbackEntryTest extends EntryTest {
     @Test
     public void testJsonField() {
         Entry e = new ArtistFeedbackEntry(getUserObj(), getArtistFeedbackObj());
-        String[] s = e.getEntry();
+        String[] s = e.getEntries();
         assertNotNull(s[EntryCol.JSON.ordinal()]);
     }
 }
