@@ -1,6 +1,8 @@
 package de.reactivejukebox.api;
 
 import de.reactivejukebox.core.Secured;
+import de.reactivejukebox.logger.LoggerProvider;
+import de.reactivejukebox.logger.RadioCreateEntry;
 import de.reactivejukebox.model.*;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
 import de.reactivejukebox.recommendations.RecommendationStrategyFactory;
@@ -44,6 +46,7 @@ public class JukeboxService {
         try {
             r.setUserId(user.getId());
             Radio radio = Model.getInstance().getRadios().put(r);
+            LoggerProvider.getLogger().writeEntry(new RadioCreateEntry(user, radio));
             return Response.ok(radio.getPlainObject()).build();
         } catch (SQLException e) {
             e.printStackTrace();
