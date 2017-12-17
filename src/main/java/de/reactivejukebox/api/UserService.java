@@ -28,7 +28,6 @@ public class UserService {
             LoggerProvider.getLogger().writeEntry(new UserLoggedInEntry(token));
             return Response.ok(token).build();
         } catch (Exception e) {
-            e.printStackTrace();
             return Response.status(442).entity("Invalid username or password").build();
         }
     }
