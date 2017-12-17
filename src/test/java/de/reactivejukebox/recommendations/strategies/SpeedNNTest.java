@@ -56,7 +56,7 @@ public class SpeedNNTest {
         float testSpeed = 100f;
 
         radio.getStartTracks().add(new Track(1000, "", new Artist(), null, "", "", 0, 0, null, testSpeed, 0f));
-        RecommendationStrategy strat = new SpeedNN(radio, new ArrayList<Track>(), 20);
+        RecommendationStrategy strat = new SpeedNN(radio, new ArrayList<>(), 20);
 
 
         Field windowField = SpeedNN.class.getDeclaredField("window");
@@ -72,7 +72,7 @@ public class SpeedNNTest {
         List<Track> result = strat.getRecommendations().getTracks();
         testResults(result, testSpeed, window);
 
-        strat = new SpeedNN(new Radio(), new ArrayList<Track>(), 20, 90, 120);
+        strat = new SpeedNN(new Radio(), new ArrayList<>(), 20, 90, 120);
         window = (float) windowField.get(strat);
         speeds = (HashSet<Float>) speedsField.get(strat);
         assertTrue(window == 15f);
@@ -86,7 +86,7 @@ public class SpeedNNTest {
             inputSpeeds.add(50f);
         }
 
-        strat = new SpeedNN(new Radio(), new ArrayList<Track>(), 20, inputSpeeds);
+        strat = new SpeedNN(new Radio(), new ArrayList<>(), 20, inputSpeeds);
         speeds = (HashSet<Float>) speedsField.get(strat);
 
         for (Float f : inputSpeeds) {
@@ -104,6 +104,16 @@ public class SpeedNNTest {
         }
     }
 
+    private void testScores(List<Track> result, List<Float> scores) {
+        assertTrue(result.size() == scores.size());
+        float prevScore = 1;
+        for (Float score : scores) {
+            assertTrue(score <= 1 && score >= 0);
+            assertTrue(score <= prevScore);
+            prevScore = score;
+        }
+    }
+
     @Test
     private void testRecommendations() throws Exception {
         Radio radio = new Radio();
@@ -112,7 +122,7 @@ public class SpeedNNTest {
         float testSpeed = 100f;
 
         radio.getStartTracks().add(new Track(1000, "", null, null, "", "", 0, 0, null, testSpeed, 0f));
-        SpeedNN strat = new SpeedNN(radio, new ArrayList<Track>(), 20);
+        SpeedNN strat = new SpeedNN(radio, new ArrayList<>(), 20);
 
         Field windowField = SpeedNN.class.getDeclaredField("window");
         Field speedsField = SpeedNN.class.getDeclaredField("speeds");
@@ -125,7 +135,9 @@ public class SpeedNNTest {
         assertTrue(speeds.contains(testSpeed));
 
         List<Track> result = strat.getRecommendations().getTracks();
+        List<Float> scores = strat.getRecommendations().getScores();
         testResults(result, testSpeed, window);
+        testScores(result,scores);
 
         Random rng = new Random(0);
 
@@ -134,7 +146,9 @@ public class SpeedNNTest {
             strat.clearSpeeds();
             strat.addSpeed(testSpeed);
             result = strat.getRecommendations().getTracks();
+            scores = strat.getRecommendations().getScores();
             testResults(result, testSpeed, window);
+            testScores(result,scores);
         }
     }
 
