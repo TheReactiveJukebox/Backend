@@ -17,7 +17,7 @@ import static de.reactivejukebox.TestTools.setModelInstance;
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertTrue;
 
-// TODO test weighting
+// TODO also test track scores in this test class
 public class MoodNNTest {
 
     private final float[] AROUSALS = {0.4f, 0.4f, -0.4f, -0.4f};
