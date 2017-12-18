@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 //TODO why are the methods of this class static?
 public class IndirectFeedbackEntries {
-    private final String INSERT_INDIRECT_FEEDBACK = "INSERT INTO indirectFeedback (SongId, UserId, RadioId, Type, Position, ToSongId) VALUES (?, ?, ?, ?, ?, ?);";
+    private final String INSERT_INDIRECT_FEEDBACK = "INSERT INTO indirectFeedback (SongId, UserId, RadioId, Type, Position, ToSongId) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT DO NOTHING;";
 
     public IndirectFeedbackPlain put(IndirectFeedbackPlain entry) throws SQLException {
         toDB(entry);
