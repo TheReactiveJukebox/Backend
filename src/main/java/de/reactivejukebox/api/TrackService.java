@@ -4,6 +4,9 @@ import de.reactivejukebox.core.Secured;
 import de.reactivejukebox.database.Database;
 import de.reactivejukebox.database.DatabaseProvider;
 import de.reactivejukebox.datahandlers.TrackFeedbackHandler;
+import de.reactivejukebox.logger.ActionFeedbackEntry;
+import de.reactivejukebox.logger.LoggerProvider;
+import de.reactivejukebox.logger.SongFeedbackEntry;
 import de.reactivejukebox.model.*;
 
 import javax.ws.rs.*;
@@ -73,6 +76,7 @@ public class TrackService {
 
         try {
             TrackFeedback feedbackReturn = new TrackFeedbackHandler().addTrackFeedback(feedback, user);
+            LoggerProvider.getLogger().writeEntry(new SongFeedbackEntry(user, feedbackReturn));
             return Response.ok().entity(feedbackReturn).build();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -98,6 +102,7 @@ public class TrackService {
             // Process input
             IndirectFeedbackPlain feedbackReturn = Model.getInstance().getIndirectFeedbackEntries().put(feedbackPlain);
             // Build response
+            LoggerProvider.getLogger().writeEntry(new ActionFeedbackEntry(user, feedbackReturn));
             return Response.ok().entity(feedbackReturn).build();
         } catch (Exception e) {
             e.printStackTrace();

@@ -29,7 +29,11 @@ public class RadioPlain {
             Float maxSpeed) {
         this.id = id;
         this.userId = userId;
-        this.genres = genres;
+        if(genres != null && genres.length > 0){
+            this.genres = genres;
+        } else {
+            this.genres = null;
+        }
         this.startYear = startYear;
         this.endYear = endYear;
         this.algorithm = algorithm;
@@ -66,7 +70,11 @@ public class RadioPlain {
     }
 
     public void setGenres(String[] genres) {
-        this.genres = genres;
+        if(genres != null && genres.length > 0){
+            this.genres = genres;
+        } else {
+            this.genres = null;
+        }
     }
 
     public Integer getStartYear() {

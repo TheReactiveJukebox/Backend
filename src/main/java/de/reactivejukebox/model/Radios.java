@@ -123,12 +123,15 @@ public class Radios implements Iterable<Radio> {
                     .map(i -> Model.getInstance().getTracks().get(i))
                     .collect(Collectors.toList());
         }
-
+        String[] genres = radio.getGenres();
+        if(genres == null){
+            genres = new String[0];
+        }
         // return rich radio object
         return new Radio(
                 radio.getId(),
                 users.get(radio.getUserId()),
-                radio.getGenres(),
+                genres,
                 radio.getStartYear(),
                 radio.getEndYear(),
                 radio.getDynamic(),
