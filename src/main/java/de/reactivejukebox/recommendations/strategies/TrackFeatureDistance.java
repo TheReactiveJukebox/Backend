@@ -43,6 +43,9 @@ public class TrackFeatureDistance implements RecommendationStrategy {
 
     @Override
     public List<Track> getRecommendations() {
+        if(upcoming.isEmpty()) {
+            return new ArrayList<>();
+        }
         List<Map<Integer, Double>> potRecommendations = new ArrayList<>(upcoming.size());
         for (Track track : upcoming) {
             potRecommendations.add(fetchScoredSongs(track));
@@ -59,7 +62,7 @@ public class TrackFeatureDistance implements RecommendationStrategy {
             }
         }
         //transform to sorted tracks
-        List<Track> recommendations = resultMap.entrySet().stream().sorted(Comparator.comparing((Map.Entry<String, Double> o1) -> o1.getValue()))
+        List<Track> recommendations = resultMap.entrySet().stream().sorted(Comparator.comparing((Map.Entry<Integer, Double> o1) -> o1.getValue()))
                 .map((Map.Entry<Integer, Double> id) -> tracks.get(id.getKey()))
                 .collect(Collectors.toList());
         // only use the first and apply ranking = weighting
