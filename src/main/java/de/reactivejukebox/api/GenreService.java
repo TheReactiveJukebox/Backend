@@ -34,6 +34,8 @@ public class GenreService {
         try {
             return Response.status(200).entity(Model.getInstance().getSpecialFeedbacks().getGenreFeedback(id, user.getId())).build();
         } catch (Exception e) {
+            System.err.println("Error getting genre feedback:");
+            e.printStackTrace();
             return Response.status(400).build();
         }
 
@@ -52,6 +54,8 @@ public class GenreService {
             LoggerProvider.getLogger().writeEntry(new GenreFeedbackEntry(user, feedbackReturn));
             return Response.status(200).entity(feedbackReturn).build();
         } catch (Exception e) {
+            System.err.println("Error adding genre feedback for genre "+feedback.getGenre()+":");
+            e.printStackTrace();
             return Response.status(400).build();
         }
     }

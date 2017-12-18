@@ -33,6 +33,7 @@ public class HistoryService {
             LoggerProvider.getLogger().writeEntry(new HistoryPostEntry(user, historyEntry));
             return Response.ok().entity(historyEntry).build();
         } catch (SQLException e) {
+            System.err.println("Error while adding history entry:");
             e.printStackTrace();
             return Response.status(500).entity("Error while commmunicating with database").build();
         }
@@ -47,6 +48,7 @@ public class HistoryService {
             LoggerProvider.getLogger().writeEntry(new HistoryDeleteEntry(user, historyId));
             return Response.ok().build();
         } catch (SQLException e) {
+            System.err.println("Error while deleting history entry:");
             e.printStackTrace();
             return Response.status(500).entity("Error while commmunicating with database").build();
         }

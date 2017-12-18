@@ -75,6 +75,7 @@ public class Entry {
             try {
                 s = new ObjectMapper().writeValueAsString(obj);
             } catch (JsonProcessingException e) {
+                System.err.println("Error while processing Json:");
                 e.printStackTrace();
             }
         }

@@ -81,6 +81,7 @@ public class TrackService {
             LoggerProvider.getLogger().writeEntry(new SongFeedbackEntry(user, feedbackReturn));
             return Response.ok().entity(feedbackReturn.getPlainObject()).build();
         } catch (SQLException e) {
+            System.err.println("Error pushing track feedback concerning track " + feedback.getTrackId() + ":");
             e.printStackTrace();
             return Response.status(500).build();
         }
@@ -107,6 +108,7 @@ public class TrackService {
             LoggerProvider.getLogger().writeEntry(new ActionFeedbackEntry(user, feedbackReturn));
             return Response.ok().entity(feedbackReturn).build();
         } catch (Exception e) {
+            System.err.println("Error pushing indirect feedback concerning track " + feedbackPlain.getTrackId() + ":");
             e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
@@ -117,9 +119,9 @@ public class TrackService {
     @Secured
     @Path("/parameter")
     public Response earliest() {
-        try{
+        try {
             return Response.ok().entity(Model.getInstance().getTracks().getTrackParameter()).build();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
