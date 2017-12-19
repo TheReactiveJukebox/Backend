@@ -181,6 +181,10 @@ public class Radio implements Serializable {
     }
 
     public Stream<Track> filterHistory(Stream<Track> trackStream, Collection<Track> upcoming, int resultCount) {
+        if (algorithm == StrategyType.HYBRID){
+            trackStream = trackStream.filter(new HistoryPredicate(upcoming));
+            return trackStream;
+        }
         List<Track> allTracks = trackStream.collect(Collectors.toList());
         Set<Track> trackSet = allTracks.stream().filter(new HistoryPredicate(this, upcoming)).collect(Collectors.toSet());  // filter History
         if (trackSet.size() >= resultCount) {

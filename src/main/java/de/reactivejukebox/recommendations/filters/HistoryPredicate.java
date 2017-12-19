@@ -19,6 +19,10 @@ public class HistoryPredicate implements Predicate<Track> {
         this(Model.getInstance().getHistoryEntries(), radio, upcoming);
     }
 
+    public HistoryPredicate(Collection<Track> upcoming) {
+        finalHistory.addAll(upcoming);
+    }
+
     public HistoryPredicate(HistoryEntries history, Radio radio, Collection<Track> upcoming) {
         Set<Track> tracks = Collections.EMPTY_SET;
         User user = radio.getUser();
