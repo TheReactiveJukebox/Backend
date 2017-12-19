@@ -20,6 +20,7 @@ public class HistoryPredicate implements Predicate<Track> {
     }
 
     public HistoryPredicate(Collection<Track> upcoming) {
+        finalHistory = Collections.EMPTY_SET;
         finalHistory.addAll(upcoming);
     }
 
