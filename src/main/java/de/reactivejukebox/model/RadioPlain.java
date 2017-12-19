@@ -66,11 +66,7 @@ public class RadioPlain {
     }
 
     public String[] getGenres() {
-        if(genres != null && genres.length > 0){
-            return genres;
-        } else {
-            return new String[0];
-        }
+        return genres;
     }
 
     public void setGenres(String[] genres) {
