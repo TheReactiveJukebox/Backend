@@ -78,7 +78,12 @@ public class HybridStrategy implements RecommendationStrategy {
             }
 
             // otherwise, instantiate and call algorithm, gather results
-            gatherAlgorithmResults(results, strategy);
+            try {
+                gatherAlgorithmResults(results, strategy);
+            } catch (Exception e){
+                System.err.println("Error Executing Strategy: " + strategy);
+                e.printStackTrace();
+            }
         }
 
         // modify Ranking
