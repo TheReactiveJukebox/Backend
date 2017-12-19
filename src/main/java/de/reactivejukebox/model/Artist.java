@@ -47,7 +47,7 @@ public class Artist implements MusicEntity {
     }
 
     @Override
-    public MusicEntityPlain getPlainObject() {
+    public ArtistPlain getPlainObject() {
         return new ArtistPlain(getName(), getId());
     }
 }

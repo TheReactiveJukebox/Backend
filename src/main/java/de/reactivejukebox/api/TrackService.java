@@ -35,8 +35,9 @@ public class TrackService {
                            @QueryParam("titlesubstr") String titleSubstring,
                            @QueryParam("artist") int artist,
                            @QueryParam("album") int album,
-                           @QueryParam("count") int countResults) {
-        List<MusicEntityPlain> result;
+                           @QueryParam("count") int countResults,
+                           @Context User user) {
+        List<TrackPlain> result;
         Set<Integer> ids = new TreeSet<>(id);
         Stream<Track> s = Model.getInstance().getTracks().stream();
         if (!ids.isEmpty()) {
@@ -54,6 +55,15 @@ public class TrackService {
             s = s.filter(track -> track.getAlbum().getId() == album);
         }
         result = s.map(Track::getPlainObject).collect(Collectors.toList());
+        TrackFeedbacks feedback = Model.getInstance().getTrackFeedbacks();
+        try {
+            for (TrackPlain r : result) {
+                r.setFeedback(feedback.get(r.getId(), user.getId()));
+            }
+        } catch (SQLException e){
+            System.err.println("Error setting track feedback into track");
+            e.printStackTrace();
+        }
         return Response.status(200)
                 .entity(result)
                 .build();

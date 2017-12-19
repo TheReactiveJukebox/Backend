@@ -40,7 +40,7 @@ public class Album implements MusicEntity {
     }
 
     @Override
-    public MusicEntityPlain getPlainObject() {
+    public AlbumPlain getPlainObject() {
         AlbumPlain plainObject = new AlbumPlain();
         plainObject.setArtist(getArtist().getId());
         plainObject.setId(getId());

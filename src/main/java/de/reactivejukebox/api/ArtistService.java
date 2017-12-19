@@ -11,6 +11,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -30,7 +31,7 @@ public class ArtistService {
             @QueryParam("namesubstr") String nameSubstring,
             @QueryParam("count") int count) {
         Set<Integer> ids = new TreeSet<>(id);
-        List<MusicEntityPlain> result;
+        List<ArtistPlain> result;
         Stream<Artist> s = Model.getInstance().getArtists().stream();
         if (!ids.isEmpty()) {
             s = s.filter(artist -> ids.contains(artist.getId()));
@@ -41,6 +42,15 @@ public class ArtistService {
                     db.normalize(artist.getName()).startsWith(db.normalize(nameSubstring)));
         }
         result = s.map(Artist::getPlainObject).collect(Collectors.toList());
+        SpecialFeedbacks feedback = Model.getInstance().getSpecialFeedbacks();
+        try {
+            for (ArtistPlain artist : result) {
+                artist.setFeedback(feedback.getArtistFeedback(artist.getId(), artist.getId()));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error setting artist feedback into artist");
+            e.printStackTrace();
+        }
         return Response.status(200)
                 .entity(result)
                 .build();

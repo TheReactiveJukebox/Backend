@@ -97,6 +97,39 @@ public class SpecialFeedbacks {
         return result;
     }
 
+    /**
+     *
+     * @param artistId artist Id
+     * @param userId
+     * @return feedback Object forArtist
+     * @throws SQLException
+     */
+    public ArtistFeedback getArtistFeedback(int artistId, int userId) throws SQLException {
+        return fromArtistByArtist(artistId, userId);
+    }
+
+    /**
+     *
+     * @param genre Genre
+     * @param userId
+     * @return eedback Object forGenre
+     * @throws SQLException
+     */
+    public GenreFeedback getGenreFeedback(String genre, int userId) throws SQLException {
+        return fromGenreByGenre(genre, userId);
+    }
+
+    /**
+     *
+     * @param albumId Album Id
+     * @param userId
+     * @return feedback Object for Album
+     * @throws SQLException
+     */
+    public AlbumFeedback getAlbumFeedback(int albumId, int userId) throws SQLException {
+        return fromAlbumByAlbum(albumId,userId);
+    }
+
     public HashMap<Integer, Integer> getArtistFeedback(int userId) throws SQLException {
         return fromArtistByUser(userId);
     }

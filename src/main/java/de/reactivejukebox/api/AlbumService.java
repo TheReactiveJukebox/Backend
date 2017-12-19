@@ -11,6 +11,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -28,8 +29,9 @@ public class AlbumService {
             @QueryParam("id") List<Integer> id,
             @QueryParam("titlesubstr") String titleSubstring,
             @QueryParam("artist") int artist,
-            @QueryParam("count") int resultCount) {
-        List<MusicEntityPlain> results;
+            @QueryParam("count") int resultCount,
+            @Context User user) {
+        List<AlbumPlain> results;
         Set<Integer> ids = new TreeSet<>(id);
         Stream<Album> s = Model.getInstance().getAlbums().stream();
         if (!id.isEmpty()) {
@@ -44,7 +46,15 @@ public class AlbumService {
             s = s.filter(album -> album.getArtist().getId() == artist);
         }
         results = s.map(Album::getPlainObject).collect(Collectors.toList());
-
+        SpecialFeedbacks feedback = Model.getInstance().getSpecialFeedbacks();
+        try {
+            for (AlbumPlain album : results) {
+                album.setFeedback(feedback.getAlbumFeedback(album.getId(), user.getId()));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error setting album feedback into album");
+            e.printStackTrace();
+        }
         return Response.status(200)
                 .entity(results)
                 .build();

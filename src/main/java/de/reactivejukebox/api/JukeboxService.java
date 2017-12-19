@@ -78,7 +78,7 @@ public class JukeboxService {
                     .map(Track::getPlainObject)
                     .collect(Collectors.toList());
             for (TrackPlain r : results) {
-                r.setTrackFeedback(feedback.get(r.getId(), user.getId()));
+                r.setFeedback(feedback.get(r.getId(), user.getId()));
             }
 
             return Response.ok(results).build();
