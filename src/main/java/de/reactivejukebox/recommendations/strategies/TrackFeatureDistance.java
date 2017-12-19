@@ -35,13 +35,13 @@ public class TrackFeatureDistance implements RecommendationStrategy {
         this.requestedResults = requestedResults;
         this.tracks = Model.getInstance().getTracks();
         this.radio = radio;
-        if (!seedTracks.isEmpty()) {
+        if (seedTracks != null && !seedTracks.isEmpty()) {
             // use next songs for recommendation
             this.seedTracks = seedTracks;
-        } else if (!radio.getStartTracks().isEmpty()) {
+        } else if (radio != null && radio.getStartTracks() != null && radio.getStartTracks().isEmpty()) {
             // use the selected start tracks
             this.seedTracks = radio.getStartTracks();
-        } else {
+        } else if (radio != null) {
             //use the 3 most similar songs as seed tracks
             float arousal, valence, speed, dynamic;
             if (radio.getArousal() != null) {
@@ -72,6 +72,8 @@ public class TrackFeatureDistance implements RecommendationStrategy {
                     Math.abs(o1.getDynamic() - dynamic) + Math.abs(o1.getSpeed() - speed)
                             + Math.abs(o1.getValence() - valence) + Math.abs(o1.getArousal() - arousal)))
                     .limit(3).collect(Collectors.toList());
+        } else {
+            throw new IllegalArgumentException("There need to give at least one parameter");
         }
     }
 
