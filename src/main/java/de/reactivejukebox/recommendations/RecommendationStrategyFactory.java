@@ -27,7 +27,7 @@ public class RecommendationStrategyFactory {
         } else if (s == StrategyType.RANDOM) {
             return new RandomTracks(radio, upcoming, resultCount);
         } else if (s ==StrategyType.FEATURES) {
-            return new TrackFeatureDistance(upcoming, resultCount);
+            return new TrackFeatureDistance(radio, upcoming, resultCount);
         } else if (s == StrategyType.MOOD){
             return new MoodNN(radio, upcoming, resultCount);
         } else if (s == StrategyType.SPEED){

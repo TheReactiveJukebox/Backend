@@ -2,6 +2,7 @@ package de.reactivejukebox.recommendations.strategies;
 
 import de.reactivejukebox.database.DatabaseProvider;
 import de.reactivejukebox.model.Model;
+import de.reactivejukebox.model.Radio;
 import de.reactivejukebox.model.Track;
 import de.reactivejukebox.model.Tracks;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
@@ -15,39 +16,72 @@ import java.util.stream.Collectors;
 
 public class TrackFeatureDistance implements RecommendationStrategy {
 
-    private static int IGNORE_COUNTER = 3;
-    private static String SQL_QUERY_RECOMMEND = "SELECT feature_distance.track_to AS id, distance " +
+    private final int IGNORE_COUNTER = 3;
+    private final String SQL_QUERY_RECOMMEND = "SELECT feature_distance.track_to AS id, distance " +
             "FROM feature_distance WHERE track_from=? ORDER BY distance ASC ";
     private int requestedResults;
     private Tracks tracks;
-    private Collection<Track> upcoming;
-
-    public TrackFeatureDistance(float speed, float dynamic, int requestedResults) {
-        this(Model.getInstance().getTracks().stream().sorted(Comparator.comparing((Track o1) ->
-                Math.abs(o1.getDynamic() - dynamic) + Math.abs(o1.getSpeed() - speed)))
-                .limit(3).collect(Collectors.toList()), requestedResults);
-    }
+    private Collection<Track> seedTracks;
+    private Radio radio;
 
 
     /**
      * Creates a recommendations based on the similarity of two songs by theirs features.
      *
-     * @param upcoming         collection of songs the radio will play
+     * @param seedTracks       collection of songs the radio will play
      * @param requestedResults number of recommendations to deliver
      */
-    public TrackFeatureDistance(Collection<Track> upcoming, int requestedResults) {
+    public TrackFeatureDistance(Radio radio, Collection<Track> seedTracks, int requestedResults) {
         this.requestedResults = requestedResults;
         this.tracks = Model.getInstance().getTracks();
-        this.upcoming = upcoming;
+        this.radio = radio;
+        if (!seedTracks.isEmpty()) {
+            // use next songs for recommendation
+            this.seedTracks = seedTracks;
+        } else if (!radio.getStartTracks().isEmpty()) {
+            // use the selected start tracks
+            this.seedTracks = radio.getStartTracks();
+        } else {
+            //use the 3 most similar songs as seed tracks
+            float arousal, valence, speed, dynamic;
+            if (radio.getArousal() != null) {
+                arousal = radio.getArousal();
+            } else {
+                arousal = tracks.stream()
+                        .collect(Collectors.averagingDouble((Track track) -> track.getArousal())).floatValue();
+            }
+            if (radio.getValence() != null) {
+                valence = radio.getValence();
+            } else {
+                valence = tracks.stream()
+                        .collect(Collectors.averagingDouble((Track track) -> track.getValence())).floatValue();
+            }
+            if (radio.getDynamic() != null) {
+                dynamic = radio.getDynamic();
+            } else {
+                dynamic = tracks.stream()
+                        .collect(Collectors.averagingDouble((Track track) -> track.getDynamic())).floatValue();
+            }
+            if (radio.getMaxSpeed() != null && radio.getMinSpeed() != null) {
+                speed = (radio.getMaxSpeed() + radio.getMinSpeed()) / 2;
+            } else {
+                speed = tracks.stream()
+                        .collect(Collectors.averagingDouble((Track track) -> track.getSpeed())).floatValue();
+            }
+            this.seedTracks = this.tracks.stream().sorted(Comparator.comparing((Track o1) ->
+                    Math.abs(o1.getDynamic() - dynamic) + Math.abs(o1.getSpeed() - speed)
+                            + Math.abs(o1.getValence() - valence) + Math.abs(o1.getArousal() - arousal)))
+                    .limit(3).collect(Collectors.toList());
+        }
     }
 
     @Override
     public List<Track> getRecommendations() {
-        if(upcoming.isEmpty()) {
+        if (seedTracks.isEmpty()) {
             return new ArrayList<>();
         }
-        List<Map<Integer, Double>> potRecommendations = new ArrayList<>(upcoming.size());
-        for (Track track : upcoming) {
+        List<Map<Integer, Double>> potRecommendations = new ArrayList<>(seedTracks.size());
+        for (Track track : seedTracks) {
             potRecommendations.add(fetchScoredSongs(track));
         }
         //reduce maps to only one map
@@ -66,14 +100,15 @@ public class TrackFeatureDistance implements RecommendationStrategy {
                 .map((Map.Entry<Integer, Double> id) -> tracks.get(id.getKey()))
                 .collect(Collectors.toList());
         // only use the first and apply ranking = weighting
-        recommendations = recommendations.subList(0, requestedResults - 1);
+        recommendations = this.radio.filter(recommendations.stream())
+                .limit(requestedResults).collect(Collectors.toList());
         //create list with weights by range normalizing distances and save them as weights
         List<Double> recommendationsWeights = recommendations.stream()
-                .map((Track track)  -> resultMap.get(track.getId())).collect(Collectors.toList());
+                .map((Track track) -> resultMap.get(track.getId())).collect(Collectors.toList());
         Double max = Collections.max(recommendationsWeights);
         Double min = Collections.min(recommendationsWeights);
         recommendationsWeights = recommendationsWeights.stream()
-                .map((Double in) -> (in - min) * (1/max)).collect(Collectors.toList());
+                .map((Double in) -> (in - min) * (1 / max)).collect(Collectors.toList());
         return recommendations;
     }
 
