@@ -17,7 +17,6 @@ import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 public class SpotifySongRecommender implements RecommendationStrategy {
@@ -45,63 +44,73 @@ public class SpotifySongRecommender implements RecommendationStrategy {
 
     @Override
     public List<Track> getRecommendations() {
-        Stream<Track> possibleTracks = spotifyApiCall(base);
-        possibleTracks = radio.filter(possibleTracks);  // Filter for radio properties
+        JSONArray jsonArray = spotifyApiCall(base);
 
-        return radio.filterHistory(possibleTracks, upcoming, resultCount) // Filter History
-                .collect(Collectors.toList());
+        ArrayList<Track> tracks = new ArrayList<>();
+        ArrayList<Float> scores = new ArrayList<>();
+
+
+        int count = jsonArray.length();
+        for (int i = 0; i < count; i++) {
+            // get next track
+            JSONObject o = jsonArray.getJSONObject(i);
+            Track t = Model.getInstance().getTracks().getBySpotifyId(o.getString("id"));
+
+            // filter upcoming tracks and tracks we don't have in the library
+            if (t == null || upcoming.contains(t)) {
+                continue;
+            }
+
+            // add track to recommendations, score according to position
+            tracks.add(t);
+            scores.add(1.0f - ((float) i / (float) count) * 0.5f);
+        }
+        return tracks.subList(0, resultCount);
     }
 
-    private Stream<Track> spotifyApiCall(List<String> seeds) {
-
+    /**
+     * Wraps both Spotify API calls (token + recommendations) with some error handling
+     * @param seeds list of Spotify IDs of seed tracks
+     * @return the JSON response of the recommendation call or an empty JSONArray if something goes wrong
+     */
+    private JSONArray spotifyApiCall(List<String> seeds) {
+        // cache auth token globally, only needs to be executed once
         if (JukeboxConfig.SPOTIFY_AUTH_TOKEN == null) {
             try {
-                JukeboxConfig.SPOTIFY_AUTH_TOKEN = getSpotifyToken();
+                JukeboxConfig.SPOTIFY_AUTH_TOKEN = getSpotifyAuthToken(
+                        JukeboxConfig.SPOTIFY_CLIENT_ID,
+                        JukeboxConfig.SPOTIFY_CLIENT_SECRET);
             } catch (IOException e) {
                 System.err.println("Could not obtain auth token from Spotify, returning empty stream. Exception: ");
                 e.printStackTrace();
-                return Stream.empty();
+                return new JSONArray();
             }
         }
 
-        String seedTracks = seeds.stream()
-                .collect(Collectors.joining(","));
-
+        // get Spotify recommendations
         try {
-            String spotifyResponse = Request
-                    .Get("https://api.spotify.com/v1/recommendations?seed_tracks=" + seedTracks + "&limit=100") // TODO how does this work if it's hard limited to 100 tracks?
-                    .addHeader("Authorization", "Bearer " + JukeboxConfig.SPOTIFY_AUTH_TOKEN)
-                    .connectTimeout(800)
-                    .execute()
-                    .returnContent()
-                    .asString();
-
-            JSONObject jsonObject = new JSONObject(spotifyResponse);
-            JSONArray jsonArray = jsonObject.getJSONArray("tracks");
-
-            List<String> spotifyIds = new ArrayList<>();
-
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject o = jsonArray.getJSONObject(i);
-                spotifyIds.add(o.getString("id"));
-            }
-
-            return Model.getInstance().getTracks().stream()
-                    .filter(track -> spotifyIds.contains(track.getSpotifyId()));
+            return getSpotifyRecommendations(seeds, JukeboxConfig.SPOTIFY_AUTH_TOKEN);
         } catch (IOException e) {
-            System.err.println("Could not get tracks from Spotify, returning empty stream. Exception: ");
+            System.err.println("Could not get tracks from Spotify, returning empty list. Exception: ");
             e.printStackTrace();
-            return Stream.empty();
+            return new JSONArray();
         }
     }
 
-    private String getSpotifyToken() throws IOException {
+    /**
+     * Queries the Spotify API for an auth token for this client
+     * @param clientId Spotify client ID
+     * @param clientSecret Spotify client secret
+     * @return an auth token that is needed to make other API calls
+     * @throws IOException when Spotify returns an error
+     */
+    private String getSpotifyAuthToken(String clientId, String clientSecret) throws IOException {
         // encode client ID and secret as base64
-
         byte[] authorization = Base64.getEncoder().encode(
-                (JukeboxConfig.SPOTIFY_CLIENT_ID + ":" + JukeboxConfig.SPOTIFY_CLIENT_SECRET).getBytes());
+                (clientId + ":" + clientSecret).getBytes());
+        String authString = new String(authorization);
 
-        String authString = new String(authorization);//.replace("\r\n", "");
+        // make request using the "Client Credentials" flow
         String jsonResponse = Request.Post("https://accounts.spotify.com/api/token")
                 .connectTimeout(800)
                 .bodyForm(Form.form().add("grant_type", "client_credentials").build())
@@ -112,5 +121,30 @@ public class SpotifySongRecommender implements RecommendationStrategy {
                 .asString();
 
         return new JSONObject(jsonResponse).getString("access_token");
+    }
+
+    /**
+     * Queries the Spotify API for recommended tracks
+     * @param seeds collection of tracks to use as a base for recommendations
+     * @param spotifyAuthToken the auth token obtained by getSpotifyAuthToken()
+     * @return the JSON response from Spotify
+     * @throws IOException when Spotify returns an error
+     */
+    private JSONArray getSpotifyRecommendations(Collection<String> seeds, String spotifyAuthToken) throws IOException {
+        // create a comma-separated list of spotify ids
+        String seedTracks = seeds.stream()
+                .collect(Collectors.joining(","));
+
+        // make request; limit = 100 because that is the maximum defined by Spotify
+        String spotifyResponse = Request
+                .Get("https://api.spotify.com/v1/recommendations?seed_tracks=" + seedTracks + "&limit=100")
+                .addHeader("Authorization", "Bearer " + spotifyAuthToken)
+                .connectTimeout(800)
+                .execute()
+                .returnContent()
+                .asString();
+
+        JSONObject jsonObject = new JSONObject(spotifyResponse);
+        return jsonObject.getJSONArray("tracks");
     }
 }
