@@ -1,19 +1,19 @@
 package de.reactivejukebox.recommendations.strategies;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.util.Base64;
 import de.reactivejukebox.JukeboxConfig;
 import de.reactivejukebox.model.Model;
 import de.reactivejukebox.model.Radio;
 import de.reactivejukebox.model.Track;
 import de.reactivejukebox.model.Tracks;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
+import org.apache.http.client.fluent.Form;
+import org.apache.http.client.fluent.Request;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,55 +54,63 @@ public class SpotifySongRecommender implements RecommendationStrategy {
 
     private Stream<Track> spotifyApiCall(List<String> seeds) {
 
-        if (JukeboxConfig.spotifyAuthToken == null) {
-            JukeboxConfig.spotifyAuthToken = this.getSpotifyToken();
+        if (JukeboxConfig.SPOTIFY_AUTH_TOKEN == null) {
+            try {
+                JukeboxConfig.SPOTIFY_AUTH_TOKEN = getSpotifyToken();
+            } catch (IOException e) {
+                System.err.println("Could not obtain auth token from Spotify, returning empty stream. Exception: ");
+                e.printStackTrace();
+                return Stream.empty();
+            }
         }
 
         String seedTracks = seeds.stream()
                 .collect(Collectors.joining(","));
 
-        Client client = Client.create();
-        WebResource webResource = client.resource("https://api.spotify.com/v1/recommendations?seed_tracks=" + seedTracks + "&limit=100");
-        ClientResponse response = webResource.header("Authorization", "Bearer " + JukeboxConfig.spotifyAuthToken).get(ClientResponse.class);
+        try {
+            String spotifyResponse = Request
+                    .Get("https://api.spotify.com/v1/recommendations?seed_tracks=" + seedTracks + "&limit=100") // TODO how does this work if it's hard limited to 100 tracks?
+                    .addHeader("Authorization", "Bearer " + JukeboxConfig.SPOTIFY_AUTH_TOKEN)
+                    .connectTimeout(800)
+                    .execute()
+                    .returnContent()
+                    .asString();
 
-        String ret = response.getEntity(String.class);
-        client.destroy();
+            JSONObject jsonObject = new JSONObject(spotifyResponse);
+            JSONArray jsonArray = jsonObject.getJSONArray("tracks");
 
-        JSONObject jsonObject = new JSONObject(ret);
-        JSONArray jsonArray = jsonObject.getJSONArray("tracks");
+            List<String> spotifyIds = new ArrayList<>();
 
-        List<String> spotifyIds = new ArrayList<>();
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject o = jsonArray.getJSONObject(i);
+                spotifyIds.add(o.getString("id"));
+            }
 
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject o = jsonArray.getJSONObject(i);
-            spotifyIds.add(o.getString("id"));
+            return Model.getInstance().getTracks().stream()
+                    .filter(track -> spotifyIds.contains(track.getSpotifyId()));
+        } catch (IOException e) {
+            System.err.println("Could not get tracks from Spotify, returning empty stream. Exception: ");
+            e.printStackTrace();
+            return Stream.empty();
         }
-
-        return Model.getInstance().getTracks().stream()
-                .filter(track -> spotifyIds.contains(track.getSpotifyId()));
     }
 
-    private String getSpotifyToken() {
-        byte[] authorization = Base64.encode(JukeboxConfig.spotifyClientId + ":" + JukeboxConfig.spotifyClientSecret);
-        String authString = new String(authorization);
-        Client client = Client.create();
+    private String getSpotifyToken() throws IOException {
+        // encode client ID and secret as base64
 
-        WebResource webResource = client.resource("https://accounts.spotify.com/api/token");
+        byte[] authorization = Base64.getEncoder().encode(
+                (JukeboxConfig.SPOTIFY_CLIENT_ID + ":" + JukeboxConfig.SPOTIFY_CLIENT_SECRET).getBytes());
 
-        ClientResponse response = webResource.queryParam("grant_type", "client_credentials")
-                .header("Content-Type", "application/x-www-form-urlencoded")
-                .header("Authorization", "Basic " + authString)
-                .post(ClientResponse.class);
+        String authString = new String(authorization);//.replace("\r\n", "");
+        String jsonResponse = Request.Post("https://accounts.spotify.com/api/token")
+                .connectTimeout(800)
+                .bodyForm(Form.form().add("grant_type", "client_credentials").build())
+                .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                .addHeader("Authorization", "Basic " + authString)
+                .execute()
+                .returnContent()
+                .asString();
 
-        if (response.getStatus() != 200) {
-            System.err.println(response);
-            return null;
-        }
-
-        String tokenJson = response.getEntity(String.class);
-        String token = new JSONObject(tokenJson).getString("access_token");
-
-        client.destroy();
-        return token;
+        return new JSONObject(jsonResponse).getString("access_token");
     }
 }
