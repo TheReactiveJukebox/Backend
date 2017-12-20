@@ -1,5 +1,6 @@
 package de.reactivejukebox.api;
 
+import de.reactivejukebox.JukeboxConfig;
 import de.reactivejukebox.core.Secured;
 import de.reactivejukebox.datahandlers.TokenHandler;
 import de.reactivejukebox.model.UserPlain;
@@ -80,7 +81,7 @@ public class UserService {
         System.out.printf("register " + auth);
         try {
             try {
-                if (auth.getInviteKey().matches("xxx")) {
+                if (auth.getInviteKey().equals(JukeboxConfig.JUKEBOX_INVITE_KEY)) {
                     auth.setInviteKey(null);
                 } else {
                     return Response.status(441).entity("invalid invite key").build();

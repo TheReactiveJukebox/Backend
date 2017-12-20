@@ -3,6 +3,7 @@ package de.reactivejukebox;
 public class JukeboxConfig {
     public static final String SPOTIFY_CLIENT_ID = getEnvironmentVariable("SPOTIFY_CLIENT_ID");
     public static final String SPOTIFY_CLIENT_SECRET = getEnvironmentVariable("SPOTIFY_CLIENT_SECRET");
+    public static final String JUKEBOX_INVITE_KEY = getEnvironmentVariable("JUKEBOX_INVITE_KEY");
     public static String SPOTIFY_AUTH_TOKEN;
 
     private static String getEnvironmentVariable(String variable) {
