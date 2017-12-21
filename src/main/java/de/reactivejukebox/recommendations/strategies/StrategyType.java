@@ -6,7 +6,7 @@ public enum StrategyType {
     HYBRID(0),
     MOOD(4),
     SPEED(4),
-    FEATURES(3);
+    FEATURES(4);
 
     StrategyType(float weight) {
         this.weight = weight;

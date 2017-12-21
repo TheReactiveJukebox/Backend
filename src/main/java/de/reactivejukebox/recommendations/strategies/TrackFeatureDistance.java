@@ -41,7 +41,7 @@ public class TrackFeatureDistance implements RecommendationStrategy {
         if (seedTracks != null && !seedTracks.isEmpty()) {
             // use next songs for recommendation
             this.seedTracks = seedTracks;
-        } else if (radio != null && radio.getStartTracks() != null && radio.getStartTracks().isEmpty()) {
+        } else if (radio != null && radio.getStartTracks() != null && !radio.getStartTracks().isEmpty()) {
             // use the selected start tracks
             this.seedTracks = radio.getStartTracks();
         } else if (radio != null) {
@@ -108,14 +108,13 @@ public class TrackFeatureDistance implements RecommendationStrategy {
         recommendations = this.radio.filter(recommendations.stream())
                 .limit(requestedResults).collect(Collectors.toList());
         //create list with weights by range normalizing distances and save them as weights
-        List<Double> doubleRecommendationsWeights = recommendations.stream()
+        List<Double> recommendationsWeights = recommendations.stream()
                 .map((Track track) -> resultMap.get(track.getId())).collect(Collectors.toList());
-        Double max = Collections.max(doubleRecommendationsWeights);
-        Double min = Collections.min(doubleRecommendationsWeights);
-        List<Float> recommendationsWeights = doubleRecommendationsWeights.stream()
-                .map((Double in) -> (in - min) * (1 / max)).map((Double d) -> d.floatValue())
-                .collect(Collectors.toList());
-        return new Recommendations(recommendations, recommendationsWeights);
+        Double max = Collections.max(recommendationsWeights);
+        Double min = Collections.min(recommendationsWeights);
+        List<Float> finalWeights = recommendationsWeights.stream()
+                .map((Double in) -> (in - min) * (1 / max)).map(Double::floatValue).collect(Collectors.toList());
+        return new Recommendations(recommendations, finalWeights);
     }
 
     private Map<Integer, Double> fetchScoredSongs(Track track) {

@@ -46,6 +46,8 @@ public class AuthenticationFilter implements ContainerRequestFilter {
                 System.out.printf("no User found");
             }
         } catch (Exception e) {
+            System.err.println("Error: Unauthorized");
+            e.printStackTrace();
             requestContext.abortWith(
                     Response.status(Response.Status.UNAUTHORIZED).build());
         }

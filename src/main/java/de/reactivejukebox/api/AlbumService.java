@@ -68,6 +68,8 @@ public class AlbumService {
         try {
             return Response.status(200).entity(Model.getInstance().getSpecialFeedbacks().getAlbumFeedback(id, user.getId())).build();
         } catch (Exception e) {
+            System.err.println("Error getting album feedback for album " + id + ":");
+            e.printStackTrace();
             return Response.status(400).build();
         }
     }
@@ -85,6 +87,8 @@ public class AlbumService {
             LoggerProvider.getLogger().writeEntry(new AlbumFeedbackEntry(user, feedbackReturn));
             return Response.status(200).entity(feedbackReturn).build();
         } catch (Exception e) {
+            System.err.println("Error adding album feedback for album " + feedback.getAlbum() + ":");
+            e.printStackTrace();
             return Response.status(400).build();
         }
     }

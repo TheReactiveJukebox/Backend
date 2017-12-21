@@ -28,6 +28,7 @@ public class UserService {
             LoggerProvider.getLogger().writeEntry(new UserLoggedInEntry(token));
             return Response.ok(token).build();
         } catch (Exception e) {
+            System.err.println("Invalid username or password:");
             return Response.status(442).entity("Invalid username or password").build();
         }
     }
@@ -48,6 +49,7 @@ public class UserService {
             LoggerProvider.getLogger().writeEntry(new UserAutoLoggedInEntry(token));
             return Response.ok(token).build();
         } catch (Exception e) {
+            System.err.println("Invalid authorization token");
             return Response.status(409).entity("no valid token").build();
         }
     }
@@ -67,6 +69,7 @@ public class UserService {
             LoggerProvider.getLogger().writeEntry(new UserLoggedOutEntry(auth));
             return Response.status(200).entity("logged out").build();
         } catch (Exception e) {
+            System.err.println("Invalid authorization token");
             return Response.status(409).entity("no valid token").build();
         }
     }
@@ -90,12 +93,14 @@ public class UserService {
                     return Response.status(441).entity("invalid invite key").build();
                 }
             } catch (Exception e) {
+                System.err.println("Invalid invite key");
                 return Response.status(441).entity("invalid invite key}").build();
             }
             UserPlain token = new TokenHandler().register(auth);
             LoggerProvider.getLogger().writeEntry(new UserRegisterEntry(auth));
             return Response.ok(token).build();
         } catch (Exception e) {
+            System.err.println("Username already in use");
             return Response.status(440).entity("username already in use").build();
         }
     }

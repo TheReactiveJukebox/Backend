@@ -29,9 +29,9 @@ public class JukeboxService {
             Radio radio = Model.getInstance().getRadios().getByUserId(user.getId());
             return Response.ok(radio.getPlainObject()).build();
         } catch (SQLException e) {
+            System.err.println("Error getting current radiostation for user " + user.getUsername() + ":");
             e.printStackTrace();
-            return Response.status(503)
-                    .entity( "Error no Radiostation available")
+            return Response.status(404)
                     .build();
         }
     }
@@ -48,9 +48,9 @@ public class JukeboxService {
             LoggerProvider.getLogger().writeEntry(new RadioCreateEntry(user, radio));
             return Response.ok(radio.getPlainObject()).build();
         } catch (SQLException e) {
+            System.err.println("Error creating radiostation for user " + user.getUsername() + ":");
             e.printStackTrace();
             return Response.status(503)
-                    .entity("Error while reading/writing database")
                     .build();
         }
     }
@@ -83,9 +83,9 @@ public class JukeboxService {
 
             return Response.ok(results).build();
         } catch (SQLException e) {
+            System.err.println("Error getting next songs for current radiostation of user " + user.getUsername() + ":");
             e.printStackTrace();
             return Response.status(502)
-                    .entity("Error while commmunicating with database")
                     .build();
         }
     }
