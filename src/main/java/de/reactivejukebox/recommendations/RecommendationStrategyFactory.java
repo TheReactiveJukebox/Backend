@@ -42,9 +42,11 @@ public class RecommendationStrategyFactory {
                 e.printStackTrace();
                 return new HybridStrategy(this, radio.getPredicates(), null, resultCount);
             }
+        } else if (s ==StrategyType.FEATURES) {
+            return new TrackFeatureDistance(radio, upcoming, resultCount);
         } else if (s == StrategyType.MOOD) {
             return new MoodNN(radio, upcoming, resultCount);
-        } else if (s == StrategyType.SPEED){
+        } else if (s == StrategyType.SPEED) {
             return new SpeedNN(radio, upcoming, resultCount);
         } else throw new NoSuchStrategyException();
     }
