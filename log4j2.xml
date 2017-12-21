@@ -4,14 +4,22 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n" />
         </Console>
-        <File name="MyFile" fileName="logs/studie.log" immediateFlush="true" append="true">
+        <File name="StudieFile" fileName="logs/studie.log" immediateFlush="true" append="true">
             <PatternLayout pattern="%msg%n"/>
+        </File>
+        <File name="FrontendFile" fileName="logs/frontend.log" immediateFlush="true" append="true">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n"/>
         </File>
     </Appenders>
     <Loggers>
-        <Root level="debug">
+        <Root level="info">
             <AppenderRef ref="Console" />
-            <AppenderRef ref="MyFile"/>
         </Root>
+        <logger name="studie" level="info">
+            <AppenderRef ref="StudieFile" />
+        </logger>
+        <logger name="frontend" level="info">
+            <AppenderRef ref="FrontendFile" />
+        </logger>
     </Loggers>
 </Configuration>
