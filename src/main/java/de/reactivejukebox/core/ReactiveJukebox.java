@@ -27,13 +27,14 @@ public class ReactiveJukebox extends ResourceConfig {
                         .in(RequestScoped.class);
             }
         });
+        model = Model.getInstance();
         while (model == null){
-            model = Model.getInstance();
             try {
-                TimeUnit.SECONDS.sleep(30);
+                TimeUnit.SECONDS.sleep(60);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            model = Model.getInstance();
         }
 
     }
