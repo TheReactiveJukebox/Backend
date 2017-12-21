@@ -34,7 +34,7 @@ public class HistoryService {
             return Response.ok().entity(historyEntry).build();
         } catch (SQLException e) {
             e.printStackTrace();
-            return Response.status(500).entity("Error while commmunicating with database").build();
+            return Response.status(500).build();
         }
     }
 
@@ -48,7 +48,7 @@ public class HistoryService {
             return Response.ok().build();
         } catch (SQLException e) {
             e.printStackTrace();
-            return Response.status(500).entity("Error while commmunicating with database").build();
+            return Response.status(500).build();
         }
     }
 }
