@@ -5,7 +5,8 @@ public enum StrategyType {
     RANDOM(1),
     HYBRID(0),
     MOOD(4),
-    SPEED(4);
+    SPEED(4),
+    FEATURES(6);
 
     StrategyType(float weight) {
         this.weight = weight;
