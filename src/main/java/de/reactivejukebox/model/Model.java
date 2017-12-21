@@ -22,7 +22,7 @@ public class Model {
     private SpecialFeedbacks specialFeedbacks;
     private IndirectFeedbackEntries indirectFeedbackEntries;
 
-    private Model() {
+    private Model() throws ModelException{
         users = new Users();
         try (Connection con = DatabaseProvider.getInstance().getDatabase().getConnection()) {
             genres = new Genres(con);
@@ -37,6 +37,7 @@ public class Model {
             artists = new Artists();
             albums = new Albums();
             tracks = new Tracks();
+            throw new ModelException();
         }
         radios = new Radios(users);
         trackFeedbacks = new TrackFeedbacks(users, tracks);
@@ -49,7 +50,12 @@ public class Model {
 
     public static synchronized Model getInstance() {
         if (Model.instance == null) {
-            Model.instance = new Model();
+            try {
+                Model.instance = new Model();
+            }catch (ModelException e){
+                System.err.println("Could build Model returning empty one which is replaced as soon as the database responds");
+                return null;
+            }
         }
         return Model.instance;
     }
