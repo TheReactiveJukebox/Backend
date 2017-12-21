@@ -77,6 +77,9 @@ public class JukeboxService {
             List<TrackPlain> results = algorithm.getRecommendations().getTracks().stream()
                     .map(Track::getPlainObject)
                     .collect(Collectors.toList());
+            if (results.size() == 0) {
+                return Response.status(404).build();
+            }
             for (TrackPlain r : results) {
                 r.setFeedback(feedback.get(r.getId(), user.getId()));
             }
