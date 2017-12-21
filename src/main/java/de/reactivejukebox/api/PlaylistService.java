@@ -69,6 +69,7 @@ public class PlaylistService {
             playlist = Model.getInstance().getPlaylists().add(playlist);
             return Response.ok(playlist).build();
         } catch (SQLException e) {
+            System.err.println("Error creating playlist:");
             e.printStackTrace();
             return Response.serverError().build();
         }

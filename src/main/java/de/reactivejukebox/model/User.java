@@ -29,6 +29,7 @@ public class User implements Serializable {
         } catch (NoSuchAlgorithmException e) {
             //will never happen
             System.err.println("SHA-256 is not available anymore");
+            e.printStackTrace();
         }
         return hashedMessage;
     }
