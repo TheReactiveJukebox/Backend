@@ -91,6 +91,8 @@ public class IndirectFeedbackPlain {
                     break;
             }
         } catch (Exception e) {
+            System.err.println("Error: Invalid feedback");
+            e.printStackTrace();
             return false;
         }
         return true;

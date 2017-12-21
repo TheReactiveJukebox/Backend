@@ -55,6 +55,7 @@ public class Playlists {
             con.close();
             return true;
         } catch (SQLException e) {
+            System.err.println("Error while removing playlist " + playlistId + ":");
             e.printStackTrace();
             return false;
         }
@@ -89,6 +90,8 @@ public class Playlists {
             con.close();
             return p;
         } catch (SQLException e) {
+            System.err.println("Error while getting playlist " + playlistId + ":");
+            e.printStackTrace();
             return null;
         }
     }
@@ -119,6 +122,8 @@ public class Playlists {
             con.close();
         } catch (SQLException e) {
             // result will be empty
+            System.err.println("Error while getting playlist for user " + userId + ":");
+            e.printStackTrace();
         }
         return results;
     }
@@ -169,6 +174,7 @@ public class Playlists {
             result = affected == 1;
             con.close();
         } catch (SQLException e) {
+            System.err.println("Error while updating playlist "+p.getId()+":");
             e.printStackTrace();
         }
         return result;
