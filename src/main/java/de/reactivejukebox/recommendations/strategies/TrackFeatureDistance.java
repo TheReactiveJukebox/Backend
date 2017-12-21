@@ -6,6 +6,7 @@ import de.reactivejukebox.model.Radio;
 import de.reactivejukebox.model.Track;
 import de.reactivejukebox.model.Tracks;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
+import de.reactivejukebox.recommendations.Recommendations;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,7 +17,8 @@ import java.util.stream.Collectors;
 
 public class TrackFeatureDistance implements RecommendationStrategy {
 
-    private final int IGNORE_COUNTER = 3;
+    private final int IGNORE_COUNTER = 5;
+    private  int fetch_counter = 100;
     private final String SQL_QUERY_RECOMMEND = "SELECT feature_distance.track_to AS id, distance " +
             "FROM feature_distance WHERE track_from=? ORDER BY distance ASC ";
     private int requestedResults;
@@ -33,6 +35,7 @@ public class TrackFeatureDistance implements RecommendationStrategy {
      */
     public TrackFeatureDistance(Radio radio, Collection<Track> seedTracks, int requestedResults) {
         this.requestedResults = requestedResults;
+        this.fetch_counter = Math.max(requestedResults, fetch_counter);
         this.tracks = Model.getInstance().getTracks();
         this.radio = radio;
         if (seedTracks != null && !seedTracks.isEmpty()) {
@@ -78,9 +81,9 @@ public class TrackFeatureDistance implements RecommendationStrategy {
     }
 
     @Override
-    public List<Track> getRecommendations() {
+    public Recommendations getRecommendations() {
         if (seedTracks.isEmpty()) {
-            return new ArrayList<>();
+            return new Recommendations(new ArrayList<>(), new ArrayList<>());
         }
         List<Map<Integer, Double>> potRecommendations = new ArrayList<>(seedTracks.size());
         for (Track track : seedTracks) {
@@ -105,13 +108,14 @@ public class TrackFeatureDistance implements RecommendationStrategy {
         recommendations = this.radio.filter(recommendations.stream())
                 .limit(requestedResults).collect(Collectors.toList());
         //create list with weights by range normalizing distances and save them as weights
-        List<Double> recommendationsWeights = recommendations.stream()
+        List<Double> doubleRecommendationsWeights = recommendations.stream()
                 .map((Track track) -> resultMap.get(track.getId())).collect(Collectors.toList());
-        Double max = Collections.max(recommendationsWeights);
-        Double min = Collections.min(recommendationsWeights);
-        recommendationsWeights = recommendationsWeights.stream()
-                .map((Double in) -> (in - min) * (1 / max)).collect(Collectors.toList());
-        return recommendations;
+        Double max = Collections.max(doubleRecommendationsWeights);
+        Double min = Collections.min(doubleRecommendationsWeights);
+        List<Float> recommendationsWeights = doubleRecommendationsWeights.stream()
+                .map((Double in) -> (in - min) * (1 / max)).map((Double d) -> d.floatValue())
+                .collect(Collectors.toList());
+        return new Recommendations(recommendations, recommendationsWeights);
     }
 
     private Map<Integer, Double> fetchScoredSongs(Track track) {
@@ -124,7 +128,7 @@ public class TrackFeatureDistance implements RecommendationStrategy {
             PreparedStatement stmnt = con.prepareStatement(SQL_QUERY_RECOMMEND);
             stmnt.setInt(1, track.getId());
             ResultSet rs = stmnt.executeQuery();
-            while (rs.next() && result.size() <= requestedResults) {
+            while (rs.next() && result.size() <= IGNORE_COUNTER + fetch_counter) {
                 // ignore the first results, so we do not deliver other versions of a song or too simliar ones
                 if (IGNORE_COUNTER < counter++) {
                     id = rs.getInt("id");
