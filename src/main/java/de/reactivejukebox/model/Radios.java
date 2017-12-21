@@ -350,7 +350,7 @@ public class Radios implements Iterable<Radio> {
             PreparedStatement addGenre = con.prepareStatement(INSERT_GENRE);
             for (String genre : genres) {
                 addGenre.setInt(1, radio.getId());
-                addGenre.setString(2, genre);
+                addGenre.setString(2, genre.toLowerCase());
                 addGenre.addBatch();
             }
             addGenre.executeBatch();
