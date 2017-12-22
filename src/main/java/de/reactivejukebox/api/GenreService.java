@@ -20,10 +20,15 @@ public class GenreService {
     @Secured
     @Produces(MediaType.APPLICATION_JSON)
     public Response getGenreList() {
-        List<String> result = Model.getInstance().getGenres().metaList();
-        return Response.status(200)
-                .entity(result)
-                .build();
+        try {
+            List<String> result = Model.getInstance().getGenres().metaList();
+            return Response.status(200)
+                    .entity(result)
+                    .build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.serverError().entity("Internal Error").build();
+        }
     }
 
     @GET
