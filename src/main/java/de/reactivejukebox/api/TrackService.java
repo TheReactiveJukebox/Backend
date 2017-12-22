@@ -36,28 +36,32 @@ public class TrackService {
                            @QueryParam("artist") int artist,
                            @QueryParam("album") int album,
                            @QueryParam("count") int countResults) {
-        List<MusicEntityPlain> result;
-        Set<Integer> ids = new TreeSet<>(id);
-        Stream<Track> s = Model.getInstance().getTracks().stream();
-        if (!ids.isEmpty()) {
-            s = s.filter(track -> ids.contains(track.getId()));
+        try {
+            List<MusicEntityPlain> result;
+            Set<Integer> ids = new TreeSet<>(id);
+            Stream<Track> s = Model.getInstance().getTracks().stream();
+            if (!ids.isEmpty()) {
+                s = s.filter(track -> ids.contains(track.getId()));
+            }
+            if (titleSubstring != null) {
+                Database db = DatabaseProvider.getInstance().getDatabase();
+                s = s.filter(track ->
+                        db.normalize(track.getTitle()).startsWith(db.normalize(titleSubstring)));
+            }
+            if (artist != 0) {
+                s = s.filter(track -> track.getArtist().getId() == artist);
+            }
+            if (album != 0) {
+                s = s.filter(track -> track.getAlbum().getId() == album);
+            }
+            result = s.map(Track::getPlainObject).collect(Collectors.toList());
+            return Response.status(200)
+                    .entity(result)
+                    .build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.serverError().entity("Internal Error").build();
         }
-        if (titleSubstring != null) {
-            Database db = DatabaseProvider.getInstance().getDatabase();
-            s = s.filter(track ->
-                    db.normalize(track.getTitle()).startsWith(db.normalize(titleSubstring)));
-        }
-        if (artist != 0) {
-            s = s.filter(track -> track.getArtist().getId() == artist);
-        }
-        if (album != 0) {
-            s = s.filter(track -> track.getAlbum().getId() == album);
-        }
-        result = s.map(Track::getPlainObject).collect(Collectors.toList());
-        return Response.status(200)
-                .entity(result)
-                .build();
-
     }
 
     /**
@@ -73,10 +77,8 @@ public class TrackService {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/feedback")
     public Response pushTrackFeedback(TrackFeedbackPlain feedback, @Context User user) {
-
-        feedback.setUserId(user.getId());
-
         try {
+            feedback.setUserId(user.getId());
             TrackFeedback feedbackReturn = new TrackFeedbackHandler().addTrackFeedback(feedback, user);
             LoggerProvider.getLogger().writeEntry(new SongFeedbackEntry(user, feedbackReturn));
             return Response.ok().entity(feedbackReturn.getPlainObject()).build();
@@ -84,8 +86,10 @@ public class TrackService {
             System.err.println("Error pushing track feedback concerning track " + feedback.getTrackId() + ":");
             e.printStackTrace();
             return Response.status(500).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.serverError().entity("Internal Error").build();
         }
-
     }
 
     /**
@@ -110,7 +114,7 @@ public class TrackService {
         } catch (Exception e) {
             System.err.println("Error pushing indirect feedback concerning track " + feedbackPlain.getTrackId() + ":");
             e.printStackTrace();
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            return Response.serverError().build();
         }
     }
 
@@ -123,7 +127,7 @@ public class TrackService {
             return Response.ok().entity(Model.getInstance().getTracks().getTrackParameter()).build();
         } catch (Exception e) {
             e.printStackTrace();
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            return Response.serverError().build();
         }
 
     }
