@@ -36,6 +36,10 @@ public class HistoryService {
             System.err.println("Error while adding history entry:");
             e.printStackTrace();
             return Response.status(500).entity("Error while commmunicating with database").build();
+        } catch (Exception e) {
+            System.err.println("Error while adding history entry:");
+            e.printStackTrace();
+            return Response.serverError().entity("Internal Error").build();
         }
     }
 
@@ -51,6 +55,10 @@ public class HistoryService {
             System.err.println("Error while deleting history entry:");
             e.printStackTrace();
             return Response.status(500).entity("Error while commmunicating with database").build();
+        } catch (Exception e) {
+            System.err.println("Error while deleting history entry:");
+            e.printStackTrace();
+            return Response.serverError().entity("Internal Error").build();
         }
     }
 }
