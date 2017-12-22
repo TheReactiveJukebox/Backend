@@ -22,8 +22,8 @@ public class UserService {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/login")
     public Response login(UserPlain auth) {
-        System.out.printf("login" + auth);
         try {
+            System.out.printf("login" + auth);
             UserPlain token = new TokenHandler().checkUser(auth);
             LoggerProvider.getLogger().writeEntry(new UserLoggedInEntry(token));
             return Response.ok(token).build();
@@ -43,8 +43,8 @@ public class UserService {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/autologin")
     public Response autoLogin(UserPlain auth) {
-        System.out.printf("autologin " + auth);
         try {
+            System.out.printf("autologin " + auth);
             UserPlain token = new TokenHandler().checkToken(auth);
             LoggerProvider.getLogger().writeEntry(new UserAutoLoggedInEntry(token));
             return Response.ok(token).build();
@@ -84,8 +84,8 @@ public class UserService {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/register")
     public Response register(UserPlain auth) {
-        System.out.printf("register " + auth);
         try {
+            System.out.printf("register " + auth);
             try {
                 if (auth.getInviteKey().matches("xxx")) {
                     auth.setInviteKey(null);
