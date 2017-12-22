@@ -12,7 +12,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.sql.SQLDataException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
@@ -55,7 +54,7 @@ public class JukeboxService {
             return Response.ok(radio.getPlainObject()).build();
         } catch (SQLException e) {
             System.err.println("Error creating radiostation for user " + user.getUsername() + ":");
-                    e.printStackTrace();
+            e.printStackTrace();
             return Response.status(503)
                     .entity("Error while reading/writing database")
                     .build();
