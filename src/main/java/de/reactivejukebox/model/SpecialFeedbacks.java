@@ -225,7 +225,7 @@ public class SpecialFeedbacks {
         HashMap<String, Integer> result = new HashMap<>();
 
         while (rs.next()) {
-            result.put(rs.getString("genre"), rs.getInt("feedbackAlbum"));
+            result.put(rs.getString("genre"), rs.getInt("feedbackGenre"));
         }
         con.close();
         return result;
