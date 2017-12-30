@@ -4,7 +4,7 @@ import de.reactivejukebox.model.*;
 
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -20,12 +20,14 @@ public class HistoryPredicate implements Predicate<Track> {
     }
 
     public HistoryPredicate(Collection<Track> upcoming) {
-        finalHistory = Collections.EMPTY_SET;
-        finalHistory.addAll(upcoming);
+        finalHistory = new HashSet<>();
+        for (Track t : upcoming) {
+            finalHistory.add(t);
+        }
     }
 
     public HistoryPredicate(HistoryEntries history, Radio radio, Collection<Track> upcoming) {
-        Set<Track> tracks = Collections.EMPTY_SET;
+        Set<Track> tracks = new HashSet<>();
         User user = radio.getUser();
         try {
             tracks = history
