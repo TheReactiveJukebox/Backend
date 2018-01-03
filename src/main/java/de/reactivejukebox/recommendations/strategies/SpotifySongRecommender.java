@@ -65,6 +65,9 @@ public class SpotifySongRecommender implements RecommendationStrategy {
             tracks.add(t);
             scores.add(1.0f - ((float) i / (float) count) * 0.5f);
         }
+
+        if (tracks.size() <= resultCount)
+            return tracks;
         return tracks.subList(0, resultCount);
     }
 
