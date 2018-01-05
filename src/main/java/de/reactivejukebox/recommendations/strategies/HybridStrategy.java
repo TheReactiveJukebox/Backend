@@ -1,5 +1,6 @@
 package de.reactivejukebox.recommendations.strategies;
 
+import de.reactivejukebox.model.Radio;
 import de.reactivejukebox.model.Track;
 import de.reactivejukebox.model.UserProfile;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
@@ -29,7 +30,8 @@ public class HybridStrategy implements RecommendationStrategy {
         GENRE_MAGNITUDE(3f),   // see calculateGenreModifier for tweaking
         SKIP(1.8f),            // see calculateLinearModifier for tweaking
         DELETE(1f),            // see calculateLinearModifier for tweaking
-        MULTISKIP(0.7f);       // see calculateLinearModifier for tweaking
+        MULTISKIP(0.7f),       // see calculateLinearModifier for tweaking
+        FILTER_MISMATCH(2f);   // see calculateLinearModifier for tweaking
 
         public float value;
 
@@ -47,14 +49,16 @@ public class HybridStrategy implements RecommendationStrategy {
     private UserProfile userProfile;
     private boolean respectUserProfile = false;
     private List<Predicate<Track>> radioTrackFilters;
+    private Radio radio;
     private int resultCount;
 
-    public HybridStrategy(RecommendationStrategyFactory factory, List<Predicate<Track>> radioTrackFilters, UserProfile userProfile, int resultCount) {
+    public HybridStrategy(RecommendationStrategyFactory factory, Radio radio, UserProfile userProfile, int resultCount) {
         this.factory = factory;
         this.resultCount = resultCount;
+        this.radio = radio;
         // predicates should be there, just in case
         if (radioTrackFilters != null) {
-            this.radioTrackFilters = radioTrackFilters;
+            this.radioTrackFilters = radio.getPredicates();
         } else {
             this.radioTrackFilters = Collections.emptyList();
         }
