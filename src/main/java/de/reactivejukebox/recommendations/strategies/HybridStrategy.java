@@ -15,8 +15,8 @@ public class HybridStrategy implements RecommendationStrategy {
      * Values roughly proportional to how much each of these actions influence recommendation score
      */
     enum FeedbackModifier {
-        LIKE_TRACK(1.5f),
-        DISLIKE_TRACK(0.5f),
+        LIKE_TRACK(2f),
+        DISLIKE_TRACK(0.1f),
         LIKE_ARTIST(1.25f),
         DISLIKE_ARTIST(0.75f),
         LIKE_ALBUM(1.25f),
