@@ -160,7 +160,7 @@ public class HybridStrategyTest {
 
     }
 
-    @Test
+    @Test(enabled = false) // TODO implement this test
     public void testGetRecommendations() throws Exception {
         User u = new User();
         Model.getInstance().getRadios();
