@@ -9,7 +9,6 @@ import de.reactivejukebox.recommendations.Recommendations;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class RandomTracks implements RecommendationStrategy {
 
@@ -37,16 +36,16 @@ public class RandomTracks implements RecommendationStrategy {
         List<Float> scores = new ArrayList<>();
 
         // tracks are all equally random, give them all the same weight
-        for (int i = 0; i < tracks.size() ; i++) {
+        for (int i = 0; i < tracks.size(); i++) {
             scores.add(1f);
         }
         return new Recommendations(tracks, scores);
     }
 
     private List<Track> getRandomTracks() {
-        Stream<Track> trackStream = radio.filter(tracks.stream());
-        List<Track> possibleTracks = radio.filterHistory(trackStream,upcoming,resultCount) // historyFilter by Radio properties and history
-                .collect(Collectors.toList()); // collect into list
+        List<Track> possibleTracks = tracks.stream()
+                .filter(track -> !upcoming.contains(track))
+                .collect(Collectors.toList());
 
         if (possibleTracks.size() >= resultCount) { //enough tracks without history available
             return pickSample(possibleTracks, resultCount);

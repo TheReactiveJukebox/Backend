@@ -117,32 +117,6 @@ public class RandomTracksTest {
 
     }
 
-    @Test
-    public void testRecommendationsWithHistory() throws Exception {
-        /*
-        Test if tracks contained in the history are not recommended by the algorithm
-        (do not request more than available)
-         */
-
-        Radio radio = new Radio();
-        radio.setId(2);
-
-        List<Track> list;
-
-        RecommendationStrategy algorithm = new RandomTracks(radio, new HashSet<>(), (TRACKSARTIST_A + TRACKSARTIST_B - 3));
-        list = algorithm.getRecommendations().getTracks(); //run algorithm
-
-        //Test tracks not from history
-        assertFalse(list.contains(Model.getInstance().getTracks().get(1)));
-        assertFalse(list.contains(Model.getInstance().getTracks().get(2)));
-        assertFalse(list.contains(Model.getInstance().getTracks().get(3)));
-
-        for (int i = 4; i < TRACKSARTIST_A + TRACKSARTIST_B + 1; i++) { //remaining songs in list
-            //every other track should be in list
-            assertTrue(list.contains(Model.getInstance().getTracks().get(i)));
-        }
-    }
-
     /**
      * Test if history tracks are recommended if more tracks are requested than available
      */
