@@ -56,10 +56,9 @@ public class SameArtistGreatestHits implements RecommendationStrategy {
     }
 
     private Stream<Track> greatestHits(Artist a) {
-        // historyFilter by History and Genre
-        Stream<Track> possibleTracks = tracks.stream().filter(new ArtistPredicate(a));  // Filter by Artists
-        possibleTracks = radio.filter(possibleTracks);  // Filter for radio properties
-        return radio.filterHistory(possibleTracks, upcoming, resultCount) //Filter History
+        return tracks.stream()
+                .filter(new ArtistPredicate(a)) // filter by artist
+                .filter(track -> !upcoming.contains(track)) // filter upcoming
                 .sorted(Comparator.comparingInt(Track::getPlayCount).reversed()); // sort
     }
 }
