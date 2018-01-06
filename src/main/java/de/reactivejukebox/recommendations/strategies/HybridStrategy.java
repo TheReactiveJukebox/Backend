@@ -8,7 +8,6 @@ import de.reactivejukebox.recommendations.RecommendationStrategyFactory;
 import de.reactivejukebox.recommendations.Recommendations;
 
 import java.util.*;
-import java.util.function.Predicate;
 
 public class HybridStrategy implements RecommendationStrategy {
 
@@ -48,7 +47,7 @@ public class HybridStrategy implements RecommendationStrategy {
     private RecommendationStrategyFactory factory;
     private UserProfile userProfile;
     private boolean respectUserProfile = false;
-    private List<Predicate<Track>> radioTrackFilters;
+    private Set<String> radioGenres;
     private Radio radio;
     private int resultCount;
 
@@ -56,11 +55,12 @@ public class HybridStrategy implements RecommendationStrategy {
         this.factory = factory;
         this.resultCount = resultCount;
         this.radio = radio;
-        // predicates should be there, just in case
-        if (radioTrackFilters != null) {
-            this.radioTrackFilters = radio.getPredicates();
+
+        // in reality, these shouldn't be null, just in case
+        if (radio == null || radio.getGenres() == null) {
+            radioGenres = Collections.emptySet();
         } else {
-            this.radioTrackFilters = Collections.emptyList();
+            radioGenres = new HashSet<>(Arrays.asList(radio.getGenres()));
         }
 
         // userProfile might be null during testing
@@ -84,7 +84,7 @@ public class HybridStrategy implements RecommendationStrategy {
             // otherwise, instantiate and call algorithm, gather results
             try {
                 gatherAlgorithmResults(results, strategy);
-            } catch (Exception e){
+            } catch (Exception e) {
                 System.err.println("Error Executing Strategy: " + strategy);
                 e.printStackTrace();
             }
@@ -94,6 +94,10 @@ public class HybridStrategy implements RecommendationStrategy {
         if (respectUserProfile) {
             applyUserFeedback(results, userProfile);
             applyHistory(results, userProfile);
+            // apply radio settings (previously filters)
+            for (Track t : results.keySet()) {
+                results.put(t, results.get(t) * getFilterScore(t));
+            }
         }
 
         // finally, collect tracks and sort them by score
@@ -134,19 +138,11 @@ public class HybridStrategy implements RecommendationStrategy {
         Iterator<Track> trackIterator = algorithmResults.getTracks().iterator();
         Iterator<Float> scoreIterator = algorithmResults.getScores().iterator();
 
-        recommendedTrackLoop:
         while (trackIterator.hasNext() && scoreIterator.hasNext()) {
             Track track = trackIterator.next();
             float score = scoreIterator.next();
 
-            // if song does not fit filter criteria, leave it out
-            for (Predicate<Track> p : radioTrackFilters) {
-                if (!p.test(track)) {
-                    continue recommendedTrackLoop;
-                }
-            }
-
-            // otherwise, compute final track score considering algorithm weight and add track to results
+            // compute final track score considering algorithm weight and add track to results
             score *= strategy.getWeight();
             if (results.containsKey(track)) {
                 results.put(track, results.get(track) + score);
@@ -279,5 +275,55 @@ public class HybridStrategy implements RecommendationStrategy {
             }
             entry.setValue(score);
         }
+    }
+
+    float getFilterScore(Track t) {
+        FeedbackModifier mod = FeedbackModifier.FILTER_MISMATCH;
+        float score = 1.0f;
+
+        // start and end year
+        int sy = radio.getStartYear() == null ? 0 : radio.getStartYear();
+        int ey = radio.getEndYear() == null ? Integer.MAX_VALUE : radio.getEndYear();
+
+        int d1 = t.getReleaseDate().getYear() - sy;
+        int d2 = t.getReleaseDate().getYear() - ey;
+
+        if (d1 < 0 || d2 > 0) {
+            score *= calculateLinearModifier(mod, Math.min(Math.abs(d1), Math.abs(d2)));
+        }
+
+        // minimum and maximum tempo
+        float minTempo = radio.getMinSpeed() == null ? 0 : radio.getMinSpeed();
+        float maxTempo = radio.getMaxSpeed() == null ? Float.MAX_VALUE : radio.getMaxSpeed();
+
+        d1 = Math.round(t.getSpeed()) - Math.round(minTempo);
+        d2 = Math.round(t.getSpeed()) - Math.round(maxTempo);
+
+        if (d1 < 0 || d2 > 0) {
+            score *= calculateLinearModifier(mod, Math.min(Math.abs(d1), Math.abs(d2)));
+        }
+
+        // arousal and valence
+        if (!(radio.getArousal() == null || radio.getValence() == null)) {
+            double a = radio.getArousal() - t.getArousal();
+            double v = radio.getValence() - t.getValence();
+            float distance = (float) Math.sqrt(a * a + v * v);
+            distance = 1 - distance / 1.415f; // maximum distance in unit square is sqrt(2) = 1.4142...
+            distance = 0.7f + 0.3f * distance; // arousal and valence data is quite inaccurate
+            score *= distance;
+        }
+
+        // genres
+        float genreScore = 1.0f;
+        for (String genre : t.getGenres()) {
+            if (radioGenres.contains(genre)) {
+                genreScore += 0.05f;
+            } else {
+                genreScore -= 0.05f;
+            }
+        }
+        score *= genreScore;
+
+        return score;
     }
 }
