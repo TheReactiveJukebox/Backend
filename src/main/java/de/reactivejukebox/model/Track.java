@@ -18,11 +18,12 @@ public class Track implements MusicEntity {
     Date releaseDate;
     float speed;
     float dynamic;
+    String spotifyId;
+    String spotifyUrl;
     float valence;
     float arousal;
 
-
-    public Track(int id, String title, Artist artist, Album album, String cover, String hash, int duration, int playCount, Date date, float speed, float dynamic) {
+    public Track(int id, String title, Artist artist, Album album, String cover, String hash, int duration, int playCount, Date date, float speed, float dynamic, String spotifyId, String spotifyUrl) {
         this();
         this.id = id;
         this.title = title;
@@ -35,10 +36,12 @@ public class Track implements MusicEntity {
         this.releaseDate = date;
         this.speed = speed;
         this.dynamic = dynamic;
+        this.spotifyId = spotifyId;
+        this.spotifyUrl = spotifyUrl;
     }
 
-    public Track(int id, String title, Artist artist, Album album, String cover, String hash, int duration, int playCount, Date releaseDate, float speed, float dynamic, float valence, float arousal) {
-        this(id,title,artist,album,cover,hash,duration,playCount,releaseDate,speed,dynamic);
+    public Track(int id, String title, Artist artist, Album album, String cover, String hash, int duration, int playCount, Date releaseDate, float speed, float dynamic, String spotifyId, String spotifyUrl, float valence, float arousal) {
+        this(id,title,artist,album,cover,hash,duration,playCount,releaseDate,speed,dynamic,spotifyId,spotifyUrl);
         this.valence = valence;
         this.arousal = arousal;
     }
@@ -141,6 +144,22 @@ public class Track implements MusicEntity {
 
     public void setDynamic(float dynamic) {
         this.dynamic = dynamic;
+    }
+
+    public String getSpotifyId() {
+        return spotifyId;
+    }
+
+    public void setSpotifyId(String spotifyId) {
+        this.spotifyId = spotifyId;
+    }
+
+    public String getSpotifyUrl() {
+        return spotifyUrl;
+    }
+
+    public void setSpotifyUrl(String spotifyUrl) {
+        this.spotifyUrl = spotifyUrl;
     }
 
     public float getValence() { return valence; }

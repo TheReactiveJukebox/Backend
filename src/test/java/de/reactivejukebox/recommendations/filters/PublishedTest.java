@@ -25,11 +25,11 @@ public class PublishedTest {
         Date d3 = new GregorianCalendar(1989,1,1).getTime();
         Date d4 = new GregorianCalendar(2001,1,1).getTime();
 
-        Track t1 = new Track(1, "Title1", new Artist(), new Album(), "blacover", "blahash", 50, 0, d1, 120, 0.9f);
-        Track t2 = new Track(2, "Title2", new Artist(), new Album(), "blacover", "blahash", 50, 0, d2, 120, 0.9f);
-        Track t3 = new Track(1, "Title3", new Artist(), new Album(), "blacover", "blahash", 50, 0, d3, 120, 0.9f);
-        Track t4 = new Track(2, "Title4", new Artist(), new Album(), "blacover", "blahash", 50, 0, d4, 120, 0.9f);
-        Track t5 = new Track(2, "Title5", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f);
+        Track t1 = new Track(1, "Title1", new Artist(), new Album(), "blacover", "blahash", 50, 0, d1, 120, 0.9f, "", "");
+        Track t2 = new Track(2, "Title2", new Artist(), new Album(), "blacover", "blahash", 50, 0, d2, 120, 0.9f, "", "");
+        Track t3 = new Track(1, "Title3", new Artist(), new Album(), "blacover", "blahash", 50, 0, d3, 120, 0.9f, "", "");
+        Track t4 = new Track(2, "Title4", new Artist(), new Album(), "blacover", "blahash", 50, 0, d4, 120, 0.9f, "", "");
+        Track t5 = new Track(2, "Title5", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 120, 0.9f, "", "");
 
         Predicate<Track> publishedPredicate = new PublishedPredicate(r);
 

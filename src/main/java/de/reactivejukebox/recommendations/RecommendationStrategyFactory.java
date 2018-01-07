@@ -28,6 +28,8 @@ public class RecommendationStrategyFactory {
             return new RandomTracks(radio, upcoming, resultCount);
         } else if (s ==StrategyType.FEATURES) {
             return new TrackFeatureDistance(radio, upcoming, resultCount);
+        } else if (s == StrategyType.SPOTIFY) {
+            return new SpotifySongRecommender(radio, upcoming, resultCount);
         } else if (s == StrategyType.MOOD){
             return new MoodNN(radio, upcoming, resultCount);
         } else if (s == StrategyType.SPEED){
