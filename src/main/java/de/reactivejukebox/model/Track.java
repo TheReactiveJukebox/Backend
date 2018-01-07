@@ -179,8 +179,7 @@ public class Track implements MusicEntity {
     @Override
     public String toString() {
         return "ID: " + this.getId() + ", " +
-                "Title: " +this.getTitle()+", "+
-                "Artist: " +this.getArtist().getName()+" "+this.getArtist().getId() +", "+
+                "Speed: " +this.getSpeed()+", "+
                 "Arousal: " +this.getArousal()+", "+
                 "Valence: " +this.getValence()+", ";
     }

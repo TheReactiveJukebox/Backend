@@ -2,6 +2,9 @@ package de.reactivejukebox.api;
 
 import de.reactivejukebox.core.Secured;
 import de.reactivejukebox.datahandlers.HistoryHandler;
+import de.reactivejukebox.logger.HistoryDeleteEntry;
+import de.reactivejukebox.logger.HistoryPostEntry;
+import de.reactivejukebox.logger.LoggerProvider;
 import de.reactivejukebox.model.HistoryEntryPlain;
 import de.reactivejukebox.model.User;
 
@@ -27,8 +30,10 @@ public class HistoryService {
     public Response createHistoryEntry(@Context User user, HistoryEntryPlain history) {
         try {
             HistoryEntryPlain historyEntry = new HistoryHandler().addHistoryEntry(history, user);
+            LoggerProvider.getLogger().writeEntry(new HistoryPostEntry(user, historyEntry));
             return Response.ok().entity(historyEntry).build();
         } catch (SQLException e) {
+            System.err.println("Error while adding history entry:");
             e.printStackTrace();
             return Response.status(500).entity("Error while commmunicating with database").build();
         }
@@ -37,11 +42,13 @@ public class HistoryService {
     @DELETE
     @Secured
     @Path("/")
-    public Response deleteEntry(@QueryParam("id") Integer historyId, @Context User user) {
+    public Response deleteEntry(@Context User user, @QueryParam("id") Integer historyId) {
         try {
             new HistoryHandler().deleteHistoryEntry(historyId, user);
+            LoggerProvider.getLogger().writeEntry(new HistoryDeleteEntry(user, historyId));
             return Response.ok().build();
         } catch (SQLException e) {
+            System.err.println("Error while deleting history entry:");
             e.printStackTrace();
             return Response.status(500).entity("Error while commmunicating with database").build();
         }

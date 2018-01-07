@@ -3,6 +3,8 @@ package de.reactivejukebox.api;
 import de.reactivejukebox.core.Secured;
 import de.reactivejukebox.database.Database;
 import de.reactivejukebox.database.DatabaseProvider;
+import de.reactivejukebox.logger.AlbumFeedbackEntry;
+import de.reactivejukebox.logger.LoggerProvider;
 import de.reactivejukebox.model.*;
 
 import javax.ws.rs.*;
@@ -52,10 +54,12 @@ public class AlbumService {
     @Path("/feedback")
     @Secured
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getFeedback(@QueryParam("id") List<Integer> id, @Context User user){
+    public Response getFeedback(@QueryParam("id") List<Integer> id, @Context User user) {
         try {
-            return Response.status(200).entity(Model.getInstance().getSpecialFeedbacks().getAlbumFeedback(id,user.getId())).build();
-        }catch (Exception e){
+            return Response.status(200).entity(Model.getInstance().getSpecialFeedbacks().getAlbumFeedback(id, user.getId())).build();
+        } catch (Exception e) {
+            System.err.println("Error getting album feedback for album " + id + ":");
+            e.printStackTrace();
             return Response.status(400).build();
         }
     }
@@ -65,10 +69,16 @@ public class AlbumService {
     @Secured
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addFeedback(AlbumFeedback feedback, @Context User user){
+    public Response addFeedback(AlbumFeedback feedback, @Context User user) {
         try {
-            return Response.status(200).entity(Model.getInstance().getSpecialFeedbacks().putAlbumFeedback(feedback,user.getId())).build();
-        }catch (Exception e){
+            AlbumFeedback feedbackReturn = Model.getInstance()
+                    .getSpecialFeedbacks()
+                    .putAlbumFeedback(feedback, user.getId());
+            LoggerProvider.getLogger().writeEntry(new AlbumFeedbackEntry(user, feedbackReturn));
+            return Response.status(200).entity(feedbackReturn).build();
+        } catch (Exception e) {
+            System.err.println("Error adding album feedback for album " + feedback.getAlbum() + ":");
+            e.printStackTrace();
             return Response.status(400).build();
         }
     }

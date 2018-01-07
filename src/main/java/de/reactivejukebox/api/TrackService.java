@@ -4,6 +4,9 @@ import de.reactivejukebox.core.Secured;
 import de.reactivejukebox.database.Database;
 import de.reactivejukebox.database.DatabaseProvider;
 import de.reactivejukebox.datahandlers.TrackFeedbackHandler;
+import de.reactivejukebox.logger.ActionFeedbackEntry;
+import de.reactivejukebox.logger.LoggerProvider;
+import de.reactivejukebox.logger.SongFeedbackEntry;
 import de.reactivejukebox.model.*;
 
 import javax.ws.rs.*;
@@ -74,9 +77,11 @@ public class TrackService {
         feedback.setUserId(user.getId());
 
         try {
-            TrackFeedbackPlain feedbackReturn = new TrackFeedbackHandler().addTrackFeedback(feedback, user).getPlainObject();
-            return Response.ok().entity(feedbackReturn).build();
+            TrackFeedback feedbackReturn = new TrackFeedbackHandler().addTrackFeedback(feedback, user);
+            LoggerProvider.getLogger().writeEntry(new SongFeedbackEntry(user, feedbackReturn));
+            return Response.ok().entity(feedbackReturn.getPlainObject()).build();
         } catch (SQLException e) {
+            System.err.println("Error pushing track feedback concerning track " + feedback.getTrackId() + ":");
             e.printStackTrace();
             return Response.status(500).build();
         }
@@ -100,8 +105,10 @@ public class TrackService {
             // Process input
             IndirectFeedbackPlain feedbackReturn = IndirectFeedbackEntries.put(feedbackPlain);
             // Build response
+            LoggerProvider.getLogger().writeEntry(new ActionFeedbackEntry(user, feedbackReturn));
             return Response.ok().entity(feedbackReturn).build();
         } catch (Exception e) {
+            System.err.println("Error pushing indirect feedback concerning track " + feedbackPlain.getTrackId() + ":");
             e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
@@ -112,9 +119,9 @@ public class TrackService {
     @Secured
     @Path("/parameter")
     public Response earliest() {
-        try{
+        try {
             return Response.ok().entity(Model.getInstance().getTracks().getTrackParameter()).build();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }

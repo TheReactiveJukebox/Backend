@@ -3,6 +3,7 @@ package de.reactivejukebox.api;
 import de.reactivejukebox.JukeboxConfig;
 import de.reactivejukebox.core.Secured;
 import de.reactivejukebox.datahandlers.TokenHandler;
+import de.reactivejukebox.logger.*;
 import de.reactivejukebox.model.UserPlain;
 
 import javax.ws.rs.*;
@@ -25,8 +26,10 @@ public class UserService {
         System.out.printf("login" + auth);
         try {
             UserPlain token = new TokenHandler().checkUser(auth);
+            LoggerProvider.getLogger().writeEntry(new UserLoggedInEntry(token));
             return Response.ok(token).build();
         } catch (Exception e) {
+            System.err.println("Invalid username or password:");
             return Response.status(442).entity("Invalid username or password").build();
         }
     }
@@ -44,8 +47,10 @@ public class UserService {
         System.out.printf("autologin " + auth);
         try {
             UserPlain token = new TokenHandler().checkToken(auth);
+            LoggerProvider.getLogger().writeEntry(new UserAutoLoggedInEntry(token));
             return Response.ok(token).build();
         } catch (Exception e) {
+            System.err.println("Invalid authorization token");
             return Response.status(409).entity("no valid token").build();
         }
     }
@@ -62,8 +67,10 @@ public class UserService {
     public Response logout(UserPlain auth) {
         try {
             new TokenHandler().logout(auth);
+            LoggerProvider.getLogger().writeEntry(new UserLoggedOutEntry(auth));
             return Response.status(200).entity("logged out").build();
         } catch (Exception e) {
+            System.err.println("Invalid authorization token");
             return Response.status(409).entity("no valid token").build();
         }
     }
@@ -87,11 +94,14 @@ public class UserService {
                     return Response.status(441).entity("invalid invite key").build();
                 }
             } catch (Exception e) {
+                System.err.println("Invalid invite key");
                 return Response.status(441).entity("invalid invite key}").build();
             }
             UserPlain token = new TokenHandler().register(auth);
+            LoggerProvider.getLogger().writeEntry(new UserRegisterEntry(auth));
             return Response.ok(token).build();
         } catch (Exception e) {
+            System.err.println("Username already in use");
             return Response.status(440).entity("username already in use").build();
         }
     }
