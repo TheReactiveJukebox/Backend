@@ -76,7 +76,7 @@ public class TrackFeatureDistance implements RecommendationStrategy {
                             + Math.abs(o1.getValence() - valence) + Math.abs(o1.getArousal() - arousal)))
                     .limit(3).collect(Collectors.toList());
         } else {
-            throw new IllegalArgumentException("There need to give at least one parameter");
+            throw new IllegalArgumentException("The Algorithm needs at least one parameter");
         }
     }
 
@@ -100,12 +100,10 @@ public class TrackFeatureDistance implements RecommendationStrategy {
                 }
             }
         }
-        //transform to sorted tracks
-        List<Track> recommendations = resultMap.entrySet().stream().sorted(Comparator.comparing((Map.Entry<Integer, Double> o1) -> o1.getValue()))
+        //transform to sorted tracks truncated to be no longer than the number of requestedResults
+        List<Track> recommendations = resultMap.entrySet().stream().sorted(Comparator
+                .comparing((Map.Entry<Integer, Double> o1) -> o1.getValue()))
                 .map((Map.Entry<Integer, Double> id) -> tracks.get(id.getKey()))
-                .collect(Collectors.toList());
-        // only use the first and apply ranking = weighting
-        recommendations = this.radio.filter(recommendations.stream())
                 .limit(requestedResults).collect(Collectors.toList());
         //create list with weights by range normalizing distances and save them as weights
         List<Double> recommendationsWeights = recommendations.stream()
