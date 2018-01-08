@@ -38,7 +38,7 @@ public class AlbumService {
         if (titleSubstring != null) {
             Database db = DatabaseProvider.getInstance().getDatabase();
             s = s.filter(album ->
-                    db.normalize(album.getTitle()).startsWith(db.normalize(titleSubstring)));
+                    db.normalize(album.getTitle()).contains(db.normalize(titleSubstring)));
         }
         if (artist != 0) {
             s = s.filter(album -> album.getArtist().getId() == artist);
