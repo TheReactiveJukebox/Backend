@@ -46,7 +46,7 @@ public class TrackService {
             if (titleSubstring != null) {
                 Database db = DatabaseProvider.getInstance().getDatabase();
                 s = s.filter(track ->
-                        db.normalize(track.getTitle()).startsWith(db.normalize(titleSubstring)));
+                        db.normalize(track.getTitle()).contains(db.normalize(titleSubstring)));
             }
             if (artist != 0) {
                 s = s.filter(track -> track.getArtist().getId() == artist);

@@ -38,7 +38,7 @@ public class SpeedNNTest {
         Random rng = new Random(0);
 
         for (int i=0;i<1000;i++){
-            Model.getInstance().getTracks().put(i,new Track(i,"",null,null,"","",0,0,null,i*0.2f,0f));
+            Model.getInstance().getTracks().put(i,new Track(i,"",null,null,"","",0,0,null,i*0.2f,0f,"",""));
         }
 
         ArrayList<HistoryEntry> history = new ArrayList<>();
@@ -55,7 +55,7 @@ public class SpeedNNTest {
 
         float testSpeed=100f;
 
-        radio.getStartTracks().add(new Track(1000,"",null,null,"","",0,0,null,testSpeed,0f));
+        radio.getStartTracks().add(new Track(1000,"",null,null,"","",0,0,null,testSpeed,0f,"",""));
         RecommendationStrategy strat = new SpeedNN(radio, new ArrayList<Track>(),20);
 
 
@@ -114,7 +114,7 @@ public class SpeedNNTest {
 
         float testSpeed=100f;
 
-        radio.getStartTracks().add(new Track(1000,"",null,null,"","",0,0,null,testSpeed,0f));
+        radio.getStartTracks().add(new Track(1000,"",null,null,"","",0,0,null,testSpeed,0f,"",""));
         SpeedNN strat = new SpeedNN(radio, new ArrayList<Track>(),20);
 
         Field windowField = SpeedNN.class.getDeclaredField("window");

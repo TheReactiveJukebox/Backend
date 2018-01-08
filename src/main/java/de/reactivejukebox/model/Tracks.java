@@ -15,7 +15,8 @@ import java.util.stream.StreamSupport;
 public class Tracks implements Iterable<Track> {
 
     private static final String SQL_QUERY =
-            "SELECT song.id, song.title, song_artist.artistid, song.albumid, album.cover, song.hash, song.duration, song.playcount, song.published, song.bpm, song.dynamics, song.mirarousal, song.mirvalence " +
+            "SELECT song.id, song.title, song_artist.artistid, song.albumid, album.cover, song.hash, song.duration, " +
+                    "song.playcount, song.published, song.bpm, song.dynamics, song.spotifyid, song.spotifyurl, song.mirarousal, song.mirvalence " +
                     "FROM song, song_artist, album " +
                     "WHERE song.albumid=album.id " +
                     "      AND song.id=song_artist.songid";
@@ -35,9 +36,11 @@ public class Tracks implements Iterable<Track> {
 
 
     protected Map<Integer, Track> tracks;
+    protected Map<String, Track> tracksBySpotifyId;
 
     public Tracks() {
         tracks = new ConcurrentHashMap<>();
+        tracksBySpotifyId = new ConcurrentHashMap<>();
     }
 
     public Tracks(Connection con, Artists artists, Albums albums) throws SQLException {
@@ -52,7 +55,10 @@ public class Tracks implements Iterable<Track> {
             if (newDate != null) {
                 javaDate = new Date(rs.getDate("published").getTime());
             }
-            tracks.put(id, new Track(
+
+            String spotifyId = rs.getString("spotifyid");
+
+            Track t =  new Track(
                     id,
                     rs.getString("title"),
                     artists.get(rs.getInt("artistid")),
@@ -64,9 +70,13 @@ public class Tracks implements Iterable<Track> {
                     javaDate,
                     rs.getFloat("bpm"),
                     rs.getFloat("dynamics"),
+                    spotifyId,
+                    rs.getString("spotifyurl"),
                     rs.getFloat("mirvalence"),
                     rs.getFloat("mirarousal")
-            ));
+            );
+            tracks.put(id, t);
+            tracksBySpotifyId.put(spotifyId, t);
         }
         for (Track t : this) {
             int id = t.getId();
@@ -81,6 +91,10 @@ public class Tracks implements Iterable<Track> {
 
     public Track get(int id) {
         return tracks.get(id);
+    }
+
+    public Track getBySpotifyId(String id) {
+        return tracksBySpotifyId.get(id);
     }
 
     public Track put(int id, Track track) {

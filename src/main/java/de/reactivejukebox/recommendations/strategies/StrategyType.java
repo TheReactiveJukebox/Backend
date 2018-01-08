@@ -4,6 +4,7 @@ public enum StrategyType {
     SAGH,
     RANDOM,
     FEATURES,
+    SPOTIFY,
     MOOD,
     SPEED
 }
