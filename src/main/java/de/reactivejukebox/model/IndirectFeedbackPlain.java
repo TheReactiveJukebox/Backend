@@ -83,7 +83,14 @@ public class IndirectFeedbackPlain {
             return false;
         }
         try {
-            switch (IndirectFeedbackName.valueOf(feedbackName)) {
+            IndirectFeedbackName feedback;
+            try {
+                feedback = IndirectFeedbackName.valueOf(feedbackName);
+            } catch (NullPointerException e) {
+                System.err.println("Error: Invalid feedback, " + feedbackName + " not know as feedback art.");
+                return false;
+            }
+            switch (feedback) {
                 case MULTI_SKIP:
                     if (toTrackId <= 0) {
                         return false;
