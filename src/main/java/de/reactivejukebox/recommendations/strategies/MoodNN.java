@@ -56,7 +56,7 @@ public class MoodNN implements RecommendationStrategy {
     }
 
     private List<Track> hybridRecs() {
-        return radio.filter(Model.getInstance().getTracks().stream())
+        return Model.getInstance().getTracks().stream()
                 .filter(new MoodPredicate(this.arousal, this.valence, this.window))
                 .filter(new HistoryPredicate(this.radio, this.upcoming))
                 .sorted(((o1, o2) -> Float.compare(calcDistance(o1), calcDistance(o2))))

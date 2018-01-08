@@ -90,7 +90,7 @@ public class SpeedNN implements RecommendationStrategy {
     }
 
     private Stream<Track> nearestNeighbors(Track speed) {
-        return radio.filter(Model.getInstance().getTracks().stream())
+        return Model.getInstance().getTracks().stream()
                 .filter(new SpeedPredicate(speed.getSpeed(), this.window))
                 .filter(new HistoryPredicate(radio, upcoming));
     }
