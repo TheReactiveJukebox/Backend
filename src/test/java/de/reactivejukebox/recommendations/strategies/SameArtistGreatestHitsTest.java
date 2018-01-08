@@ -44,9 +44,9 @@ public class SameArtistGreatestHitsTest {
         m.getArtists().put(artistA.getId(), artistA);
         m.getAlbums().put(albumA.getId(), albumA);
 
-        for (int i = 0; i < TRACKSARTIST_A; i++) {
+        for (int i = 0; i < TRACKSARTIST_A ; i++) {
             Model.getInstance().getTracks().put(i, new Track(
-                    i, "Track A" + i, artistA, albumA, "", "", 180, 4711 + i*100, new Date(), 120, 0.9f
+                    i, "Track A" + i, artistA, albumA, "", "", 180, 4711 + i, new Date(), 120, 0.9f, "", ""
             ));
         }
 
@@ -59,7 +59,7 @@ public class SameArtistGreatestHitsTest {
         int _startindex = Model.getInstance().getTracks().size();
         for (int i = _startindex; i < TRACKSARTIST_B + _startindex; i++) {
             Model.getInstance().getTracks().put(i, new Track(
-                    i, "Track B" + i, artistB, albumB, "", "", 191, 4211 - i, new Date(), 120, 0.9f
+                    i, "Track B" + i, artistB, albumB, "", "", 191, 4211 - i, new Date(), 120, 0.9f, "", ""
             ));
         }
 

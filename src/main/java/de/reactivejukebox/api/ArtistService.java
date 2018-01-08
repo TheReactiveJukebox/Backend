@@ -39,7 +39,7 @@ public class ArtistService {
         if (nameSubstring != null) {
             Database db = DatabaseProvider.getInstance().getDatabase();
             s = s.filter(artist ->
-                    db.normalize(artist.getName()).startsWith(db.normalize(nameSubstring)));
+                    db.normalize(artist.getName()).contains(db.normalize(nameSubstring)));
         }
         result = s.map(Artist::getPlainObject).collect(Collectors.toList());
         SpecialFeedbacks feedback = Model.getInstance().getSpecialFeedbacks();

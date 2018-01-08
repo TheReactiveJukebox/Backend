@@ -280,18 +280,21 @@ public class HybridStrategy implements RecommendationStrategy {
     float getFilterScore(Track t) {
         FeedbackModifier mod = FeedbackModifier.FILTER_MISMATCH;
         float score = 1.0f;
+        int d1;
+        int d2;
 
         // start and end year
         int sy = radio.getStartYear() == null ? 0 : radio.getStartYear();
         int ey = radio.getEndYear() == null ? Integer.MAX_VALUE : radio.getEndYear();
 
-        int d1 = t.getReleaseDate().getYear() - sy;
-        int d2 = t.getReleaseDate().getYear() - ey;
+        if (t.getReleaseDate() != null) { //Flat decrease instead?
+            d1 = t.getReleaseDate().getYear() - sy;
+            d2 = t.getReleaseDate().getYear() - ey;
 
-        if (d1 < 0 || d2 > 0) {
-            score *= calculateLinearModifier(mod, Math.min(Math.abs(d1), Math.abs(d2)));
+            if (d1 < 0 || d2 > 0) {
+                score *= calculateLinearModifier(mod, Math.min(Math.abs(d1), Math.abs(d2)));
+            }
         }
-
         // minimum and maximum tempo
         float minTempo = radio.getMinSpeed() == null ? 0 : radio.getMinSpeed();
         float maxTempo = radio.getMaxSpeed() == null ? Float.MAX_VALUE : radio.getMaxSpeed();
