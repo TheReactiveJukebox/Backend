@@ -12,11 +12,11 @@ public class MoodFeedback {
         this.feedback = feedback;
     }
 
-    public int getFSpeed() {
+    public int getFMood() {
         return fMood;
     }
 
-    public void setFSpeed(int artist) {
+    public void setFMood(int artist) {
         this.fMood = fMood;
     }
 
