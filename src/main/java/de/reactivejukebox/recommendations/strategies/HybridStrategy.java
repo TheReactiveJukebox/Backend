@@ -30,7 +30,7 @@ public class HybridStrategy implements RecommendationStrategy {
         SKIP(1.8f),            // see calculateLinearModifier for tweaking
         DELETE(1f),            // see calculateLinearModifier for tweaking
         MULTISKIP(0.7f),       // see calculateLinearModifier for tweaking
-        FILTER_MISMATCH(2f);   // see calculateLinearModifier for tweaking
+        FILTER_MISMATCH(4f);   // see calculateLinearModifier for tweaking
 
         public float value;
 
@@ -278,16 +278,18 @@ public class HybridStrategy implements RecommendationStrategy {
     }
 
     float getFilterScore(Track t) {
-        FeedbackModifier mod = FeedbackModifier.FILTER_MISMATCH;
+        final FeedbackModifier mod = FeedbackModifier.FILTER_MISMATCH;
         float score = 1.0f;
         int d1;
         int d2;
 
         // start and end year
-        int sy = radio.getStartYear() == null ? 0 : radio.getStartYear();
-        int ey = radio.getEndYear() == null ? Integer.MAX_VALUE : radio.getEndYear();
+        if (t.getReleaseDate() == null) {
+            score *= 0.5;
+        } else {
+            int sy = radio.getStartYear() == null ? 0 : radio.getStartYear();
+            int ey = radio.getEndYear() == null ? Integer.MAX_VALUE : radio.getEndYear();
 
-        if (t.getReleaseDate() != null) { //Flat decrease instead?
             d1 = t.getReleaseDate().getYear() - sy;
             d2 = t.getReleaseDate().getYear() - ey;
 
