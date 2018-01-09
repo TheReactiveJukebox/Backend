@@ -31,7 +31,7 @@ public class JukeboxService {
         } catch (SQLException e) {
             System.err.println("Error getting current radiostation for user " + user.getUsername() + ":");
             e.printStackTrace();
-            return Response.status(404)
+            return Response.status(404).entity("No Radiostation available")
                     .build();
         }
     }
@@ -50,7 +50,7 @@ public class JukeboxService {
         } catch (SQLException e) {
             System.err.println("Error creating radiostation for user " + user.getUsername() + ":");
             e.printStackTrace();
-            return Response.status(503)
+            return Response.status(503).entity("Error creating Radio Station")
                     .build();
         }
     }
@@ -88,7 +88,7 @@ public class JukeboxService {
         } catch (SQLException e) {
             System.err.println("Error getting next songs for current radiostation of user " + user.getUsername() + ":");
             e.printStackTrace();
-            return Response.status(502)
+            return Response.status(502).entity("Error getting Songs")
                     .build();
         }
     }
