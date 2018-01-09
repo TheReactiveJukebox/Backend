@@ -8,6 +8,7 @@ import de.reactivejukebox.recommendations.Recommendations;
 import de.reactivejukebox.recommendations.filters.HistoryPredicate;
 import de.reactivejukebox.recommendations.filters.MoodPredicate;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,8 +26,17 @@ public class MoodNN implements RecommendationStrategy {
         this(radio, upcoming, resultCount, 0f, 0f, 0f);
     }
 
-    public MoodNN(Radio radio, Collection<Track> upcoming, int resultCount, float arousal, float valence, float window) {
-        this.selectedTracks = radio.getStartTracks();
+    private MoodNN(Radio radio, Collection<Track> upcoming, int resultCount, float arousal, float valence, float window) {
+        if(radio.getStartTracks() != null && radio.getStartTracks().size() > 0){
+            this.selectedTracks = radio.getStartTracks();
+        }
+        else{
+            this.selectedTracks = new ArrayList<>();
+            if(radio.getValence()!=null && radio.getArousal()!=null && radio.getValence()!=0f && radio.getArousal()!=0f){
+                this.selectedTracks.add(new Track(0,"",null,null,"","",0
+                        ,0,null,0f,0f,"","",radio.getValence(),radio.getArousal()));
+            }
+        }
         this.radio = radio;
         this.upcoming = upcoming;
         this.resultCount = resultCount;
@@ -73,7 +83,7 @@ public class MoodNN implements RecommendationStrategy {
     }
 
     private Stream<Track> nearestNeighbours(Track t) {
-        return radio.filter(Model.getInstance().getTracks().stream()) // Filter Radio presets
+        return   Model.getInstance().getTracks().stream()
                 .filter(new MoodPredicate(t.getArousal(), t.getValence())) // Filter track mood
                 .filter(new HistoryPredicate(this.radio, this.upcoming)); // Filter history
     }
