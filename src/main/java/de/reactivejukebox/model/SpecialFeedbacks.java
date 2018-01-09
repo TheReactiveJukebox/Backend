@@ -52,6 +52,17 @@ public class SpecialFeedbacks {
         return feedback;
     }
 
+    public SpeedFeedback putSpeedFeedback(SpeedFeedback feedback, int userId) throws  SQLException {
+        toDbSpeed(feedback, userId);
+        return feedback;
+    }
+
+    public MoodFeedback putMoodFeedback(MoodFeedback feedback, int userId) throws  SQLException {
+        toDbMood(feedback, userId);
+        return feedback;
+    }
+
+
     /**
      *
      * @param artistIds list af artist Id's
@@ -97,6 +108,22 @@ public class SpecialFeedbacks {
         return result;
     }
 
+    public List<SpeedFeedback> getSpeedFeedback(List<Integer> speeds, int userId) throws SQLException {
+        List<SpeedFeedback> result = new ArrayList<>();
+        for (Integer a:speeds){
+            result.add(fromSpeedBySpeed(a,userId));
+        }
+        return result;
+    }
+
+    public List<MoodFeedback> getMoodFeedback(List<Integer> moods, int userId) throws SQLException {
+        List<MoodFeedback> result = new ArrayList<>();
+        for (Integer a:moods){
+            result.add(fromMoodByMood(a,userId));
+        }
+        return result;
+    }
+
     /**
      *
      * @param artistId artist Id
@@ -130,6 +157,14 @@ public class SpecialFeedbacks {
         return fromAlbumByAlbum(albumId,userId);
     }
 
+    public SpeedFeedback getSpeedFeedback(int speed, int userId) throws SQLException {
+        return fromSpeedBySpeed(speed,userId);
+    }
+
+    public MoodFeedback getMoodFeedback(int mood, int userId) throws SQLException {
+        return fromMoodByMood(mood,userId);
+    }
+
     public HashMap<Integer, Integer> getArtistFeedback(int userId) throws SQLException {
         return fromArtistByUser(userId);
     }
@@ -140,6 +175,14 @@ public class SpecialFeedbacks {
 
     public HashMap<String, Integer> getGenreFeedback(int userId) throws SQLException {
         return fromGenreByUser(userId);
+    }
+
+    public HashMap<Integer, Integer> getSpeedFeedback(int userId)  throws SQLException {
+        return fromSpeedByUser(userId);
+    }
+
+    public HashMap<Integer, Integer> getMoodFeedback(int userId)  throws SQLException {
+        return fromMoodByUser(userId);
     }
 
     private ArtistFeedback fromArtistByArtist(int artist, int userId) throws SQLException {
@@ -288,5 +331,104 @@ public class SpecialFeedbacks {
         addFeedback.executeUpdate();
         con.close();
     }
+
+    private SpeedFeedback fromSpeedBySpeed(int speed, int userId) throws SQLException {
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM feedbackSpeed WHERE userid = ? " +
+                " AND speed = ?;");
+        getFeedback.setInt(1, userId);
+        getFeedback.setInt(2, speed);
+        ResultSet rs = getFeedback.executeQuery();
+        SpeedFeedback feedback = new SpeedFeedback();
+        feedback.setFSpeed(speed);
+        if (rs.next()) {
+            feedback.setFeedback(rs.getInt("feedbackSpeed"));
+        }
+        con.close();
+        return feedback;
+    }
+
+    private HashMap<Integer, Integer> fromSpeedByUser(int userId) throws SQLException {
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM feedbackSpeed WHERE userid = ?;");
+        getFeedback.setInt(1, userId);
+        ResultSet rs = getFeedback.executeQuery();
+        HashMap<Integer, Integer> result = new HashMap<>();
+
+        while (rs.next()) {
+            result.put(rs.getInt("Speed"), rs.getInt("feedbackSpeed"));
+        }
+        con.close();
+        return result;
+    }
+
+    private void toDbSpeed(SpeedFeedback feedback, int userId) throws SQLException {
+
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        PreparedStatement addFeedback = con.prepareStatement("INSERT INTO feedbackSpeed (userid, " +
+                " Speed, feedbackMood) " +
+                "VALUES(?, ?, ?) " +
+                "ON Conflict (UserId, Speed) Do " +
+                "UPDATE Set feedbackMood = ?;");
+
+        addFeedback.setInt(1, userId);
+        addFeedback.setInt(2, feedback.getFSpeed());
+        addFeedback.setInt(3, feedback.getFeedback());
+
+        addFeedback.setInt(4, feedback.getFeedback());
+
+        addFeedback.executeUpdate();
+        con.close();
+    }
+
+    private MoodFeedback fromMoodByMood(int mood, int userId) throws SQLException {
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM feedbackMood WHERE userid = ? " +
+                " AND mood = ?;");
+        getFeedback.setInt(1, userId);
+        getFeedback.setInt(2, mood);
+        ResultSet rs = getFeedback.executeQuery();
+        MoodFeedback feedback = new MoodFeedback();
+        feedback.setFMood(mood);
+        if (rs.next()) {
+            feedback.setFeedback(rs.getInt("feedbackMood"));
+        }
+        con.close();
+        return feedback;
+    }
+
+    private HashMap<Integer, Integer> fromMoodByUser(int userId) throws SQLException {
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM feedbackMood WHERE userid = ?;");
+        getFeedback.setInt(1, userId);
+        ResultSet rs = getFeedback.executeQuery();
+        HashMap<Integer, Integer> result = new HashMap<>();
+
+        while (rs.next()) {
+            result.put(rs.getInt("Mood"), rs.getInt("feedbackMood"));
+        }
+        con.close();
+        return result;
+    }
+
+    private void toDbMood(MoodFeedback feedback, int userId) throws SQLException {
+
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        PreparedStatement addFeedback = con.prepareStatement("INSERT INTO feedbackMood (userid, " +
+                " Speed, feedbackMood) " +
+                "VALUES(?, ?, ?) " +
+                "ON Conflict (UserId, Mood) Do " +
+                "UPDATE Set feedbackMood = ?;");
+
+        addFeedback.setInt(1, userId);
+        addFeedback.setInt(2, feedback.getFMood());
+        addFeedback.setInt(3, feedback.getFeedback());
+
+        addFeedback.setInt(4, feedback.getFeedback());
+
+        addFeedback.executeUpdate();
+        con.close();
+    }
+
 
 }
