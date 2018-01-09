@@ -22,8 +22,10 @@ public class Track implements MusicEntity {
     String spotifyUrl;
     float valence;
     float arousal;
+    int fSpeed;
+    int fMood;
 
-    public Track(int id, String title, Artist artist, Album album, String cover, String hash, int duration, int playCount, Date date, float speed, float dynamic, String spotifyId, String spotifyUrl) {
+    public Track(int id, String title, Artist artist, Album album, String cover, String hash, int duration, int playCount, Date date, float speed, float dynamic, String spotifyId, String spotifyUrl, int fSpeed, int fMood) {
         this();
         this.id = id;
         this.title = title;
@@ -38,11 +40,14 @@ public class Track implements MusicEntity {
         this.dynamic = dynamic;
         this.spotifyId = spotifyId;
         this.spotifyUrl = spotifyUrl;
+
+        this.fSpeed = fSpeed;
+        this.fMood = fMood;
     }
 
 
-    public Track(int id, String title, Artist artist, Album album, String cover, String hash, int duration, int playCount, Date releaseDate, float speed, float dynamic, String spotifyId, String spotifyUrl, float valence, float arousal) {
-        this(id, title, artist, album, cover, hash, duration, playCount, releaseDate, speed, dynamic, spotifyId, spotifyUrl);
+    public Track(int id, String title, Artist artist, Album album, String cover, String hash, int duration, int playCount, Date releaseDate, float speed, float dynamic, String spotifyId, String spotifyUrl, float valence, float arousal, int fSpeed, int fMood) {
+        this(id, title, artist, album, cover, hash, duration, playCount, releaseDate, speed, dynamic, spotifyId, spotifyUrl, fSpeed, fMood);
 
         this.valence = valence;
         this.arousal = arousal;
@@ -183,7 +188,7 @@ public class Track implements MusicEntity {
     @Override
     public TrackPlain getPlainObject() {
         String file = hash.substring(0, 1) + "/" + hash.substring(1, 2) + "/" + hash.substring(2) + ".mp3";
-        return new TrackPlain(id, title, artist.getId(), album.getId(), cover, file, duration, playCount, genres, releaseDate, speed, dynamic, arousal, valence);
+        return new TrackPlain(id, title, artist.getId(), album.getId(), cover, file, duration, playCount, genres, releaseDate, speed, dynamic, arousal, valence, fSpeed, fMood);
     }
 
     @Override

@@ -157,6 +157,7 @@ public class SpecialFeedbacks {
         con.close();
         return feedback;
     }
+
     private HashMap<Integer, Integer> fromArtistByUser(int userId) throws SQLException {
         Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM feedbackArtist WHERE userid = ?;");
