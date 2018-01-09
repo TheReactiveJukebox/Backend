@@ -34,7 +34,7 @@ public class MoodNN implements RecommendationStrategy {
             this.selectedTracks = new ArrayList<>();
             if(radio.getValence()!=null && radio.getArousal()!=null && radio.getValence()!=0f && radio.getArousal()!=0f){
                 this.selectedTracks.add(new Track(0,"",null,null,"","",0
-                        ,0,null,0f,0f,"","",radio.getValence(),radio.getArousal()));
+                        ,0,null,0f,0f,"","",radio.getValence(),radio.getArousal(),0,0));
             }
         }
         this.radio = radio;
