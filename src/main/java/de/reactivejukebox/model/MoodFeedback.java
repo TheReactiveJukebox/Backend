@@ -16,7 +16,7 @@ public class MoodFeedback {
         return fMood;
     }
 
-    public void setFMood(int artist) {
+    public void setFMood(int fMood) {
         this.fMood = fMood;
     }
 
