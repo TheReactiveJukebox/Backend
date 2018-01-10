@@ -12,11 +12,11 @@ public class MoodFeedback {
         this.feedback = feedback;
     }
 
-    public int getFMood() {
+    public int getfMood() {
         return fMood;
     }
 
-    public void setFMood(int fMood) {
+    public void setfMood(int fMood) {
         this.fMood = fMood;
     }
 

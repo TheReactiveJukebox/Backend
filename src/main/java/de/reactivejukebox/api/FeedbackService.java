@@ -1,16 +1,12 @@
 package de.reactivejukebox.api;
 
 import de.reactivejukebox.core.Secured;
-import de.reactivejukebox.logger.ArtistFeedbackEntry;
-import de.reactivejukebox.logger.LoggerProvider;
 import de.reactivejukebox.model.*;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @Path("/")
@@ -44,7 +40,7 @@ public class FeedbackService {
             //TODO LoggerProvider.getLogger().writeEntry(new ArtistFeedbackEntry(user, feedbackReturn));
             return Response.status(200).entity(feedbackReturn).build();
         } catch (Exception e) {
-            System.err.println("Error adding tempo feedback for tempo " + feedback.getFSpeed() + ":");
+            System.err.println("Error adding tempo feedback for tempo " + feedback.getfSpeed() + ":");
             e.printStackTrace();
             return Response.status(400).build();
         }
@@ -78,7 +74,7 @@ public class FeedbackService {
             //TODO LoggerProvider.getLogger().writeEntry(new ArtistFeedbackEntry(user, feedbackReturn));
             return Response.status(200).entity(feedbackReturn).build();
         } catch (Exception e) {
-            System.err.println("Error adding artist feedback for artist " + feedback.getFMood() + ":");
+            System.err.println("Error adding artist feedback for artist " + feedback.getfMood() + ":");
             e.printStackTrace();
             return Response.status(400).build();
         }

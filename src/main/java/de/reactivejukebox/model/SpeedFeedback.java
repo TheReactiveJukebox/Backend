@@ -12,11 +12,11 @@ public class SpeedFeedback {
             this.feedback = feedback;
         }
 
-        public int getFSpeed() {
+        public int getfSpeed() {
             return fSpeed;
         }
 
-        public void setFSpeed(int artist) {
+        public void setfSpeed(int artist) {
             this.fSpeed = fSpeed;
         }
 

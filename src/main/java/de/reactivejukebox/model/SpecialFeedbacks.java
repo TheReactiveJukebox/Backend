@@ -360,7 +360,7 @@ public class SpecialFeedbacks {
         getFeedback.setInt(2, speed);
         ResultSet rs = getFeedback.executeQuery();
         SpeedFeedback feedback = new SpeedFeedback();
-        feedback.setFSpeed(speed);
+        feedback.setfSpeed(speed);
         if (rs.next()) {
             feedback.setFeedback(rs.getInt("feedbackSpeed"));
         }
@@ -392,7 +392,7 @@ public class SpecialFeedbacks {
                 "UPDATE Set feedbackSpeed = ?;");
 
         addFeedback.setInt(1, userId);
-        addFeedback.setInt(2, feedback.getFSpeed());
+        addFeedback.setInt(2, feedback.getfSpeed());
         addFeedback.setInt(3, feedback.getFeedback());
 
         addFeedback.setInt(4, feedback.getFeedback());
@@ -409,7 +409,7 @@ public class SpecialFeedbacks {
         getFeedback.setInt(2, mood);
         ResultSet rs = getFeedback.executeQuery();
         MoodFeedback feedback = new MoodFeedback();
-        feedback.setFMood(mood);
+        feedback.setfMood(mood);
         if (rs.next()) {
             feedback.setFeedback(rs.getInt("feedbackMood"));
         }
@@ -441,7 +441,7 @@ public class SpecialFeedbacks {
                 "UPDATE Set feedbackMood = ?;");
 
         addFeedback.setInt(1, userId);
-        addFeedback.setInt(2, feedback.getFMood());
+        addFeedback.setInt(2, feedback.getfMood());
         addFeedback.setInt(3, feedback.getFeedback());
 
         addFeedback.setInt(4, feedback.getFeedback());
