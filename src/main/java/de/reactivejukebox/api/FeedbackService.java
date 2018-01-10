@@ -79,7 +79,7 @@ public class FeedbackService {
             // LoggerProvider.getLogger().writeEntry(new ArtistFeedbackEntry(user, feedbackReturn));
             return Response.status(200).entity(new MoodFeedback()).build();
         } catch (Exception e) {
-            System.err.println("Error adding artist feedback for artist " + feedback.getFSpeed() + ":");
+            System.err.println("Error adding artist feedback for artist " + feedback.getFMood() + ":");
             e.printStackTrace();
             return Response.status(400).build();
         }
