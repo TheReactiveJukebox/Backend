@@ -19,7 +19,12 @@ public class StudyService {
     @Path("/")
     @Secured
     public Response createQuestionnaire(@Context User user) {
-        LoggerProvider.getLogger().writeEntry(new QuestionnaireEntry(user));
-        return Response.ok("{}").build();
+        try {
+            LoggerProvider.getLogger().writeEntry(new QuestionnaireEntry(user));
+            return Response.ok("{}").build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.serverError().entity("Internal Error").build();
+        }
     }
 }

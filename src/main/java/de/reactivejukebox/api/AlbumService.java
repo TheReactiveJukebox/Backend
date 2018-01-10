@@ -29,25 +29,30 @@ public class AlbumService {
             @QueryParam("titlesubstr") String titleSubstring,
             @QueryParam("artist") int artist,
             @QueryParam("count") int resultCount) {
-        List<MusicEntityPlain> results;
-        Set<Integer> ids = new TreeSet<>(id);
-        Stream<Album> s = Model.getInstance().getAlbums().stream();
-        if (!id.isEmpty()) {
-            s = s.filter(album -> ids.contains(album.getId()));
-        }
-        if (titleSubstring != null) {
-            Database db = DatabaseProvider.getInstance().getDatabase();
-            s = s.filter(album ->
-                    db.normalize(album.getTitle()).contains(db.normalize(titleSubstring)));
-        }
-        if (artist != 0) {
-            s = s.filter(album -> album.getArtist().getId() == artist);
-        }
-        results = s.map(Album::getPlainObject).collect(Collectors.toList());
+        try {
+            List<MusicEntityPlain> results;
+            Set<Integer> ids = new TreeSet<>(id);
+            Stream<Album> s = Model.getInstance().getAlbums().stream();
+            if (!id.isEmpty()) {
+                s = s.filter(album -> ids.contains(album.getId()));
+            }
+            if (titleSubstring != null) {
+                Database db = DatabaseProvider.getInstance().getDatabase();
+                s = s.filter(album ->
+                        db.normalize(album.getTitle()).contains(db.normalize(titleSubstring)));
+            }
+            if (artist != 0) {
+                s = s.filter(album -> album.getArtist().getId() == artist);
+            }
+            results = s.map(Album::getPlainObject).collect(Collectors.toList());
 
-        return Response.status(200)
-                .entity(results)
-                .build();
+            return Response.status(200)
+                    .entity(results)
+                    .build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.serverError().entity("Internal Error").build();
+        }
     }
 
     @GET
