@@ -114,7 +114,7 @@ public class TrackService {
         } catch (Exception e) {
             System.err.println("Error pushing indirect feedback concerning track " + feedbackPlain.getTrackId() + ":");
             e.printStackTrace();
-            return Response.serverError().build();
+            return Response.serverError().entity("Internal Error").build();
         }
     }
 
@@ -127,7 +127,7 @@ public class TrackService {
             return Response.ok().entity(Model.getInstance().getTracks().getTrackParameter()).build();
         } catch (Exception e) {
             e.printStackTrace();
-            return Response.serverError().build();
+            return Response.serverError().entity("Internal Error").build();
         }
 
     }
