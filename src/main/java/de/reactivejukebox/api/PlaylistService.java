@@ -71,14 +71,12 @@ public class PlaylistService {
             Date now = new Date();
             playlist.setCreated(now);
             playlist.setEdited(now);
-            try {
-                playlist = Model.getInstance().getPlaylists().add(playlist);
-                return Response.ok(playlist).build();
-            } catch (SQLException e) {
-                System.err.println("Error creating playlist:");
-                e.printStackTrace();
-                return Response.serverError().build();
-            }
+            playlist = Model.getInstance().getPlaylists().add(playlist);
+            return Response.ok(playlist).build();
+        } catch (SQLException e) {
+            System.err.println("Error creating playlist:");
+            e.printStackTrace();
+            return Response.serverError().build();
         } catch (Exception e) {
             e.printStackTrace();
             return Response.serverError().entity("Internal Error").build();
