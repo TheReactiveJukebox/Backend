@@ -16,7 +16,7 @@ public class SpeedFeedback {
             return fSpeed;
         }
 
-        public void setfSpeed(int artist) {
+        public void setfSpeed(int fSpeed) {
             this.fSpeed = fSpeed;
         }
 
