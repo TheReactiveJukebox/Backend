@@ -29,21 +29,26 @@ public class ArtistService {
             @QueryParam("id") List<Integer> id,
             @QueryParam("namesubstr") String nameSubstring,
             @QueryParam("count") int count) {
-        Set<Integer> ids = new TreeSet<>(id);
-        List<MusicEntityPlain> result;
-        Stream<Artist> s = Model.getInstance().getArtists().stream();
-        if (!ids.isEmpty()) {
-            s = s.filter(artist -> ids.contains(artist.getId()));
+        try {
+            Set<Integer> ids = new TreeSet<>(id);
+            List<MusicEntityPlain> result;
+            Stream<Artist> s = Model.getInstance().getArtists().stream();
+            if (!ids.isEmpty()) {
+                s = s.filter(artist -> ids.contains(artist.getId()));
+            }
+            if (nameSubstring != null) {
+                Database db = DatabaseProvider.getInstance().getDatabase();
+                s = s.filter(artist ->
+                        db.normalize(artist.getName()).contains(db.normalize(nameSubstring)));
+            }
+            result = s.map(Artist::getPlainObject).collect(Collectors.toList());
+            return Response.status(200)
+                    .entity(result)
+                    .build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.serverError().entity("Internal Error").build();
         }
-        if (nameSubstring != null) {
-            Database db = DatabaseProvider.getInstance().getDatabase();
-            s = s.filter(artist ->
-                    db.normalize(artist.getName()).contains(db.normalize(nameSubstring)));
-        }
-        result = s.map(Artist::getPlainObject).collect(Collectors.toList());
-        return Response.status(200)
-                .entity(result)
-                .build();
     }
 
     @GET
