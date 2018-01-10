@@ -124,6 +124,26 @@ public class SpecialFeedbacks {
         return result;
     }
 
+    public List<SpeedFeedback> getAllSpeedFeedback(int userId) throws SQLException {
+        List<SpeedFeedback> result = new ArrayList<>();
+        HashMap<Integer, Integer> feedback = getSpeedFeedback(userId);
+        Set<Integer> speeds = feedback.keySet();
+        for (Integer a:speeds){
+            result.add(new SpeedFeedback(a, feedback.get(a)));
+        }
+        return result;
+    }
+
+    public List<MoodFeedback> getAllMoodFeedback(int userId) throws SQLException {
+        List<MoodFeedback> result = new ArrayList<>();
+        HashMap<Integer, Integer> feedback = getMoodFeedback(userId);
+        Set<Integer> moods = feedback.keySet();
+        for (Integer a:moods){
+            result.add(new MoodFeedback(a, feedback.get(a)));
+        }
+        return result;
+    }
+
     /**
      *
      * @param artistId artist Id

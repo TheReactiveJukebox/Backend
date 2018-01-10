@@ -10,6 +10,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Path("/")
@@ -21,8 +22,7 @@ public class FeedbackService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getFeedback(@Context User user) {
         try {
-            List<SpeedFeedback> result = new ArrayList<>();
-            result.add(new SpeedFeedback());
+            List<SpeedFeedback> result = Model.getInstance().getSpecialFeedbacks().getAllSpeedFeedback(user.getId());
             return Response.status(200).entity(result).build();
         } catch (Exception e) {
             System.err.println("Error getting Tempo feedback:");
@@ -38,11 +38,11 @@ public class FeedbackService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response addFeedback(SpeedFeedback feedback, @Context User user) {
         try {
-           // ArtistFeedback feedbackReturn = Model.getInstance()
-           //         .getSpecialFeedbacks()
-           //         .putArtistFeedback(feedback, user.getId());
-           // LoggerProvider.getLogger().writeEntry(new ArtistFeedbackEntry(user, feedbackReturn));
-            return Response.status(200).entity(new SpeedFeedback()).build();
+            SpeedFeedback feedbackReturn = Model.getInstance()
+                    .getSpecialFeedbacks()
+                    .putSpeedFeedback(feedback, user.getId());
+            //TODO LoggerProvider.getLogger().writeEntry(new ArtistFeedbackEntry(user, feedbackReturn));
+            return Response.status(200).entity(feedbackReturn).build();
         } catch (Exception e) {
             System.err.println("Error adding artist feedback for artist " + feedback.getFSpeed() + ":");
             e.printStackTrace();
@@ -56,8 +56,7 @@ public class FeedbackService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getMoodFeedback(@Context User user) {
         try {
-            List<MoodFeedback> result = new ArrayList<>();
-            result.add(new MoodFeedback());
+            List<MoodFeedback> result = Model.getInstance().getSpecialFeedbacks().getAllMoodFeedback(user.getId());
             return Response.status(200).entity(result).build();
         } catch (Exception e) {
             System.err.println("Error getting Tempo feedback:");
@@ -73,11 +72,11 @@ public class FeedbackService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response addMoodFeedback(MoodFeedback feedback, @Context User user) {
         try {
-            // ArtistFeedback feedbackReturn = Model.getInstance()
-            //         .getSpecialFeedbacks()
-            //         .putArtistFeedback(feedback, user.getId());
-            // LoggerProvider.getLogger().writeEntry(new ArtistFeedbackEntry(user, feedbackReturn));
-            return Response.status(200).entity(new MoodFeedback()).build();
+             MoodFeedback feedbackReturn = Model.getInstance()
+                     .getSpecialFeedbacks()
+                     .putMoodFeedback(feedback, user.getId());
+            //TODO LoggerProvider.getLogger().writeEntry(new ArtistFeedbackEntry(user, feedbackReturn));
+            return Response.status(200).entity(feedbackReturn).build();
         } catch (Exception e) {
             System.err.println("Error adding artist feedback for artist " + feedback.getFMood() + ":");
             e.printStackTrace();
