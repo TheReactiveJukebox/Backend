@@ -44,7 +44,7 @@ public class FeedbackService {
             //TODO LoggerProvider.getLogger().writeEntry(new ArtistFeedbackEntry(user, feedbackReturn));
             return Response.status(200).entity(feedbackReturn).build();
         } catch (Exception e) {
-            System.err.println("Error adding artist feedback for artist " + feedback.getFSpeed() + ":");
+            System.err.println("Error adding tempo feedback for tempo " + feedback.getFSpeed() + ":");
             e.printStackTrace();
             return Response.status(400).build();
         }

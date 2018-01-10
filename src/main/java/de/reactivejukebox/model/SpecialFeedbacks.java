@@ -386,10 +386,10 @@ public class SpecialFeedbacks {
 
         Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement addFeedback = con.prepareStatement("INSERT INTO feedbackSpeed (userid, " +
-                " Speed, feedbackMood) " +
+                " Speed, feedbackSpeed) " +
                 "VALUES(?, ?, ?) " +
                 "ON Conflict (UserId, Speed) Do " +
-                "UPDATE Set feedbackMood = ?;");
+                "UPDATE Set feedbackSpeed = ?;");
 
         addFeedback.setInt(1, userId);
         addFeedback.setInt(2, feedback.getFSpeed());
@@ -435,7 +435,7 @@ public class SpecialFeedbacks {
 
         Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement addFeedback = con.prepareStatement("INSERT INTO feedbackMood (userid, " +
-                " Speed, feedbackMood) " +
+                " mood, feedbackMood) " +
                 "VALUES(?, ?, ?) " +
                 "ON Conflict (UserId, Mood) Do " +
                 "UPDATE Set feedbackMood = ?;");
