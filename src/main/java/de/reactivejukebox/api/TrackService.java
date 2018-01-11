@@ -37,7 +37,8 @@ public class TrackService {
                            @QueryParam("album") int album,
                            @QueryParam("count") int countResults,
                            @Context User user) {
-        List<TrackPlain> result;
+        List<TrackPlain> result = null;
+        try {
         Set<Integer> ids = new TreeSet<>(id);
         Stream<Track> s = Model.getInstance().getTracks().stream();
         if (!ids.isEmpty()) {
@@ -56,17 +57,22 @@ public class TrackService {
         }
         result = s.map(Track::getPlainObject).collect(Collectors.toList());
         TrackFeedbacks feedback = Model.getInstance().getTrackFeedbacks();
-        try {
             for (TrackPlain r : result) {
                 r.setFeedback(feedback.get(r.getId(), user.getId()));
             }
+		return Response.status(200)
+                .entity(result)
+                .build();
         } catch (SQLException e){
             System.err.println("Error setting track feedback into track");
             e.printStackTrace();
-        }
-        return Response.status(200)
+            return Response.status(200)
                 .entity(result)
                 .build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(501).entity("Internal Error").build();
+        }
 
     }
 
@@ -91,9 +97,11 @@ public class TrackService {
         } catch (SQLException e) {
             System.err.println("Error pushing track feedback concerning track " + feedback.getTrackId() + ":");
             e.printStackTrace();
-            return Response.status(500).build();
+            return Response.status(501).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(501).entity("Internal Error").build();
         }
-
     }
 
     /**
@@ -118,7 +126,7 @@ public class TrackService {
         } catch (Exception e) {
             System.err.println("Error pushing indirect feedback concerning track " + feedbackPlain.getTrackId() + ":");
             e.printStackTrace();
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            return Response.status(501).entity("Internal Error").build();
         }
     }
 
@@ -131,7 +139,7 @@ public class TrackService {
             return Response.ok().entity(Model.getInstance().getTracks().getTrackParameter()).build();
         } catch (Exception e) {
             e.printStackTrace();
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            return Response.status(501).entity("Internal Error").build();
         }
 
     }

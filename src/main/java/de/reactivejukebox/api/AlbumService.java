@@ -31,7 +31,8 @@ public class AlbumService {
             @QueryParam("artist") int artist,
             @QueryParam("count") int resultCount,
             @Context User user) {
-        List<AlbumPlain> results;
+        List<AlbumPlain> results = null;
+        try {
         Set<Integer> ids = new TreeSet<>(id);
         Stream<Album> s = Model.getInstance().getAlbums().stream();
         if (!id.isEmpty()) {
@@ -47,17 +48,23 @@ public class AlbumService {
         }
         results = s.map(Album::getPlainObject).collect(Collectors.toList());
         SpecialFeedbacks feedback = Model.getInstance().getSpecialFeedbacks();
-        try {
             for (AlbumPlain album : results) {
                 album.setFeedback(feedback.getAlbumFeedback(album.getId(), user.getId()));
             }
-        } catch (SQLException e) {
-            System.err.println("Error setting album feedback into album");
-            e.printStackTrace();
-        }
+
         return Response.status(200)
                 .entity(results)
                 .build();
+        } catch (SQLException e) {
+            System.err.println("Error setting album feedback into album");
+            e.printStackTrace();
+        	return Response.status(200)
+                .entity(results)
+                .build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.serverError().entity("Internal Error").build();
+        }
     }
 
     @GET

@@ -33,6 +33,10 @@ public class JukeboxService {
             e.printStackTrace();
             return Response.status(404)
                     .build();
+        } catch (Exception e) {
+            System.err.println("Error getting current radiostation for user " + user.getUsername() + ":");
+            e.printStackTrace();
+            return Response.serverError().entity("Internal Error").build();
         }
     }
 
@@ -52,6 +56,10 @@ public class JukeboxService {
             e.printStackTrace();
             return Response.status(503)
                     .build();
+        } catch (Exception e) {
+            System.err.println("Error creating radiostation for user " + user.getUsername() + ":");
+            e.printStackTrace();
+            return Response.serverError().entity("Internal Error").build();
         }
     }
 
@@ -62,8 +70,8 @@ public class JukeboxService {
     public Response getNextSongs(@Context User user,
                                  @QueryParam("count") int count,
                                  @QueryParam("upcoming") List<Integer> upcoming) {
-        TrackFeedbacks feedback = Model.getInstance().getTrackFeedbacks();
         try {
+            TrackFeedbacks feedback = Model.getInstance().getTrackFeedbacks();
             // upcomingTracks contains tracks that are already in the listening queue
             List<Track> upcomingTracks = upcoming.stream()
                     .map(i -> Model.getInstance().getTracks().get(i))
@@ -90,6 +98,10 @@ public class JukeboxService {
             e.printStackTrace();
             return Response.status(502)
                     .build();
+        } catch (Exception e) {
+            System.err.println("Error getting next songs for current radiostation of user " + user.getUsername() + ":");
+            e.printStackTrace();
+            return Response.serverError().entity("Internal Error").build();
         }
     }
 
@@ -98,7 +110,12 @@ public class JukeboxService {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/algorithms")
     public Response getAlgorithms() {
-        List<String> algorithms = Arrays.stream(StrategyType.values()).map(Enum::name).collect(Collectors.toList());
-        return Response.ok(algorithms).build();
+        try {
+            List<String> algorithms = Arrays.stream(StrategyType.values()).map(Enum::name).collect(Collectors.toList());
+            return Response.ok(algorithms).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.serverError().entity("Internal Error").build();
+        }
     }
 }
