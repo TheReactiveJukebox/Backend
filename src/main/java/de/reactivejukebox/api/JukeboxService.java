@@ -79,7 +79,9 @@ public class JukeboxService {
                     .collect(Collectors.toList());
             // build algorithm for user's current jukebox
             Radio radio = Model.getInstance().getRadios().getByUserId(user.getId());
-
+            if (start != null && start && radio.getStartTracks() != null){
+                upcomingTracks = radio.getStartTracks();
+            }
             RecommendationStrategy algorithm = new RecommendationStrategyFactory(radio, upcomingTracks)
                     .createStrategy(count);
             // obtain results
