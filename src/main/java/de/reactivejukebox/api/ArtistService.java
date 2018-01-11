@@ -31,7 +31,8 @@ public class ArtistService {
             @QueryParam("namesubstr") String nameSubstring,
             @QueryParam("count") int count) {
         Set<Integer> ids = new TreeSet<>(id);
-        List<ArtistPlain> result;
+        List<ArtistPlain> result = null;
+        try {
         Stream<Artist> s = Model.getInstance().getArtists().stream();
         if (!ids.isEmpty()) {
             s = s.filter(artist -> ids.contains(artist.getId()));
@@ -43,17 +44,22 @@ public class ArtistService {
         }
         result = s.map(Artist::getPlainObject).collect(Collectors.toList());
         SpecialFeedbacks feedback = Model.getInstance().getSpecialFeedbacks();
-        try {
-            for (ArtistPlain artist : result) {
-                artist.setFeedback(feedback.getArtistFeedback(artist.getId(), artist.getId()));
-            }
+        for (ArtistPlain artist : result) {
+            artist.setFeedback(feedback.getArtistFeedback(artist.getId(), artist.getId()));
+        }
+        return Response.status(200)
+            .entity(result)
+            .build();
         } catch (SQLException e) {
             System.err.println("Error setting artist feedback into artist");
             e.printStackTrace();
+        	return Response.status(200)
+        	    .entity(result)
+            	.build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(501).entity("Internal Error").build();
         }
-        return Response.status(200)
-                .entity(result)
-                .build();
     }
 
     @GET

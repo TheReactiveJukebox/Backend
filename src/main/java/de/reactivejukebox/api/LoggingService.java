@@ -18,8 +18,13 @@ public class LoggingService {
     @Path("/")
     @Secured
     public Response createLog(@Context User user, FrontendLog log) {
-        String msg = user.getUsername() + "-" + user.getId() + " " + log.getMessage();
-        LogManager.getLogger("frontend").error(msg);
-        return Response.ok("{}").build();
+        try {
+            String msg = user.getUsername() + "-" + user.getId() + " " + log.getMessage();
+            LogManager.getLogger("frontend").error(msg);
+            return Response.ok("{}").build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(501).entity("Internal Error").build();
+        }
     }
 }
