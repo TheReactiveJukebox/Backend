@@ -36,7 +36,7 @@ public class JukeboxService {
         } catch (Exception e) {
             System.err.println("Error getting current radiostation for user " + user.getUsername() + ":");
             e.printStackTrace();
-            return Response.serverError().entity("Internal Error").build();
+            return Response.status(501).entity("Internal Error").build();
         }
     }
 
@@ -59,7 +59,7 @@ public class JukeboxService {
         } catch (Exception e) {
             System.err.println("Error creating radiostation for user " + user.getUsername() + ":");
             e.printStackTrace();
-            return Response.serverError().entity("Internal Error").build();
+            return Response.status(501).entity("Internal Error").build();
         }
     }
 
@@ -101,7 +101,7 @@ public class JukeboxService {
         } catch (Exception e) {
             System.err.println("Error getting next songs for current radiostation of user " + user.getUsername() + ":");
             e.printStackTrace();
-            return Response.serverError().entity("Internal Error").build();
+            return Response.status(501).entity("Internal Error").build();
         }
     }
 
@@ -115,7 +115,7 @@ public class JukeboxService {
             return Response.ok(algorithms).build();
         } catch (Exception e) {
             e.printStackTrace();
-            return Response.serverError().entity("Internal Error").build();
+            return Response.status(501).entity("Internal Error").build();
         }
     }
 }

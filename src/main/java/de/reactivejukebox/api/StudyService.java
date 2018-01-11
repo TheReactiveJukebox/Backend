@@ -24,7 +24,7 @@ public class StudyService {
             return Response.ok("{}").build();
         } catch (Exception e) {
             e.printStackTrace();
-            return Response.serverError().entity("Internal Error").build();
+            return Response.status(501).entity("Internal Error").build();
         }
     }
 }
