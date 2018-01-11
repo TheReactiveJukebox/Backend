@@ -78,9 +78,9 @@ public class JukeboxService {
             List<TrackPlain> results = algorithm.getRecommendations().getTracks().stream()
                     .map(Track::getPlainObject)
                     .collect(Collectors.toList());
-            if(start != null && start && radio.getStartTracks() != null){
-                List<TrackPlain> startTracks =  radio.getStartTracks().stream().map(Track::getPlainObject).collect(Collectors.toList());
-                results.addAll(0,startTracks);
+            if (start != null && start && radio.getStartTracks() != null) {
+                List<TrackPlain> startTracks = radio.getStartTracks().stream().map(Track::getPlainObject).collect(Collectors.toList());
+                results.addAll(0, startTracks);
             }
             if (results.size() == 0) {
                 return Response.status(404).build();
@@ -91,6 +91,9 @@ public class JukeboxService {
 
             return Response.ok(results).build();
         } catch (SQLException e) {
+            return Response.status(422).entity("No radiostation available")
+                    .build();
+        } catch (Exception e) {
             System.err.println("Error getting next songs for current radiostation of user " + user.getUsername() + ":");
             e.printStackTrace();
             return Response.status(502).entity("Error getting Songs")
