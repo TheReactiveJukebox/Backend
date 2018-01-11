@@ -61,6 +61,7 @@ public class JukeboxService {
     @Path("/next")
     public Response getNextSongs(@Context User user,
                                  @QueryParam("count") int count,
+                                 @QueryParam("start") Boolean start,
                                  @QueryParam("upcoming") List<Integer> upcoming) {
         TrackFeedbacks feedback = Model.getInstance().getTrackFeedbacks();
         try {
@@ -77,6 +78,10 @@ public class JukeboxService {
             List<TrackPlain> results = algorithm.getRecommendations().getTracks().stream()
                     .map(Track::getPlainObject)
                     .collect(Collectors.toList());
+            if(start != null && start && radio.getStartTracks() != null){
+                List<TrackPlain> startTracks =  radio.getStartTracks().stream().map(Track::getPlainObject).collect(Collectors.toList());
+                results.addAll(0,startTracks);
+            }
             if (results.size() == 0) {
                 return Response.status(404).build();
             }
