@@ -51,7 +51,7 @@ public class PlaylistService {
             return Response.ok(results).build();
         } catch (Exception e) {
             e.printStackTrace();
-            return Response.serverError().entity("Internal Error").build();
+            return Response.status(501).entity("Internal Error").build();
         }
     }
 
@@ -76,10 +76,10 @@ public class PlaylistService {
         } catch (SQLException e) {
             System.err.println("Error creating playlist:");
             e.printStackTrace();
-            return Response.serverError().build();
+            return Response.status(501).build();
         } catch (Exception e) {
             e.printStackTrace();
-            return Response.serverError().entity("Internal Error").build();
+            return Response.status(501).entity("Internal Error").build();
         }
     }
 
@@ -121,7 +121,7 @@ public class PlaylistService {
             return Response.ok(playlist).build();
         } catch (Exception e) {
             e.printStackTrace();
-            return Response.serverError().entity("Internal Error").build();
+            return Response.status(501).entity("Internal Error").build();
         }
     }
 
@@ -143,14 +143,14 @@ public class PlaylistService {
                         .build();
             }
             if (!Model.getInstance().getPlaylists().remove(id)) {
-                return Response.serverError()
+                return Response.status(501)
                         .entity("Could not remove playlist due to internal error.")
                         .build();
             }
             return Response.ok("{}").build();
         } catch (Exception e) {
             e.printStackTrace();
-            return Response.serverError().entity("Internal Error").build();
+            return Response.status(501).entity("Internal Error").build();
         }
     }
 }

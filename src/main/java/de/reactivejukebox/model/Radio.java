@@ -8,10 +8,8 @@ import de.reactivejukebox.recommendations.filters.SpeedPredicate;
 import de.reactivejukebox.recommendations.strategies.StrategyType;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -159,26 +157,34 @@ public class Radio implements Serializable {
     }
 
     public Stream<Track> filter(Stream<Track> trackStream) {
-        if (getGenres() != null && getGenres().length > 0) {
-            trackStream = trackStream.filter(new GenrePredicate(this));
+        for (Predicate<Track> p : getPredicates()) {
+            trackStream = trackStream.filter(p);
         }
-        if (getStartYear() != null || getEndYear() != null) {
-            trackStream = trackStream.filter(new PublishedPredicate(this));
-        }
-
-        if (getArousal() != null || getValence() != null) {
-            trackStream = trackStream.filter(new MoodPredicate(this));
-
-        }
-        if (getMinSpeed() != null || getMaxSpeed() != null) {
-            trackStream = trackStream.filter(new SpeedPredicate(this));
-
-        }
-
         return trackStream;
     }
 
+    public List<Predicate<Track>> getPredicates() {
+        ArrayList<Predicate<Track>> predicates = new ArrayList<>();
+        if (getGenres() != null && getGenres().length > 0) {
+            predicates.add(new GenrePredicate(this));
+        }
+        if (getStartYear() != null || getEndYear() != null) {
+            predicates.add(new PublishedPredicate(this));
+        }
+        if (getMinSpeed()!= null || getMaxSpeed()!= null ){
+            predicates.add(new SpeedPredicate(this));
+        }
+        if (getArousal() != null || getValence() != null) {
+            predicates.add(new MoodPredicate(this));
+        }
+        return predicates;
+    }
+
     public Stream<Track> filterHistory(Stream<Track> trackStream, Collection<Track> upcoming, int resultCount) {
+        if (algorithm == StrategyType.HYBRID){
+            trackStream = trackStream.filter(new HistoryPredicate(upcoming));
+            return trackStream;
+        }
         List<Track> allTracks = trackStream.collect(Collectors.toList());
         Set<Track> trackSet = allTracks.stream().filter(new HistoryPredicate(this, upcoming)).collect(Collectors.toSet());  // filter History
         if (trackSet.size() >= resultCount) {

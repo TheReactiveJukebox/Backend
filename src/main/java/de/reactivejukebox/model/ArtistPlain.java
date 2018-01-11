@@ -4,6 +4,7 @@ public class ArtistPlain implements MusicEntityPlain {
 
     protected String name;
     protected int id;
+    protected ArtistFeedback feedback;
 
     public ArtistPlain() {
     }
@@ -27,5 +28,13 @@ public class ArtistPlain implements MusicEntityPlain {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public ArtistFeedback getFeedback() {
+        return feedback;
+    }
+
+    public void setFeedback(ArtistFeedback feedback) {
+        this.feedback = feedback;
     }
 }

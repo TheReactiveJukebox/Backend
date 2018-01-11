@@ -35,33 +35,45 @@ public class TrackService {
                            @QueryParam("titlesubstr") String titleSubstring,
                            @QueryParam("artist") int artist,
                            @QueryParam("album") int album,
-                           @QueryParam("count") int countResults) {
+                           @QueryParam("count") int countResults,
+                           @Context User user) {
+        List<TrackPlain> result = null;
         try {
-            List<MusicEntityPlain> result;
-            Set<Integer> ids = new TreeSet<>(id);
-            Stream<Track> s = Model.getInstance().getTracks().stream();
-            if (!ids.isEmpty()) {
-                s = s.filter(track -> ids.contains(track.getId()));
+        Set<Integer> ids = new TreeSet<>(id);
+        Stream<Track> s = Model.getInstance().getTracks().stream();
+        if (!ids.isEmpty()) {
+            s = s.filter(track -> ids.contains(track.getId()));
+        }
+        if (titleSubstring != null) {
+            Database db = DatabaseProvider.getInstance().getDatabase();
+            s = s.filter(track ->
+                    db.normalize(track.getTitle()).contains(db.normalize(titleSubstring)));
+        }
+        if (artist != 0) {
+            s = s.filter(track -> track.getArtist().getId() == artist);
+        }
+        if (album != 0) {
+            s = s.filter(track -> track.getAlbum().getId() == album);
+        }
+        result = s.map(Track::getPlainObject).collect(Collectors.toList());
+        TrackFeedbacks feedback = Model.getInstance().getTrackFeedbacks();
+            for (TrackPlain r : result) {
+                r.setFeedback(feedback.get(r.getId(), user.getId()));
             }
-            if (titleSubstring != null) {
-                Database db = DatabaseProvider.getInstance().getDatabase();
-                s = s.filter(track ->
-                        db.normalize(track.getTitle()).contains(db.normalize(titleSubstring)));
-            }
-            if (artist != 0) {
-                s = s.filter(track -> track.getArtist().getId() == artist);
-            }
-            if (album != 0) {
-                s = s.filter(track -> track.getAlbum().getId() == album);
-            }
-            result = s.map(Track::getPlainObject).collect(Collectors.toList());
+		return Response.status(200)
+                .entity(result)
+                .build();
+        } catch (SQLException e){
+            System.err.println("Error setting track feedback into track");
+            e.printStackTrace();
             return Response.status(200)
-                    .entity(result)
-                    .build();
+                .entity(result)
+                .build();
         } catch (Exception e) {
             e.printStackTrace();
-            return Response.serverError().entity("Internal Error").build();
+            return Response.status(501).entity("Internal Error").build();
         }
+
     }
 
     /**
@@ -69,26 +81,26 @@ public class TrackService {
      *
      * @param feedback posted feedback
      * @param user     user who gave the feedback
-     * @return TrackFeedbackPlain Object of the feedback actually written to the DB
+     * @return TrackFeedback Object of the feedback actually written to the DB
      */
     @POST
     @Secured
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/feedback")
-    public Response pushTrackFeedback(TrackFeedbackPlain feedback, @Context User user) {
+    public Response pushTrackFeedback(TrackFeedback feedback, @Context User user) {
+
         try {
-            feedback.setUserId(user.getId());
             TrackFeedback feedbackReturn = new TrackFeedbackHandler().addTrackFeedback(feedback, user);
             LoggerProvider.getLogger().writeEntry(new SongFeedbackEntry(user, feedbackReturn));
-            return Response.ok().entity(feedbackReturn.getPlainObject()).build();
+            return Response.ok().entity(feedbackReturn).build();
         } catch (SQLException e) {
             System.err.println("Error pushing track feedback concerning track " + feedback.getTrackId() + ":");
             e.printStackTrace();
-            return Response.status(500).build();
+            return Response.status(501).build();
         } catch (Exception e) {
             e.printStackTrace();
-            return Response.serverError().entity("Internal Error").build();
+            return Response.status(501).entity("Internal Error").build();
         }
     }
 
@@ -107,14 +119,14 @@ public class TrackService {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
             // Process input
-            IndirectFeedbackPlain feedbackReturn = IndirectFeedbackEntries.put(feedbackPlain);
+            IndirectFeedbackPlain feedbackReturn = Model.getInstance().getIndirectFeedbackEntries().put(feedbackPlain);
             // Build response
             LoggerProvider.getLogger().writeEntry(new ActionFeedbackEntry(user, feedbackReturn));
             return Response.ok().entity(feedbackReturn).build();
         } catch (Exception e) {
             System.err.println("Error pushing indirect feedback concerning track " + feedbackPlain.getTrackId() + ":");
             e.printStackTrace();
-            return Response.serverError().entity("Internal Error").build();
+            return Response.status(501).entity("Internal Error").build();
         }
     }
 
@@ -127,7 +139,7 @@ public class TrackService {
             return Response.ok().entity(Model.getInstance().getTracks().getTrackParameter()).build();
         } catch (Exception e) {
             e.printStackTrace();
-            return Response.serverError().entity("Internal Error").build();
+            return Response.status(501).entity("Internal Error").build();
         }
 
     }

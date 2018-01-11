@@ -2,19 +2,21 @@ package de.reactivejukebox.recommendations.strategies;
 
 import de.reactivejukebox.model.*;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
+import de.reactivejukebox.recommendations.Recommendations;
 import org.mockito.Mockito;
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.*;
 
+import static de.reactivejukebox.TestTools.setModelInstance;
 import static org.mockito.Mockito.mock;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 public class SameArtistGreatestHitsTest {
     public static int TRACKSARTIST_A = 8;
@@ -55,7 +57,7 @@ public class SameArtistGreatestHitsTest {
         Model.getInstance().getAlbums().put(albumB.getId(), albumB);
 
         int _startindex = Model.getInstance().getTracks().size();
-        for (int i = _startindex ; i < TRACKSARTIST_B + _startindex; i++) {
+        for (int i = _startindex; i < TRACKSARTIST_B + _startindex; i++) {
             Model.getInstance().getTracks().put(i, new Track(
                     i, "Track B" + i, artistB, albumB, "", "", 191, 4211 - i, new Date(), 120, 0.9f, "", ""
             ));
@@ -65,10 +67,9 @@ public class SameArtistGreatestHitsTest {
         Radio radio = new Radio();
 
         ArrayList<HistoryEntry> history = new ArrayList<>();
-        history.add(new HistoryEntry(1,Model.getInstance().getTracks().get(1),radio,new User(),new Timestamp(1))); //Add track to history
-        history.add(new HistoryEntry(2,Model.getInstance().getTracks().get(2),radio,new User(),new Timestamp(2))); //Add track to history
-        history.add(new HistoryEntry(3,Model.getInstance().getTracks().get(9),radio,new User(),new Timestamp(3))); //Add track to history
-
+        history.add(new HistoryEntry(1, Model.getInstance().getTracks().get(1), radio, new User(), new Timestamp(1))); //Add track to history
+        history.add(new HistoryEntry(2, Model.getInstance().getTracks().get(2), radio, new User(), new Timestamp(2))); //Add track to history
+        history.add(new HistoryEntry(3, Model.getInstance().getTracks().get(9), radio, new User(), new Timestamp(3))); //Add track to history
 
 
         Mockito.when(h.getListByRadioId(1)).thenReturn(new ArrayList<>());
@@ -79,30 +80,38 @@ public class SameArtistGreatestHitsTest {
 
     @Test
     public void testGetRecommendations() throws Exception {
-        List<Track> list = new ArrayList<>();
-
         Radio radio = new Radio();
         radio.setId(2);
         radio.getStartTracks().add(Model.getInstance().getTracks().get(1));
 
         RecommendationStrategy algorithm = new SameArtistGreatestHits(radio, new HashSet<>(), 5);
-        list = algorithm.getRecommendations();
+        Recommendations r = algorithm.getRecommendations();
 
-        assertTrue(list.contains(Model.getInstance().getTracks().get(7)));
-        assertFalse(list.contains(Model.getInstance().getTracks().get(8)));
-        assertFalse(list.contains(Model.getInstance().getTracks().get(2)));
+        assertTrue(r.getTracks().contains(Model.getInstance().getTracks().get(7)));
+        assertFalse(r.getTracks().contains(Model.getInstance().getTracks().get(8)));
+        assertFalse(r.getTracks().contains(Model.getInstance().getTracks().get(2)));
+
+        // test weights: should be sorted by score, first score should be 1
+        Iterator<Float> iter = r.getScores().iterator();
+        float a = iter.next();
+        assertEquals(a, 1f, 0.0001);
+
+        while (iter.hasNext()) {
+            float b = iter.next();
+            assertTrue(b <= a);
+            a = b;
+        }
+
     }
 
     @Test
     public void testGetRecommendationsMoreTracks() throws Exception {
-        List<Track> list = new ArrayList<>();
-
         Radio radio = new Radio();
         radio.setId(2);
         radio.getStartTracks().add(Model.getInstance().getTracks().get(1));
 
         RecommendationStrategy algorithm = new SameArtistGreatestHits(radio, new HashSet<>(), Integer.MAX_VALUE);
-        list = algorithm.getRecommendations();
+        List<Track> list = algorithm.getRecommendations().getTracks();
 
         assertTrue(list.contains(Model.getInstance().getTracks().get(7)));
         assertFalse(list.contains(Model.getInstance().getTracks().get(8)));
@@ -112,16 +121,5 @@ public class SameArtistGreatestHitsTest {
     @AfterClass
     public void tearDown() {
         setModelInstance(null);
-    }
-
-    private void setModelInstance(Model m) {
-        try {
-            Field instance = Model.class.getDeclaredField("instance");
-            instance.setAccessible(true);
-            instance.set(null, m);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            System.err.println("Could not set instance field of model class using reflection!");
-            Assert.fail();
-        }
     }
 }

@@ -1,36 +1,29 @@
 package de.reactivejukebox.recommendations.strategies;
 
-import com.sun.org.apache.regexp.internal.RE;
 import de.reactivejukebox.model.*;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
-import de.reactivejukebox.recommendations.filters.MoodPredicate;
 import org.mockito.Mockito;
-import org.testng.Assert;
-import org.testng.Reporter;
+
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static org.mockito.Matchers.floatThat;
+import static de.reactivejukebox.TestTools.setModelInstance;
 import static org.mockito.Mockito.mock;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertTrue;
 
-/**
- * Created by David on 28.11.2017.
- */
 public class MoodNNTest {
 
-    private final float[] AROUSALS = {0.4f,0.4f,-0.4f,-0.4f};
-    private final float[] VALENCES = {-0.4f,0.4f,0.4f,-0.4f};
+    private final float[] AROUSALS = {0.4f, 0.4f, -0.4f, -0.4f};
+    private final float[] VALENCES = {-0.4f, 0.4f, 0.4f, -0.4f};
 
     @BeforeClass
-    private void setUpModel() throws SQLException{
+    private void setUpModel() throws SQLException {
         Tracks tracks = new Tracks();
 
         Model m = mock(Model.class);
@@ -45,121 +38,147 @@ public class MoodNNTest {
         Album stub = new Album();
 
         Artist checker;
-        float a,v;
-        for (int i=0;i<4;i++){
-            checker = new Artist(i+1,"Artist");
-            for(int j=0;j<100;j++){
-                a = AROUSALS[i]-0.05f+(rng.nextFloat()*0.1f);
-                v = VALENCES[i]-0.05f+(rng.nextFloat()*0.1f);
-                Model.getInstance().getTracks().put(i*100+j,new Track(i*100+j,"",checker,stub,"","",
-                        0,0,null,0f,0f,"","",v,a));
+        float a, v;
+        for (int i = 0; i < 4; i++) {
+            checker = new Artist(i + 1, "Artist");
+            for (int j = 0; j < 100; j++) {
+                a = AROUSALS[i] - 0.05f + (rng.nextFloat() * 0.1f);
+                v = VALENCES[i] - 0.05f + (rng.nextFloat() * 0.1f);
+                Model.getInstance().getTracks().put(i * 100 + j, new Track(i * 100 + j, "", checker, stub, "", "",
+                        0, 0, null, 0f, 0f, "","", v, a));
             }
         }
 
-        Model.getInstance().getTracks().put(500,new Track());
+        Model.getInstance().getTracks().put(500, new Track());
 
         ArrayList<HistoryEntry> history = new ArrayList<>();
-        for(int i=0;i<80;i++)
-        history.add(new HistoryEntry(i,Model.getInstance().getTracks().get(i),new Radio(),new User(),new Timestamp(1))); //Add track to history
+        for (int i = 0; i < 80; i++)
+            history.add(new HistoryEntry(i, Model.getInstance().getTracks().get(i), new Radio(), new User(), new Timestamp(1))); //Add track to history
 
         Mockito.when(h.getListByRadioId(2)).thenReturn(history);
     }
 
     @Test
-    public void TestNNModel() throws Exception{
+    public void TestNNModel() throws Exception {
 
         Radio radio = new Radio();
         radio.setId(1);
-        radio.getStartTracks().add(new Track(888,"",null, null,"","",
-                0,0,null,0f,0f,"","",-0.4f,0.4f));
+        radio.getStartTracks().add(new Track(888, "", null, null, "", "",
+                0, 0, null, 0f, 0f, "","", -0.4f, 0.4f));
 
-        RecommendationStrategy strat= new MoodNN(radio,new ArrayList<Track>(),20);
-        List<Track> result = strat.getRecommendations();
-        Reporter.log("Size: "+result.size(),true);
+        RecommendationStrategy strat = new MoodNN(radio, new ArrayList<Track>(), 20);
+        List<Track> result = strat.getRecommendations().getTracks();
+        List<Float> scores = strat.getRecommendations().getScores();
 
+        assertTrue(scores.size() == result.size());
         assertTrue(result.size() == 20);
-        float dist= -1;
-        for (Track e:result){
-            Reporter.log(e.toString(),true);
-            assertTrue(e.getArtist().getId()==1);
-            float current = Math.abs(e.getArousal()-0.4f)+Math.abs(e.getValence()+0.4f);
-            Reporter.log(Float.toString(current),true);
-            assertTrue(current>=dist);
+        float dist = -1;
+        for (Track e : result) {
+            assertTrue(e.getArtist().getId() == 1);
+            float current = Math.abs(e.getArousal() - 0.4f) + Math.abs(e.getValence() + 0.4f);
+            assertTrue(current >= dist);
             dist = current;
         }
 
-        radio.getStartTracks().clear();
-        radio.getStartTracks().add(new Track(888,"",null, null,"","",
-                0,0,null,0f,0f,"","",0.4f,0.4f));
-
-        result = strat.getRecommendations();
-        Reporter.log("Size: "+result.size(),true);
-        assertTrue(result.size() == 20);
-        for (Track e:result){
-            Reporter.log(e.toString(),true);
-            assertTrue(e.getArtist().getId()==2);
+        float prevScore = 1;
+        for (Float score : scores) {
+            assertTrue(score <= 1 && score >= 0);
+            assertTrue(score <= prevScore);
+            prevScore = score;
         }
 
         radio.getStartTracks().clear();
-        radio.getStartTracks().add(new Track(888,"",null, null,"","",
-                0,0,null,0f,0f,"","",0.4f,-0.4f));
+        radio.getStartTracks().add(new Track(888, "", null, null, "", "",
+                0, 0, null, 0f, 0f, "","", 0.4f, 0.4f));
 
-        result = strat.getRecommendations();
-        Reporter.log("Size: "+result.size(),true);
+        result = strat.getRecommendations().getTracks();
+        scores = strat.getRecommendations().getScores();
+
+        assertTrue(scores.size() == result.size());
         assertTrue(result.size() == 20);
-        for (Track e:result){
-            Reporter.log(e.toString(),true);
-            assertTrue(e.getArtist().getId()==3);
+        for (Track e : result) {
+            assertTrue(e.getArtist().getId() == 2);
+        }
+
+        prevScore = 1;
+        for (Float score : scores) {
+            assertTrue(score <= 1 && score >= 0);
+            assertTrue(score <= prevScore);
+            prevScore = score;
         }
 
         radio.getStartTracks().clear();
-        radio.getStartTracks().add(new Track(888,"",null, null,"","",
-                0,0,null,0f,0f,"","",-0.4f,-0.4f));
+        radio.getStartTracks().add(new Track(888, "", null, null, "", "",
+                0, 0, null, 0f, 0f, "","", 0.4f, -0.4f));
 
-        result = strat.getRecommendations();
-        Reporter.log("Size: "+result.size(),true);
+        result = strat.getRecommendations().getTracks();
+        scores = strat.getRecommendations().getScores();
+
+        assertTrue(scores.size() == result.size());
         assertTrue(result.size() == 20);
-        for (Track e:result){
-            assertTrue(e.getArtist().getId()==4);
+        for (Track e : result) {
+            assertTrue(e.getArtist().getId() == 3);
+        }
+
+        prevScore = 1;
+        for (Float score : scores) {
+            assertTrue(score <= 1 && score >= 0);
+            assertTrue(score <= prevScore);
+            prevScore = score;
+        }
+
+        radio.getStartTracks().clear();
+        radio.getStartTracks().add(new Track(888, "", null, null, "", "",
+                0, 0, null, 0f, 0f, "","", -0.4f, -0.4f));
+
+        result = strat.getRecommendations().getTracks();
+        scores = strat.getRecommendations().getScores();
+
+        assertTrue(scores.size() == result.size());
+        assertTrue(result.size() == 20);
+        for (Track e : result) {
+            assertTrue(e.getArtist().getId() == 4);
+        }
+
+        prevScore = 1;
+        for (Float score : scores) {
+            assertTrue(score <= 1 && score >= 0);
+            assertTrue(score <= prevScore);
+            prevScore = score;
         }
 
 
-        radio.getStartTracks().add(new Track(888,"",null, null,"","",
-                0,0,null,0f,0f,"","",-0.4f,0.4f));
+        radio.getStartTracks().add(new Track(888, "", null, null, "", "",
+                0, 0, null, 0f, 0f, "","", -0.4f, 0.4f));
         assertTrue(result.size() == 20);
-        result = strat.getRecommendations();
-        Reporter.log("Size: "+result.size(),true);
+        result = strat.getRecommendations().getTracks();
+        scores = strat.getRecommendations().getScores();
 
-        for (Track e:result){
-            Reporter.log(e.toString(),true);
-            assertTrue(e.getArtist().getId()==1 || e.getArtist().getId() == 4); ;
+        assertTrue(scores.size() == result.size());
+        for (Track e : result) {
+            assertTrue(e.getArtist().getId() == 1 || e.getArtist().getId() == 4);
+        }
+
+        prevScore = 1;
+        for (Float score : scores) {
+            assertTrue(score <= 1 && score >= 0);
+            assertTrue(score <= prevScore);
+            prevScore = score;
         }
 
     }
 
     @Test
-    public void TestNNHistory() throws Exception{
+    public void TestNNHistory() throws Exception {
         Radio radio = new Radio();
         radio.setId(2);
-        radio.getStartTracks().add(new Track(888,"",null, null,"","",
-                0,0,null,0f,0f,"","",-0.4f,0.4f));
+        radio.getStartTracks().add(new Track(888, "", null, null, "", "",
+                0, 0, null, 0f, 0f, "","",-0.4f, 0.4f));
 
-        RecommendationStrategy strat= new MoodNN(radio,new ArrayList<Track>(),20);
-        List<Track> result = strat.getRecommendations();
-        for (Track e:result) {
-            Reporter.log(e.toString(), true);
-            assertTrue(e.getId()>=80 && e.getId()<101);
-        }
-    }
-
-    private void setModelInstance(Model m) {
-        try {
-            Field instance = Model.class.getDeclaredField("instance");
-            instance.setAccessible(true);
-            instance.set(null, m);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            System.err.println("Could not set instance field of model class using reflection!");
-            Assert.fail();
+        RecommendationStrategy strat = new MoodNN(radio, new ArrayList<Track>(), 20);
+        List<Track> result = strat.getRecommendations().getTracks();
+        for (Track e : result) {
+            assertTrue(e.getId() >= 80 && e.getId() < 101);
         }
     }
 }

@@ -17,9 +17,9 @@ public class TrackPlain implements MusicEntityPlain {
     Date releaseDate;
     float speed;
     float dynamic;
+    TrackFeedback feedback;
     float arousal;
     float valence;
-    TrackFeedbackPlain trackFeedback;
 
     public TrackPlain(int id, String title, int artist, int album, String cover, String file, int duration, int playCount, List<String> genres, Date releaseDate, float speed, float dynamic, float arousal, float valence) {
         this.id = id;
@@ -145,11 +145,11 @@ public class TrackPlain implements MusicEntityPlain {
 
     public void setValence(float valence) { this.valence = valence; }
 
-    public TrackFeedbackPlain getTrackFeedback() {
-        return trackFeedback;
+    public TrackFeedback getFeedback() {
+        return feedback;
     }
 
-    public void setTrackFeedback(TrackFeedbackPlain trackFeedback) {
-        this.trackFeedback = trackFeedback;
+    public void setFeedback(TrackFeedback feedback) {
+        this.feedback = feedback;
     }
 }

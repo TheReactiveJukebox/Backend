@@ -35,11 +35,11 @@ public class HistoryService {
         } catch (SQLException e) {
             System.err.println("Error while adding history entry:");
             e.printStackTrace();
-            return Response.status(500).entity("Error while commmunicating with database").build();
+            return Response.status(501).entity("Error while commmunicating with database").build();
         } catch (Exception e) {
             System.err.println("Error while adding history entry:");
             e.printStackTrace();
-            return Response.serverError().entity("Internal Error").build();
+            return Response.status(501).entity("Internal Error").build();
         }
     }
 
@@ -54,11 +54,11 @@ public class HistoryService {
         } catch (SQLException e) {
             System.err.println("Error while deleting history entry:");
             e.printStackTrace();
-            return Response.status(500).entity("Error while commmunicating with database").build();
+            return Response.status(501).entity("Error while commmunicating with database").build();
         } catch (Exception e) {
             System.err.println("Error while deleting history entry:");
             e.printStackTrace();
-            return Response.serverError().entity("Internal Error").build();
+            return Response.status(501).entity("Internal Error").build();
         }
     }
 }

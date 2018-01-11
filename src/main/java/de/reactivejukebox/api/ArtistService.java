@@ -11,6 +11,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -29,25 +30,35 @@ public class ArtistService {
             @QueryParam("id") List<Integer> id,
             @QueryParam("namesubstr") String nameSubstring,
             @QueryParam("count") int count) {
+        Set<Integer> ids = new TreeSet<>(id);
+        List<ArtistPlain> result = null;
         try {
-            Set<Integer> ids = new TreeSet<>(id);
-            List<MusicEntityPlain> result;
-            Stream<Artist> s = Model.getInstance().getArtists().stream();
-            if (!ids.isEmpty()) {
-                s = s.filter(artist -> ids.contains(artist.getId()));
-            }
-            if (nameSubstring != null) {
-                Database db = DatabaseProvider.getInstance().getDatabase();
-                s = s.filter(artist ->
-                        db.normalize(artist.getName()).contains(db.normalize(nameSubstring)));
-            }
-            result = s.map(Artist::getPlainObject).collect(Collectors.toList());
-            return Response.status(200)
-                    .entity(result)
-                    .build();
+        Stream<Artist> s = Model.getInstance().getArtists().stream();
+        if (!ids.isEmpty()) {
+            s = s.filter(artist -> ids.contains(artist.getId()));
+        }
+        if (nameSubstring != null) {
+            Database db = DatabaseProvider.getInstance().getDatabase();
+            s = s.filter(artist ->
+                    db.normalize(artist.getName()).contains(db.normalize(nameSubstring)));
+        }
+        result = s.map(Artist::getPlainObject).collect(Collectors.toList());
+        SpecialFeedbacks feedback = Model.getInstance().getSpecialFeedbacks();
+        for (ArtistPlain artist : result) {
+            artist.setFeedback(feedback.getArtistFeedback(artist.getId(), artist.getId()));
+        }
+        return Response.status(200)
+            .entity(result)
+            .build();
+        } catch (SQLException e) {
+            System.err.println("Error setting artist feedback into artist");
+            e.printStackTrace();
+        	return Response.status(200)
+        	    .entity(result)
+            	.build();
         } catch (Exception e) {
             e.printStackTrace();
-            return Response.serverError().entity("Internal Error").build();
+            return Response.status(501).entity("Internal Error").build();
         }
     }
 

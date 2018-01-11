@@ -5,6 +5,7 @@ public class AlbumPlain implements MusicEntityPlain {
     protected String title;
     protected int artist;
     protected int id;
+    protected AlbumFeedback feedback;
 
     public String getTitle() {
         return title;
@@ -28,5 +29,13 @@ public class AlbumPlain implements MusicEntityPlain {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public AlbumFeedback getFeedback() {
+        return feedback;
+    }
+
+    public void setFeedback(AlbumFeedback feedback) {
+        this.feedback = feedback;
     }
 }

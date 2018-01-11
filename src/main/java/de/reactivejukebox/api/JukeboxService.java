@@ -31,13 +31,12 @@ public class JukeboxService {
         } catch (SQLException e) {
             System.err.println("Error getting current radiostation for user " + user.getUsername() + ":");
             e.printStackTrace();
-            return Response.status(503)
-                    .entity("Error no Radiostation available")
+            return Response.status(404)
                     .build();
         } catch (Exception e) {
             System.err.println("Error getting current radiostation for user " + user.getUsername() + ":");
             e.printStackTrace();
-            return Response.serverError().entity("Internal Error").build();
+            return Response.status(501).entity("Internal Error").build();
         }
     }
 
@@ -56,12 +55,11 @@ public class JukeboxService {
             System.err.println("Error creating radiostation for user " + user.getUsername() + ":");
             e.printStackTrace();
             return Response.status(503)
-                    .entity("Error while reading/writing database")
                     .build();
         } catch (Exception e) {
             System.err.println("Error creating radiostation for user " + user.getUsername() + ":");
             e.printStackTrace();
-            return Response.serverError().entity("Internal Error").build();
+            return Response.status(501).entity("Internal Error").build();
         }
     }
 
@@ -84,11 +82,14 @@ public class JukeboxService {
             RecommendationStrategy algorithm = new RecommendationStrategyFactory(radio, upcomingTracks)
                     .createStrategy(count);
             // obtain results
-            List<TrackPlain> results = algorithm.getRecommendations().stream()
+            List<TrackPlain> results = algorithm.getRecommendations().getTracks().stream()
                     .map(Track::getPlainObject)
                     .collect(Collectors.toList());
+            if (results.size() == 0) {
+                return Response.status(404).build();
+            }
             for (TrackPlain r : results) {
-                r.setTrackFeedback(feedback.get(r.getId(), user.getId()).getPlainObject());
+                r.setFeedback(feedback.get(r.getId(), user.getId()));
             }
 
             return Response.ok(results).build();
@@ -96,12 +97,11 @@ public class JukeboxService {
             System.err.println("Error getting next songs for current radiostation of user " + user.getUsername() + ":");
             e.printStackTrace();
             return Response.status(502)
-                    .entity("Error while commmunicating with database")
                     .build();
         } catch (Exception e) {
             System.err.println("Error getting next songs for current radiostation of user " + user.getUsername() + ":");
             e.printStackTrace();
-            return Response.serverError().entity("Internal Error").build();
+            return Response.status(501).entity("Internal Error").build();
         }
     }
 
@@ -115,9 +115,7 @@ public class JukeboxService {
             return Response.ok(algorithms).build();
         } catch (Exception e) {
             e.printStackTrace();
-            return Response.serverError().entity("Internal Error").build();
+            return Response.status(501).entity("Internal Error").build();
         }
     }
-
-
 }

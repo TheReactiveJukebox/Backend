@@ -20,8 +20,9 @@ public class Model {
     private Genres genres;
     private Playlists playlists;
     private SpecialFeedbacks specialFeedbacks;
+    private IndirectFeedbackEntries indirectFeedbackEntries;
 
-    private Model() {
+    private Model() throws ModelException{
         users = new Users();
         try (Connection con = DatabaseProvider.getInstance().getDatabase().getConnection()) {
             genres = new Genres(con);
@@ -36,18 +37,25 @@ public class Model {
             artists = new Artists();
             albums = new Albums();
             tracks = new Tracks();
+            throw new ModelException();
         }
         radios = new Radios(users);
         trackFeedbacks = new TrackFeedbacks(users, tracks);
         specialFeedbacks = new SpecialFeedbacks(users);
         historyEntries = new HistoryEntries(users, tracks, radios);
         playlists = new Playlists();
+        indirectFeedbackEntries = new IndirectFeedbackEntries();
 
     }
 
     public static synchronized Model getInstance() {
         if (Model.instance == null) {
-            Model.instance = new Model();
+            try {
+                Model.instance = new Model();
+            }catch (ModelException e){
+                System.err.println("Could build Model returning empty one which is replaced as soon as the database responds");
+                return null;
+            }
         }
         return Model.instance;
     }
@@ -91,4 +99,6 @@ public class Model {
     public Playlists getPlaylists() {
         return playlists;
     }
+
+    public IndirectFeedbackEntries getIndirectFeedbackEntries() { return indirectFeedbackEntries; }
 }

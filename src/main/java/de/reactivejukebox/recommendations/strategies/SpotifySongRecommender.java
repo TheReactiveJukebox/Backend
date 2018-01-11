@@ -6,6 +6,7 @@ import de.reactivejukebox.model.Radio;
 import de.reactivejukebox.model.Track;
 import de.reactivejukebox.model.Tracks;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
+import de.reactivejukebox.recommendations.Recommendations;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
 import org.json.JSONArray;
@@ -43,7 +44,7 @@ public class SpotifySongRecommender implements RecommendationStrategy {
     }
 
     @Override
-    public List<Track> getRecommendations() {
+    public Recommendations getRecommendations() {
         JSONArray jsonArray = spotifyApiCall(base);
 
         ArrayList<Track> tracks = new ArrayList<>();
@@ -67,12 +68,13 @@ public class SpotifySongRecommender implements RecommendationStrategy {
         }
 
         if (tracks.size() <= resultCount)
-            return tracks;
-        return tracks.subList(0, resultCount);
+            return new Recommendations(tracks, scores);
+        return new Recommendations(tracks.subList(0, resultCount), scores.subList(0, resultCount));
     }
 
     /**
      * Wraps both Spotify API calls (token + recommendations) with some error handling
+     *
      * @param seeds list of Spotify IDs of seed tracks
      * @return the JSON response of the recommendation call or an empty JSONArray if something goes wrong
      */
@@ -102,7 +104,8 @@ public class SpotifySongRecommender implements RecommendationStrategy {
 
     /**
      * Queries the Spotify API for an auth token for this client
-     * @param clientId Spotify client ID
+     *
+     * @param clientId     Spotify client ID
      * @param clientSecret Spotify client secret
      * @return an auth token that is needed to make other API calls
      * @throws IOException when Spotify returns an error
@@ -128,7 +131,8 @@ public class SpotifySongRecommender implements RecommendationStrategy {
 
     /**
      * Queries the Spotify API for recommended tracks
-     * @param seeds collection of tracks to use as a base for recommendations
+     *
+     * @param seeds            collection of tracks to use as a base for recommendations
      * @param spotifyAuthToken the auth token obtained by getSpotifyAuthToken()
      * @return the JSON response from Spotify
      * @throws IOException when Spotify returns an error

@@ -3,16 +3,76 @@ package de.reactivejukebox.model;
 import de.reactivejukebox.database.DatabaseProvider;
 
 import java.sql.*;
+import java.util.HashMap;
 
+
+//TODO why are the methods of this class static?
 public class IndirectFeedbackEntries {
-    static private final String INSERT_INDIRECT_FEEDBACK = "INSERT INTO indirectFeedback (SongId, UserId, RadioId, Type, Position, ToSongId) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT DO NOTHING;";
+    private final String INSERT_INDIRECT_FEEDBACK = "INSERT INTO indirectFeedback (SongId, UserId, RadioId, Type, Position, ToSongId) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT DO NOTHING;";
 
-    public static IndirectFeedbackPlain put(IndirectFeedbackPlain entry) throws SQLException {
+    public IndirectFeedbackPlain put(IndirectFeedbackPlain entry) throws SQLException {
         toDB(entry);
         return entry;
     }
 
-    private static void toDB(IndirectFeedbackPlain entry) throws SQLException {
+    public HashMap<Integer, Integer> getSkipFeedback(int radioId, int userId) throws SQLException {
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM indirectFeedback WHERE userid = ? and " +
+                "radioId = ? and Type = 'SKIP'");
+        getFeedback.setInt(1, userId);
+        getFeedback.setInt(2, radioId);
+        ResultSet rs = getFeedback.executeQuery();
+        HashMap<Integer, Integer> result = new HashMap<>();
+
+        while (rs.next()) {
+            int count = result.getOrDefault(rs.getInt("songId"),0);
+            count += 1;
+            result.put(rs.getInt("songId"), count);
+        }
+        con.close();
+        return result;
+    }
+
+    public HashMap<Integer, Integer> getDeleteFeedback(int radioId, int userId) throws SQLException {
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM indirectFeedback WHERE userid = ? and " +
+                "radioId = ? and Type = 'DELETE'");
+        getFeedback.setInt(1, userId);
+        getFeedback.setInt(2, radioId);
+        ResultSet rs = getFeedback.executeQuery();
+        HashMap<Integer, Integer> result = new HashMap<>();
+
+        while (rs.next()) {
+            int count = result.getOrDefault(rs.getInt("songId"),0);
+            count += 1;
+            result.put(rs.getInt("songId"), count);
+        }
+        con.close();
+        return result;
+    }
+
+    public HashMap<Integer, Integer> getMultiSkipFeedback(int radioId, int userId) throws SQLException {
+        Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
+        PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM indirectFeedback WHERE userid = ? and " +
+                "radioId = ? and Type = 'MULTI_SKIP'");
+        getFeedback.setInt(1, userId);
+        getFeedback.setInt(2, radioId);
+        ResultSet rs = getFeedback.executeQuery();
+        HashMap<Integer, Integer> result = new HashMap<>();
+
+        while (rs.next()) {
+            int count = result.getOrDefault(rs.getInt("songId"),0);
+            count += 1;
+            result.put(rs.getInt("songId"), count);
+        }
+        con.close();
+        return result;
+    }
+
+
+
+
+    private void toDB(IndirectFeedbackPlain entry) throws SQLException {
         Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement addEntry = con.prepareStatement(INSERT_INDIRECT_FEEDBACK, Statement.RETURN_GENERATED_KEYS);
         addEntry.setInt(1, entry.getTrackId());

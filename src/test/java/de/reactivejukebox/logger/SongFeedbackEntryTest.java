@@ -16,8 +16,7 @@ public class SongFeedbackEntryTest extends EntryTest {
 
     TrackFeedback getTrackFeedbackObj() {
         TrackFeedback feedback = new TrackFeedback();
-        feedback.setTrack(getTrackObj());
-        feedback.setUser(getUserObj());
+        feedback.setTrackId(getTrackObj().getId());
         return feedback;
     }
 
