@@ -185,6 +185,22 @@ public class Track implements MusicEntity {
         this.arousal = arousal;
     }
 
+    public int getfSpeed() {
+        return fSpeed;
+    }
+
+    public void setfSpeed(int fSpeed) {
+        this.fSpeed = fSpeed;
+    }
+
+    public int getfMood() {
+        return fMood;
+    }
+
+    public void setfMood(int fMood) {
+        this.fMood = fMood;
+    }
+
     @Override
     public TrackPlain getPlainObject() {
         String file = hash.substring(0, 1) + "/" + hash.substring(1, 2) + "/" + hash.substring(2) + ".mp3";

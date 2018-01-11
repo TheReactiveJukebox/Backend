@@ -215,15 +215,15 @@ public class HybridStrategy implements RecommendationStrategy {
                 score *= FeedbackModifier.DISLIKE_ALBUM.value;
             }
 
-            if (profile.getSpeedFeedback(t.getSpeed()) == 1) {
+            if (profile.getSpeedFeedback(t.getfSpeed()) == 1) {
                 score *= FeedbackModifier.LIKE_TEMPO.value;
-            } else if (profile.getSpeedFeedback(t.getSpeed()) == -1) {
+            } else if (profile.getSpeedFeedback(t.getfSpeed()) == -1) {
                 score *= FeedbackModifier.DISLIKE_TEMPO.value;
             }
 
-            if (profile.getMoodFeedback(t.getArousal(), t.getValence()) == 1) {
+            if (profile.getMoodFeedback(t.getfMood()) == 1) {
                 score *= FeedbackModifier.LIKE_MOOD.value;
-            } else if (profile.getMoodFeedback(t.getArousal(), t.getValence()) == -1) {
+            } else if (profile.getMoodFeedback(t.getfMood()) == -1) {
                 score *= FeedbackModifier.DISLIKE_MOOD.value;
             }
 
