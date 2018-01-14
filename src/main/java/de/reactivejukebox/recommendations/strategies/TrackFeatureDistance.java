@@ -111,7 +111,8 @@ public class TrackFeatureDistance implements RecommendationStrategy {
         Double max = Collections.max(recommendationsWeights);
         Double min = Collections.min(recommendationsWeights);
         List<Float> finalWeights = recommendationsWeights.stream()
-                .map((Double in) -> (in - min) * (1 / max)).map(Double::floatValue).collect(Collectors.toList());
+                .map((Double in) -> (in - min) * (1 / max)).map((Double in) -> (1 - in)).map(Double::floatValue)
+                .collect(Collectors.toList());
         return new Recommendations(recommendations, finalWeights);
     }
 
