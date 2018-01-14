@@ -6,6 +6,7 @@ import de.reactivejukebox.model.UserProfile;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
 import de.reactivejukebox.recommendations.RecommendationStrategyFactory;
 import de.reactivejukebox.recommendations.Recommendations;
+import de.reactivejukebox.recommendations.filters.GenreSorter;
 
 import java.util.*;
 
@@ -119,8 +120,10 @@ public class HybridStrategy implements RecommendationStrategy {
         * If you ever end up here debugging a NullPointerException when accessing
         * Recommendations.getScores(), you know what to do.
         */
+        Recommendations recs = GenreSorter.getInstance()
+                .getGenreSortedRecommendation(Arrays.asList(radio.getGenres()), recommendations, scores);
 
-        return getTruncatedDistinctRecommendations(recommendations, scores);
+        return getTruncatedDistinctRecommendations(recs.getTracks(), recs.getScores());
     }
 
     private Recommendations getTruncatedDistinctRecommendations(List<Track> recommendations, List<Float> scores) {
