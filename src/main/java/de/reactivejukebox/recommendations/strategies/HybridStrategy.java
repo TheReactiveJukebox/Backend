@@ -120,7 +120,35 @@ public class HybridStrategy implements RecommendationStrategy {
         * Recommendations.getScores(), you know what to do.
         */
 
-        return new Recommendations(recommendations.subList(0, Math.min(resultCount, recommendations.size())), scores);
+        return getTruncatedDistinctRecommendations(recommendations, scores);
+    }
+
+    private Recommendations getTruncatedDistinctRecommendations(List<Track> recommendations, List<Float> scores) {
+        List<Track> finalRecs = new ArrayList<>();
+        List<Float> finalScores = new ArrayList<>();
+        finalRecs.add(recommendations.get(0));
+        finalScores.add(scores.get(0));
+        int counter = 1;
+        boolean addTrack = true;
+        while (counter <= this.resultCount && recommendations.size() > counter) {
+            Track newTrack = recommendations.get(counter++);
+            if(finalRecs.stream().anyMatch((Track t) -> t.getId() == newTrack.getId())) {
+                continue;
+            }
+            for (Track track: finalRecs) {
+                int compareTitle = track.getTitle().compareTo(newTrack.getTitle());
+                int compareArtist = track.getArtist().getNameNormalized().compareTo(newTrack.getArtist().getNameNormalized());
+                if (Math.abs(compareTitle) <= 2 && Math.abs(compareArtist) <= 2) {
+                    addTrack = false;
+                }
+            }
+            if(addTrack) {
+                finalRecs.add(newTrack);
+                finalScores.add(scores.get(counter));
+            }
+            addTrack = true;
+        }
+        return new Recommendations(finalRecs, finalScores);
     }
 
 
