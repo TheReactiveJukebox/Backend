@@ -19,7 +19,7 @@ public class MoodPredicate implements Predicate<Track>{
     }
 
     public MoodPredicate(float arousal, float valence){
-        this(arousal,valence, this.startWindow);
+        this(arousal,valence, MoodPredicate.startWindow);
     }
 
     public MoodPredicate(float arousal, float valence, float window){

@@ -69,7 +69,7 @@ public class MoodNN implements RecommendationStrategy {
     }
 
     private float score(float distance) { // 1 when exact speed match, 0 when 5% away from selected mood, quadratic decay
-        return (float) Math.pow((Math.max((MoodPredicate.startWindow * this.windowMultiplicator)- distance, 0)) / 0.1f, 2);
+        return (float) Math.pow((Math.max((MoodPredicate.startWindow * this.windowMultiplicator)- distance, 0)) / (MoodPredicate.startWindow * this.windowMultiplicator), 2);
     }
 
     private Stream<Track> nearestNeighbours(Track t) {
