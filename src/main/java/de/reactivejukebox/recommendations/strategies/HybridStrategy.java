@@ -16,15 +16,15 @@ public class HybridStrategy implements RecommendationStrategy {
      */
     enum FeedbackModifier {
         LIKE_TRACK(2f),
-        DISLIKE_TRACK(0.1f),
-        LIKE_ARTIST(1.25f),
-        DISLIKE_ARTIST(0.75f),
+        DISLIKE_TRACK(0.01f),
+        LIKE_ARTIST(1.5f),
+        DISLIKE_ARTIST(0.25f),
         LIKE_ALBUM(1.25f),
         DISLIKE_ALBUM(0.75f),
         LIKE_TEMPO(1.25f),
         DISLIKE_TEMPO(0.75f),
-        LIKE_MOOD(1.25f),
-        DISLIKE_MOOD(0.75f),
+        LIKE_MOOD(1.5f),
+        DISLIKE_MOOD(0.5f),
         GENRE(0.25f),          // see calculateGenreModifier for tweaking
         GENRE_MAGNITUDE(3f),   // see calculateGenreModifier for tweaking
         SKIP(1.8f),            // see calculateLinearModifier for tweaking
