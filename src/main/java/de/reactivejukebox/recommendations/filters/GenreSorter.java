@@ -32,19 +32,19 @@ public class GenreSorter {
     }
 
     public Recommendations getGenreSortedRecommendation(Radio radio, List<Track> recommendations, List<Float> scores) {
-        List<String> requested_genre;
+        List<String> requestedGenres;
         if (radio.getGenres() == null || radio.getGenres().length == 0) {
             if (radio.getStartTracks() == null || radio.getStartTracks().isEmpty()) {
                 return new Recommendations(recommendations, scores);
             } else {
-                requested_genre = radio.getStartTracks().stream().flatMap((Track t) -> t.getGenres().stream())
+                requestedGenres = radio.getStartTracks().stream().flatMap((Track t) -> t.getGenres().stream())
                         .distinct().collect(Collectors.toList());
             }
         } else {
-            requested_genre = Arrays.asList(radio.getGenres());
+            requestedGenres = Arrays.asList(radio.getGenres());
         }
         //fetch genre similarity for each relevant genre
-        List<String> simSortedGenreList = getSortedGenreList(requested_genre,
+        List<String> simSortedGenreList = getSortedGenreList(requestedGenres,
                 recommendations.stream().flatMap((Track t) -> t.getGenres().stream())
                         .distinct().collect(Collectors.toList()));
 
@@ -58,7 +58,7 @@ public class GenreSorter {
         for (int i = 0; i < recommendations.size(); i++) {
             currentTrack = recommendations.get(i);
             tobreak:
-            for (String genre : requested_genre) {
+            for (String genre : requestedGenres) {
                 if (currentTrack.getGenres().contains(genre)) {
                     //add found song
                     sortedTracks.add(currentTrack);
