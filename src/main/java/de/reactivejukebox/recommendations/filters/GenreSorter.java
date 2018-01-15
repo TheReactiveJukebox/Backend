@@ -1,6 +1,7 @@
 package de.reactivejukebox.recommendations.filters;
 
 import de.reactivejukebox.database.DatabaseProvider;
+import de.reactivejukebox.model.Radio;
 import de.reactivejukebox.model.Track;
 import de.reactivejukebox.recommendations.Recommendations;
 
@@ -30,9 +31,14 @@ public class GenreSorter {
             return GenreSorter.instance;
     }
 
-    public Recommendations getGenreSortedRecommendation(List<String> origin_genre, List<Track> recommendations, List<Float> scores) {
+    public Recommendations getGenreSortedRecommendation(Radio radio, List<Track> recommendations, List<Float> scores) {
+        List<String> requested_genre;
+        if(radio.getGenres() == null || radio.getGenres().length == 0) {
+            return new Recommendations(recommendations, scores);
+        }
+        requested_genre = Arrays.asList(radio.getGenres());
         //fetch genre similarity for each relevant genre
-        List<String> simSortedGenreList = getSortedGenreList(origin_genre,
+        List<String> simSortedGenreList = getSortedGenreList(requested_genre,
                 recommendations.stream().flatMap((Track t) -> t.getGenres().stream())
                         .distinct().collect(Collectors.toList()));
 
@@ -46,8 +52,8 @@ public class GenreSorter {
         for (int i = 0; i < recommendations.size(); i++) {
             currentTrack = recommendations.get(i);
             tobreak:
-            for (String maingenre: origin_genre) {
-                if (currentTrack.getGenres().contains(maingenre)) {
+            for (String genre: requested_genre) {
+                if (currentTrack.getGenres().contains(genre)) {
                     //add found song
                     sortedTracks.add(currentTrack);
                     sortedScores.add(scores.get(i));
@@ -58,16 +64,16 @@ public class GenreSorter {
             }
         }
 
-        //clean
+        //clean (start removing at the end, so that the indices do not get shuffled)
         for (int a=toRemove.size() - 1;a >= 0; a--) {
             recommendations.remove(toRemove.get(a));
             scores.remove(toRemove.get(a));
         }
         toRemove.clear();
 
-        //now add all other genre
+        //now add all tracks without explicit requested genre starting with the most similar
         while (!recommendations.isEmpty() && !simSortedGenreList.isEmpty()) {
-            //look weather the next relevant genre is contained in one song
+            //look weather the next relevant genre is contained in one remaining song
             for (int i = 0; i < recommendations.size(); i++) {
                 currentTrack = recommendations.get(i);
                 if (currentTrack.getGenres().contains(simSortedGenreList.get(0))) {
@@ -78,13 +84,14 @@ public class GenreSorter {
                     toRemove.add(i);
                 }
             }
-            //clean
+            //clean (start removing at the end, so that the indices do not get shuffled)
             for (int a=toRemove.size() - 1;a >= 0; a--) {
                 recommendations.remove(toRemove.get(a));
                 scores.remove(toRemove.get(a));
             }
             toRemove.clear();
         }
+        //add songs without any genre
         if (!recommendations.isEmpty()) {
             sortedTracks.addAll(recommendations);
             sortedScores.addAll(scores);
@@ -107,21 +114,22 @@ public class GenreSorter {
                 id = rs.getInt("id");
                 nameIdMapping.put(name, id);
             }
+            con.close();
         } catch (SQLException e) {
             System.err.println("GenreSorter was not able to fetch all genre from database table genre");
         }
     }
 
-    private List<String> getSortedGenreList(List<String> mainGenre, List<String> allGenre) {
+    private List<String> getSortedGenreList(List<String> requestedGenre, List<String> remainingGenre) {
         Map<String, Double> result = new HashMap<>();
-        List<Integer> mainGenreIds = mainGenre.stream().map((String s) -> nameIdMapping.get(s))
+        List<Integer> mainGenreIds = requestedGenre.stream().map((String s) -> nameIdMapping.get(s))
                 .distinct().collect(Collectors.toList());
         int id;
         double distance;
         try {
             Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
             PreparedStatement stmnt = con.prepareStatement(SQL_QUERY_GENRE_SIM);
-            for(String genre: allGenre) {
+            for(String genre: remainingGenre) {
                 for (int mainGenreInt : mainGenreIds) {
                     id = nameIdMapping.get(genre);
                     if (id == mainGenreInt) {
@@ -148,7 +156,7 @@ public class GenreSorter {
         /* return the sorted genre list
          (note that a similarity value of 1 means, that the genre are very similiar.
          To get the correct result, we need to inverse the similarity) */
-        return allGenre.stream().sorted(Comparator.comparing((String s) -> 1 - result.getOrDefault(s,0.0)))
+        return remainingGenre.stream().sorted(Comparator.comparing((String s) -> 1 - result.getOrDefault(s,0.0)))
                 .collect(Collectors.toList());
     }
 }

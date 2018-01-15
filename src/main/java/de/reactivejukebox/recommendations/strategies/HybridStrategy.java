@@ -6,6 +6,7 @@ import de.reactivejukebox.model.UserProfile;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
 import de.reactivejukebox.recommendations.RecommendationStrategyFactory;
 import de.reactivejukebox.recommendations.Recommendations;
+import de.reactivejukebox.recommendations.filters.GenreScoreModifier;
 import de.reactivejukebox.recommendations.filters.GenreSorter;
 
 import java.util.*;
@@ -35,6 +36,7 @@ public class HybridStrategy implements RecommendationStrategy {
 
         public float value;
 
+
         FeedbackModifier(float value) {
             this.value = value;
         }
@@ -44,6 +46,7 @@ public class HybridStrategy implements RecommendationStrategy {
      * How many recommendations every algorithm should generate
      */
     static final int N_BEST_SONGS = 200;
+    private static final int GENRE_VERSION = 0; // 0 uses the modifier and 1 the sorter
 
     private RecommendationStrategyFactory factory;
     private UserProfile userProfile;
@@ -101,13 +104,17 @@ public class HybridStrategy implements RecommendationStrategy {
             }
         }
 
+        if(GENRE_VERSION == 0) {
+            results = GenreScoreModifier.getInstance().modifyScoreByGenreSim(radio,results);
+        }
+
         // finally, collect tracks and sort them by score
-        ArrayList<Track> recommendations = new ArrayList<>();
+        List<Track> recommendations = new ArrayList<>();
         recommendations.addAll(results.keySet());
         recommendations.sort(Comparator.comparing(results::get).reversed());
 
         // If need be, we could also assemble a list of scores like this:
-        ArrayList<Float> scores = new ArrayList<>();
+        List<Float> scores = new ArrayList<>();
         for (Track t : recommendations) {
             scores.add(results.get(t));
         }
@@ -120,10 +127,14 @@ public class HybridStrategy implements RecommendationStrategy {
         * If you ever end up here debugging a NullPointerException when accessing
         * Recommendations.getScores(), you know what to do.
         */
-        Recommendations recs = GenreSorter.getInstance()
-                .getGenreSortedRecommendation(Arrays.asList(radio.getGenres()), recommendations, scores);
 
-        return getTruncatedDistinctRecommendations(recs.getTracks(), recs.getScores());
+        if(GENRE_VERSION == 1) {
+            Recommendations recs = GenreSorter.getInstance()
+                    .getGenreSortedRecommendation(radio, recommendations, scores);
+            recommendations = recs.getTracks();
+            scores = recs.getScores();
+        }
+        return getTruncatedDistinctRecommendations(recommendations, scores);
     }
 
     private Recommendations getTruncatedDistinctRecommendations(List<Track> recommendations, List<Float> scores) {
@@ -134,7 +145,7 @@ public class HybridStrategy implements RecommendationStrategy {
         int counter = 1;
         boolean addTrack = true;
         while (counter <= this.resultCount && recommendations.size() > counter) {
-            Track newTrack = recommendations.get(counter++);
+            Track newTrack = recommendations.get(counter);
             if(finalRecs.stream().anyMatch((Track t) -> t.getId() == newTrack.getId())) {
                 continue;
             }
@@ -150,6 +161,7 @@ public class HybridStrategy implements RecommendationStrategy {
                 finalScores.add(scores.get(counter));
             }
             addTrack = true;
+            counter++;
         }
         return new Recommendations(finalRecs, finalScores);
     }
