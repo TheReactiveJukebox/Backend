@@ -47,7 +47,7 @@ public class GenreScoreModifier {
                     t.getGenres().stream()).distinct().collect(Collectors.toList()));
 
             //multiply each score with 1 + similarity (note: max(similarity)=1)
-            List<Integer> requestedGenreIds = requestedGenre.stream().map((String s) -> nameIdMapping.get(s))
+            List<Integer> requestedGenreIds = requestedGenre.stream().map((String s) -> nameIdMapping.get(s.toLowerCase()))
                     .distinct().collect(Collectors.toList());
             List<Integer> trackGenreIds;
             toContinue:
@@ -87,7 +87,7 @@ public class GenreScoreModifier {
                 String name;
                 Integer id;
                 while (rs.next()) {
-                    name = rs.getString("name");
+                    name = rs.getString("name").toLowerCase();
                     id = rs.getInt("id");
                     nameIdMapping.put(name, id);
                 }
@@ -98,9 +98,9 @@ public class GenreScoreModifier {
         }
 
         private void fetchSimilarities(List<String> requestedGenre, List<String> remainingGenre) {
-            List<Integer> mainGenreIds = requestedGenre.stream().map((String s) -> nameIdMapping.get(s))
+            List<Integer> mainGenreIds = requestedGenre.stream().map((String s) -> nameIdMapping.get(s.toLowerCase()))
                     .distinct().collect(Collectors.toList());
-            List<Integer> remainingGenreIds = remainingGenre.stream().map((String s) -> nameIdMapping.get(s))
+            List<Integer> remainingGenreIds = remainingGenre.stream().map((String s) -> nameIdMapping.get(s.toLowerCase()))
                     .distinct().collect(Collectors.toList());
             float sim;
             try {

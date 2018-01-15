@@ -46,7 +46,7 @@ public class HybridStrategy implements RecommendationStrategy {
      * How many recommendations every algorithm should generate
      */
     static final int N_BEST_SONGS = 200;
-    private static final int GENRE_VERSION = 0; // 0 uses the modifier and 1 the sorter
+    private static final int GENRE_VERSION = 1; // 0 uses the modifier and 1 the sorter
 
     private RecommendationStrategyFactory factory;
     private UserProfile userProfile;
