@@ -122,7 +122,7 @@ public class GenreSorter {
 
     private List<String> getSortedGenreList(List<String> requestedGenre, List<String> remainingGenre) {
         Map<String, Double> result = new HashMap<>();
-        List<Integer> mainGenreIds = requestedGenre.stream().map((String s) -> nameIdMapping.get(s))
+        List<Integer> mainGenreIds = requestedGenre.stream().map((String s) -> nameIdMapping.get(s.toLowerCase()))
                 .distinct().collect(Collectors.toList());
         int id;
         double distance;
