@@ -4,12 +4,15 @@ import de.reactivejukebox.model.*;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
 import org.mockito.Mockito;
 
+import org.testng.Reporter;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
@@ -49,7 +52,7 @@ public class MoodNNTest {
             }
         }
 
-        Model.getInstance().getTracks().put(500, new Track());
+        //Model.getInstance().getTracks().put(500, new Track());
 
         ArrayList<HistoryEntry> history = new ArrayList<>();
         for (int i = 0; i < 80; i++)
@@ -180,5 +183,18 @@ public class MoodNNTest {
         for (Track e : result) {
             assertTrue(e.getId() >= 80 && e.getId() < 101);
         }
+    }
+
+    @Test
+    public void TestConstructor() throws Exception{
+        Radio radio = new Radio();
+        radio.setArousal(0.01f);
+        radio.setValence(-0.01f);
+
+        RecommendationStrategy strat = new MoodNN(radio, new ArrayList<>(),20);
+        Field selectedField = MoodNN.class.getDeclaredField("selectedTracks");
+        selectedField.setAccessible(true);
+        Collection<Track> selected = (Collection<Track>) selectedField.get(strat);
+
     }
 }

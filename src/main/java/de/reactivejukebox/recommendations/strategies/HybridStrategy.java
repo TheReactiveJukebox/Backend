@@ -30,7 +30,7 @@ public class HybridStrategy implements RecommendationStrategy {
         SKIP(1.8f),            // see calculateLinearModifier for tweaking
         DELETE(1f),            // see calculateLinearModifier for tweaking
         MULTISKIP(0.7f),       // see calculateLinearModifier for tweaking
-        FILTER_MISMATCH(4f);   // see calculateLinearModifier for tweaking
+        FILTER_MISMATCH(8f);   // see calculateLinearModifier for tweaking
 
         public float value;
 
@@ -213,6 +213,14 @@ public class HybridStrategy implements RecommendationStrategy {
     }
 
     /**
+     *Gaussian "Bell-curve" with maximum 1 at the center and a normalized window for different domains.
+     */
+
+    float calculateGaussianModifier(float x,float center, float domain){
+        return (float) Math.exp(-(Math.pow(x-center,2)/(domain/FeedbackModifier.FILTER_MISMATCH.value)));
+    }
+
+    /**
      * Applies all user feedback to modify the ranking
      *
      * @param ranking the intermediate data structure used to keep track of scores in getRecommendations()
@@ -306,14 +314,13 @@ public class HybridStrategy implements RecommendationStrategy {
     }
 
     float getFilterScore(Track t) {
-        final FeedbackModifier mod = FeedbackModifier.FILTER_MISMATCH;
         float score = 1.0f;
         int d1;
         int d2;
 
         // start and end year
         if (t.getReleaseDate() == null) {
-            score *= 0.5;
+            score *= 0.01f;
         } else {
             int sy = radio.getStartYear() == null ? 0 : radio.getStartYear();
             int ey = radio.getEndYear() == null ? Integer.MAX_VALUE : radio.getEndYear();
@@ -321,9 +328,13 @@ public class HybridStrategy implements RecommendationStrategy {
             d1 = t.getReleaseDate().getYear() - sy;
             d2 = t.getReleaseDate().getYear() - ey;
 
-            if (d1 < 0 || d2 > 0) {
-                score *= calculateLinearModifier(mod, Math.min(Math.abs(d1), Math.abs(d2)));
+            if (d1 < 0) {
+                score *= calculateGaussianModifier((float)t.getReleaseDate().getYear(),(float)sy,118);
             }
+            if (d2 > 0) {
+                score *= calculateGaussianModifier((float)t.getReleaseDate().getYear(),(float)ey,118);
+            }
+
         }
         // minimum and maximum tempo
         float minTempo = radio.getMinSpeed() == null ? 0 : radio.getMinSpeed();
@@ -332,17 +343,18 @@ public class HybridStrategy implements RecommendationStrategy {
         d1 = Math.round(t.getSpeed()) - Math.round(minTempo);
         d2 = Math.round(t.getSpeed()) - Math.round(maxTempo);
 
-        if (d1 < 0 || d2 > 0) {
-            score *= calculateLinearModifier(mod, Math.min(Math.abs(d1), Math.abs(d2)));
+        if (d1 < 0) {
+            score *= calculateGaussianModifier(t.getSpeed(),minTempo,216);
+        }
+        if (d2 > 0) {
+            score *= calculateGaussianModifier(t.getSpeed(),maxTempo,216);
         }
 
         // arousal and valence
         if (!(radio.getArousal() == null || radio.getValence() == null)) {
-            double a = radio.getArousal() - t.getArousal();
-            double v = radio.getValence() - t.getValence();
-            float distance = (float) Math.sqrt(a * a + v * v);
-            distance = 1 - distance / 1.415f; // maximum distance in unit square is sqrt(2) = 1.4142...
-            distance = 0.7f + 0.3f * distance; // arousal and valence data is quite inaccurate
+            float a = calculateGaussianModifier(t.getArousal(),radio.getArousal(),2);
+            float v = calculateGaussianModifier(t.getValence(),radio.getValence(),2);
+            float distance = (a+v)/2;
             score *= distance;
         }
 
@@ -350,13 +362,13 @@ public class HybridStrategy implements RecommendationStrategy {
         float genreScore = 1.0f;
         for (String genre : t.getGenres()) {
             if (radioGenres.contains(genre)) {
-                genreScore += 0.05f;
-            } else {
-                genreScore -= 0.05f;
+                genreScore += 0.2f;
             }
         }
-        score *= genreScore;
+        if (t.getGenres().size() == 0) genreScore -= 0.2f;
 
+        score *= genreScore;
+        
         return score;
     }
 }
