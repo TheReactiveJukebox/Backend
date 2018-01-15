@@ -61,6 +61,9 @@ public class Tracks implements Iterable<Track> {
             int fSpeed = Math.round(rs.getFloat("bpm")/5);
             int fMood = new MoodKey(rs.getFloat("mirarousal"),rs.getFloat("mirvalence")).hashCode();
 
+            float valence = Math.max(-1,Math.max(rs.getFloat("mirvalence"),1));
+            float arousal = Math.max(-1,Math.max(rs.getFloat("mirarousa"),1));
+
             Track t =  new Track(
                     id,
                     rs.getString("title"),
@@ -75,8 +78,8 @@ public class Tracks implements Iterable<Track> {
                     rs.getFloat("dynamics"),
                     spotifyId,
                     rs.getString("spotifyurl"),
-                    rs.getFloat("mirvalence"),
-                    rs.getFloat("mirarousal"),
+                    valence,
+                    arousal,
                     fSpeed,
                     fMood
 
