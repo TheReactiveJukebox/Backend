@@ -34,7 +34,12 @@ public class GenreSorter {
     public Recommendations getGenreSortedRecommendation(Radio radio, List<Track> recommendations, List<Float> scores) {
         List<String> requested_genre;
         if(radio.getGenres() == null || radio.getGenres().length == 0) {
-            return new Recommendations(recommendations, scores);
+            if (radio.getStartTracks().isEmpty()) {
+                return new Recommendations(recommendations, scores);
+            } else {
+                requested_genre = radio.getStartTracks().stream().flatMap((Track t) -> t.getGenres().stream())
+                        .distinct().collect(Collectors.toList());
+            }
         }
         requested_genre = Arrays.asList(radio.getGenres());
         //fetch genre similarity for each relevant genre
