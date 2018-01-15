@@ -48,7 +48,7 @@ public class MoodNNTest {
                 a = AROUSALS[i] - 0.05f + (rng.nextFloat() * 0.1f);
                 v = VALENCES[i] - 0.05f + (rng.nextFloat() * 0.1f);
                 Model.getInstance().getTracks().put(i * 100 + j, new Track(i * 100 + j, "", checker, stub, "", "",
-                        0, 0, null, 0f, 0f, "","", v, a));
+                        0, 0, null, 0f, 0f, "", "", v, a));
             }
         }
 
@@ -67,7 +67,7 @@ public class MoodNNTest {
         Radio radio = new Radio();
         radio.setId(1);
         radio.getStartTracks().add(new Track(888, "", null, null, "", "",
-                0, 0, null, 0f, 0f, "","", -0.4f, 0.4f));
+                0, 0, null, 0f, 0f, "", "", -0.4f, 0.4f));
 
         RecommendationStrategy strat = new MoodNN(radio, new ArrayList<Track>(), 20);
         List<Track> result = strat.getRecommendations().getTracks();
@@ -92,7 +92,7 @@ public class MoodNNTest {
 
         radio.getStartTracks().clear();
         radio.getStartTracks().add(new Track(888, "", null, null, "", "",
-                0, 0, null, 0f, 0f, "","", 0.4f, 0.4f));
+                0, 0, null, 0f, 0f, "", "", 0.4f, 0.4f));
 
         result = strat.getRecommendations().getTracks();
         scores = strat.getRecommendations().getScores();
@@ -112,7 +112,7 @@ public class MoodNNTest {
 
         radio.getStartTracks().clear();
         radio.getStartTracks().add(new Track(888, "", null, null, "", "",
-                0, 0, null, 0f, 0f, "","", 0.4f, -0.4f));
+                0, 0, null, 0f, 0f, "", "", 0.4f, -0.4f));
 
         result = strat.getRecommendations().getTracks();
         scores = strat.getRecommendations().getScores();
@@ -132,7 +132,7 @@ public class MoodNNTest {
 
         radio.getStartTracks().clear();
         radio.getStartTracks().add(new Track(888, "", null, null, "", "",
-                0, 0, null, 0f, 0f, "","", -0.4f, -0.4f));
+                0, 0, null, 0f, 0f, "", "", -0.4f, -0.4f));
 
         result = strat.getRecommendations().getTracks();
         scores = strat.getRecommendations().getScores();
@@ -152,7 +152,7 @@ public class MoodNNTest {
 
 
         radio.getStartTracks().add(new Track(888, "", null, null, "", "",
-                0, 0, null, 0f, 0f, "","", -0.4f, 0.4f));
+                0, 0, null, 0f, 0f, "", "", -0.4f, 0.4f));
         assertTrue(result.size() == 20);
         result = strat.getRecommendations().getTracks();
         scores = strat.getRecommendations().getScores();
@@ -176,7 +176,7 @@ public class MoodNNTest {
         Radio radio = new Radio();
         radio.setId(2);
         radio.getStartTracks().add(new Track(888, "", null, null, "", "",
-                0, 0, null, 0f, 0f, "","",-0.4f, 0.4f));
+                0, 0, null, 0f, 0f, "", "", -0.4f, 0.4f));
 
         RecommendationStrategy strat = new MoodNN(radio, new ArrayList<Track>(), 20);
         List<Track> result = strat.getRecommendations().getTracks();
@@ -186,42 +186,42 @@ public class MoodNNTest {
     }
 
     @Test
-    public void TestConstructor() throws Exception{
+    public void TestConstructor() throws Exception {
         Radio radio = new Radio();
         radio.setArousal(0.01f);
         radio.setValence(-0.01f);
 
-        RecommendationStrategy strat = new MoodNN(radio, new ArrayList<>(),20);
+        RecommendationStrategy strat = new MoodNN(radio, new ArrayList<>(), 20);
         Field selectedField = MoodNN.class.getDeclaredField("selectedTracks");
         selectedField.setAccessible(true);
         Collection<Track> selected = (Collection<Track>) selectedField.get(strat);
         assertTrue(selected.size() == 1);
-        for (Track t:selected){
-            assertTrue(t.getArtist().getId()==1);
+        for (Track t : selected) {
+            assertTrue(t.getArtist().getId() == 1);
         }
 
         radio.setValence(0.01f);
-        strat = new MoodNN(radio, new ArrayList<>(),20);
+        strat = new MoodNN(radio, new ArrayList<>(), 20);
         selected = (Collection<Track>) selectedField.get(strat);
         assertTrue(selected.size() == 1);
-        for (Track t:selected){
-            assertTrue(t.getArtist().getId()==2);
+        for (Track t : selected) {
+            assertTrue(t.getArtist().getId() == 2);
         }
 
         radio.setArousal(-0.01f);
-        strat = new MoodNN(radio, new ArrayList<>(),20);
+        strat = new MoodNN(radio, new ArrayList<>(), 20);
         selected = (Collection<Track>) selectedField.get(strat);
         assertTrue(selected.size() == 1);
-        for (Track t:selected){
-            assertTrue(t.getArtist().getId()==3);
+        for (Track t : selected) {
+            assertTrue(t.getArtist().getId() == 3);
         }
 
         radio.setValence(-0.01f);
-        strat = new MoodNN(radio, new ArrayList<>(),20);
+        strat = new MoodNN(radio, new ArrayList<>(), 20);
         selected = (Collection<Track>) selectedField.get(strat);
         assertTrue(selected.size() == 1);
-        for (Track t:selected){
-            assertTrue(t.getArtist().getId()==4);
+        for (Track t : selected) {
+            assertTrue(t.getArtist().getId() == 4);
         }
     }
 }

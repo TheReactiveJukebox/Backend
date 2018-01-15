@@ -132,17 +132,17 @@ public class HybridStrategy implements RecommendationStrategy {
         boolean addTrack = true;
         while (counter <= this.resultCount && recommendations.size() > counter) {
             Track newTrack = recommendations.get(counter++);
-            if(finalRecs.stream().anyMatch((Track t) -> t.getId() == newTrack.getId())) {
+            if (finalRecs.stream().anyMatch((Track t) -> t.getId() == newTrack.getId())) {
                 continue;
             }
-            for (Track track: finalRecs) {
+            for (Track track : finalRecs) {
                 int compareTitle = track.getTitle().compareTo(newTrack.getTitle());
                 int compareArtist = track.getArtist().getNameNormalized().compareTo(newTrack.getArtist().getNameNormalized());
                 if (Math.abs(compareTitle) <= 2 && Math.abs(compareArtist) <= 2) {
                     addTrack = false;
                 }
             }
-            if(addTrack) {
+            if (addTrack) {
                 finalRecs.add(newTrack);
                 finalScores.add(scores.get(counter));
             }
@@ -213,11 +213,11 @@ public class HybridStrategy implements RecommendationStrategy {
     }
 
     /**
-     *Gaussian "Bell-curve" with maximum 1 at the center and a normalized window for different domains.
+     * Gaussian "Bell-curve" with maximum 1 at the center and a normalized window for different domains.
      */
 
-    float calculateGaussianModifier(float x,float center, float domain){
-        return (float) Math.exp(-(Math.pow(x-center,2)/(domain/FeedbackModifier.FILTER_MISMATCH.value)));
+    float calculateGaussianModifier(float x, float center, float domain) {
+        return (float) Math.exp(-(Math.pow(x - center, 2) / (domain / FeedbackModifier.FILTER_MISMATCH.value)));
     }
 
     /**
@@ -329,10 +329,10 @@ public class HybridStrategy implements RecommendationStrategy {
             d2 = t.getReleaseDate().getYear() - ey;
 
             if (d1 < 0) {
-                score *= calculateGaussianModifier((float)t.getReleaseDate().getYear(),(float)sy,118);
+                score *= calculateGaussianModifier((float) t.getReleaseDate().getYear(), (float) sy, 118);
             }
             if (d2 > 0) {
-                score *= calculateGaussianModifier((float)t.getReleaseDate().getYear(),(float)ey,118);
+                score *= calculateGaussianModifier((float) t.getReleaseDate().getYear(), (float) ey, 118);
             }
 
         }
@@ -344,17 +344,17 @@ public class HybridStrategy implements RecommendationStrategy {
         d2 = Math.round(t.getSpeed()) - Math.round(maxTempo);
 
         if (d1 < 0) {
-            score *= calculateGaussianModifier(t.getSpeed(),minTempo,216);
+            score *= calculateGaussianModifier(t.getSpeed(), minTempo, 216);
         }
         if (d2 > 0) {
-            score *= calculateGaussianModifier(t.getSpeed(),maxTempo,216);
+            score *= calculateGaussianModifier(t.getSpeed(), maxTempo, 216);
         }
 
         // arousal and valence
         if (!(radio.getArousal() == null || radio.getValence() == null)) {
-            float a = calculateGaussianModifier(t.getArousal(),radio.getArousal(),2);
-            float v = calculateGaussianModifier(t.getValence(),radio.getValence(),2);
-            float distance = (a+v)/2;
+            float a = calculateGaussianModifier(t.getArousal(), radio.getArousal(), 2);
+            float v = calculateGaussianModifier(t.getValence(), radio.getValence(), 2);
+            float distance = (a + v) / 2;
             score *= distance;
         }
 

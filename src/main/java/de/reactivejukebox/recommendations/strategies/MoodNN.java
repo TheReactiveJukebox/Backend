@@ -24,16 +24,15 @@ public class MoodNN implements RecommendationStrategy {
     private int windowMultiplicator;
 
     public MoodNN(Radio radio, Collection<Track> upcoming, int resultCount) {
-        if(radio.getStartTracks() != null && radio.getStartTracks().size() > 0){
+        if (radio.getStartTracks() != null && radio.getStartTracks().size() > 0) {
             this.selectedTracks = radio.getStartTracks();
-        }
-        else{
+        } else {
             this.selectedTracks = new ArrayList<>();
         }
 
-        if(radio.getValence()!=null && radio.getArousal()!=null && radio.getValence()!=0f && radio.getArousal()!=0f){
+        if (radio.getValence() != null && radio.getArousal() != null && radio.getValence() != 0f && radio.getArousal() != 0f) {
             Track near = Model.getInstance().getTracks().stream()
-                    .min(Comparator.comparing((Track t)->calcDistance(radio.getArousal(),radio.getValence(),t)))
+                    .min(Comparator.comparing((Track t) -> calcDistance(radio.getArousal(), radio.getValence(), t)))
                     .get();
             this.selectedTracks.add(near);
         }
@@ -52,7 +51,7 @@ public class MoodNN implements RecommendationStrategy {
             tracks = defaultRecs();
             score = this.getScores(tracks);
             this.windowMultiplicator++;
-        }while (tracks.size() < this.resultCount/4 && this.windowMultiplicator <=4);
+        } while (tracks.size() < this.resultCount / 4 && this.windowMultiplicator <= 4);
 
 
         Recommendations rec = new Recommendations(tracks, score);
@@ -67,31 +66,30 @@ public class MoodNN implements RecommendationStrategy {
     }
 
 
-
     private List<Float> getScores(List<Track> recommendations) {
         return recommendations.stream().map(this::calcDistance).map(this::score).collect(Collectors.toList());
     }
 
     private float score(float distance) { // 1 when exact speed match, 0 when 5% away from selected mood, quadratic decay
-        return (float) Math.pow((Math.max((MoodPredicate.startWindow * this.windowMultiplicator)- distance, 0)) / (MoodPredicate.startWindow * this.windowMultiplicator), 2);
+        return (float) Math.pow((Math.max((MoodPredicate.startWindow * this.windowMultiplicator) - distance, 0)) / (MoodPredicate.startWindow * this.windowMultiplicator), 2);
     }
 
     private Stream<Track> nearestNeighbours(Track t) {
-        return   Model.getInstance().getTracks().stream()
+        return Model.getInstance().getTracks().stream()
                 .filter(new MoodPredicate(t.getArousal(), t.getValence(), MoodPredicate.startWindow * this.windowMultiplicator)) // Filter track mood
                 .filter(new HistoryPredicate(this.radio, this.upcoming)); // Filter history
     }
 
     private float calcDistance(Track t) {
-            float result = Float.MAX_VALUE;
-            for (Track e : selectedTracks) { // Get minimal Distance to the selected Tracks
-                float dist = Math.abs(t.getArousal() - e.getArousal()) + Math.abs(t.getValence() - e.getValence());
-                result = dist < result ? dist : result;
-            }
-            return result;
+        float result = Float.MAX_VALUE;
+        for (Track e : selectedTracks) { // Get minimal Distance to the selected Tracks
+            float dist = Math.abs(t.getArousal() - e.getArousal()) + Math.abs(t.getValence() - e.getValence());
+            result = dist < result ? dist : result;
+        }
+        return result;
     }
 
-    private float calcDistance(float arousal, float valence, Track t){
-        return Math.abs(t.getArousal() - arousal) + Math.abs(t.getValence()-valence);
+    private float calcDistance(float arousal, float valence, Track t) {
+        return Math.abs(t.getArousal() - arousal) + Math.abs(t.getValence() - valence);
     }
 }
