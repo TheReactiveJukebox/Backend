@@ -135,13 +135,8 @@ public class GenreSorter {
                     if (id == mainGenreInt) {
                         continue;
                     }
-                    if (id < mainGenreInt) {
-                        stmnt.setInt(1, mainGenreInt);
-                        stmnt.setInt(2, id);
-                    } else {
-                        stmnt.setInt(1, id);
-                        stmnt.setInt(2, mainGenreInt);
-                    }
+                    stmnt.setInt(1, Math.min(mainGenreInt, id));
+                    stmnt.setInt(2, Math.max(mainGenreInt, id));
                     ResultSet rs = stmnt.executeQuery();
                     while (rs.next()) {
                             distance = rs.getDouble("sim");
