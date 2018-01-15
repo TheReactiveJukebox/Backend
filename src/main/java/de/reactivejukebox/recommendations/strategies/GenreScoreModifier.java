@@ -1,4 +1,4 @@
-package de.reactivejukebox.recommendations.filters;
+package de.reactivejukebox.recommendations.strategies;
 
 import de.reactivejukebox.database.DatabaseProvider;
 import de.reactivejukebox.model.Radio;
@@ -11,18 +11,18 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class GenreScoreModifier {
+public class GenreScoreModifier extends GenreStrategy{
 
 
-        private HashMap<String, Integer> nameIdMapping;
+        // matrix with similarity between each genre (lazy init)
         float[][] similarity;
+        //query to get similarity between exactly two genre
         private final String SQL_QUERY_GENRE_SIM = "SELECT genresimilarity.Similarity AS sim " +
-                "FROM genresimilarity WHERE GenreId1=? AND GenreId2=?";
-        private final String SQL_QUERY_GENRE_ID = "SELECT genre.id AS id, genre.name AS name FROM genre ";
+            "FROM genresimilarity WHERE GenreId1=? AND GenreId2=?";
         private  static GenreScoreModifier instance;
 
         private GenreScoreModifier() {
-            initGenreIdMaps();
+            super();
             similarity = new float[nameIdMapping.size()+1][nameIdMapping.size()+1];
             for (float[] row: similarity) {
                 Arrays.fill(row, 0);
@@ -37,33 +37,31 @@ public class GenreScoreModifier {
         }
 
         public Map<Track, Float> modifyScoreByGenreSim(Radio radio, Map<Track, Float> recommendations) {
-            List<String> requestedGenre;
-            if(radio.getGenres() == null || radio.getGenres().length == 0) {
+            List<Integer> requestedGenre  = getListOfRequestedGenre(radio);
+            if(requestedGenre.isEmpty()) {
                 return recommendations;
             }
-            requestedGenre = Arrays.asList(radio.getGenres());
             //fetch genre similarity for each relevant genre
             fetchSimilarities(requestedGenre, recommendations.keySet().stream().flatMap((Track t) ->
                     t.getGenres().stream()).distinct().collect(Collectors.toList()));
 
-            //multiply each score with 1 + similarity (note: max(similarity)=1)
-            List<Integer> requestedGenreIds = requestedGenre.stream().map((String s) -> nameIdMapping.get(s.toLowerCase()))
-                    .distinct().collect(Collectors.toList());
-            List<Integer> trackGenreIds;
+            //multiply each score with 1 + similarity (note: most similar=1)
+            List<Integer> trackGenre;
             toContinue:
             for (Track t: recommendations.keySet()) {
-                List<String> trackGenre = t.getGenres();
-                for (String s: requestedGenre) {
-                    if (trackGenre.contains(s)) {
+                trackGenre = transformStringToInteger(t.getGenres());
+                // update track score with the exactly requested genre
+                for (Integer rgenre: requestedGenre) {
+                    if (trackGenre.contains(rgenre)) {
                         float currentScore = recommendations.get(t);
                         recommendations.put(t, currentScore * (1 + 1));
                         continue toContinue;
                     }
                 }
+                // update score ot tracks not containing the exact genre
                 float bestScore = 0;
-                for (Integer genre: trackGenre.stream().map((String s) -> nameIdMapping.get(s))
-                        .collect(Collectors.toList())) {
-                    for (Integer requestedId: requestedGenreIds) {
+                for (Integer genre: trackGenre) {
+                    for (Integer requestedId: requestedGenre) {
                         if(similarity[genre][requestedId] > bestScore) {
                             bestScore = similarity[genre][requestedId];
                         }
@@ -76,38 +74,14 @@ public class GenreScoreModifier {
             return recommendations;
         }
 
-
-        private void initGenreIdMaps() {
-            nameIdMapping = new HashMap<>();
-            Connection con;
-            try {
-                con = DatabaseProvider.getInstance().getDatabase().getConnection();
-                PreparedStatement stmnt = con.prepareStatement(SQL_QUERY_GENRE_ID);
-                ResultSet rs = stmnt.executeQuery();
-                String name;
-                Integer id;
-                while (rs.next()) {
-                    name = rs.getString("name").toLowerCase();
-                    id = rs.getInt("id");
-                    nameIdMapping.put(name, id);
-                }
-                con.close();
-            } catch (SQLException e) {
-                System.err.println("Was not able to fetch all genre from database table genre");
-            }
-        }
-
-        private void fetchSimilarities(List<String> requestedGenre, List<String> remainingGenre) {
-            List<Integer> mainGenreIds = requestedGenre.stream().map((String s) -> nameIdMapping.get(s.toLowerCase()))
-                    .distinct().collect(Collectors.toList());
-            List<Integer> remainingGenreIds = remainingGenre.stream().map((String s) -> nameIdMapping.get(s.toLowerCase()))
-                    .distinct().collect(Collectors.toList());
+        private void fetchSimilarities(List<Integer> requestedGenre, List<String> remainingGenre) {
+            List<Integer> remainingGenreIds = transformStringToInteger(remainingGenre);
             float sim;
             try {
                 Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
                 PreparedStatement stmnt = con.prepareStatement(SQL_QUERY_GENRE_SIM);
                 for(Integer remaining: remainingGenreIds) {
-                    for (int mainGenreInt : mainGenreIds) {
+                    for (int mainGenreInt : requestedGenre) {
                         if (remaining == mainGenreInt) {
                             continue;
                         }

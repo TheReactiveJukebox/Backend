@@ -6,8 +6,6 @@ import de.reactivejukebox.model.UserProfile;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
 import de.reactivejukebox.recommendations.RecommendationStrategyFactory;
 import de.reactivejukebox.recommendations.Recommendations;
-import de.reactivejukebox.recommendations.filters.GenreScoreModifier;
-import de.reactivejukebox.recommendations.filters.GenreSorter;
 
 import java.util.*;
 

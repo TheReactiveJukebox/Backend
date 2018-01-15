@@ -1,4 +1,4 @@
-package de.reactivejukebox.recommendations.filters;
+package de.reactivejukebox.recommendations.strategies;
 
 import de.reactivejukebox.database.DatabaseProvider;
 import de.reactivejukebox.model.Radio;
@@ -12,16 +12,14 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class GenreSorter {
+public class GenreSorter extends GenreStrategy {
 
-    private HashMap<String, Integer> nameIdMapping;
     private final String SQL_QUERY_GENRE_SIM = "SELECT genresimilarity.Similarity AS sim " +
             "FROM genresimilarity WHERE GenreId1=? AND GenreId2=?";
-    private final String SQL_QUERY_GENRE_ID = "SELECT genre.id AS id, genre.name AS name FROM genre ";
     private static GenreSorter instance;
 
     private GenreSorter() {
-        initGenreIdMaps();
+        super();
     }
 
     public static GenreSorter getInstance() {
@@ -32,55 +30,42 @@ public class GenreSorter {
     }
 
     public Recommendations getGenreSortedRecommendation(Radio radio, List<Track> recommendations, List<Float> scores) {
-        // Find out which genres are requested
-        List<String> requestedGenres;
-        if (radio.getGenres() == null || radio.getGenres().length == 0) {
-            if (radio.getStartTracks() == null || radio.getStartTracks().isEmpty()) {
-                return new Recommendations(recommendations, scores);
-            } else {
-                requestedGenres = radio
-                        .getStartTracks()
-                        .stream()
-                        .flatMap((Track t) -> t.getGenres().stream())
-                        .distinct()
-                        .collect(Collectors.toList());
-            }
-        } else {
-            requestedGenres = Arrays.asList(radio.getGenres());
+        List<String> requestedGenre = getListOfRequestedGenreStrings(radio);
+        //check whether there are any relevant genre
+        if (requestedGenre.isEmpty()) {
+            return new Recommendations(recommendations, scores);
         }
 
         //fetch genre similarity for each relevant genre
-        List<String> simSortedGenreList = getSortedGenreList(requestedGenres,
-                recommendations
-                        .stream()
+        List<String> simSortedGenreList = getSortedGenreList(transformStringToInteger(requestedGenre),
+                recommendations.stream()
                         .flatMap((Track t) -> t.getGenres().stream())
-                        .distinct()
-                        .collect(Collectors.toList())
+                        .distinct().collect(Collectors.toList())
         );
 
-        //fill new lists sorted by genre
+        //init new lists
         List<Track> sortedTracks = new ArrayList<>(recommendations.size());
         List<Float> sortedScores = new ArrayList<>(scores.size());
         Track currentTrack;
         List<Integer> toRemove = new ArrayList<>();
 
-        //first add all songs containing the concrete genre
+        //first add all songs containing the user specified genre
         for (int i = 0; i < recommendations.size(); i++) {
             currentTrack = recommendations.get(i);
             tobreak:
-            for (String genre : requestedGenres) {
+            for (String genre : requestedGenre) {
                 if (currentTrack.getGenres().contains(genre)) {
-                    //add found song
+                    //add matching song
                     sortedTracks.add(currentTrack);
                     sortedScores.add(scores.get(i));
-                    //remove inserted indices
+                    //mark inserted indices for removal
                     toRemove.add(i);
                     break tobreak;
                 }
             }
         }
 
-        //clean (start removing at the end, so that the indices do not get shuffled)
+        //clean input list (start removing at the end, so that the indices do not get shuffled)
         for (int a = toRemove.size() - 1; a >= 0; a--) {
             recommendations.remove((int)toRemove.get(a));
             scores.remove((int)toRemove.get(a));
@@ -93,10 +78,10 @@ public class GenreSorter {
             for (int i = 0; i < recommendations.size(); i++) {
                 currentTrack = recommendations.get(i);
                 if (currentTrack.getGenres().contains(simSortedGenreList.get(0))) {
-                    //add found song
+                    //add matching song
                     sortedTracks.add(currentTrack);
                     sortedScores.add(scores.get(i));
-                    //remove inserted indices
+                    //mark inserted indices for removal
                     toRemove.add(i);
                 }
             }
@@ -116,64 +101,33 @@ public class GenreSorter {
         return new Recommendations(sortedTracks, sortedScores);
     }
 
-
-    private void initGenreIdMaps() {
-        nameIdMapping = new HashMap<>();
-        Connection con;
-        try {
-            con = DatabaseProvider.getInstance().getDatabase().getConnection();
-            PreparedStatement stmnt = con.prepareStatement(SQL_QUERY_GENRE_ID);
-            ResultSet rs = stmnt.executeQuery();
-            String name;
-            Integer id;
-            while (rs.next()) {
-                name = rs.getString("name");
-                id = rs.getInt("id");
-                nameIdMapping.put(name, id);
-            }
-            con.close();
-        } catch (SQLException e) {
-            System.err.println("GenreSorter was not able to fetch all genre from database table genre");
-        }
-    }
-
-    private List<String> getSortedGenreList(List<String> requestedGenre, List<String> remainingGenre) {
-        Map<String, Double> result = new HashMap<>();
-        List<Integer> mainGenreIds = requestedGenre
-                .stream()
-                .map((String s) -> nameIdMapping.get(s.toLowerCase()))
-                .distinct()
-                .collect(Collectors.toList());
+    private List<String> getSortedGenreList(List<Integer> requestedGenre, List<String> remainingGenre) {
+        Map<String, Float> result = new HashMap<>();
         int id;
-        double distance;
         try {
             Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
             PreparedStatement stmnt = con.prepareStatement(SQL_QUERY_GENRE_SIM);
             for (String genre : remainingGenre) {
-                for (int mainGenreInt : mainGenreIds) {
+                for (int mainGenreInt : requestedGenre) {
                     id = nameIdMapping.get(genre);
                     if (id == mainGenreInt) {
                         continue;
                     }
+                    //database is a triangular matrix, so make sure to use the smaller value first
                     stmnt.setInt(1, Math.min(mainGenreInt, id));
                     stmnt.setInt(2, Math.max(mainGenreInt, id));
                     ResultSet rs = stmnt.executeQuery();
-                    while (rs.next()) {
-                        distance = rs.getDouble("sim");
-                        result.put(genre, distance);
-                    }
+                    rs.next(); //there is only exact one result
+                    result.put(genre, rs.getFloat("sim"));
                 }
             }
             con.close();
         } catch (SQLException e1) {
             System.err.println("GenreSorter could not fetch genre similarity from database table genresimilarity");
         }
-        /* return the sorted genre list
-         (note that a similarity value of 1 means, that the genre are very similiar.
-         To get the correct result, we need to inverse the similarity) */
-        return remainingGenre
-                .stream()
-                .sorted(Comparator.comparing((String s) -> 1 - result.getOrDefault(s, 0.0)))
+        // return the sorted genre list
+        return remainingGenre.stream()
+                .sorted(Comparator.comparing((String s) -> 1 - result.getOrDefault(s, 0f)))//similarity range = (0,1) most sim. = 1 => invert similarity for correct order
                 .collect(Collectors.toList());
     }
 }
