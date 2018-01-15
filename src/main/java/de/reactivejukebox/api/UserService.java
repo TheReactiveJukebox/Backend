@@ -98,7 +98,7 @@ public class UserService {
                 return Response.status(441).entity("invalid invite key}").build();
             }
             UserPlain token = new TokenHandler().register(auth);
-            LoggerProvider.getLogger().writeEntry(new UserRegisterEntry(auth));
+            LoggerProvider.getLogger().writeEntry(new UserRegisterEntry(token));
             return Response.ok(token).build();
         } catch (Exception e) {
             System.err.println("Username already in use");
