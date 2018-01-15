@@ -30,7 +30,7 @@ public class HybridStrategy implements RecommendationStrategy {
         SKIP(1.8f),            // see calculateLinearModifier for tweaking
         DELETE(1f),            // see calculateLinearModifier for tweaking
         MULTISKIP(0.7f),       // see calculateLinearModifier for tweaking
-        FILTER_MISMATCH(8f);   // see calculateLinearModifier for tweaking
+        FILTER_MISMATCH(4f);   // see calculateLinearModifier for tweaking
 
         public float value;
 
