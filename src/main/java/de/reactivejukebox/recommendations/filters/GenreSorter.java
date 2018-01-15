@@ -18,7 +18,7 @@ public class GenreSorter {
     private final String SQL_QUERY_GENRE_SIM = "SELECT genresimilarity.Similarity AS sim " +
             "FROM genresimilarity WHERE GenreId1=? AND GenreId2=?";
     private final String SQL_QUERY_GENRE_ID = "SELECT genre.id AS id, genre.name AS name FROM genre ";
-    private  static GenreSorter instance;
+    private static GenreSorter instance;
 
     private GenreSorter() {
         initGenreIdMaps();
@@ -28,12 +28,12 @@ public class GenreSorter {
         if (GenreSorter.instance == null) {
             GenreSorter.instance = new GenreSorter();
         }
-            return GenreSorter.instance;
+        return GenreSorter.instance;
     }
 
     public Recommendations getGenreSortedRecommendation(Radio radio, List<Track> recommendations, List<Float> scores) {
         List<String> requested_genre;
-        if(radio.getGenres() == null || radio.getGenres().length == 0) {
+        if (radio.getGenres() == null || radio.getGenres().length == 0) {
             if (radio.getStartTracks().isEmpty()) {
                 return new Recommendations(recommendations, scores);
             } else {
@@ -57,7 +57,7 @@ public class GenreSorter {
         for (int i = 0; i < recommendations.size(); i++) {
             currentTrack = recommendations.get(i);
             tobreak:
-            for (String genre: requested_genre) {
+            for (String genre : requested_genre) {
                 if (currentTrack.getGenres().contains(genre)) {
                     //add found song
                     sortedTracks.add(currentTrack);
@@ -70,7 +70,7 @@ public class GenreSorter {
         }
 
         //clean (start removing at the end, so that the indices do not get shuffled)
-        for (int a=toRemove.size() - 1;a >= 0; a--) {
+        for (int a = toRemove.size() - 1; a >= 0; a--) {
             recommendations.remove(toRemove.get(a));
             scores.remove(toRemove.get(a));
         }
@@ -91,7 +91,7 @@ public class GenreSorter {
             }
             simSortedGenreList.remove(0);
             //clean (start removing at the end, so that the indices do not get shuffled)
-            for (int a=toRemove.size() - 1;a >= 0; a--) {
+            for (int a = toRemove.size() - 1; a >= 0; a--) {
                 recommendations.remove(toRemove.get(a));
                 scores.remove(toRemove.get(a));
             }
@@ -135,7 +135,7 @@ public class GenreSorter {
         try {
             Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
             PreparedStatement stmnt = con.prepareStatement(SQL_QUERY_GENRE_SIM);
-            for(String genre: remainingGenre) {
+            for (String genre : remainingGenre) {
                 for (int mainGenreInt : mainGenreIds) {
                     id = nameIdMapping.get(genre);
                     if (id == mainGenreInt) {
@@ -145,8 +145,8 @@ public class GenreSorter {
                     stmnt.setInt(2, Math.max(mainGenreInt, id));
                     ResultSet rs = stmnt.executeQuery();
                     while (rs.next()) {
-                            distance = rs.getDouble("sim");
-                            result.put(genre, distance);
+                        distance = rs.getDouble("sim");
+                        result.put(genre, distance);
                     }
                 }
             }
@@ -157,7 +157,7 @@ public class GenreSorter {
         /* return the sorted genre list
          (note that a similarity value of 1 means, that the genre are very similiar.
          To get the correct result, we need to inverse the similarity) */
-        return remainingGenre.stream().sorted(Comparator.comparing((String s) -> 1 - result.getOrDefault(s,0.0)))
+        return remainingGenre.stream().sorted(Comparator.comparing((String s) -> 1 - result.getOrDefault(s, 0.0)))
                 .collect(Collectors.toList());
     }
 }

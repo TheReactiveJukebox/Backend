@@ -104,8 +104,8 @@ public class HybridStrategy implements RecommendationStrategy {
             }
         }
 
-        if(GENRE_VERSION == 0) {
-            results = GenreScoreModifier.getInstance().modifyScoreByGenreSim(radio,results);
+        if (GENRE_VERSION == 0) {
+            results = GenreScoreModifier.getInstance().modifyScoreByGenreSim(radio, results);
         }
 
         // finally, collect tracks and sort them by score
@@ -128,7 +128,7 @@ public class HybridStrategy implements RecommendationStrategy {
         * Recommendations.getScores(), you know what to do.
         */
 
-        if(GENRE_VERSION == 1) {
+        if (GENRE_VERSION == 1) {
             Recommendations recs = GenreSorter.getInstance()
                     .getGenreSortedRecommendation(radio, recommendations, scores);
             recommendations = recs.getTracks();
@@ -143,19 +143,19 @@ public class HybridStrategy implements RecommendationStrategy {
         finalRecs.add(recommendations.get(0));
         finalScores.add(scores.get(0));
         boolean addTrack = true;
-        for (int counter=1;counter <= this.resultCount && recommendations.size() > counter; counter++) {
+        for (int counter = 1; counter <= this.resultCount && recommendations.size() > counter; counter++) {
             Track newTrack = recommendations.get(counter);
-            if(finalRecs.stream().anyMatch((Track t) -> t.getId() == newTrack.getId())) {
+            if (finalRecs.stream().anyMatch((Track t) -> t.getId() == newTrack.getId())) {
                 continue;
             }
-            for (Track track: finalRecs) {
+            for (Track track : finalRecs) {
                 int compareTitle = track.getTitle().compareTo(newTrack.getTitle());
                 int compareArtist = track.getArtist().getNameNormalized().compareTo(newTrack.getArtist().getNameNormalized());
                 if (Math.abs(compareTitle) <= 2 && Math.abs(compareArtist) <= 2) {
                     addTrack = false;
                 }
             }
-            if(addTrack) {
+            if (addTrack) {
                 finalRecs.add(newTrack);
                 finalScores.add(scores.get(counter));
             }

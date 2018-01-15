@@ -31,29 +31,29 @@ public class GenreNN implements RecommendationStrategy {
 
     public GenreNN(Radio radio, Collection<Track> seedTracks, int requestedResults) {
         this.initGenreIdMaps();
-       if(radio.getGenres() != null && radio.getGenres().length != 0) {
+        if (radio.getGenres() != null && radio.getGenres().length != 0) {
             queryGenre = Arrays.asList(radio.getGenres()).stream().map((String s) -> nameIdMapping.get(s.toLowerCase())).distinct().collect(Collectors.toList());
-       } else if (!seedTracks.isEmpty()) {
+        } else if (!seedTracks.isEmpty()) {
             queryGenre = seedTracks.stream().flatMap((Track t) -> t.getGenres().stream().map((String s) ->
                     nameIdMapping.get(s.toLowerCase()))).distinct().collect(Collectors.toList());
-       } else {
+        } else {
             queryGenre = new ArrayList<>();
-       }
-       this.requestedResults = requestedResults;
+        }
+        this.requestedResults = requestedResults;
     }
 
     @Override
     public Recommendations getRecommendations() {
         List<Track> recommendations = new ArrayList<>();
         List<Float> weights = new ArrayList<>();
-        if(queryGenre.isEmpty()) {
+        if (queryGenre.isEmpty()) {
             return new Recommendations(recommendations, weights);
         }
         try {
             Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
             //fetch from requested genre
             String query = SQL_QUERY_GENRE_TRACKS_GENERIC;
-            for (int i = 0;i < queryGenre.size(); i++) {
+            for (int i = 0; i < queryGenre.size(); i++) {
                 query = query + "GenreId=" + queryGenre.get(i) + " OR";
             }
             query = query.substring(0, query.length() - 3);
@@ -72,10 +72,10 @@ public class GenreNN implements RecommendationStrategy {
             //search in next similar tracks
             List<List<Integer>> otherGenre = new ArrayList<>();
             List<Map<Integer, Float>> otherGenreSims = new ArrayList<>();
-            for (Integer genre: queryGenre) {
+            for (Integer genre : queryGenre) {
                 Map<Integer, Float> myMap = this.getMostSimilarGenre(genre);
                 otherGenreSims.add(myMap);
-                otherGenre.add(otherGenreSims.get(otherGenreSims.size()-1).keySet().stream()
+                otherGenre.add(otherGenreSims.get(otherGenreSims.size() - 1).keySet().stream()
                         .sorted(Comparator.comparing((Integer t) -> 1. - myMap.get(t)))
                         .collect(Collectors.toList()));
             }
@@ -91,7 +91,7 @@ public class GenreNN implements RecommendationStrategy {
                         recommendations.add(this.tracks.get(id));
                         weights.add(otherGenreSims.get(i).get(j));
                     }
-                    if(recommendations.size() >= this.requestedResults) {
+                    if (recommendations.size() >= this.requestedResults) {
                         con.close();
                         break finishBreak;
                     }
@@ -105,7 +105,7 @@ public class GenreNN implements RecommendationStrategy {
         return new Recommendations(recommendations, weights);
     }
 
-    private Map<Integer,Float> getMostSimilarGenre(int genre) {
+    private Map<Integer, Float> getMostSimilarGenre(int genre) {
         Map<Integer, Float> result = new HashMap<>();
         int id;
         double sim;
@@ -115,12 +115,12 @@ public class GenreNN implements RecommendationStrategy {
             stmnt.setInt(1, genre);
             ResultSet rs = stmnt.executeQuery();
             while (rs.next()) {
-                    result.putIfAbsent(rs.getInt("id"), rs.getFloat("sim"));
+                result.putIfAbsent(rs.getInt("id"), rs.getFloat("sim"));
             }
             stmnt = con.prepareStatement(SQL_QUERY_SIM_GENRE2);
             stmnt.setInt(1, genre);
             rs = stmnt.executeQuery();
-            while (rs.next() ) {
+            while (rs.next()) {
                 result.putIfAbsent(rs.getInt("id"), rs.getFloat("sim"));
             }
             con.close();
