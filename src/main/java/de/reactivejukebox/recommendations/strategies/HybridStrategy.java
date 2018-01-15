@@ -142,9 +142,8 @@ public class HybridStrategy implements RecommendationStrategy {
         List<Float> finalScores = new ArrayList<>();
         finalRecs.add(recommendations.get(0));
         finalScores.add(scores.get(0));
-        int counter = 1;
         boolean addTrack = true;
-        while (counter <= this.resultCount && recommendations.size() > counter) {
+        for (int counter=1;counter <= this.resultCount && recommendations.size() > counter; counter++) {
             Track newTrack = recommendations.get(counter);
             if(finalRecs.stream().anyMatch((Track t) -> t.getId() == newTrack.getId())) {
                 continue;
@@ -161,7 +160,6 @@ public class HybridStrategy implements RecommendationStrategy {
                 finalScores.add(scores.get(counter));
             }
             addTrack = true;
-            counter++;
         }
         return new Recommendations(finalRecs, finalScores);
     }
