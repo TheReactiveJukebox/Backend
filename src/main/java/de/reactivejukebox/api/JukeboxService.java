@@ -29,8 +29,6 @@ public class JukeboxService {
             Radio radio = Model.getInstance().getRadios().getByUserId(user.getId());
             return Response.ok(radio.getPlainObject()).build();
         } catch (SQLException e) {
-            System.err.println("Error getting current radiostation for user " + user.getUsername() + ":");
-            e.printStackTrace();
             return Response.status(404).entity("No Radiostation available")
                     .build();
         } catch (Exception e) {
