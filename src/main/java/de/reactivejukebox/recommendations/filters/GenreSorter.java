@@ -32,21 +32,31 @@ public class GenreSorter {
     }
 
     public Recommendations getGenreSortedRecommendation(Radio radio, List<Track> recommendations, List<Float> scores) {
+        // Find out which genres are requested
         List<String> requestedGenres;
         if (radio.getGenres() == null || radio.getGenres().length == 0) {
             if (radio.getStartTracks() == null || radio.getStartTracks().isEmpty()) {
                 return new Recommendations(recommendations, scores);
             } else {
-                requestedGenres = radio.getStartTracks().stream().flatMap((Track t) -> t.getGenres().stream())
-                        .distinct().collect(Collectors.toList());
+                requestedGenres = radio
+                        .getStartTracks()
+                        .stream()
+                        .flatMap((Track t) -> t.getGenres().stream())
+                        .distinct()
+                        .collect(Collectors.toList());
             }
         } else {
             requestedGenres = Arrays.asList(radio.getGenres());
         }
+
         //fetch genre similarity for each relevant genre
         List<String> simSortedGenreList = getSortedGenreList(requestedGenres,
-                recommendations.stream().flatMap((Track t) -> t.getGenres().stream())
-                        .distinct().collect(Collectors.toList()));
+                recommendations
+                        .stream()
+                        .flatMap((Track t) -> t.getGenres().stream())
+                        .distinct()
+                        .collect(Collectors.toList())
+        );
 
         //fill new lists sorted by genre
         List<Track> sortedTracks = new ArrayList<>(recommendations.size());
@@ -72,8 +82,8 @@ public class GenreSorter {
 
         //clean (start removing at the end, so that the indices do not get shuffled)
         for (int a = toRemove.size() - 1; a >= 0; a--) {
-            recommendations.remove(toRemove.get(a));
-            scores.remove(toRemove.get(a));
+            recommendations.remove((int)toRemove.get(a));
+            scores.remove((int)toRemove.get(a));
         }
         toRemove.clear();
 
@@ -93,8 +103,8 @@ public class GenreSorter {
             simSortedGenreList.remove(0);
             //clean (start removing at the end, so that the indices do not get shuffled)
             for (int a = toRemove.size() - 1; a >= 0; a--) {
-                recommendations.remove(toRemove.get(a));
-                scores.remove(toRemove.get(a));
+                recommendations.remove((int)toRemove.get(a));
+                scores.remove((int)toRemove.get(a));
             }
             toRemove.clear();
         }
@@ -129,8 +139,11 @@ public class GenreSorter {
 
     private List<String> getSortedGenreList(List<String> requestedGenre, List<String> remainingGenre) {
         Map<String, Double> result = new HashMap<>();
-        List<Integer> mainGenreIds = requestedGenre.stream().map((String s) -> nameIdMapping.get(s.toLowerCase()))
-                .distinct().collect(Collectors.toList());
+        List<Integer> mainGenreIds = requestedGenre
+                .stream()
+                .map((String s) -> nameIdMapping.get(s.toLowerCase()))
+                .distinct()
+                .collect(Collectors.toList());
         int id;
         double distance;
         try {
@@ -158,7 +171,9 @@ public class GenreSorter {
         /* return the sorted genre list
          (note that a similarity value of 1 means, that the genre are very similiar.
          To get the correct result, we need to inverse the similarity) */
-        return remainingGenre.stream().sorted(Comparator.comparing((String s) -> 1 - result.getOrDefault(s, 0.0)))
+        return remainingGenre
+                .stream()
+                .sorted(Comparator.comparing((String s) -> 1 - result.getOrDefault(s, 0.0)))
                 .collect(Collectors.toList());
     }
 }
