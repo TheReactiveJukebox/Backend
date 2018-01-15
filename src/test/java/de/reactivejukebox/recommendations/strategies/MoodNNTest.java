@@ -195,6 +195,33 @@ public class MoodNNTest {
         Field selectedField = MoodNN.class.getDeclaredField("selectedTracks");
         selectedField.setAccessible(true);
         Collection<Track> selected = (Collection<Track>) selectedField.get(strat);
+        assertTrue(selected.size() == 1);
+        for (Track t:selected){
+            assertTrue(t.getArtist().getId()==1);
+        }
 
+        radio.setValence(0.01f);
+        strat = new MoodNN(radio, new ArrayList<>(),20);
+        selected = (Collection<Track>) selectedField.get(strat);
+        assertTrue(selected.size() == 1);
+        for (Track t:selected){
+            assertTrue(t.getArtist().getId()==2);
+        }
+
+        radio.setArousal(-0.01f);
+        strat = new MoodNN(radio, new ArrayList<>(),20);
+        selected = (Collection<Track>) selectedField.get(strat);
+        assertTrue(selected.size() == 1);
+        for (Track t:selected){
+            assertTrue(t.getArtist().getId()==3);
+        }
+
+        radio.setValence(-0.01f);
+        strat = new MoodNN(radio, new ArrayList<>(),20);
+        selected = (Collection<Track>) selectedField.get(strat);
+        assertTrue(selected.size() == 1);
+        for (Track t:selected){
+            assertTrue(t.getArtist().getId()==4);
+        }
     }
 }

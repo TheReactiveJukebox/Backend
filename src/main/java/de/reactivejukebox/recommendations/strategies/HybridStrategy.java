@@ -368,7 +368,7 @@ public class HybridStrategy implements RecommendationStrategy {
         if (t.getGenres().size() == 0) genreScore -= 0.2f;
 
         score *= genreScore;
-        
+
         return score;
     }
 }
