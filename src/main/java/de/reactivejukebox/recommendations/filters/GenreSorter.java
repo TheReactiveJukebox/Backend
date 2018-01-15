@@ -84,6 +84,7 @@ public class GenreSorter {
                     toRemove.add(i);
                 }
             }
+            simSortedGenreList.remove(0);
             //clean (start removing at the end, so that the indices do not get shuffled)
             for (int a=toRemove.size() - 1;a >= 0; a--) {
                 recommendations.remove(toRemove.get(a));
