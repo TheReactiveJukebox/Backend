@@ -62,7 +62,7 @@ public class Tracks implements Iterable<Track> {
             int fMood = new MoodKey(rs.getFloat("mirarousal"),rs.getFloat("mirvalence")).hashCode();
 
             float valence = Math.max(-1,Math.min(rs.getFloat("mirvalence"),1));
-            float arousal = Math.max(-1,Math.min(rs.getFloat("mirarousa"),1));
+            float arousal = Math.max(-1,Math.min(rs.getFloat("mirarousal"),1));
 
             Track t =  new Track(
                     id,
