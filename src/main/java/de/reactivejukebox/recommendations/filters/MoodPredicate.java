@@ -10,7 +10,7 @@ import java.util.function.Predicate;
  */
 public class MoodPredicate implements Predicate<Track>{
 
-    public static final float startWindow = 0.3f;
+    public static final float startWindow = 0.1f;
 
     private float arousal, valence, window;
 

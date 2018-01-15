@@ -10,6 +10,7 @@ import de.reactivejukebox.recommendations.filters.MoodPredicate;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,10 +29,13 @@ public class MoodNN implements RecommendationStrategy {
         }
         else{
             this.selectedTracks = new ArrayList<>();
-            if(radio.getValence()!=null && radio.getArousal()!=null && radio.getValence()!=0f && radio.getArousal()!=0f){
-                this.selectedTracks.add(new Track(0,"",null,null,"","",0
-                        ,0,null,0f,0f,"","",radio.getValence(),radio.getArousal()));
-            }
+        }
+
+        if(radio.getValence()!=null && radio.getArousal()!=null && radio.getValence()!=0f && radio.getArousal()!=0f){
+            Track near = Model.getInstance().getTracks().stream()
+                    .min(Comparator.comparing((Track t)->calcDistance(radio.getArousal(),radio.getValence(),t)))
+                    .get();
+            this.selectedTracks.add(near);
         }
         this.radio = radio;
         this.upcoming = upcoming;
@@ -48,7 +52,7 @@ public class MoodNN implements RecommendationStrategy {
             tracks = defaultRecs();
             score = this.getScores(tracks);
             this.windowMultiplicator++;
-        }while (tracks.size() < this.resultCount/4);
+        }while (tracks.size() < this.resultCount/4 && this.windowMultiplicator <=4);
 
 
         Recommendations rec = new Recommendations(tracks, score);
@@ -85,5 +89,9 @@ public class MoodNN implements RecommendationStrategy {
                 result = dist < result ? dist : result;
             }
             return result;
+    }
+
+    private float calcDistance(float arousal, float valence, Track t){
+        return Math.abs(t.getArousal() - arousal) + Math.abs(t.getValence()-valence);
     }
 }
