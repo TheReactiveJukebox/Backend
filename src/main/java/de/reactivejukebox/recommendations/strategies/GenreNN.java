@@ -25,7 +25,7 @@ public class GenreNN extends GenreStrategy implements RecommendationStrategy {
     private final String SQL_QUERY_SIM_GENRE2 = "SELECT genresimilarity.Similarity AS sim, genresimilarity.GenreId1 AS id " +
             "FROM genresimilarity WHERE GenreId2=?";
     private final String SQL_QUERY_GENRE_TRACKS = "SELECT song_genre.SongId AS id FROM song_genre WHERE GenreId=?";
-    private final String SQL_QUERY_GENRE_TRACKS_GENERIC = "SELECT song_genre.SongId AS id FROM song_genre WHERE";
+    private final String SQL_QUERY_GENRE_TRACKS_GENERIC = "SELECT song_genre.SongId AS id FROM song_genre WHERE ";
 
     public GenreNN(Radio radio, Collection<Track> seedTracks, int requestedResults) {
         super();
@@ -45,17 +45,20 @@ public class GenreNN extends GenreStrategy implements RecommendationStrategy {
 
             //fetch all songs from requested genre
             String query = SQL_QUERY_GENRE_TRACKS_GENERIC;
+
             for (int i = 0; i < queryGenre.size(); i++) {
                 query = query + "GenreId=" + queryGenre.get(i) + " OR";
             }
             query = query.substring(0, query.length() - 3);
             PreparedStatement stmnt = con.prepareStatement(query);
             ResultSet rs = stmnt.executeQuery();
+
             while (rs.next() && recommendation.size() <= this.requestedResults) {
                 int id = rs.getInt("id");
                 recommendation.add(this.tracks.get(id));
                 weights.add(1f);
             }
+
             //check if there are already enough tracks
             if (recommendation.size() >= this.requestedResults) {
                 con.close();
@@ -95,9 +98,10 @@ public class GenreNN extends GenreStrategy implements RecommendationStrategy {
 
             con.close();
         } catch (SQLException e1) {
-            System.err.println("could not fetch song feature distance table from database");
+            System.err.println("could not fetch songs with the queried genre from database");
         }
-        return new Recommendations(recommendation.subList(0, requestedResults), weights.subList(0, requestedResults));
+        int subListsize = Math.min(recommendation.size(), requestedResults);
+        return new Recommendations(recommendation.subList(0, subListsize), weights.subList(0, subListsize));
     }
 
     //Query the database for the similarity to all other genre
@@ -119,7 +123,7 @@ public class GenreNN extends GenreStrategy implements RecommendationStrategy {
             }
             con.close();
         } catch (SQLException e1) {
-            System.err.println("could not fetch song feature distance table from database");
+            System.err.println("could not fetch genre similarity table from database");
         }
         return result;
     }
