@@ -355,7 +355,7 @@ public class SpecialFeedbacks {
     private SpeedFeedback fromSpeedBySpeed(int speed, int userId) throws SQLException {
         Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM feedbackSpeed WHERE userid = ? " +
-                " AND speed = ?;");
+                " AND fspeed = ?;");
         getFeedback.setInt(1, userId);
         getFeedback.setInt(2, speed);
         ResultSet rs = getFeedback.executeQuery();
@@ -376,7 +376,7 @@ public class SpecialFeedbacks {
         HashMap<Integer, Integer> result = new HashMap<>();
 
         while (rs.next()) {
-            result.put(rs.getInt("Speed"), rs.getInt("feedbackSpeed"));
+            result.put(rs.getInt("fSpeed"), rs.getInt("feedbackSpeed"));
         }
         con.close();
         return result;
@@ -386,9 +386,9 @@ public class SpecialFeedbacks {
 
         Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement addFeedback = con.prepareStatement("INSERT INTO feedbackSpeed (userid, " +
-                " Speed, feedbackSpeed) " +
+                " fSpeed, feedbackSpeed) " +
                 "VALUES(?, ?, ?) " +
-                "ON Conflict (UserId, Speed) Do " +
+                "ON Conflict (UserId, fSpeed) Do " +
                 "UPDATE Set feedbackSpeed = ?;");
 
         addFeedback.setInt(1, userId);
@@ -404,7 +404,7 @@ public class SpecialFeedbacks {
     private MoodFeedback fromMoodByMood(int mood, int userId) throws SQLException {
         Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement getFeedback = con.prepareStatement("SELECT * FROM feedbackMood WHERE userid = ? " +
-                " AND mood = ?;");
+                " AND fmood = ?;");
         getFeedback.setInt(1, userId);
         getFeedback.setInt(2, mood);
         ResultSet rs = getFeedback.executeQuery();
@@ -425,7 +425,7 @@ public class SpecialFeedbacks {
         HashMap<Integer, Integer> result = new HashMap<>();
 
         while (rs.next()) {
-            result.put(rs.getInt("Mood"), rs.getInt("feedbackMood"));
+            result.put(rs.getInt("fMood"), rs.getInt("feedbackMood"));
         }
         con.close();
         return result;
@@ -435,9 +435,9 @@ public class SpecialFeedbacks {
 
         Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement addFeedback = con.prepareStatement("INSERT INTO feedbackMood (userid, " +
-                " mood, feedbackMood) " +
+                " fmood, feedbackMood) " +
                 "VALUES(?, ?, ?) " +
-                "ON Conflict (UserId, Mood) Do " +
+                "ON Conflict (UserId, fMood) Do " +
                 "UPDATE Set feedbackMood = ?;");
 
         addFeedback.setInt(1, userId);
