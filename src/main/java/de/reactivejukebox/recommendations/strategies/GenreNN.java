@@ -62,7 +62,7 @@ public class GenreNN extends GenreStrategy implements RecommendationStrategy {
             //check if there are already enough tracks
             if (recommendation.size() >= this.requestedResults) {
                 con.close();
-                return new Recommendations(recommendation.subList(0, requestedResults), weights.subList(0, requestedResults));
+                return new Recommendations(recommendation.subList(0, requestedResults - 1), weights.subList(0, requestedResults - 1));
             }
 
             //search for more tracks in the most similar genre
@@ -98,7 +98,7 @@ public class GenreNN extends GenreStrategy implements RecommendationStrategy {
         } catch (SQLException e1) {
             System.err.println("could not fetch songs with the queried genre from database");
         }
-        return new Recommendations(recommendation.subList(0, requestedResults), weights.subList(0, requestedResults));
+        return new Recommendations(recommendation.subList(0, requestedResults - 1), weights.subList(0, requestedResults - 1));
     }
 
     //Query the database for the similarity to all other genre
