@@ -47,13 +47,13 @@ public class GenreNN extends GenreStrategy implements RecommendationStrategy {
             String query = SQL_QUERY_GENRE_TRACKS_GENERIC;
 
             for (int i = 0; i < queryGenre.size(); i++) {
-                query = query + "GenreId=" + queryGenre.get(i) + " OR";
+                query = query + "GenreId=" + queryGenre.get(i) + " OR ";
             }
-            query = query.substring(0, query.length() - 3);
+            query = query.substring(0, query.length() - 4);
             PreparedStatement stmnt = con.prepareStatement(query);
             ResultSet rs = stmnt.executeQuery();
 
-            while (rs.next() && recommendation.size() <= this.requestedResults) {
+            while (recommendation.size() < this.requestedResults && rs.next()) {
                 int id = rs.getInt("id");
                 recommendation.add(this.tracks.get(id));
                 weights.add(1f);
@@ -84,24 +84,21 @@ public class GenreNN extends GenreStrategy implements RecommendationStrategy {
                     stmnt.setInt(1, otherGenre.get(i).get(j));
                     rs = stmnt.executeQuery();
                     alreadyContainded.add(otherGenre.get(i).get(j));
-                    while (rs.next() && recommendation.size() <= this.requestedResults) {
+                    while (recommendation.size() < this.requestedResults && rs.next()) {
                         int id = rs.getInt("id");
                         recommendation.add(this.tracks.get(id));
                         weights.add(otherGenreSims.get(i).get(j));
                     }
                     if (recommendation.size() >= this.requestedResults) {
-                        con.close();
                         break finishBreak;
                     }
                 }
             }
-
             con.close();
         } catch (SQLException e1) {
             System.err.println("could not fetch songs with the queried genre from database");
         }
-        int subListsize = Math.min(recommendation.size(), requestedResults);
-        return new Recommendations(recommendation.subList(0, subListsize), weights.subList(0, subListsize));
+        return new Recommendations(recommendation.subList(0, requestedResults), weights.subList(0, requestedResults));
     }
 
     //Query the database for the similarity to all other genre
