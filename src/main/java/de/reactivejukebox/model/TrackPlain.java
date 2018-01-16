@@ -20,8 +20,10 @@ public class TrackPlain implements MusicEntityPlain {
     TrackFeedback feedback;
     float arousal;
     float valence;
+    int fSpeed;
+    int fMood;
 
-    public TrackPlain(int id, String title, int artist, int album, String cover, String file, int duration, int playCount, List<String> genres, Date releaseDate, float speed, float dynamic, float arousal, float valence) {
+    public TrackPlain(int id, String title, int artist, int album, String cover, String file, int duration, int playCount, List<String> genres, Date releaseDate, float speed, float dynamic, float arousal, float valence, int fSpeed, int fMood) {
         this.id = id;
         this.title = title;
         this.artist = artist;
@@ -36,6 +38,8 @@ public class TrackPlain implements MusicEntityPlain {
         this.dynamic = dynamic;
         this.arousal = arousal;
         this.valence = valence;
+        this.fSpeed = fSpeed;
+        this.fMood = fMood;
     }
 
     public TrackPlain() {
@@ -151,5 +155,21 @@ public class TrackPlain implements MusicEntityPlain {
 
     public void setFeedback(TrackFeedback feedback) {
         this.feedback = feedback;
+    }
+
+    public int getfSpeed() {
+        return fSpeed;
+    }
+
+    public void setfSpeed(int fSpeed) {
+        this.fSpeed = fSpeed;
+    }
+
+    public int getfMood() {
+        return fMood;
+    }
+
+    public void setfMood(int fMood) {
+        this.fMood = fMood;
     }
 }

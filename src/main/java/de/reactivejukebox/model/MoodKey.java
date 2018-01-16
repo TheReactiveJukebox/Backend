@@ -7,8 +7,8 @@ public class MoodKey {
 
 
     public MoodKey(Float arousal, Float valence) {
-        this.x = Math.round(arousal * 50);
-        this.y = Math.round(valence * 50);
+        this.x = Math.round(arousal * 40);
+        this.y = Math.round(valence * 40);
     }
 
     @Override
@@ -22,7 +22,7 @@ public class MoodKey {
     @Override
     public int hashCode() {
         int result = x;
-        result = 31 * result + y;
+        result = 100 * result + y;
         return result;
     }
 
