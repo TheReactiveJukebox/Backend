@@ -38,7 +38,7 @@ public class HybridStrategyTest {
 
         artists.put(1, new Artist(1, "Artist A"));
         albums.put(1, new Album(1, "Album A", artists.get(1)));
-        tracks.put(1, new Track(1, "Track A1", artists.get(1), albums.get(1), "", "", 500, 17263, new Date(), 100, 0.5f, "",""));
+        tracks.put(1, new Track(1, "Track A1", artists.get(1), albums.get(1), "", "", 500, 17263, new Date(), 100, 0.5f, "","",0,0));
 
         Model m = Mockito.mock(Model.class);
         Mockito.when(m.getArtists()).thenReturn(artists);
@@ -98,7 +98,7 @@ public class HybridStrategyTest {
 
         // Nothing else was done to change the weight. We give the implementation the benefit of the doubt.
         Mockito.when(mockProfile.getAlbumFeedback(Mockito.anyInt())).thenReturn(0);
-        Mockito.when(mockProfile.getMoodFeedback(Mockito.anyFloat(), Mockito.anyFloat())).thenReturn(0);
+        Mockito.when(mockProfile.getMoodFeedback(Mockito.anyInt())).thenReturn(0);
         Mockito.when(mockProfile.getSpeedFeedback(Mockito.anyInt())).thenReturn(0);
         Mockito.when(mockProfile.getArtistFeedback(Mockito.anyInt())).thenReturn(0);
         Mockito.when(mockProfile.getDeleteFeedback(Mockito.anyInt())).thenReturn(0);

@@ -8,14 +8,13 @@ public class UserProfile {
     private Radio radio;
 
     private ArrayList<HistoryEntry> historyList;
-    private HashSet<TrackFeedback> rawTrackFeedback;
     private HashMap<Integer, Integer> trackFeedback;
     private HashMap<Integer, Integer> artistFeedback;
     private HashMap<Integer, Integer> albumFeedback;
     private HashMap<String, Integer> genreFeedback;
 
     private HashMap<Integer, Integer> speedFeedback;
-    private HashMap<MoodKey, Integer> moodFeedback;
+    private HashMap<Integer, Integer> moodFeedback;
 
     private HashMap<Integer, Integer> skipFeedback;
     private HashMap<Integer, Integer> deleteFeedback;
@@ -29,7 +28,7 @@ public class UserProfile {
         this.radio = radio;
         int userId = radio.getUser().getId();
         tracks = Model.getInstance().getTracks();
-        rawTrackFeedback = Model.getInstance().getTrackFeedbacks().getByUserId(userId);
+        trackFeedback = Model.getInstance().getTrackFeedbacks().getByUserId(userId);
         SpecialFeedbacks sf = Model.getInstance().getSpecialFeedbacks();
         artistFeedback = sf.getArtistFeedback(userId);
         albumFeedback = sf.getAlbumFeedback(userId);
@@ -43,9 +42,9 @@ public class UserProfile {
         historyList = Model.getInstance().getHistoryEntries().getListByRadioId(radio.getId());
 
         history = new HashMap<>();
-        speedFeedback = new HashMap<>();
-        trackFeedback = new HashMap<>();
-        moodFeedback = new HashMap<>();
+        speedFeedback = Model.getInstance().getSpecialFeedbacks().getSpeedFeedback(userId);
+        trackFeedback = Model.getInstance().getTrackFeedbacks().getByUserId(userId);
+        moodFeedback = Model.getInstance().getSpecialFeedbacks().getMoodFeedback(userId);
         build();
     }
 
@@ -77,14 +76,12 @@ public class UserProfile {
         return multiSkipFeedback.getOrDefault(id, 0);
     }
 
-    public int getSpeedFeedback(float speed){
-        int speedInt = Math.round(speed/5); //TODO change with new Feedback
-        return speedFeedback.getOrDefault(speedInt, 0);
+    public int getSpeedFeedback(int fSpeed){
+        return speedFeedback.getOrDefault(fSpeed, 0);
     }
 
-    public int getMoodFeedback(float arousal, float valence){
-        MoodKey key = new MoodKey(arousal,valence);
-        return moodFeedback.getOrDefault(key, 0);
+    public int getMoodFeedback(int fMood){
+        return moodFeedback.getOrDefault(fMood, 0);
     }
 
     public int getHistory(int trackId){ return history.getOrDefault(trackId,0); }
@@ -92,26 +89,6 @@ public class UserProfile {
 
     //TODO change with new Feedback
     private void build(){
-        for (TrackFeedback f: rawTrackFeedback) {
-            Track t = tracks.get(f.getTrackId());
-            if (f.getSongFeedback()> 0){
-                trackFeedback.put(t.getId(), 1);
-            }else if (f.getSongFeedback()< 0){
-                trackFeedback.put(t.getId(),-1);
-            }
-            if (f.getSpeedFeedback() > 0){
-                float speed = t.getSpeed()/5;
-                speedFeedback.put(Math.round(speed),1);
-            }else if (f.getSpeedFeedback() < 0) {
-                float speed = t.getSpeed()/5;
-                speedFeedback.put(Math.round(speed),-1);
-            }
-            if (f.getMoodFeedback() > 0) {
-                moodFeedback.put(new MoodKey(t.getArousal(), t.getValence()),1);
-            } else if (f.getMoodFeedback() < 0) {
-                moodFeedback.put(new MoodKey(t.getArousal(), t.getValence()),-1);
-            }
-        }
         historyList.sort(Comparator.comparing(HistoryEntry::getTime));
         ListIterator<HistoryEntry> li = historyList.listIterator(historyList.size());
         int i = 1;

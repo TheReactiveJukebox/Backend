@@ -44,12 +44,12 @@ public class TrackFeedbacks {
         return fromDB(id);
     }
 
-    public HashSet <TrackFeedback> getByUserId(int id) throws SQLException {
-        HashSet<TrackFeedback> trackFeedbacks = new HashSet<>();
+    public HashMap <Integer, Integer> getByUserId(int id) throws SQLException {
+        HashMap<Integer, Integer> trackFeedbacks = new HashMap<>();
         ArrayList<TrackFeedback> feedbacksPlain;
             feedbacksPlain = this.fromDbByUserId(id);
         for (TrackFeedback f: feedbacksPlain) {
-            trackFeedbacks.add(f);
+            trackFeedbacks.put(f.getTrackId(),f.getSongFeedback());
         }
         return trackFeedbacks;
     }
@@ -114,24 +114,17 @@ public class TrackFeedbacks {
 
         Connection con = DatabaseProvider.getInstance().getDatabase().getConnection();
         PreparedStatement addFeedback = con.prepareStatement("INSERT INTO feedback (userid, songid," +
-                " feedbacksong, feedbackspeed, feedbackdynamics, feedbackmood) " +
-                "VALUES(?, ?, ?, ?, ?, ?) " +
+                " feedbacksong) " +
+                "VALUES(?, ?, ?) " +
                 "ON Conflict (userid, songid) Do " +
-                "UPDATE Set (feedbacksong, feedbackspeed, " +
-                "feedbackdynamics, feedbackmood, time) = " +
-                "(?, ?, ?, ?, CURRENT_TIMESTAMP);");
+                "UPDATE Set (feedbacksong, time) = " +
+                "(?, CURRENT_TIMESTAMP);");
 
         addFeedback.setInt(1, userId);
         addFeedback.setInt(2, feedback.getTrackId());
         addFeedback.setInt(3, feedback.getSongFeedback());
-        addFeedback.setInt(4, feedback.getSpeedFeedback());
-        addFeedback.setInt(5, feedback.getDynamicsFeedback());
-        addFeedback.setInt(6, feedback.getMoodFeedback());
 
-        addFeedback.setInt(7, feedback.getSongFeedback());
-        addFeedback.setInt(8, feedback.getSpeedFeedback());
-        addFeedback.setInt(9, feedback.getDynamicsFeedback());
-        addFeedback.setInt(10, feedback.getMoodFeedback());
+        addFeedback.setInt(4, feedback.getSongFeedback());
 
         addFeedback.executeUpdate();
         con.close();
@@ -144,9 +137,6 @@ public class TrackFeedbacks {
         feedback.setTrackId(rs.getInt("songid"));
 
         feedback.setSongFeedback(rs.getInt("feedbacksong"));
-        feedback.setSpeedFeedback(rs.getInt("feedbackspeed"));
-        feedback.setDynamicsFeedback(rs.getInt("feedbackdynamics"));
-        feedback.setMoodFeedback(rs.getInt("feedbackmood"));
 
 
         return feedback;
