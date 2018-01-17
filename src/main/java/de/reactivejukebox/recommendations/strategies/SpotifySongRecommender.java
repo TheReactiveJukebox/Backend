@@ -45,11 +45,15 @@ public class SpotifySongRecommender implements RecommendationStrategy {
 
     @Override
     public Recommendations getRecommendations() {
-        JSONArray jsonArray = spotifyApiCall(base);
-
         ArrayList<Track> tracks = new ArrayList<>();
         ArrayList<Float> scores = new ArrayList<>();
 
+        // return empty list if there are no startTracks given
+        if(base.size() == 0) {
+            return new Recommendations(tracks, scores);
+        }
+
+        JSONArray jsonArray = spotifyApiCall(base);
 
         int count = jsonArray.length();
         for (int i = 0; i < count; i++) {
