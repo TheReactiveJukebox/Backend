@@ -29,9 +29,7 @@ public class JukeboxService {
             Radio radio = Model.getInstance().getRadios().getByUserId(user.getId());
             return Response.ok(radio.getPlainObject()).build();
         } catch (SQLException e) {
-            System.err.println("Error getting current radiostation for user " + user.getUsername() + ":");
-            e.printStackTrace();
-            return Response.status(404)
+            return Response.status(404).entity("No Radiostation available")
                     .build();
         } catch (Exception e) {
             System.err.println("Error getting current radiostation for user " + user.getUsername() + ":");
@@ -54,7 +52,7 @@ public class JukeboxService {
         } catch (SQLException e) {
             System.err.println("Error creating radiostation for user " + user.getUsername() + ":");
             e.printStackTrace();
-            return Response.status(503)
+            return Response.status(503).entity("Error creating Radio Station")
                     .build();
         } catch (Exception e) {
             System.err.println("Error creating radiostation for user " + user.getUsername() + ":");
@@ -69,6 +67,7 @@ public class JukeboxService {
     @Path("/next")
     public Response getNextSongs(@Context User user,
                                  @QueryParam("count") int count,
+                                 @QueryParam("start") Boolean start,
                                  @QueryParam("upcoming") List<Integer> upcoming) {
         try {
             TrackFeedbacks feedback = Model.getInstance().getTrackFeedbacks();
@@ -78,13 +77,19 @@ public class JukeboxService {
                     .collect(Collectors.toList());
             // build algorithm for user's current jukebox
             Radio radio = Model.getInstance().getRadios().getByUserId(user.getId());
-
+            if (start != null && start && radio.getStartTracks() != null){
+                upcomingTracks = radio.getStartTracks();
+            }
             RecommendationStrategy algorithm = new RecommendationStrategyFactory(radio, upcomingTracks)
                     .createStrategy(count);
             // obtain results
             List<TrackPlain> results = algorithm.getRecommendations().getTracks().stream()
                     .map(Track::getPlainObject)
                     .collect(Collectors.toList());
+            if (start != null && start && radio.getStartTracks() != null) {
+                List<TrackPlain> startTracks = radio.getStartTracks().stream().map(Track::getPlainObject).collect(Collectors.toList());
+                results.addAll(0, startTracks);
+            }
             if (results.size() == 0) {
                 return Response.status(404).build();
             }
@@ -94,9 +99,7 @@ public class JukeboxService {
 
             return Response.ok(results).build();
         } catch (SQLException e) {
-            System.err.println("Error getting next songs for current radiostation of user " + user.getUsername() + ":");
-            e.printStackTrace();
-            return Response.status(502)
+            return Response.status(422).entity("No radiostation available")
                     .build();
         } catch (Exception e) {
             System.err.println("Error getting next songs for current radiostation of user " + user.getUsername() + ":");

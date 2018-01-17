@@ -34,6 +34,7 @@ public class HybridStrategy implements RecommendationStrategy {
 
         public float value;
 
+
         FeedbackModifier(float value) {
             this.value = value;
         }
@@ -43,6 +44,7 @@ public class HybridStrategy implements RecommendationStrategy {
      * How many recommendations every algorithm should generate
      */
     static final int N_BEST_SONGS = 200;
+    private static final int GENRE_VERSION = 2; // 0 to use the modifier and 1 to use the sorter
 
     private RecommendationStrategyFactory factory;
     private UserProfile userProfile;
@@ -100,13 +102,17 @@ public class HybridStrategy implements RecommendationStrategy {
             }
         }
 
+        if (GENRE_VERSION == 0) {
+            results = GenreScoreModifier.getInstance().modifyScoreByGenreSim(radio, results);
+        }
+
         // finally, collect tracks and sort them by score
-        ArrayList<Track> recommendations = new ArrayList<>();
+        List<Track> recommendations = new ArrayList<>();
         recommendations.addAll(results.keySet());
         recommendations.sort(Comparator.comparing(results::get).reversed());
 
         // If need be, we could also assemble a list of scores like this:
-        ArrayList<Float> scores = new ArrayList<>();
+        List<Float> scores = new ArrayList<>();
         for (Track t : recommendations) {
             scores.add(results.get(t));
         }
@@ -120,6 +126,12 @@ public class HybridStrategy implements RecommendationStrategy {
         * Recommendations.getScores(), you know what to do.
         */
 
+        if (GENRE_VERSION == 1) {
+            Recommendations recs = GenreSorter.getInstance()
+                    .getGenreSortedRecommendation(radio, recommendations, scores);
+            recommendations = recs.getTracks();
+            scores = recs.getScores();
+        }
         return getTruncatedDistinctRecommendations(recommendations, scores);
     }
 
@@ -128,10 +140,9 @@ public class HybridStrategy implements RecommendationStrategy {
         List<Float> finalScores = new ArrayList<>();
         finalRecs.add(recommendations.get(0));
         finalScores.add(scores.get(0));
-        int counter = 1;
         boolean addTrack = true;
-        while (counter <= this.resultCount && recommendations.size() > counter) {
-            Track newTrack = recommendations.get(counter++);
+        for (int counter = 1; counter <= this.resultCount && recommendations.size() > counter; counter++) {
+            Track newTrack = recommendations.get(counter);
             if (finalRecs.stream().anyMatch((Track t) -> t.getId() == newTrack.getId())) {
                 continue;
             }
@@ -251,15 +262,15 @@ public class HybridStrategy implements RecommendationStrategy {
                 score *= FeedbackModifier.DISLIKE_ALBUM.value;
             }
 
-            if (profile.getSpeedFeedback(t.getSpeed()) == 1) {
+            if (profile.getSpeedFeedback(t.getfSpeed()) == 1) {
                 score *= FeedbackModifier.LIKE_TEMPO.value;
-            } else if (profile.getSpeedFeedback(t.getSpeed()) == -1) {
+            } else if (profile.getSpeedFeedback(t.getfSpeed()) == -1) {
                 score *= FeedbackModifier.DISLIKE_TEMPO.value;
             }
 
-            if (profile.getMoodFeedback(t.getArousal(), t.getValence()) == 1) {
+            if (profile.getMoodFeedback(t.getfMood()) == 1) {
                 score *= FeedbackModifier.LIKE_MOOD.value;
-            } else if (profile.getMoodFeedback(t.getArousal(), t.getValence()) == -1) {
+            } else if (profile.getMoodFeedback(t.getfMood()) == -1) {
                 score *= FeedbackModifier.DISLIKE_MOOD.value;
             }
 

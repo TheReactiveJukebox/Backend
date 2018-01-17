@@ -4,10 +4,11 @@ public enum StrategyType {
     SAGH(2),
     RANDOM(1),
     HYBRID(0),
-    MOOD(3),
-    SPEED(3),
-    SPOTIFY(4),
-    FEATURES(3);
+    MOOD(4),
+    SPEED(4),
+    SPOTIFY(3),
+    FEATURES(4),
+    GENRE(4);
 
     StrategyType(float weight) {
         this.weight = weight;

@@ -29,11 +29,11 @@ public class SpeedPredicateTest {
         Float s3 = 89.99f;
         Float s4 = 100.0001f;
 
-        Track t1 = new Track(1, "Title1", new Artist(), new Album(), "blacover", "blahash", 50, 0, d1, s1, 0.9f, "", "");
-        Track t2 = new Track(2, "Title2", new Artist(), new Album(), "blacover", "blahash", 50, 0, d2, s2, 0.9f, "", "");
-        Track t3 = new Track(1, "Title3", new Artist(), new Album(), "blacover", "blahash", 50, 0, d3, s3, 0.9f, "", "");
-        Track t4 = new Track(2, "Title4", new Artist(), new Album(), "blacover", "blahash", 50, 0, d4, s4, 0.9f, "", "");
-        Track t5 = new Track(2, "Title5", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 0, 0.9f, "", "");
+        Track t1 = new Track(1, "Title1", new Artist(), new Album(), "blacover", "blahash", 50, 0, d1, s1, 0.9f, "", "",0,0);
+        Track t2 = new Track(2, "Title2", new Artist(), new Album(), "blacover", "blahash", 50, 0, d2, s2, 0.9f, "", "",0,0);
+        Track t3 = new Track(1, "Title3", new Artist(), new Album(), "blacover", "blahash", 50, 0, d3, s3, 0.9f, "", "",0,0);
+        Track t4 = new Track(2, "Title4", new Artist(), new Album(), "blacover", "blahash", 50, 0, d4, s4, 0.9f, "", "",0,0);
+        Track t5 = new Track(2, "Title5", new Artist(), new Album(), "blacover", "blahash", 50, 0, new Date(), 0, 0.9f, "", "",0,0);
 
         Predicate<Track> speedPredicate = new SpeedPredicate(r);
 
