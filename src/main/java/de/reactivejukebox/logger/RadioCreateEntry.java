@@ -22,7 +22,7 @@ public class RadioCreateEntry extends Entry {
 
         StringJoiner songValue = new StringJoiner(",");
         List<Track> startTracks = radio.getStartTracks();
-        if (startTracks != null) {
+        if (startTracks != null && startTracks.size() > 0) {
             for (Track song : startTracks) {
                 songValue.add(String.valueOf(song.getId()));
             }
