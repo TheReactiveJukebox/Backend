@@ -50,6 +50,8 @@ public class RecommendationStrategyFactory {
             return new MoodNN(radio, upcoming, resultCount);
         } else if (s == StrategyType.SPEED) {
             return new SpeedNN(radio, upcoming, resultCount);
+        } else if (s == StrategyType.GENRE) {
+            return new GenreNN(radio, upcoming, resultCount);
         } else throw new NoSuchStrategyException();
     }
 

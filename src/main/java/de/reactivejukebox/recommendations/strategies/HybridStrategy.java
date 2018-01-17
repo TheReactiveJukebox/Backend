@@ -34,6 +34,7 @@ public class HybridStrategy implements RecommendationStrategy {
 
         public float value;
 
+
         FeedbackModifier(float value) {
             this.value = value;
         }
@@ -43,6 +44,7 @@ public class HybridStrategy implements RecommendationStrategy {
      * How many recommendations every algorithm should generate
      */
     static final int N_BEST_SONGS = 200;
+    private static final int GENRE_VERSION = 2; // 0 to use the modifier and 1 to use the sorter
 
     private RecommendationStrategyFactory factory;
     private UserProfile userProfile;
@@ -100,13 +102,17 @@ public class HybridStrategy implements RecommendationStrategy {
             }
         }
 
+        if (GENRE_VERSION == 0) {
+            results = GenreScoreModifier.getInstance().modifyScoreByGenreSim(radio, results);
+        }
+
         // finally, collect tracks and sort them by score
-        ArrayList<Track> recommendations = new ArrayList<>();
+        List<Track> recommendations = new ArrayList<>();
         recommendations.addAll(results.keySet());
         recommendations.sort(Comparator.comparing(results::get).reversed());
 
         // If need be, we could also assemble a list of scores like this:
-        ArrayList<Float> scores = new ArrayList<>();
+        List<Float> scores = new ArrayList<>();
         for (Track t : recommendations) {
             scores.add(results.get(t));
         }
@@ -120,6 +126,12 @@ public class HybridStrategy implements RecommendationStrategy {
         * Recommendations.getScores(), you know what to do.
         */
 
+        if (GENRE_VERSION == 1) {
+            Recommendations recs = GenreSorter.getInstance()
+                    .getGenreSortedRecommendation(radio, recommendations, scores);
+            recommendations = recs.getTracks();
+            scores = recs.getScores();
+        }
         return getTruncatedDistinctRecommendations(recommendations, scores);
     }
 
@@ -128,21 +140,20 @@ public class HybridStrategy implements RecommendationStrategy {
         List<Float> finalScores = new ArrayList<>();
         finalRecs.add(recommendations.get(0));
         finalScores.add(scores.get(0));
-        int counter = 1;
         boolean addTrack = true;
-        while (counter <= this.resultCount && recommendations.size() > counter) {
-            Track newTrack = recommendations.get(counter++);
-            if(finalRecs.stream().anyMatch((Track t) -> t.getId() == newTrack.getId())) {
+        for (int counter = 1; counter <= this.resultCount && recommendations.size() > counter; counter++) {
+            Track newTrack = recommendations.get(counter);
+            if (finalRecs.stream().anyMatch((Track t) -> t.getId() == newTrack.getId())) {
                 continue;
             }
-            for (Track track: finalRecs) {
+            for (Track track : finalRecs) {
                 int compareTitle = track.getTitle().compareTo(newTrack.getTitle());
                 int compareArtist = track.getArtist().getNameNormalized().compareTo(newTrack.getArtist().getNameNormalized());
                 if (Math.abs(compareTitle) <= 2 && Math.abs(compareArtist) <= 2) {
                     addTrack = false;
                 }
             }
-            if(addTrack) {
+            if (addTrack) {
                 finalRecs.add(newTrack);
                 finalScores.add(scores.get(counter));
             }
