@@ -141,7 +141,7 @@ public class HybridStrategy implements RecommendationStrategy {
         finalRecs.add(recommendations.get(0));
         finalScores.add(scores.get(0));
         boolean addTrack = true;
-        for (int counter = 1; counter <= this.resultCount && recommendations.size() > counter; counter++) {
+        for (int counter = 1; finalRecs.size() < this.resultCount && recommendations.size() > counter; counter++) {
             Track newTrack = recommendations.get(counter);
             if (finalRecs.stream().anyMatch((Track t) -> t.getId() == newTrack.getId())) {
                 continue;
