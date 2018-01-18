@@ -10,6 +10,8 @@ import java.util.function.Predicate;
  */
 public class MoodPredicate implements Predicate<Track>{
 
+    public static final float startWindow = 0.1f;
+
     private float arousal, valence, window;
 
     public MoodPredicate(Radio radio){
@@ -17,7 +19,7 @@ public class MoodPredicate implements Predicate<Track>{
     }
 
     public MoodPredicate(float arousal, float valence){
-        this(arousal,valence, 0.1f);
+        this(arousal,valence, MoodPredicate.startWindow);
     }
 
     public MoodPredicate(float arousal, float valence, float window){

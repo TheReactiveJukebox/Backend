@@ -16,15 +16,15 @@ public class HybridStrategy implements RecommendationStrategy {
      */
     enum FeedbackModifier {
         LIKE_TRACK(2f),
-        DISLIKE_TRACK(0.1f),
-        LIKE_ARTIST(1.25f),
-        DISLIKE_ARTIST(0.75f),
+        DISLIKE_TRACK(0.01f),
+        LIKE_ARTIST(1.5f),
+        DISLIKE_ARTIST(0.25f),
         LIKE_ALBUM(1.25f),
         DISLIKE_ALBUM(0.75f),
         LIKE_TEMPO(1.25f),
         DISLIKE_TEMPO(0.75f),
-        LIKE_MOOD(1.25f),
-        DISLIKE_MOOD(0.75f),
+        LIKE_MOOD(1.5f),
+        DISLIKE_MOOD(0.5f),
         GENRE(0.25f),          // see calculateGenreModifier for tweaking
         GENRE_MAGNITUDE(3f),   // see calculateGenreModifier for tweaking
         SKIP(1.8f),            // see calculateLinearModifier for tweaking
@@ -141,7 +141,7 @@ public class HybridStrategy implements RecommendationStrategy {
         finalRecs.add(recommendations.get(0));
         finalScores.add(scores.get(0));
         boolean addTrack = true;
-        for (int counter = 1; counter <= this.resultCount && recommendations.size() > counter; counter++) {
+        for (int counter = 1; finalRecs.size() < this.resultCount && recommendations.size() > counter; counter++) {
             Track newTrack = recommendations.get(counter);
             if (finalRecs.stream().anyMatch((Track t) -> t.getId() == newTrack.getId())) {
                 continue;
@@ -221,6 +221,14 @@ public class HybridStrategy implements RecommendationStrategy {
      */
     float calculateGenreModifier(int genreScore) {
         return (float) Math.tanh((float) genreScore / FeedbackModifier.GENRE_MAGNITUDE.value) / (1f / FeedbackModifier.GENRE.value) + 1f;
+    }
+
+    /**
+     * Gaussian "Bell-curve" with maximum 1 at the center and a normalized window for different domains.
+     */
+
+    float calculateGaussianModifier(float x, float center, float domain) {
+        return (float) Math.exp(-(Math.pow(x - center, 2) / (domain / FeedbackModifier.FILTER_MISMATCH.value)));
     }
 
     /**
@@ -317,14 +325,13 @@ public class HybridStrategy implements RecommendationStrategy {
     }
 
     float getFilterScore(Track t) {
-        final FeedbackModifier mod = FeedbackModifier.FILTER_MISMATCH;
         float score = 1.0f;
         int d1;
         int d2;
 
         // start and end year
         if (t.getReleaseDate() == null) {
-            score *= 0.5;
+            score *= 0.01f;
         } else {
             int sy = radio.getStartYear() == null ? 0 : radio.getStartYear();
             int ey = radio.getEndYear() == null ? Integer.MAX_VALUE : radio.getEndYear();
@@ -332,9 +339,13 @@ public class HybridStrategy implements RecommendationStrategy {
             d1 = t.getReleaseDate().getYear() - sy;
             d2 = t.getReleaseDate().getYear() - ey;
 
-            if (d1 < 0 || d2 > 0) {
-                score *= calculateLinearModifier(mod, Math.min(Math.abs(d1), Math.abs(d2)));
+            if (d1 < 0) {
+                score *= calculateGaussianModifier((float) t.getReleaseDate().getYear(), (float) sy, 118);
             }
+            if (d2 > 0) {
+                score *= calculateGaussianModifier((float) t.getReleaseDate().getYear(), (float) ey, 118);
+            }
+
         }
         // minimum and maximum tempo
         float minTempo = radio.getMinSpeed() == null ? 0 : radio.getMinSpeed();
@@ -343,17 +354,18 @@ public class HybridStrategy implements RecommendationStrategy {
         d1 = Math.round(t.getSpeed()) - Math.round(minTempo);
         d2 = Math.round(t.getSpeed()) - Math.round(maxTempo);
 
-        if (d1 < 0 || d2 > 0) {
-            score *= calculateLinearModifier(mod, Math.min(Math.abs(d1), Math.abs(d2)));
+        if (d1 < 0) {
+            score *= calculateGaussianModifier(t.getSpeed(), minTempo, 216);
+        }
+        if (d2 > 0) {
+            score *= calculateGaussianModifier(t.getSpeed(), maxTempo, 216);
         }
 
         // arousal and valence
         if (!(radio.getArousal() == null || radio.getValence() == null)) {
-            double a = radio.getArousal() - t.getArousal();
-            double v = radio.getValence() - t.getValence();
-            float distance = (float) Math.sqrt(a * a + v * v);
-            distance = 1 - distance / 1.415f; // maximum distance in unit square is sqrt(2) = 1.4142...
-            distance = 0.7f + 0.3f * distance; // arousal and valence data is quite inaccurate
+            float a = calculateGaussianModifier(t.getArousal(), radio.getArousal(), 2);
+            float v = calculateGaussianModifier(t.getValence(), radio.getValence(), 2);
+            float distance = (a + v) / 2;
             score *= distance;
         }
 
@@ -361,11 +373,11 @@ public class HybridStrategy implements RecommendationStrategy {
         float genreScore = 1.0f;
         for (String genre : t.getGenres()) {
             if (radioGenres.contains(genre)) {
-                genreScore += 0.05f;
-            } else {
-                genreScore -= 0.05f;
+                genreScore += 0.2f;
             }
         }
+        if (t.getGenres().size() == 0) genreScore -= 0.2f;
+
         score *= genreScore;
 
         return score;

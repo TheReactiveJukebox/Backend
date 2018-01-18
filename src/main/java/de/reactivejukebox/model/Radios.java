@@ -115,7 +115,7 @@ public class Radios implements Iterable<Radio> {
 
     private Radio build(RadioPlain radio) throws SQLException {
         // convert track id array to List<Track>
-        List<Track> startTracks = null;
+        List<Track> startTracks = new ArrayList<>();
         int[] tracks = radio.getStartTracks();
         if (tracks != null) {
             startTracks = Arrays.stream(radio.getStartTracks())

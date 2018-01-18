@@ -5,6 +5,7 @@ import de.reactivejukebox.recommendations.RecommendationStrategy;
 import de.reactivejukebox.recommendations.RecommendationStrategyFactory;
 import de.reactivejukebox.recommendations.Recommendations;
 import org.mockito.Mockito;
+import org.testng.Reporter;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -87,6 +88,16 @@ public class HybridStrategyTest {
         b = anyHybrid.calculateLinearModifier(HybridStrategy.FeedbackModifier.SKIP, Integer.MAX_VALUE);
         assertTrue(b < a);
         assertTrue(b > 0);
+    }
+
+    @Test
+    public void testCalculateGaussianModifier() throws Exception{
+        for (float x = -1f;x<1f;x=x+0.1f){
+            assertTrue(anyHybrid.calculateGaussianModifier(x,0,2)<=1);
+            if (x==0){
+                assertTrue(anyHybrid.calculateGaussianModifier(x,0,2)==1);
+            }
+        }
     }
 
     @Test
