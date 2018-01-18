@@ -40,7 +40,7 @@ public class FeedbackService {
             //TODO LoggerProvider.getLogger().writeEntry(new ArtistFeedbackEntry(user, feedbackReturn));
             return Response.status(200).entity(feedbackReturn).build();
         } catch (Exception e) {
-            System.err.println("Error adding tempo feedback for tempo " + feedback.getfSpeed() + ":");
+            System.err.println("Error adding tempo feedback for fTempo " + feedback.getfSpeed() + ":");
             e.printStackTrace();
             return Response.status(400).build();
         }
@@ -55,7 +55,7 @@ public class FeedbackService {
             List<MoodFeedback> result = Model.getInstance().getSpecialFeedbacks().getAllMoodFeedback(user.getId());
             return Response.status(200).entity(result).build();
         } catch (Exception e) {
-            System.err.println("Error getting Tempo feedback:");
+            System.err.println("Error getting Mood feedback:");
             e.printStackTrace();
             return Response.status(400).build();
         }
@@ -74,7 +74,7 @@ public class FeedbackService {
             //TODO LoggerProvider.getLogger().writeEntry(new ArtistFeedbackEntry(user, feedbackReturn));
             return Response.status(200).entity(feedbackReturn).build();
         } catch (Exception e) {
-            System.err.println("Error adding artist feedback for artist " + feedback.getfMood() + ":");
+            System.err.println("Error adding mood feedback for fMood " + feedback.getfMood() + ":");
             e.printStackTrace();
             return Response.status(400).build();
         }
