@@ -8,10 +8,8 @@ import de.reactivejukebox.recommendations.Recommendations;
 import de.reactivejukebox.recommendations.filters.HistoryPredicate;
 import de.reactivejukebox.recommendations.filters.SpeedPredicate;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -23,7 +21,7 @@ public class SpeedNN implements RecommendationStrategy {
 
     private static final float DefaultWindow = 5f;
     private static final float MaxWindow = 10f;
-    private HashSet<Float> speeds;
+    private Set<Float> speeds;
     private Radio radio;
     private Collection<Track> upcoming;
     private int resultCount;
@@ -51,12 +49,13 @@ public class SpeedNN implements RecommendationStrategy {
         this.upcoming = upcoming;
         this.resultCount = resultCount;
         this.window = (maxSpeed - minSpeed) / 2;
-        this.speeds = new HashSet<>();
+        this.speeds = Collections.newSetFromMap(new ConcurrentHashMap<Float, Boolean>());
         this.speeds.add((minSpeed + maxSpeed) / 2);
     }
 
     public SpeedNN(Radio radio, Collection<Track> upcoming, int resultCount, Collection<Float> speeds, float window) {
-        this.speeds = new HashSet<>(speeds);
+        this.speeds = Collections.newSetFromMap(new ConcurrentHashMap<Float, Boolean>());
+        this.speeds.addAll(speeds);
         this.radio = radio;
         this.upcoming = upcoming;
         this.resultCount = resultCount;
