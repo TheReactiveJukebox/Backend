@@ -220,6 +220,7 @@ public class HybridStrategy implements RecommendationStrategy {
      * @return the final modifier to apply to the track score
      */
     float calculateGenreModifier(int genreScore) {
+        if(genreScore < 0) return (float) Math.pow(2,genreScore);
         return (float) Math.tanh((float) genreScore / FeedbackModifier.GENRE_MAGNITUDE.value) / (1f / FeedbackModifier.GENRE.value) + 1f;
     }
 
