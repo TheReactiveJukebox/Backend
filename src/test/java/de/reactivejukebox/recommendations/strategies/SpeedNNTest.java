@@ -10,10 +10,7 @@ import org.testng.annotations.Test;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.*;
@@ -64,7 +61,7 @@ public class SpeedNNTest {
         windowField.setAccessible(true);
         speedsField.setAccessible(true);
         float window = (float) windowField.get(strat);
-        HashSet<Float> speeds = (HashSet<Float>) speedsField.get(strat);
+        Set<Float> speeds = (Set<Float>) speedsField.get(strat);
 
         assertTrue(window == 5f);
         assertTrue(speeds.contains(testSpeed));
@@ -74,7 +71,7 @@ public class SpeedNNTest {
 
         strat = new SpeedNN(new Radio(), new ArrayList<>(), 20, 90, 120);
         window = (float) windowField.get(strat);
-        speeds = (HashSet<Float>) speedsField.get(strat);
+        speeds = (Set<Float>) speedsField.get(strat);
         assertTrue(window == 15f);
         assertTrue(speeds.contains(105f));
 
@@ -87,7 +84,7 @@ public class SpeedNNTest {
         }
 
         strat = new SpeedNN(new Radio(), new ArrayList<>(), 20, inputSpeeds);
-        speeds = (HashSet<Float>) speedsField.get(strat);
+        speeds = (Set<Float>) speedsField.get(strat);
 
         for (Float f : inputSpeeds) {
             assertTrue(speeds.contains(f));
@@ -129,7 +126,7 @@ public class SpeedNNTest {
         windowField.setAccessible(true);
         speedsField.setAccessible(true);
         float window = (float) windowField.get(strat);
-        HashSet<Float> speeds = (HashSet<Float>) speedsField.get(strat);
+        Set<Float> speeds = (Set<Float>) speedsField.get(strat);
 
         assertTrue(window == 5f);
         assertTrue(speeds.contains(testSpeed));
