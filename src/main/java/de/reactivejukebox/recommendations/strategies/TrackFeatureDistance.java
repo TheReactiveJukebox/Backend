@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class TrackFeatureDistance implements RecommendationStrategy {
 
     private final int IGNORE_COUNTER = 5;
-    private  int fetch_counter = 100;
+    private int fetch_counter = 100;
     private final String SQL_QUERY_RECOMMEND = "SELECT feature_distance.track_to AS id, distance " +
             "FROM feature_distance WHERE track_from=? ORDER BY distance ASC ";
     private int requestedResults;
@@ -101,17 +101,27 @@ public class TrackFeatureDistance implements RecommendationStrategy {
             }
         }
         //transform to sorted tracks truncated to be no longer than the number of requestedResults
-        List<Track> recommendations = resultMap.entrySet().stream().sorted(Comparator
-                .comparing((Map.Entry<Integer, Double> o1) -> o1.getValue()))
+        List<Track> recommendations = resultMap.entrySet().stream()
+                .sorted(Comparator.comparing(Map.Entry::getValue))
                 .map((Map.Entry<Integer, Double> id) -> tracks.get(id.getKey()))
-                .limit(requestedResults).collect(Collectors.toList());
+                .limit(requestedResults)
+                .collect(Collectors.toList());
+
+        if (recommendations.size() <= 0 || requestedResults <= 0)
+            // when no recommendations can be given, return empty data structure
+            return new Recommendations(new ArrayList<>(), new ArrayList<>());
+
         //create list with weights by range normalizing distances and save them as weights
         List<Double> recommendationsWeights = recommendations.stream()
-                .map((Track track) -> resultMap.get(track.getId())).collect(Collectors.toList());
+                .map((Track track) -> resultMap.get(track.getId()))
+                .collect(Collectors.toList());
+
         Double max = Collections.max(recommendationsWeights);
         Double min = Collections.min(recommendationsWeights);
         List<Float> finalWeights = recommendationsWeights.stream()
-                .map((Double in) -> (in - min) * (1 / max)).map((Double in) -> (1 - in)).map(Double::floatValue)
+                .map((Double in) -> (in - min) * (1 / max))
+                .map((Double in) -> (1 - in))
+                .map(Double::floatValue)
                 .collect(Collectors.toList());
         return new Recommendations(recommendations, finalWeights);
     }
