@@ -56,11 +56,20 @@ public class SpotifySongRecommender implements RecommendationStrategy {
 
         JSONArray jsonArray = spotifyApiCall(base);
 
+        Tracks tracksClass;
+        try {
+            tracksClass = Model.getInstance().getTracks();
+        } catch (NullPointerException e) {
+            System.err.println("Could not get a instance from tracks class:");
+            e.printStackTrace();
+            return new Recommendations(tracks, scores);
+        }
+
         int count = jsonArray.length();
         for (int i = 0; i < count; i++) {
             // get next track
             JSONObject o = jsonArray.getJSONObject(i);
-            Track t = Model.getInstance().getTracks().getBySpotifyId(o.getString("id"));
+            Track t = tracksClass.getBySpotifyId(o.getString("id"));
 
             // filter upcoming tracks and tracks we don't have in the library
             if (t == null || upcoming.contains(t)) {
