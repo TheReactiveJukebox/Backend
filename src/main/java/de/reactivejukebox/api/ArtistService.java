@@ -27,6 +27,7 @@ public class ArtistService {
     @Secured
     @Produces(MediaType.APPLICATION_JSON)
     public Response getArtist(
+            @Context User user,
             @QueryParam("id") List<Integer> id,
             @QueryParam("namesubstr") String nameSubstring,
             @QueryParam("count") int count) {
@@ -45,7 +46,7 @@ public class ArtistService {
         result = s.map(Artist::getPlainObject).collect(Collectors.toList());
         SpecialFeedbacks feedback = Model.getInstance().getSpecialFeedbacks();
         for (ArtistPlain artist : result) {
-            artist.setFeedback(feedback.getArtistFeedback(artist.getId(), artist.getId()));
+            artist.setFeedback(feedback.getArtistFeedback(artist.getId(), user.getId()));
         }
         return Response.status(200)
             .entity(result)
