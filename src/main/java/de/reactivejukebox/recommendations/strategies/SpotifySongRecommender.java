@@ -147,8 +147,6 @@ public class SpotifySongRecommender implements RecommendationStrategy {
         String seedTracks = seeds.stream()
                 .collect(Collectors.joining(","));
 
-
-        JSONArray jsonArray;
         try {
             // make request; limit = 100 because that is the maximum defined by Spotify
             String spotifyResponse = Request
@@ -158,12 +156,10 @@ public class SpotifySongRecommender implements RecommendationStrategy {
                     .execute()
                     .returnContent()
                     .asString();
-            jsonArray = new JSONObject(spotifyResponse).getJSONArray("tracks");
+            return new JSONObject(spotifyResponse).getJSONArray("tracks");
         } catch (HttpResponseException e) {
             System.err.println("Spotify API call error: get Code: " + e.getStatusCode());
-            jsonArray = new JSONArray();
+            return new JSONArray();
         }
-
-        return jsonArray;
     }
 }
