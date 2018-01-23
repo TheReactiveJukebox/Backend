@@ -90,7 +90,7 @@ public class SpotifySongRecommender implements RecommendationStrategy {
                 JukeboxConfig.SPOTIFY_AUTH_TOKEN = getSpotifyAuthToken(
                         JukeboxConfig.SPOTIFY_CLIENT_ID,
                         JukeboxConfig.SPOTIFY_CLIENT_SECRET);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 System.err.println("Could not obtain auth token from Spotify, returning empty stream. Exception: ");
                 e.printStackTrace();
                 return new JSONArray();
@@ -100,7 +100,7 @@ public class SpotifySongRecommender implements RecommendationStrategy {
         // get Spotify recommendations
         try {
             return getSpotifyRecommendations(seeds, JukeboxConfig.SPOTIFY_AUTH_TOKEN);
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println("Could not get tracks from Spotify, returning empty list. Exception: ");
             e.printStackTrace();
             return new JSONArray();
