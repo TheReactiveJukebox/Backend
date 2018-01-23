@@ -26,8 +26,6 @@ public class SpotifySongRecommender implements RecommendationStrategy {
     private final static int ConnectionTimeout = 800; // in milliseconds
     private List<String> base;
     private int resultCount;
-    private Tracks tracks;
-    private Radio radio;
     private Collection<Track> upcoming;
 
     public SpotifySongRecommender(Radio radio, Collection<Track> upcoming, int resultCount) {
@@ -36,13 +34,11 @@ public class SpotifySongRecommender implements RecommendationStrategy {
 
     public SpotifySongRecommender(Radio radio, Collection<Track> upcoming, int resultCount, Tracks tracks) {
         this.resultCount = resultCount;
-        this.radio = radio;
         this.upcoming = upcoming;
         this.base = radio.getStartTracks().stream()
                 .distinct()
                 .map(Track::getSpotifyId)
                 .collect(Collectors.toList());
-        this.tracks = tracks;
 
         //Hotfix for bad Spotify DB entry
         this.base.removeIf((String s) -> s.trim().compareTo("0") == 0);
