@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 
 public class SpotifySongRecommender implements RecommendationStrategy {
-
+    private final static int ConnectionTimeout = 800; // in milliseconds
     private List<String> base;
     private int resultCount;
     private Tracks tracks;
@@ -122,7 +122,7 @@ public class SpotifySongRecommender implements RecommendationStrategy {
 
         // make request using the "Client Credentials" flow
         String jsonResponse = Request.Post("https://accounts.spotify.com/api/token")
-                .connectTimeout(800)
+                .connectTimeout(ConnectionTimeout)
                 .bodyForm(Form.form().add("grant_type", "client_credentials").build())
                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
                 .addHeader("Authorization", "Basic " + authString)
@@ -150,7 +150,7 @@ public class SpotifySongRecommender implements RecommendationStrategy {
         String spotifyResponse = Request
                 .Get("https://api.spotify.com/v1/recommendations?seed_tracks=" + seedTracks + "&limit=100")
                 .addHeader("Authorization", "Bearer " + spotifyAuthToken)
-                .connectTimeout(800)
+                .connectTimeout(ConnectionTimeout)
                 .execute()
                 .returnContent()
                 .asString();
