@@ -244,34 +244,55 @@ public class HybridStrategy implements RecommendationStrategy {
             float score = entry.getValue();
 
             // apply direct feedback modifiers: track, artist, album, tempo, mood
-            if (profile.getTrackFeedback(trackId) == 1) {
-                score *= FeedbackModifier.LIKE_TRACK.value;
-            } else if (profile.getTrackFeedback(trackId) == -1) {
-                score *= FeedbackModifier.DISLIKE_TRACK.value;
+
+            // track feedback
+            switch (profile.getTrackFeedback(trackId)) {
+                case 1:
+                    score *= FeedbackModifier.LIKE_TRACK.value;
+                    break;
+                case -1:
+                    score *= FeedbackModifier.DISLIKE_TRACK.value;
+                    break;
             }
 
-            if (profile.getArtistFeedback(trackId) == 1) {
-                score *= FeedbackModifier.LIKE_ARTIST.value;
-            } else if (profile.getTrackFeedback(trackId) == -1) {
-                score *= FeedbackModifier.DISLIKE_ARTIST.value;
+            // Artist feedback
+            switch (profile.getArtistFeedback(trackId)) {
+                case 1:
+                    score *= FeedbackModifier.LIKE_ARTIST.value;
+                    break;
+                case -1:
+                    score *= FeedbackModifier.DISLIKE_ARTIST.value;
+                    break;
             }
 
-            if (profile.getAlbumFeedback(trackId) == 1) {
-                score *= FeedbackModifier.LIKE_ALBUM.value;
-            } else if (profile.getAlbumFeedback(trackId) == -1) {
-                score *= FeedbackModifier.DISLIKE_ALBUM.value;
+            // Album feedback
+            switch (profile.getAlbumFeedback(trackId)) {
+                case 1:
+                    score *= FeedbackModifier.LIKE_ALBUM.value;
+                    break;
+                case -1:
+                    score *= FeedbackModifier.DISLIKE_ALBUM.value;
+                    break;
             }
 
-            if (profile.getSpeedFeedback(t.getfSpeed()) == 1) {
-                score *= FeedbackModifier.LIKE_TEMPO.value;
-            } else if (profile.getSpeedFeedback(t.getfSpeed()) == -1) {
-                score *= FeedbackModifier.DISLIKE_TEMPO.value;
+            // Speed feedback
+            switch (profile.getSpeedFeedback(t.getfSpeed())) {
+                case 1:
+                    score *= FeedbackModifier.LIKE_TEMPO.value;
+                    break;
+                case -1:
+                    score *= FeedbackModifier.DISLIKE_TEMPO.value;
+                    break;
             }
 
-            if (profile.getMoodFeedback(t.getfMood()) == 1) {
-                score *= FeedbackModifier.LIKE_MOOD.value;
-            } else if (profile.getMoodFeedback(t.getfMood()) == -1) {
-                score *= FeedbackModifier.DISLIKE_MOOD.value;
+            // Mood feedback
+            switch (profile.getMoodFeedback(t.getfMood())) {
+                case 1:
+                    score *= FeedbackModifier.LIKE_MOOD.value;
+                    break;
+                case -1:
+                    score *= FeedbackModifier.DISLIKE_MOOD.value;
+                    break;
             }
 
             // count liked vs. disliked genres, map to modifier
