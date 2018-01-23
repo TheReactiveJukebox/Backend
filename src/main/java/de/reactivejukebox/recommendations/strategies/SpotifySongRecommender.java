@@ -14,7 +14,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -41,7 +44,7 @@ public class SpotifySongRecommender implements RecommendationStrategy {
         this.tracks = tracks;
 
         //Hotfix for bad Spotify DB entry
-        this.base.removeIf((String s) -> s.trim().compareTo("0")==0);
+        this.base.removeIf((String s) -> s.trim().compareTo("0") == 0);
     }
 
     @Override
@@ -50,7 +53,7 @@ public class SpotifySongRecommender implements RecommendationStrategy {
         ArrayList<Float> scores = new ArrayList<>();
 
         // return empty list if there are no startTracks given
-        if(base.size() == 0) {
+        if (base.size() == 0) {
             return new Recommendations(tracks, scores);
         }
 
