@@ -14,6 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
@@ -162,6 +163,9 @@ public class SpotifySongRecommender implements RecommendationStrategy {
             return new JSONObject(spotifyResponse).getJSONArray("tracks");
         } catch (HttpResponseException e) {
             System.err.println("Spotify API call error: get Code: " + e.getStatusCode());
+            return new JSONArray();
+        } catch (SocketTimeoutException e) {
+            System.err.println("Spotify API call timeout.");
             return new JSONArray();
         }
     }
