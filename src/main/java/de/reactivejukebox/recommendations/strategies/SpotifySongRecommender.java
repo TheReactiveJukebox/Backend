@@ -7,6 +7,7 @@ import de.reactivejukebox.model.Track;
 import de.reactivejukebox.model.Tracks;
 import de.reactivejukebox.recommendations.RecommendationStrategy;
 import de.reactivejukebox.recommendations.Recommendations;
+import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
 import org.json.JSONArray;
@@ -146,16 +147,23 @@ public class SpotifySongRecommender implements RecommendationStrategy {
         String seedTracks = seeds.stream()
                 .collect(Collectors.joining(","));
 
-        // make request; limit = 100 because that is the maximum defined by Spotify
-        String spotifyResponse = Request
-                .Get("https://api.spotify.com/v1/recommendations?seed_tracks=" + seedTracks + "&limit=100")
-                .addHeader("Authorization", "Bearer " + spotifyAuthToken)
-                .connectTimeout(ConnectionTimeout)
-                .execute()
-                .returnContent()
-                .asString();
 
-        JSONObject jsonObject = new JSONObject(spotifyResponse);
-        return jsonObject.getJSONArray("tracks");
+        JSONArray jsonArray;
+        try {
+            // make request; limit = 100 because that is the maximum defined by Spotify
+            String spotifyResponse = Request
+                    .Get("https://api.spotify.com/v1/recommendations?seed_tracks=" + seedTracks + "&limit=100")
+                    .addHeader("Authorization", "Bearer " + spotifyAuthToken)
+                    .connectTimeout(ConnectionTimeout)
+                    .execute()
+                    .returnContent()
+                    .asString();
+            jsonArray = new JSONObject(spotifyResponse).getJSONArray("tracks");
+        } catch (HttpResponseException e) {
+            System.err.println("Spotify API call error: get Code: " + e.getStatusCode());
+            jsonArray = new JSONArray();
+        }
+
+        return jsonArray;
     }
 }
