@@ -15,16 +15,16 @@ public class HybridStrategy implements RecommendationStrategy {
      * Values roughly proportional to how much each of these actions influence recommendation score
      */
     enum FeedbackModifier {
-        LIKE_TRACK(2f),
-        DISLIKE_TRACK(0.01f),
-        LIKE_ARTIST(1.5f),
-        DISLIKE_ARTIST(0.25f),
+        LIKE_TRACK(1.3f),
+        DISLIKE_TRACK(0.001f),
+        LIKE_ARTIST(1.3f),
+        DISLIKE_ARTIST(0.01f),
         LIKE_ALBUM(1.25f),
-        DISLIKE_ALBUM(0.75f),
-        LIKE_TEMPO(1.25f),
-        DISLIKE_TEMPO(0.75f),
-        LIKE_MOOD(1.5f),
-        DISLIKE_MOOD(0.5f),
+        DISLIKE_ALBUM(0.25f),
+        LIKE_TEMPO(1.05f),
+        DISLIKE_TEMPO(0.9f),
+        LIKE_MOOD(1.05f),
+        DISLIKE_MOOD(0.9f),
         GENRE(0.25f),          // see calculateGenreModifier for tweaking
         GENRE_MAGNITUDE(3f),   // see calculateGenreModifier for tweaking
         SKIP(1.8f),            // see calculateLinearModifier for tweaking
@@ -220,6 +220,7 @@ public class HybridStrategy implements RecommendationStrategy {
      * @return the final modifier to apply to the track score
      */
     float calculateGenreModifier(int genreScore) {
+        if(genreScore < 0) return (float) Math.pow(2,genreScore);
         return (float) Math.tanh((float) genreScore / FeedbackModifier.GENRE_MAGNITUDE.value) / (1f / FeedbackModifier.GENRE.value) + 1f;
     }
 
@@ -228,7 +229,7 @@ public class HybridStrategy implements RecommendationStrategy {
      */
 
     float calculateGaussianModifier(float x, float center, float domain) {
-        return (float) Math.exp(-(Math.pow(x - center, 2) / (domain / FeedbackModifier.FILTER_MISMATCH.value)));
+        return (float) Math.max(Math.exp(-(Math.pow(x - center, 2) / (domain / FeedbackModifier.FILTER_MISMATCH.value))), 0.01);
     }
 
     /**
@@ -352,7 +353,7 @@ public class HybridStrategy implements RecommendationStrategy {
 
         // start and end year
         if (t.getReleaseDate() == null) {
-            score *= 0.01f;
+            score *= 0.001f;
         } else {
             int sy = radio.getStartYear() == null ? 0 : radio.getStartYear();
             int ey = radio.getEndYear() == null ? Integer.MAX_VALUE : radio.getEndYear();
@@ -394,7 +395,7 @@ public class HybridStrategy implements RecommendationStrategy {
         float genreScore = 1.0f;
         for (String genre : t.getGenres()) {
             if (radioGenres.contains(genre)) {
-                genreScore += 0.2f;
+                genreScore += 0.4f;
             }
         }
         if (t.getGenres().size() == 0) genreScore -= 0.2f;
