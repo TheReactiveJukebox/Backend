@@ -140,26 +140,37 @@ public class HybridStrategy implements RecommendationStrategy {
         List<Float> finalScores = new ArrayList<>();
         finalRecs.add(recommendations.get(0));
         finalScores.add(scores.get(0));
-        boolean addTrack = true;
         for (int counter = 1; finalRecs.size() < this.resultCount && recommendations.size() > counter; counter++) {
             Track newTrack = recommendations.get(counter);
-            if (finalRecs.stream().anyMatch((Track t) -> t.getId() == newTrack.getId())) {
-                continue;
-            }
-            for (Track track : finalRecs) {
-                int compareTitle = track.getTitle().compareTo(newTrack.getTitle());
-                int compareArtist = track.getArtist().getNameNormalized().compareTo(newTrack.getArtist().getNameNormalized());
-                if (Math.abs(compareTitle) <= 2 && Math.abs(compareArtist) <= 2) {
-                    addTrack = false;
-                }
-            }
-            if (addTrack) {
+            if (!isduplicatedSongsInPlaylist(newTrack, finalRecs)) {
                 finalRecs.add(newTrack);
                 finalScores.add(scores.get(counter));
             }
-            addTrack = true;
         }
         return new Recommendations(finalRecs, finalScores);
+    }
+
+    private boolean isduplicatedSongsInPlaylist(Track track, List<Track> playlist) {
+        // check if song with this Id is included
+        if (playlist.stream().anyMatch((Track t) -> t.getId() == track.getId())) {
+            return true;
+        }
+        for (Track t : playlist) {
+            //check for special version of the same song of the same song with different Id
+            if(t.getArtist().getNameNormalized().equals(track.getArtist().getNameNormalized())
+                    && (t.getTitle().equalsIgnoreCase(track.getTitle())
+                    || track.getTitle().equalsIgnoreCase(t.getTitle()))) {
+                return true;
+            }
+            //check if there is a track with very similar title and artist
+            int compareTitle = this.computeLevenshteinDistance(t.getTitle(), track.getTitle());
+            int compareArtist = this.computeLevenshteinDistance(t.getArtist().getNameNormalized(),
+                    track.getArtist().getNameNormalized());
+            if (compareTitle <= 2 && compareArtist <= 2) {
+               return true;
+            }
+        }
+        return false;
     }
 
 
@@ -381,5 +392,33 @@ public class HybridStrategy implements RecommendationStrategy {
         score *= genreScore;
 
         return score;
+    }
+
+    private int minimum(int a, int b, int c) {
+        return Math.min(Math.min(a, b), c);
+    }
+
+    /**
+     * The Levenshtein distance is the number of changes needed to transform one string into the compared string
+     * @param lhs first string
+     * @param rhs second string
+     * @return number of needed changes to one of the Strings
+     */
+    private int computeLevenshteinDistance(CharSequence lhs, CharSequence rhs) {
+        int[][] distance = new int[lhs.length() + 1][rhs.length() + 1];
+
+        for (int i = 0; i <= lhs.length(); i++)
+            distance[i][0] = i;
+        for (int j = 1; j <= rhs.length(); j++)
+            distance[0][j] = j;
+
+        for (int i = 1; i <= lhs.length(); i++)
+            for (int j = 1; j <= rhs.length(); j++)
+                distance[i][j] = this.minimum(
+                        distance[i - 1][j] + 1,
+                        distance[i][j - 1] + 1,
+                        distance[i - 1][j - 1] + ((lhs.charAt(i - 1) == rhs.charAt(j - 1)) ? 0 : 1));
+
+        return distance[lhs.length()][rhs.length()];
     }
 }
